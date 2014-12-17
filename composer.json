@@ -1,0 +1,37 @@
+{
+    "name": "netinteractive/elegant",
+    "license": "MIT",
+    "type": "library",
+    "homepage": "https://bitbucket.org/niteam/laravel-elegant",
+    "keywords": ["laravel", "model", "elegant", "netinteractive", "laravel4"],
+    "version": "1.0.0@dev",
+    "description": "",
+    "authors": [
+        {
+            "name": "halfik",
+            "email": "halfik@gmail.com"
+        }
+    ],
+    "require": {
+        "netinteractive/utils": "1.0.*", "
+    },
+    "repositories": [
+        {
+            "type":"git",
+            "url": "https://bitbucket.org/niteam/laravel-utils"
+        }
+    ],
+    "require": {
+        "php": ">=5.4.0",
+        "illuminate/support": "4.2.*"
+    },
+    "autoload": {
+        "classmap": [
+            "src/models"
+        ],
+        "psr-0": {
+            "Netinteractive\\Elegant": "src/"
+        }
+    },
+    "minimum-stability": "stable"
+}
