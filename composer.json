@@ -4,7 +4,7 @@
     "type": "library",
     "homepage": "https://bitbucket.org/niteam/laravel-elegant",
     "keywords": ["laravel", "model", "elegant", "netinteractive", "laravel4"],
-    "version": "1.0.2",
+    "version": "1.0.3@dev",
     "description": "",
     "authors": [
         {
@@ -27,7 +27,8 @@
     },
     "autoload": {
         "psr-0": {
-            "Netinteractive\\Elegant": "src/"
+            "Netinteractive\\Elegant": "src/",
+            "Netinteractive\\Events": "src/"
         }
     },
     "minimum-stability": "stable"
