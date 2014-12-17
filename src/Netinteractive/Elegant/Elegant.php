@@ -46,7 +46,12 @@ abstract class Elegant extends Model{
     }
 
 
-    abstract protected function init();
+    /**
+     *
+     */
+    protected function init(){
+
+    }
 
 
     /**
