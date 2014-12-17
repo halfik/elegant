@@ -18,7 +18,7 @@ class ElegantServiceProvider extends ServiceProvider {
 	 */
 	public function register()
 	{
-		//
+		\Event::subscribe('Netinteractive\Elegant\Events\EventHandler');
 	}
 
 	/**

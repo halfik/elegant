@@ -1,18 +1,17 @@
 <?php
-namespace Netinteractive\Events;
+namespace Netinteractive\Elegant\Events;
 
-use \Netinteractive\Elegant\Elegant AS Elegant;
+use Netinteractive\Elegant\Elegant;
 
 /**
  * Class ElegantEventHandler
  */
 class ElegantEventHandler {
 
-
     /**
-     * @param Elegant $user
+     * @param Elegant $model
      */
-    public function readFilters(Elegant $user){
+    public function readFilters(Elegant $model){
        echo 2; exit;
     }
 
@@ -23,7 +22,7 @@ class ElegantEventHandler {
      * @return array
      */
     public function subscribe($events)
-    {
+    {   echo 149; exit;
         $events->listen('eloquent.elegant.before.setAttribute', 'ElegantEventHandler@readFilters');
     }
 

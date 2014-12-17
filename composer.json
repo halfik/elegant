@@ -27,8 +27,7 @@
     },
     "autoload": {
         "psr-0": {
-            "Netinteractive\\Elegant": "src/",
-            "Netinteractive\\Events": "src/"
+            "Netinteractive\\Elegant": "src/"
         }
     },
     "minimum-stability": "stable"
