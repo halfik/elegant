@@ -13,7 +13,7 @@
         }
     ],
     "require": {
-        "netinteractive/utils": "1.0.*", "
+        "netinteractive/utils": "1.0.*"
     },
     "repositories": [
         {
