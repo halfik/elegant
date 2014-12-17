@@ -26,9 +26,6 @@
         "illuminate/support": "4.2.*"
     },
     "autoload": {
-        "classmap": [
-            "src/models"
-        ],
         "psr-0": {
             "Netinteractive\\Elegant": "src/"
         }
