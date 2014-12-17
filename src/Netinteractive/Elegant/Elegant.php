@@ -36,15 +36,17 @@ abstract class Elegant extends Model{
     protected static $queryAllowAcl = true;
 
 
-
+    /**
+     * @param array $attributes
+     */
     public function __construct(array $attributes = array()){
         Searchable::$alias = $this->getTable();
         $this->init();
         parent::__construct($attributes);
     }
 
-    protected function init(){
-    }
+
+    abstract protected function init();
 
 
     /**
@@ -128,10 +130,13 @@ abstract class Elegant extends Model{
         $attributes = $this->attributes;
         $this->attributes = $this->getDirty();
 
+        $this->fireModelEvent('elegant.before.insert', false);
+
         $result = parent::performInsert($query, $options);
 
         $this->attributes = array_merge($attributes, $this->attributes );
-        $this->fireModelEvent('after_created', false);
+
+        $this->fireModelEvent('elegant.after.insert', false);
 
         return $result;
     }
@@ -145,8 +150,10 @@ abstract class Elegant extends Model{
      */
     protected function performUpdate(\Illuminate\Database\Eloquent\Builder $query, array $options=array()){
         $this->validate('update');
+
+        $this->fireModelEvent('elegant.before.update', false);
         $result = parent::performUpdate($query, $options);
-        $this->fireModelEvent('after_updated', false);
+        $this->fireModelEvent('elegant.after.update', false);
 
         return $result;
     }
@@ -607,60 +614,22 @@ abstract class Elegant extends Model{
      * @param string $key
      * @param mixed $value
      */
-    public function setAttribute($key, $value)
-    {
-        $type = $this->getFieldType($key);
-        /**
-         * booleanow nie trimujemy, bo zamienia false na pusty string
-         */
-        if(is_scalar($value) && !is_bool($value)){
-            $value = trim($value);
-        }
-
-        switch ($type){
-            case 'integer':
-                if (empty($value)){
-                    $value = null;
-                }
-                break;
-            case 'date':
-            case 'dateTime':
-                if (empty($value)){
-                    $value = null;
-                }
-                break;
-            case 'price':
-                if (empty($value)){
-                    $value = null;
-                }else{
-                    $value = str_replace(',', '.', $value);
-                }
-                break;
-        }
-
+    public function setAttribute($key, $value){
+        $this->fireModelEvent('elegant.before.setAttribute', false);
         parent::setAttribute($key, $value);
+        $this->fireModelEvent('elegant.after.setAttribute', false);
     }
 
     /**
      * @param string $key
      * @return mixed
      */
-    public function getAttribute($key)
-    {
-        $inAttributes = array_key_exists($key, $this->attributes);
+    public function getAttribute($key){
+        $this->fireModelEvent('elegant.before.getAttribute', false);
+        $result = parent::getAttribute($key);
+        $this->fireModelEvent('elegant.after.getAttribute', false);
 
-        if ($inAttributes) {
-            $type = $this->getFieldType($key);
-
-            switch ($type){
-                case 'price':
-                    $this->$key = str_replace('.', ',', $this->$key);
-                    break;
-            }
-
-        }
-
-        return  parent::getAttribute($key);
+        return $result;
     }
 
     /**
