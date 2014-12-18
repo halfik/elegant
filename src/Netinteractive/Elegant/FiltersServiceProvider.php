@@ -2,7 +2,7 @@
 
 use Illuminate\Support\ServiceProvider;
 
-class ElegantServiceProvider extends ServiceProvider {
+class FiltersServiceProvider extends ServiceProvider {
 
 	/**
 	 * Indicates if loading of the provider is deferred.
@@ -11,7 +11,6 @@ class ElegantServiceProvider extends ServiceProvider {
 	 */
 	protected $defer = false;
 
-
 	/**
 	 * Register the service provider.
 	 *
@@ -19,8 +18,10 @@ class ElegantServiceProvider extends ServiceProvider {
 	 */
 	public function register()
 	{
-		\Event::listen('eloquent.elegant.before.setAttribute: *', 'Netinteractive\Elegant\Events\EventHandler@writeFilters');
-		\Event::listen('eloquent.elegant.after.getAttribute: *', 'Netinteractive\Elegant\Events\EventHandler@readFilters');
+		$this->package('netinteractive/elegant');
+
+		\Event::listen('eloquent.elegant.after.setAttribute: *', 'Netinteractive\Elegant\Events\EventHandler@fillFilters');
+		\Event::listen('elegant.before.save', 'Netinteractive\Elegant\Events\EventHandler@saveFilters');
 	}
 
 	/**

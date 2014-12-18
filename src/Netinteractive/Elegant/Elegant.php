@@ -136,7 +136,7 @@ abstract class Elegant extends Model{
         $this->attributes = $this->getDirty();
 
         $this->fireModelEvent('elegant.before.insert', false);
-
+        $this->fireModelEvent('elegant.before.saving', false);
         $result = parent::performInsert($query, $options);
 
         $this->attributes = array_merge($attributes, $this->attributes );
@@ -157,11 +157,14 @@ abstract class Elegant extends Model{
         $this->validate('update');
 
         $this->fireModelEvent('elegant.before.update', false);
+        $this->fireModelEvent('elegant.before.saving', false);
         $result = parent::performUpdate($query, $options);
         $this->fireModelEvent('elegant.after.update', false);
 
         return $result;
     }
+
+
 
     /**
      * Validate model fields
@@ -521,6 +524,19 @@ abstract class Elegant extends Model{
     }
 
     /**
+     * zwraca filtry dla pola
+     * @param string $field
+     * @return null
+     */
+    public function getFieldFilters($field){
+        if (!isSet($this->fields[$field]['filters'])){
+            return null;
+        }
+
+        return $this->fields[$field]['filters'];
+    }
+
+    /**
      * set up validation rules for selected field
      * @param string $field
      * @param string|array $rules
@@ -578,11 +594,24 @@ abstract class Elegant extends Model{
     {
         $dirty =  parent::getDirty();
 
+        $obj = new \stdClass();
+        $obj->data = $dirty;
+        $obj->Record = $this;
+
+        \Event::fire('elegant.before.save', $obj);
+        $dirty = $obj->data;
+
         foreach ($dirty as $field => $value)
         {
+            /**
+             * usuwamy pola, ktore nie pochodza z modelu
+             */
             if (!$this->isOriginal($field)){
                 unset($dirty[$field]);
             }
+            /**
+             * usuwamy haslo jesli jest puste
+             */
             elseif($this->getFieldType($field) == 'password' && empty($dirty[$field])){
                 unset($dirty[$field]);
             }
@@ -612,8 +641,11 @@ abstract class Elegant extends Model{
             \Event::fire('acl.filter.model.fill', $obj);
             $attributes=$obj->data;
         }
+
         return parent::fill($attributes);
     }
+
+
 
     /**
      * @param string $key
@@ -623,18 +655,6 @@ abstract class Elegant extends Model{
         $this->fireModelEvent('elegant.before.setAttribute', false);
         parent::setAttribute($key, $value);
         $this->fireModelEvent('elegant.after.setAttribute', false);
-    }
-
-    /**
-     * @param string $key
-     * @return mixed
-     */
-    public function getAttribute($key){
-        $this->fireModelEvent('elegant.before.getAttribute', false);
-        $result = parent::getAttribute($key);
-        $this->fireModelEvent('elegant.after.getAttribute', false);
-
-        return $result;
     }
 
     /**
@@ -648,6 +668,33 @@ abstract class Elegant extends Model{
         $grammar = $conn->getQueryGrammar();
 
         return \App::make('QueryBuilder', array($conn, $grammar, $conn->getPostProcessor()))->allowAclFilter(self::$queryAllowAcl);
+    }
+
+    public function display($field){
+        $obj = new \stdClass();
+        $obj->data = $dirty;
+        $obj->Record = $this;
+
+        \Event::fire('elegant.before.save', $obj);
+        $dirty = $obj->data;
+
+        foreach ($dirty as $field => $value)
+        {
+            /**
+             * usuwamy pola, ktore nie pochodza z modelu
+             */
+            if (!$this->isOriginal($field)){
+                unset($dirty[$field]);
+            }
+            /**
+             * usuwamy haslo jesli jest puste
+             */
+            elseif($this->getFieldType($field) == 'password' && empty($dirty[$field])){
+                unset($dirty[$field]);
+            }
+        }
+
+        return $dirty;
     }
 
 
