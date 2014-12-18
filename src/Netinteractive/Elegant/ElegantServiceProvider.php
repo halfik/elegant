@@ -11,6 +11,7 @@ class ElegantServiceProvider extends ServiceProvider {
 	 */
 	protected $defer = false;
 
+
 	/**
 	 * Register the service provider.
 	 *
@@ -18,7 +19,8 @@ class ElegantServiceProvider extends ServiceProvider {
 	 */
 	public function register()
 	{
-		\Event::subscribe('Netinteractive\Elegant\Events\EventHandler');
+		\Event::listen('eloquent.elegant.before.setAttribute: *', 'Netinteractive\Elegant\Events\EventHandler@writeFilters');
+		\Event::listen('eloquent.elegant.after.getAttribute: *', 'Netinteractive\Elegant\Events\EventHandler@readFilters');
 	}
 
 	/**

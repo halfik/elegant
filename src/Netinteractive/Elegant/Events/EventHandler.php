@@ -1,29 +1,25 @@
 <?php
 namespace Netinteractive\Elegant\Events;
-
 use Netinteractive\Elegant\Elegant;
+
 
 /**
  * Class ElegantEventHandler
  */
-class ElegantEventHandler {
+class EventHandler {
 
     /**
      * @param Elegant $model
      */
     public function readFilters(Elegant $model){
-       echo 2; exit;
+
     }
 
     /**
-     * Rejestrujemy eventy uzytkownika
-     *
-     * @param  Illuminate\Events\Dispatcher  $events
-     * @return array
+     * @param Elegant $model
      */
-    public function subscribe($events)
-    {   echo 149; exit;
-        $events->listen('eloquent.elegant.before.setAttribute', 'ElegantEventHandler@readFilters');
+    public function writeFilters(Elegant $model){
+        
     }
 
 }
