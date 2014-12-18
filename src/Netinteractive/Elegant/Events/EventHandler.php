@@ -10,19 +10,38 @@ use Netinteractive\Elegant\Elegant;
 class EventHandler {
 
     /**
+     * filtry modyfikujace dane modelu w momencie proby ich wyswietlenia
+     * @param stdClass $obj
+     */
+    public function displayFilters($obj){
+        $definedFilters = \Config::get('elegant::filters.display');
+        $filters = $obj->Record->getFieldFilters($obj->field);
+
+        if (isSet($filters['display'])){
+            foreach ($filters['display'] AS $filter){
+                if ( !is_scalar($filter)){
+                    $obj->value = $filter($obj->value);
+                }
+                elseif (isSet($definedFilters[$filter])){
+                    $obj->value = $definedFilters[$filter]($obj->value );
+                }
+            }
+        }
+    }
+
+    /**
      * filtry modyfikujace dane z modelu przed zapisem do bazy danych
      * (nie modyfikuja danych w samym modelu)
-     * @param Elegant $model
+     * @param stdClass $obj
      */
     public function saveFilters($obj){
-
         $definedFilters = \Config::get('elegant::filters.save');
 
         foreach ($obj->Record->getAttributes() AS $key=>$val){
             $filters = $obj->Record->getFieldFilters($key);
 
-            if (isSet($filters['fill'])){
-                foreach ($filters['fill'] AS $filter){
+            if (isSet($filters['save'])){
+                foreach ($filters['save'] AS $filter){
                     if ( !is_scalar($filter)){
                         $obj->data[$key] = $filter($val);
                     }
@@ -35,7 +54,7 @@ class EventHandler {
     }
 
     /**
-     * filtry, modyfikujace pola modelu w momencie zmiany ich wartosci
+     * filtry, modyfikujace pola modelu w momencie zmiany ich wartosci przez setAttr (m.in. wypelnienie danymi z bazy)
      * @param Elegant $model
      */
     public function fillFilters(Elegant $model){

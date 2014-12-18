@@ -10,6 +10,9 @@ return array(
         'firstToUpper' => function($value){
             return ucfirst($value);
         },
+        'price' => function($value){
+            return str_replace(',', '.', $value);
+        },
      ),
     'fill' => array(
         'emptyToNull' => function ($value){

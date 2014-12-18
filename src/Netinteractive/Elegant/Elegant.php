@@ -635,9 +635,9 @@ abstract class Elegant extends Model{
      */
     public function fill(array $attributes){
         if(count($attributes)){
-            $obj=new \stdClass();
-            $obj->data=$attributes;
-            $obj->Record=$this;
+            $obj = new \stdClass();
+            $obj->data = $attributes;
+            $obj->Record = $this;
             \Event::fire('acl.filter.model.fill', $obj);
             $attributes=$obj->data;
         }
@@ -670,31 +670,20 @@ abstract class Elegant extends Model{
         return \App::make('QueryBuilder', array($conn, $grammar, $conn->getPostProcessor()))->allowAclFilter(self::$queryAllowAcl);
     }
 
+
+    /**
+     * funckja, ktora zwraca wartosc pola modelu po jej przefiltrowaniu
+     * @param string $field
+     * @return mixed
+     */
     public function display($field){
         $obj = new \stdClass();
-        $obj->data = $dirty;
+        $obj->value = $this->$field;
+        $obj->field = $field;
         $obj->Record = $this;
 
-        \Event::fire('elegant.before.save', $obj);
-        $dirty = $obj->data;
-
-        foreach ($dirty as $field => $value)
-        {
-            /**
-             * usuwamy pola, ktore nie pochodza z modelu
-             */
-            if (!$this->isOriginal($field)){
-                unset($dirty[$field]);
-            }
-            /**
-             * usuwamy haslo jesli jest puste
-             */
-            elseif($this->getFieldType($field) == 'password' && empty($dirty[$field])){
-                unset($dirty[$field]);
-            }
-        }
-
-        return $dirty;
+        \Event::fire('elegant.before.display', $obj);
+        return $obj->value;
     }
 
 

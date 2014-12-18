@@ -22,6 +22,7 @@ class FiltersServiceProvider extends ServiceProvider {
 
 		\Event::listen('eloquent.elegant.after.setAttribute: *', 'Netinteractive\Elegant\Events\EventHandler@fillFilters');
 		\Event::listen('elegant.before.save', 'Netinteractive\Elegant\Events\EventHandler@saveFilters');
+		\Event::listen('elegant.before.display', 'Netinteractive\Elegant\Events\EventHandler@displayFilters');
 	}
 
 	/**
