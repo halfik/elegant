@@ -10,15 +10,31 @@ use Netinteractive\Elegant\Elegant;
 class EventHandler {
 
     /**
+     * metoda parsuje filtry
+     * @param Elegant $model
+     * @param string $key
+     * @param string $type
+     * @return mixed
+     */
+    protected function _parseFilters($filters){
+        if (!empty($filters) && !is_array($filters)){
+            $filters = explode('|', str_replace(' ', '', $filters));
+        }
+
+        return $filters;
+    }
+
+
+    /**
      * filtry modyfikujace dane modelu w momencie proby ich wyswietlenia
      * @param stdClass $obj
      */
     public function displayFilters($obj){
         $definedFilters = \Config::get('elegant::filters.display');
-        $filters = $obj->Record->getFieldFilters($obj->field);
+        $filters =  $this->_parseFilters( $obj->Record->getFieldFilters($obj->field)['display'] );
 
-        if (isSet($filters['display'])){
-            foreach ($filters['display'] AS $filter){
+        if (isSet($filters)){
+            foreach ($filters AS $filter){
                 if ( !is_scalar($filter)){
                     $obj->value = $filter($obj->value);
                 }
@@ -38,15 +54,15 @@ class EventHandler {
         $definedFilters = \Config::get('elegant::filters.save');
 
         foreach ($obj->Record->getAttributes() AS $key=>$val){
-            $filters = $obj->Record->getFieldFilters($key);
+            $filters =  $this->_parseFilters( $obj->Record->getFieldFilters($key)['save'] );
 
-            if (isSet($filters['save'])){
-                foreach ($filters['save'] AS $filter){
+            if (isSet($filters)){
+                foreach ($filters AS $filter){
                     if ( !is_scalar($filter)){
-                        $obj->data[$key] = $filter($val);
+                        $obj->data[$key] = $filter($obj->data[$key]);
                     }
                     elseif (isSet($definedFilters[$filter])){
-                        $obj->data[$key] = $definedFilters[$filter]($val);
+                        $obj->data[$key] = $definedFilters[$filter]($obj->data[$key]);
                     }
                 }
             }
@@ -61,16 +77,15 @@ class EventHandler {
         $definedFilters = \Config::get('elegant::filters.fill');
 
         foreach ($model->getAttributes() AS $key=>$val){
-            $filters = $model->getFieldFilters($key);
+            $filters =  $this->_parseFilters( $model->getFieldFilters($key)['fill'] );
 
-            if (isSet($filters['fill'])){
-                foreach ($filters['fill'] AS $filter){
-
+            if (isSet($filters)){
+                foreach ($filters AS $filter){
                     if ( !is_scalar($filter)){
-                        $model->$key = $filter($val);
+                        $model->$key = $filter($model->$key);
                     }
                     elseif (isSet($definedFilters[$filter])){
-                        $model->$key = $definedFilters[$filter]($val);
+                        $model->$key = $definedFilters[$filter]($model->$key);
                     }
                 }
             }
