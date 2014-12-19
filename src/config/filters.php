@@ -7,6 +7,12 @@ return array(
         },
     ),
     'save' => array(
+        'emptyToNull' => function ($value){
+            if (empty($value)){
+                $value = null;
+            }
+            return $value;
+        },
         'firstToUpper' => function($value){
             return ucfirst($value);
         },
