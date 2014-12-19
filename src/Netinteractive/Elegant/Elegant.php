@@ -312,6 +312,9 @@ abstract class Elegant extends Model{
      */
     public function makeLikeWhere(\Illuminate\Database\Eloquent\Builder &$q, $keyword, $inFields){
         $keyword = trim($keyword);
+        if(!is_array($inFields)){
+            $inFields=array($inFields);
+        }
         $q->where(function(\Illuminate\Database\Eloquent\Builder $q)use($keyword, $inFields){
             foreach($inFields as $field){
                 if ( isSet($this->fields[$field]['searchable'])){
