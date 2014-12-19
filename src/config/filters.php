@@ -29,6 +29,9 @@ return array(
         },
         'trim' => function($value){
             return trim($value);
-        }
+        },
+        'price' => function($value){
+            return str_replace(',', '.', $value);
+        },
     )
 );
