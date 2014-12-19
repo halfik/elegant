@@ -35,6 +35,11 @@ abstract class Elegant extends Model{
      */
     protected static $queryAllowAcl = true;
 
+    /**
+     * lista mozliwych typow dla pol
+     * @var array
+     */
+    public static $fieldTypes = array('string', 'text', 'int', 'bool', 'email', 'date', 'dateTime', 'html', 'file', 'image');
 
     /**
      * @param array $attributes
