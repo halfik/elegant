@@ -31,7 +31,7 @@ class EventHandler {
      */
     public function displayFilters($obj){
         $definedFilters = \Config::get('elegant::filters.display');
-        $filters =  $this->_parseFilters( $obj->Record->getFieldFilters($obj->field)['display'] );
+        $filters =  $this->_parseFilters( array_get($obj->Record->getFieldFilters($obj->field),'display') );
 
         if (isSet($filters)){
             foreach ($filters AS $filter){
@@ -54,7 +54,7 @@ class EventHandler {
         $definedFilters = \Config::get('elegant::filters.save');
 
         foreach ($obj->Record->getAttributes() AS $key=>$val){
-            $filters =  $this->_parseFilters( $obj->Record->getFieldFilters($key)['save'] );
+            $filters =  $this->_parseFilters( array_get($obj->Record->getFieldFilters($key),'save'));
 
             if (isSet($filters)){
                 foreach ($filters AS $filter){
@@ -77,7 +77,7 @@ class EventHandler {
         $definedFilters = \Config::get('elegant::filters.fill');
 
         foreach ($model->getAttributes() AS $key=>$val){
-            $filters =  $this->_parseFilters( $model->getFieldFilters($key)['fill'] );
+            $filters =  $this->_parseFilters( array_get($model->getFieldFilters($key),'fill'));
 
             if (isSet($filters)){
                 foreach ($filters AS $filter){
