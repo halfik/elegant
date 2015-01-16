@@ -52,16 +52,17 @@ class EventHandler {
      */
     public function saveFilters($obj){
         $definedFilters = \Config::get('elegant::filters.save');
-
         foreach ($obj->Record->getAttributes() AS $key=>$val){
+
             $filters =  $this->_parseFilters( array_get($obj->Record->getFieldFilters($key),'save'));
 
             if (isSet($filters)){
                 foreach ($filters AS $filter){
                     if ( !is_scalar($filter)){
                         $obj->data[$key] = $filter($obj->data[$key]);
+
                     }
-                    elseif (isSet($definedFilters[$filter])){
+                    elseif (isSet($definedFilters[$filter]) && isset($obj->data[$key])){
                         $obj->data[$key] = $definedFilters[$filter]($obj->data[$key]);
                     }
                 }
