@@ -33,7 +33,7 @@ class Searchable {
 
     public static function orInt($field, $operator='='){
         return function (&$q, $keyword) use ($field, $operator){
-            if (is_numeric($keyword)){
+            if (is_integer($keyword)){
                 $q->orWhere(self::$alias.'.'.$field, $operator, $keyword);
             }
         };
