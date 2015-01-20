@@ -315,7 +315,7 @@ abstract class Elegant extends Model{
      * @param array $inFields
      * @return Elegant
      */
-    public function makeLikeWhere(\Illuminate\Database\Eloquent\Builder &$q, $keyword, $inFields){
+    public function makeLikeWhere2(\Illuminate\Database\Eloquent\Builder &$q, $keyword, $inFields){
         $keyword = trim($keyword);
         if(!is_array($inFields)){
             $inFields=array($inFields);
@@ -328,6 +328,46 @@ abstract class Elegant extends Model{
                         $this->fields[$field]['searchable']($q,$keyword);
                     }
                 }
+            }
+        });
+
+        return $this;
+    }
+
+    /**
+     * @param \Illuminate\Database\Eloquent\Builder $q
+     * @param string $keyword
+     * @param array $inFields
+     * @return Elegant
+     */
+    public function makeLikeWhere(\Illuminate\Database\Eloquent\Builder &$q, $keyword, $inFields){
+        $keyword = trim($keyword);
+        if(!is_array($inFields)){
+            $inFields=array($inFields);
+        }
+        $q->where(function(\Illuminate\Database\Eloquent\Builder $q)use($keyword, $inFields){
+            foreach($inFields as $field){
+                if ($this->isOriginal($field)){
+                    if ( isSet($this->fields[$field]['searchable']) && $this->fields[$field]['searchable'] == true){
+                        $searchable = $this->fields[$field]['searchable'];
+                        if($searchable instanceof \Closure){
+                            $this->fields[$field]['searchable']($q,$keyword);
+                        }
+                    }
+                }
+                elseif (is_array($field) && count($field) == 2){
+                    $relModel = \App($field[1]);
+
+                    if ( isSet($relModel->fields[$field[0]]['searchable']) && $relModel->fields[$field[0]]['searchable'] == true){
+                        $searchable = $relModel->fields[$field[0]]['searchable'];
+                        if($searchable instanceof \Closure){
+                            $relModel->fields[$field[0]]['searchable']($q,$keyword);
+                        }
+                    }
+
+                }
+
+
             }
         });
 
