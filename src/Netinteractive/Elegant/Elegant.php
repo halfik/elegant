@@ -767,7 +767,7 @@ abstract class Elegant extends Model{
      * @param boolean $displayFilter - default true
      * @return array
      */
-    public function toArray($displayFilter=true)
+    public function toArray($displayFilter=false)
     {
         $attributes = $this->attributesToArray();
 
