@@ -8,6 +8,7 @@ use Netinteractive\Elegant\Exception\DeletionException;
 use Netinteractive\Elegant\Searchable AS Searchable;
 use Netinteractive\Utils\Utils AS Utils;
 
+
 abstract class Elegant extends Model{
     /**
      * @var array
@@ -315,7 +316,7 @@ abstract class Elegant extends Model{
      * @param array $inFields
      * @return Elegant
      */
-    public function makeLikeWhere(\Illuminate\Database\Eloquent\Builder &$q, $keyword, $inFields){
+    public function makeLikeWhere2(\Illuminate\Database\Eloquent\Builder &$q, $keyword, $inFields){
         $keyword = trim($keyword);
         if(!is_array($inFields)){
             $inFields=array($inFields);
@@ -328,6 +329,46 @@ abstract class Elegant extends Model{
                         $this->fields[$field]['searchable']($q,$keyword);
                     }
                 }
+            }
+        });
+
+        return $this;
+    }
+
+    /**
+     * @param \Illuminate\Database\Eloquent\Builder $q
+     * @param string $keyword
+     * @param array $inFields
+     * @return Elegant
+     */
+    public function makeLikeWhere(\Illuminate\Database\Eloquent\Builder &$q, $keyword, $inFields){
+        $keyword = trim($keyword);
+        if(!is_array($inFields)){
+            $inFields=array($inFields);
+        }
+        $q->where(function(\Illuminate\Database\Eloquent\Builder $q)use($keyword, $inFields){
+            foreach($inFields as $field){
+                if ($this->isOriginal($field)){
+                    if ( isSet($this->fields[$field]['searchable']) && $this->fields[$field]['searchable'] == true){
+                        $searchable = $this->fields[$field]['searchable'];
+                        if($searchable instanceof \Closure){
+                            $this->fields[$field]['searchable']($q,$keyword);
+                        }
+                    }
+                }
+                elseif (is_array($field) && count($field) == 2){
+                    $relModel = \App($field[1]);
+
+                    if ( isSet($relModel->fields[$field[0]]['searchable']) && $relModel->fields[$field[0]]['searchable'] == true){
+                        $searchable = $relModel->fields[$field[0]]['searchable'];
+                        if($searchable instanceof \Closure){
+                            $relModel->fields[$field[0]]['searchable']($q,$keyword);
+                        }
+                    }
+
+                }
+
+
             }
         });
 
@@ -704,5 +745,41 @@ abstract class Elegant extends Model{
     public function newEloquentBuilder($query)
     {
         return \App::make('ModelBuilder', array($query));
+    }
+
+
+    /**
+     * @param array $models
+     * @return \Illuminate\Database\Eloquent\Collection|mixed|Collection
+     */
+    public function newCollection(array $models = array())
+	{
+        try {
+            $collection = \App::make('Collection', $models);
+            return $collection;
+        }catch (\ReflectionException $e){
+            return new Collection($models);
+        }
+	}
+
+    /**
+     * Convert the model instance to an array.
+     * @param boolean $displayFilter - default true
+     * @return array
+     */
+    public function toArray($displayFilter=true)
+    {
+        $attributes = $this->attributesToArray();
+
+        $data =  array_merge($attributes, $this->relationsToArray());
+
+        if ($displayFilter == true){
+            foreach ($data as $key=>$val){
+                $data[$key] = $this->display($key);
+            }
+        }
+
+
+        return $data;
     }
 }
