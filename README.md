@@ -1,0 +1,18 @@
+Netinteractive\Elegant
+=====================
+
+Elegant to bazowa klasa dla modeli. Rozszerzenie Eloquenta.
+
+## Usługi
+- FiltersServiceProvider - usługa dostarcza 3 mechanizmów filtrów dla modelu:
+    +   \Event::listen('eloquent.elegant.after.setAttribute: *', 'Netinteractive\Elegant\Events\EventHandler@fillFilters');
+    +	\Event::listen('elegant.before.save', 'Netinteractive\Elegant\Events\EventHandler@saveFilters');
+    +	\Event::listen('elegant.before.display', 'Netinteractive\Elegant\Events\EventHandler@displayFilters');
+
+- CollectionServiceProvider - usługa binduje klase Netinteractive\Elegant\Collection jako Collection, ktora pozniej wykorzystana jest w modelu. Chwilowo nie ma zastosowania.
+
+## Wersje
+- 1.0.15
+    +   CollectionServiceProvider + przeciazenie tworzenia kolekcjiw Elegancie: zamiast przez new, robimy to przez App::make().
+    +   Przeciazylem Elagat::toArray(), tak aby domyslnie odpalal mechanizm filtrow display
+

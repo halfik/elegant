@@ -8,6 +8,7 @@ use Netinteractive\Elegant\Exception\DeletionException;
 use Netinteractive\Elegant\Searchable AS Searchable;
 use Netinteractive\Utils\Utils AS Utils;
 
+
 abstract class Elegant extends Model{
     /**
      * @var array
@@ -744,5 +745,41 @@ abstract class Elegant extends Model{
     public function newEloquentBuilder($query)
     {
         return \App::make('ModelBuilder', array($query));
+    }
+
+
+    /**
+     * @param array $models
+     * @return \Illuminate\Database\Eloquent\Collection|mixed|Collection
+     */
+    public function newCollection(array $models = array())
+	{
+        try {
+            $collection = \App::make('Collection', $models);
+            return $collection;
+        }catch (\ReflectionException $e){
+            return new Collection($models);
+        }
+	}
+
+    /**
+     * Convert the model instance to an array.
+     * @param boolean $displayFilter - default true
+     * @return array
+     */
+    public function toArray($displayFilter=true)
+    {
+        $attributes = $this->attributesToArray();
+
+        $data =  array_merge($attributes, $this->relationsToArray());
+
+        if ($displayFilter == true){
+            foreach ($data as $key=>$val){
+                $data[$key] = $this->display($key);
+            }
+        }
+
+
+        return $data;
     }
 }
