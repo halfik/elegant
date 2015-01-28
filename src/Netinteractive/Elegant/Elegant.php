@@ -365,10 +365,7 @@ abstract class Elegant extends Model{
                             $relModel->fields[$field[0]]['searchable']($q,$keyword);
                         }
                     }
-
                 }
-
-
             }
         });
 
@@ -409,11 +406,13 @@ abstract class Elegant extends Model{
 
     /**
      * Wyszukiwarka
+     *
      * @param array $input
      * @param array collumns
+     * @param string $operator
      * @param boolean $defaultJoin
      */
-    public function search($input, $columns=array(), $defaultJoin=true){
+    public function search($input, $columns=array(), $operator='and', $defaultJoin=true){
         $query = $this->getQuery();
         if (empty($columns)){
             $columns[] = $this->table.'.*';
@@ -432,19 +431,22 @@ abstract class Elegant extends Model{
                 }
             }
         }
-        
+
         if ($defaultJoin){
             $query = $this->searchJoins($query);
         }
 
-        foreach ($input AS $modelName=>$fields){
-            if (!empty($fields)){
-                $model = \App::make($modelName);
-                foreach ($fields AS $field=>$value){
-                    $query = $model->queryFieldSearch($field, $value, $query);
+        #opakowane w where, aby inne where dodane wczesniej lub pozniej dzialaly prawidlowo
+        $query->where(function($query) use ($input, $operator){
+            foreach ($input AS $modelName=>$fields){
+                if (!empty($fields)){
+                    $model = \App::make($modelName);
+                    foreach ($fields AS $field=>$value){
+                        $query = $model->queryFieldSearch($field, $value, $query, $operator);
+                    }
                 }
             }
-        }
+        });
 
         return $query;
     }
@@ -530,12 +532,14 @@ abstract class Elegant extends Model{
      * @param string $field
      * @param string $keyword
      * @param Query $q
+     * @param string $operator
      * @return mixed
      */
-    public function queryFieldSearch($field, $keyword, $q){
+    public function queryFieldSearch($field, $keyword, $q, $operator='or'){
         if (isSet($this->fields[$field]['searchable'])){
-            $this->fields[$field]['searchable']($q,$keyword);
+            $this->fields[$field]['searchable']($q,$keyword, $operator);
         }
+
         return $q;
     }
 

@@ -16,15 +16,22 @@ class Searchable  {
      * @param string $operator
      * @return callable
      */
-    public static function orText($field,$operator=null){
+    public static function text($field, $operator=null){
         if (!$operator){
             $operator = static::$like;
         }
-        return function (&$q, $keyword) use ($field, $operator){
+
+        return function (&$q, $keyword, $logic='or') use ($field, $operator){
             if ($operator == static::$like){
                 $keyword = '%'.$keyword.'%';
             }
-            $q->orWhere(static::$alias.'.'.$field, $operator, $keyword);
+
+            if ($logic == 'or'){
+                $q->orWhere(static::$alias.'.'.$field, $operator, $keyword);
+            }else{
+                $q->where(static::$alias.'.'.$field, $operator, $keyword);
+            }
+
         };
     }
 
@@ -32,9 +39,13 @@ class Searchable  {
      * @param $field
      * @return callable
      */
-    public static function orTextLeft($field){
-        return function (&$q, $keyword) use ($field){
-            $q->orWhere(static::$alias.'.'.$field, static::$like, '%'.$keyword);
+    public static function textLeft($field){
+        return function (&$q, $keyword, $logic='or') use ($field){
+            if ($logic == 'or'){
+                $q->orWhere(static::$alias.'.'.$field, static::$like, '%'.$keyword);
+            }else{
+                $q->where(static::$alias.'.'.$field, static::$like, '%'.$keyword);
+            }
         };
     }
 
@@ -42,9 +53,14 @@ class Searchable  {
      * @param $field
      * @return callable
      */
-    public static function orTextRight($field){
-        return function (&$q, $keyword) use ($field){
-            $q->orWhere(static::$alias.'.'.$field, static::$like, $keyword.'%');
+    public static function textRight($field){
+        return function (&$q, $keyword, $logic='or') use ($field){
+            if ($logic == 'or'){
+                $q->orWhere(static::$alias.'.'.$field, static::$like, $keyword.'%');
+            }else{
+                $q->where(static::$alias.'.'.$field, static::$like, $keyword.'%');
+            }
+
         };
     }
 
@@ -53,10 +69,21 @@ class Searchable  {
      * @param string $operator
      * @return callable
      */
-    public static function orInt($field, $operator='='){
-        return function (&$q, $keyword) use ($field, $operator){
+    public static function int($field, $operator='='){
+        return function (&$q, $keyword, $logic='or') use ($field, $operator){
             if (is_numeric($keyword)){
-                $q->orWhere(static::$alias.'.'.$field, $operator, $keyword);
+                if ($logic == 'or'){
+                    $q->orWhere(static::$alias.'.'.$field, $operator, $keyword);
+                }else{
+                    $q->where(static::$alias.'.'.$field, $operator, $keyword);
+                }
+            }
+            elseif(is_array($keyword)){
+                if ($logic == 'or'){
+                    $q-> orWhereIn(static::$alias.'.'.$field, array_values($keyword));
+                }else{
+                    $q->whereIn(static::$alias.'.'.$field, array_values($keyword));
+                }
             }
         };
     }
@@ -66,10 +93,14 @@ class Searchable  {
      * @param string $operator
      * @return callable
      */
-    public static function orDate($field, $operator='='){
-        return function (&$q, $keyword) use ($field, $operator){
+    public static function date($field, $operator='='){
+        return function (&$q, $keyword, $logic='or') use ($field, $operator){
             if (isDate($keyword) && !is_numeric($keyword)){
-                $q->orWhere(static::$alias.'.'.$field, $operator, $keyword);
+                if ($logic == 'or'){
+                    $q->orWhere(static::$alias.'.'.$field, $operator, $keyword);
+                }else{
+                    $q->where(static::$alias.'.'.$field, $operator, $keyword);
+                }
             }
         };
     }
