@@ -310,30 +310,6 @@ abstract class Elegant extends Model{
         return $result;
     }
 
-    /**
-     * @param \Illuminate\Database\Eloquent\Builder $q
-     * @param string $keyword
-     * @param array $inFields
-     * @return Elegant
-     */
-    public function makeLikeWhere2(\Illuminate\Database\Eloquent\Builder &$q, $keyword, $inFields){
-        $keyword = trim($keyword);
-        if(!is_array($inFields)){
-            $inFields=array($inFields);
-        }
-        $q->where(function(\Illuminate\Database\Eloquent\Builder $q)use($keyword, $inFields){
-            foreach($inFields as $field){
-                if ( isSet($this->fields[$field]['searchable'])){
-                    $searchable = $this->fields[$field]['searchable'];
-                    if($searchable instanceof \Closure){
-                        $this->fields[$field]['searchable']($q,$keyword);
-                    }
-                }
-            }
-        });
-
-        return $this;
-    }
 
     /**
      * @param \Illuminate\Database\Eloquent\Builder $q
