@@ -411,8 +411,9 @@ abstract class Elegant extends Model{
      * Wyszukiwarka
      * @param array $input
      * @param array collumns
+     * @param boolean $defaultJoin
      */
-    public function search($input, $columns=array()){
+    public function search($input, $columns=array(), $defaultJoin=true){
         $query = $this->getQuery();
         if (empty($columns)){
             $columns[] = $this->table.'.*';
@@ -431,14 +432,16 @@ abstract class Elegant extends Model{
                 }
             }
         }
-
-        $query = $this->searchJoins($query);
+        
+        if ($defaultJoin){
+            $query = $this->searchJoins($query);
+        }
 
         foreach ($input AS $modelName=>$fields){
             if (!empty($fields)){
                 $model = \App::make($modelName);
-                foreach ($fields AS $fieldName=>$value){
-                    $query = $model->queryFieldSearch($fieldName, $value, $query);
+                foreach ($fields AS $field=>$value){
+                    $query = $model->queryFieldSearch($field, $value, $query);
                 }
             }
         }

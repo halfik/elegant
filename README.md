@@ -12,6 +12,8 @@ Elegant to bazowa klasa dla modeli. Rozszerzenie Eloquenta.
 - CollectionServiceProvider - usługa binduje klase Netinteractive\Elegant\Collection jako Collection, ktora pozniej wykorzystana jest w modelu. Chwilowo nie ma zastosowania.
 
 ## Wersje
+- 1.1.1
+    + do search doszeld nowy parametr: search($input, $columns=array(), $defaultJoin=true) - definiuje on, czy do zapytania dodać zdefiniowane dla searcha joiny.
 - **1.1.0**
     + Elegant::search - metoda wyszukiwania na potrzeby CrudTrait::searchInGrid, zmieniona na searchInGrid
     + Elegant::search($input, $columns=array()) - wyszukiwarka
