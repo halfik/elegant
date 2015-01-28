@@ -18,7 +18,10 @@ class Searchable  {
      * @return string
      */
     protected static function clearKeyword($keyword){
-        return trim($keyword);
+        if (is_scalar($keyword)){
+            return trim($keyword);
+        }
+        return $keyword;
     }
 
     /**
