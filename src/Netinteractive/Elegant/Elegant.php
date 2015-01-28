@@ -439,7 +439,7 @@ abstract class Elegant extends Model{
         #opakowane w where, aby inne where dodane wczesniej lub pozniej dzialaly prawidlowo
         $query->where(function($query) use ($input, $operator){
             foreach ($input AS $modelName=>$fields){
-                if (!empty($fields)){
+                if (!empty($fields) && is_array($fields)){
                     $model = \App::make($modelName);
                     foreach ($fields AS $field=>$value){
                         $query = $model->queryFieldSearch($field, $value, $query, $operator);
