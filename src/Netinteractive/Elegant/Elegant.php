@@ -390,13 +390,60 @@ abstract class Elegant extends Model{
      * @param array $params
      * @return \Illuminate\Database\Query\Builder|static
      */
-    public function search(array $params=array()){
+    public function searchInGrid(array $params=array()){
         $q=$this->newQuery();
         if(array_get($params,'fields')){
             $q->select($this->makeFieldsAliases($params['fields']));
             $q->from($this->getTable().' AS '.get_class($this));
         }
         return $q;
+    }
+
+    /**
+    * @param $query
+    * @return mixed
+     */
+    protected function searchJoins($query){
+        return $query;
+    }
+
+    /**
+     * Wyszukiwarka
+     * @param array $input
+     * @param array collumns
+     */
+    public function search($input, $columns=array()){
+        $query = $this->getQuery();
+        if (empty($columns)){
+            $columns[] = $this->table.'.*';
+        }
+        $query->select($columns);
+
+        foreach ($input as $groupName=>$groupFields){
+            if (is_array($groupFields)){
+                foreach ($groupFields AS $name=>$val ){
+                    if(is_array($val) && in_array('null',$val)){
+                        unset($input[$groupName][$name]);
+                    }
+                    if (empty($input[$groupName][$name])){
+                        unset($input[$groupName][$name]);
+                    }
+                }
+            }
+        }
+
+        $query = $this->searchJoins($query);
+
+        foreach ($input AS $modelName=>$fields){
+            if (!empty($fields)){
+                $model = \App::make($modelName);
+                foreach ($fields AS $fieldName=>$value){
+                    $query = $model->queryFieldSearch($fieldName, $value, $query);
+                }
+            }
+        }
+
+        return $query;
     }
 
     /**
@@ -473,6 +520,20 @@ abstract class Elegant extends Model{
 
         }
         return $result;
+    }
+
+    /**
+     * Metoda w oparciu o dane zdefiniowane w modelu, dodaje odpowiedni where do zapytania
+     * @param string $field
+     * @param string $keyword
+     * @param Query $q
+     * @return mixed
+     */
+    public function queryFieldSearch($field, $keyword, $q){
+        if (isSet($this->fields[$field]['searchable'])){
+            $this->fields[$field]['searchable']($q,$keyword);
+        }
+        return $q;
     }
 
     /**
