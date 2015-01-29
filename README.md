@@ -27,3 +27,16 @@ Elegant to bazowa klasa dla modeli. Rozszerzenie Eloquenta.
     +   CollectionServiceProvider + przeciazenie tworzenia kolekcjiw Elegancie: zamiast przez new, robimy to przez App::make().
     +   Przeciazylem Elagat::toArray(), tak aby domyslnie odpalal mechanizm filtrow display
 
+
+##Typy pół
+
+- int
+- float
+- string
+- text
+- date
+- dateTime
+- bool
+- file
+- image
+
