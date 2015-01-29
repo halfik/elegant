@@ -310,30 +310,6 @@ abstract class Elegant extends Model{
         return $result;
     }
 
-    /**
-     * @param \Illuminate\Database\Eloquent\Builder $q
-     * @param string $keyword
-     * @param array $inFields
-     * @return Elegant
-     */
-    public function makeLikeWhere2(\Illuminate\Database\Eloquent\Builder &$q, $keyword, $inFields){
-        $keyword = trim($keyword);
-        if(!is_array($inFields)){
-            $inFields=array($inFields);
-        }
-        $q->where(function(\Illuminate\Database\Eloquent\Builder $q)use($keyword, $inFields){
-            foreach($inFields as $field){
-                if ( isSet($this->fields[$field]['searchable'])){
-                    $searchable = $this->fields[$field]['searchable'];
-                    if($searchable instanceof \Closure){
-                        $this->fields[$field]['searchable']($q,$keyword);
-                    }
-                }
-            }
-        });
-
-        return $this;
-    }
 
     /**
      * @param \Illuminate\Database\Eloquent\Builder $q
@@ -439,7 +415,7 @@ abstract class Elegant extends Model{
         #opakowane w where, aby inne where dodane wczesniej lub pozniej dzialaly prawidlowo
         $query->where(function($query) use ($input, $operator){
             foreach ($input AS $modelName=>$fields){
-                if (!empty($fields)){
+                if (!empty($fields) && is_array($fields)){
                     $model = \App::make($modelName);
                     foreach ($fields AS $field=>$value){
                         $query = $model->queryFieldSearch($field, $value, $query, $operator);

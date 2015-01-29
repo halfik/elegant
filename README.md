@@ -12,6 +12,12 @@ Elegant to bazowa klasa dla modeli. Rozszerzenie Eloquenta.
 - CollectionServiceProvider - usługa binduje klase Netinteractive\Elegant\Collection jako Collection, ktora pozniej wykorzystana jest w modelu. Chwilowo nie ma zastosowania.
 
 ## Wersje
+- 1.2.3
+    + Searchable::clearKeyword - fix bledu z trim
+- 1.2.2
+    + Searchable::clearKeyword - funckaj do oszyczania danych dla where. narazie trimuje. uzyta we wszystkich metodach Searchable.
+- 1.2.1
+    + Fix Elegant::search - byl problem, jesli trafialy jakies parametry jak np. numer strony, nazwa buttona itd.
 - **1.2.0**
     + Elegant::search($input, $columns=array(), $operator='and', $defaultJoin=true) - doszedl parametr operatora
     + Searchable - zmienil sie caly interface. Szczegoly w kodzie.

@@ -11,6 +11,19 @@ class Searchable  {
     public static $alias;
     public static $like = 'LIKE';
 
+
+    /**
+     * funckja do oszyczania szukanej frazy ze zbednych elementow
+     * @param $keyword
+     * @return string
+     */
+    protected static function clearKeyword($keyword){
+        if (is_scalar($keyword)){
+            return trim($keyword);
+        }
+        return $keyword;
+    }
+
     /**
      * @param $field
      * @param string $operator
@@ -22,6 +35,7 @@ class Searchable  {
         }
 
         return function (&$q, $keyword, $logic='or') use ($field, $operator){
+            $keyword = self::clearKeyword($keyword);
             if ($operator == static::$like){
                 $keyword = '%'.$keyword.'%';
             }
@@ -41,6 +55,7 @@ class Searchable  {
      */
     public static function textLeft($field){
         return function (&$q, $keyword, $logic='or') use ($field){
+            $keyword = self::clearKeyword($keyword);
             if ($logic == 'or'){
                 $q->orWhere(static::$alias.'.'.$field, static::$like, '%'.$keyword);
             }else{
@@ -55,6 +70,7 @@ class Searchable  {
      */
     public static function textRight($field){
         return function (&$q, $keyword, $logic='or') use ($field){
+            $keyword = self::clearKeyword($keyword);
             if ($logic == 'or'){
                 $q->orWhere(static::$alias.'.'.$field, static::$like, $keyword.'%');
             }else{
@@ -71,6 +87,7 @@ class Searchable  {
      */
     public static function int($field, $operator='='){
         return function (&$q, $keyword, $logic='or') use ($field, $operator){
+            $keyword = self::clearKeyword($keyword);
             if (is_numeric($keyword)){
                 if ($logic == 'or'){
                     $q->orWhere(static::$alias.'.'.$field, $operator, $keyword);
@@ -95,6 +112,7 @@ class Searchable  {
      */
     public static function date($field, $operator='='){
         return function (&$q, $keyword, $logic='or') use ($field, $operator){
+            $keyword = self::clearKeyword($keyword);
             if (isDate($keyword) && !is_numeric($keyword)){
                 if ($logic == 'or'){
                     $q->orWhere(static::$alias.'.'.$field, $operator, $keyword);
