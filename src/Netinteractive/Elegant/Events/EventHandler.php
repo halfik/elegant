@@ -35,11 +35,22 @@ class EventHandler {
 
         if (isSet($filters)){
             foreach ($filters AS $filter){
+                $filterInfo = explode(':', $filter);
+                $filter = $filterInfo[0];
+
                 if ( !is_scalar($filter)){
                     $obj->value = $filter($obj->value);
                 }
                 elseif (isSet($definedFilters[$filter])){
-                    $obj->value = $definedFilters[$filter]($obj->value );
+                    if (isSet($filterInfo[1])){
+                        $params = explode(',', $filterInfo[1]);
+                        $params = array_map('trim',$params);
+
+                        $obj->value = $definedFilters[$filterInfo[0]]($obj->value , $params);
+                    }
+                    else{
+                        $obj->value = $definedFilters[$filterInfo[0]]($obj->value);
+                    }
                 }
             }
         }
@@ -58,12 +69,22 @@ class EventHandler {
 
             if (isSet($filters)){
                 foreach ($filters AS $filter){
+                    $filterInfo = explode(':', $filter);
+                    $filter = $filterInfo[0];
+
                     if ( !is_scalar($filter)){
                         $obj->data[$key] = $filter($obj->data[$key]);
 
                     }
                     elseif (isSet($definedFilters[$filter]) && isset($obj->data[$key])){
-                        $obj->data[$key] = $definedFilters[$filter]($obj->data[$key]);
+                       if (isSet($filterInfo[1])){
+                            $params = explode(',', $filterInfo[1]);
+                            $params = array_map('trim',$params);
+                            $obj->data[$key] = $definedFilters[$filterInfo[0]]($obj->data[$key], $params);
+                        }
+                        else{
+                            $obj->data[$key] = $definedFilters[$filterInfo[0]]($obj->data[$key]);
+                        }
                     }
                 }
             }
@@ -82,11 +103,21 @@ class EventHandler {
 
             if (isSet($filters)){
                 foreach ($filters AS $filter){
+                    $filterInfo = explode(':', $filter);
+                    $filter = $filterInfo[0];
+
                     if ( !is_scalar($filter)){
                         $model->$key = $filter($model->$key);
                     }
                     elseif (isSet($definedFilters[$filter])){
-                        $model->$key = $definedFilters[$filter]($model->$key);
+                        if (isSet($filterInfo[1])){
+                            $params = explode(',', $filterInfo[1]);
+                            $params = array_map('trim',$params);
+                            $model->$key = $definedFilters[$filterInfo[0]]($model->$key, $params);
+                        }
+                        else{
+                            $model->$key = $definedFilters[$filterInfo[0]]($model->$key);
+                        }
                     }
                 }
             }
