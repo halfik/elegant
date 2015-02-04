@@ -9,7 +9,21 @@
 
 class Searchable  {
     public static $alias;
-    public static $like = 'LIKE';
+    public static $like = array(
+        'pgsql'=>'iLIKE'
+    );
+
+    /**
+     * Zwraca operato like w zaleznosci od bazy danych
+     * @return string
+     */
+    public static function getLikeOperator(){
+        $driver=\Config::get('database.default');
+        if(isset(self::$like[$driver])){
+            return self::$like[$driver];
+        }
+        return 'LIKE';
+    }
 
 
     /**
@@ -31,12 +45,12 @@ class Searchable  {
      */
     public static function text($field, $operator=null){
         if (!$operator){
-            $operator = static::$like;
+            $operator = static::getLikeOperator();
         }
 
         return function (&$q, $keyword, $logic='or') use ($field, $operator){
             $keyword = self::clearKeyword($keyword);
-            if ($operator == static::$like){
+            if ($operator == static::getLikeOperator()){
                 $keyword = '%'.$keyword.'%';
             }
 
@@ -57,9 +71,9 @@ class Searchable  {
         return function (&$q, $keyword, $logic='or') use ($field){
             $keyword = self::clearKeyword($keyword);
             if ($logic == 'or'){
-                $q->orWhere(static::$alias.'.'.$field, static::$like, '%'.$keyword);
+                $q->orWhere(static::$alias.'.'.$field, static::getLikeOperator(), '%'.$keyword);
             }else{
-                $q->where(static::$alias.'.'.$field, static::$like, '%'.$keyword);
+                $q->where(static::$alias.'.'.$field, static::getLikeOperator(), '%'.$keyword);
             }
         };
     }
@@ -72,9 +86,9 @@ class Searchable  {
         return function (&$q, $keyword, $logic='or') use ($field){
             $keyword = self::clearKeyword($keyword);
             if ($logic == 'or'){
-                $q->orWhere(static::$alias.'.'.$field, static::$like, $keyword.'%');
+                $q->orWhere(static::$alias.'.'.$field, static::getLikeOperator(), $keyword.'%');
             }else{
-                $q->where(static::$alias.'.'.$field, static::$like, $keyword.'%');
+                $q->where(static::$alias.'.'.$field, static::getLikeOperator(), $keyword.'%');
             }
 
         };
