@@ -7,9 +7,11 @@ use Netinteractive\Elegant\Exception\AttachException;
 use Netinteractive\Elegant\Exception\DeletionException;
 use Netinteractive\Elegant\Searchable AS Searchable;
 use Netinteractive\Utils\Utils AS Utils;
+use Netinteractive\Elegant\Filters\Field\Display AS DisplayLogic;
 
 
-abstract class Elegant extends Model{
+abstract class Elegant extends Model
+{
     /**
      * @var array
      */
@@ -45,7 +47,8 @@ abstract class Elegant extends Model{
     /**
      * @param array $attributes
      */
-    public function __construct(array $attributes = array()){
+    public function __construct(array $attributes = array())
+    {
         Searchable::$alias = $this->getTable();
         $this->init();
         parent::__construct($attributes);
@@ -55,7 +58,8 @@ abstract class Elegant extends Model{
     /**
      *
      */
-    protected function init(){
+    protected function init()
+    {
 
     }
 
@@ -64,15 +68,15 @@ abstract class Elegant extends Model{
      * Find a model by its primary key.
      * Przeciazylismy i dodajemy nazwe tabeli z modelu przed nazwa pola
      *
-     * @param  mixed  $id
-     * @param  array  $columns
+     * @param  mixed $id
+     * @param  array $columns
      * @return \Illuminate\Support\Collection|static
      */
     public static function find($id, $columns = array('*'))
     {
-        foreach ($columns AS &$column){
-            if (strpos('.', $column) == false){
-                $column =  \App::make(get_called_class())->getTable().'.'.$column;
+        foreach ($columns AS &$column) {
+            if (strpos('.', $column) == false) {
+                $column = \App::make(get_called_class())->getTable() . '.' . $column;
             }
         }
 
@@ -83,13 +87,14 @@ abstract class Elegant extends Model{
      * Get all of the models from the database.
      * Przeciazylismy i dodajemy nazwe tabeli z modelu przed nazwa pola
      *
-     * @param  array  $columns
+     * @param  array $columns
      * @return \Illuminate\Database\Eloquent\Collection|static[]
      */
-    public static function all($columns = array('*')){
-        foreach ($columns AS &$column){
-            if (strpos('.', $column) == false){
-                $column =  \App::make(get_called_class())->getTable().'.'.$column;
+    public static function all($columns = array('*'))
+    {
+        foreach ($columns AS &$column) {
+            if (strpos('.', $column) == false) {
+                $column = \App::make(get_called_class())->getTable() . '.' . $column;
             }
         }
 
@@ -100,9 +105,10 @@ abstract class Elegant extends Model{
      * Zwraca obiekt walidatora
      * @return Illuminate\Support\Facades\Validator
      */
-    public function validator(){
-        if(is_null($this->validator)){
-            $this->validator=\Validator::make($this->attributes,$this->getFieldsRules());
+    public function validator()
+    {
+        if (is_null($this->validator)) {
+            $this->validator = \Validator::make($this->attributes, $this->getFieldsRules());
         }
         return $this->validator;
     }
@@ -112,8 +118,9 @@ abstract class Elegant extends Model{
      * Zwraca tablice z lista pol modelu wraz z informacjami o walidacji etc. etc.
      * @return array
      */
-    public function getFields(){
-        if (!$this->fields){
+    public function getFields()
+    {
+        if (!$this->fields) {
             $this->fields = array();
         }
         return $this->fields;
@@ -124,7 +131,8 @@ abstract class Elegant extends Model{
      * Metoda pozwala kierowac odpaleniem eventu acl w query builderze
      * @param bool $allow
      */
-    public static function allowQueryAcl($allow=true){
+    public static function allowQueryAcl($allow = true)
+    {
         self::$queryAllowAcl = $allow;
     }
 
@@ -132,10 +140,11 @@ abstract class Elegant extends Model{
      * Perform a model insert operation.
      * Przeciazylismy, aby dodac eventy after_create, z ktorych korzystaja np. userParams
      *
-     * @param  \Illuminate\Database\Eloquent\Builder  $query
+     * @param  \Illuminate\Database\Eloquent\Builder $query
      * @return bool|null
      */
-    public function performInsert(\Illuminate\Database\Eloquent\Builder $query, array $options=array()){
+    public function performInsert(\Illuminate\Database\Eloquent\Builder $query, array $options = array())
+    {
         $this->validate('insert');
 
         $attributes = $this->attributes;
@@ -145,7 +154,7 @@ abstract class Elegant extends Model{
         $this->fireModelEvent('elegant.before.saving', false);
         $result = parent::performInsert($query, $options);
 
-        $this->attributes = array_merge($attributes, $this->attributes );
+        $this->attributes = array_merge($attributes, $this->attributes);
 
         $this->fireModelEvent('elegant.after.insert', false);
 
@@ -156,10 +165,11 @@ abstract class Elegant extends Model{
      * Perform a model update operation.
      * Przeciazylismy, aby dodac eventy after_updated, z ktorych korzystaja np. userParams
      *
-     * @param  \Illuminate\Database\Eloquent\Builder  $query
+     * @param  \Illuminate\Database\Eloquent\Builder $query
      * @return bool|null
      */
-    protected function performUpdate(\Illuminate\Database\Eloquent\Builder $query, array $options=array()){
+    protected function performUpdate(\Illuminate\Database\Eloquent\Builder $query, array $options = array())
+    {
         $this->validate('update');
 
         $this->fireModelEvent('elegant.before.update', false);
@@ -171,15 +181,15 @@ abstract class Elegant extends Model{
     }
 
 
-
     /**
      * Validate model fields
      * @param string $rulesGroups
      * @throws Netinteractive\Elegant\Exception\ValidationException
      * @return Elegant
      */
-    public function validate($rulesGroups='all'){
-        if ($this->validationEnabled == false){
+    public function validate($rulesGroups = 'all')
+    {
+        if ($this->validationEnabled == false) {
             return $this;
         }
         $messageBag = new MessageBag();
@@ -187,18 +197,18 @@ abstract class Elegant extends Model{
         $validator->setData($this->attributes);
 
         $rules = $this->getFieldsRules($rulesGroups);
-        foreach ($rules AS $field=>$val){
-            if ($this->exists && !$this->isDirty($field)){
+        foreach ($rules AS $field => $val) {
+            if ($this->exists && !$this->isDirty($field)) {
                 unset($rules[$field]);
             }
         }
 
         $validator->setRules($rules);
 
-        if($validator->fails()){
-            $messages=$validator->messages()->toArray();
-            foreach($messages as $key=>$message){
-                $messageBag->add($key,$message);
+        if ($validator->fails()) {
+            $messages = $validator->messages()->toArray();
+            foreach ($messages as $key => $message) {
+                $messageBag->add($key, $message);
             }
             $this->error = new ValidationException($messageBag);
             throw $this->error;
@@ -212,28 +222,29 @@ abstract class Elegant extends Model{
      * @param array $field
      * @return $this
      */
-    public function validateFields(array $fields, $rulesGroups='all'){
-        if ($this->validationEnabled == false){
+    public function validateFields(array $fields, $rulesGroups = 'all')
+    {
+        if ($this->validationEnabled == false) {
             return $this;
         }
 
-        $messageBag=new MessageBag();
-        $validator=$this->validator();
+        $messageBag = new MessageBag();
+        $validator = $this->validator();
         $validator->setData($this->attributes);
 
         $rules = $this->getFieldsRules($rulesGroups, $fields);
-        foreach ($rules AS $field=>$val){
-            if ($this->exists && !$this->isDirty($field)){
+        foreach ($rules AS $field => $val) {
+            if ($this->exists && !$this->isDirty($field)) {
                 unset($rules[$field]);
             }
         }
 
         $validator->setRules($rules);
 
-        if($validator->fails()){
-            $messages=$validator->messages()->toArray();
-            foreach($messages as $key=>$message){
-                $messageBag->add($key,$message);
+        if ($validator->fails()) {
+            $messages = $validator->messages()->toArray();
+            foreach ($messages as $key => $message) {
+                $messageBag->add($key, $message);
             }
             $this->error = new ValidationException($messageBag);
             throw $this->error;
@@ -249,15 +260,15 @@ abstract class Elegant extends Model{
      * @throws Netinteractive\Elegant\Exception\ValidationException
      * @return Elegant
      */
-    public function addValidationError($key, $message){
-        if(is_null($this->error)){
-            $MessageBag=new MessageBag();
+    public function addValidationError($key, $message)
+    {
+        if (is_null($this->error)) {
+            $MessageBag = new MessageBag();
             $this->error = new ElegantValidationException($MessageBag);
+        } else {
+            $MessageBag = $this->error->getMessageBag();
         }
-        else{
-            $MessageBag=$this->error->getMessageBag();
-        }
-        $MessageBag->add($key,$message);
+        $MessageBag->add($key, $message);
         return $this;
     }
 
@@ -265,11 +276,12 @@ abstract class Elegant extends Model{
      * @param string $rulesGroups
      * @return bool
      */
-    public function isValid($rulesGroups='all'){
-        try{
+    public function isValid($rulesGroups = 'all')
+    {
+        try {
             $this->validate($rulesGroups);
             return true;
-        }catch (ElegantValidationException $e){
+        } catch (ElegantValidationException $e) {
             return false;
         }
     }
@@ -279,14 +291,15 @@ abstract class Elegant extends Model{
      * @throws Netinteractive\Elegant\Exception\AttachException
      * @param $key
      */
-    public function checkAttachedIds($key, $message='Brak powiązanych rekordów!'){
-        if(!$this->exists && !$this->getAttribute($key)){
+    public function checkAttachedIds($key, $message = 'Brak powiązanych rekordów!')
+    {
+        if (!$this->exists && !$this->getAttribute($key)) {
             throw new AttachException($message);
         }
 
-        if(isset($this->attributes[$key])){
-            $arr=explode(',',$this->attributes[$key]);
-            if(count($arr)<1 || empty($arr[0])){
+        if (isset($this->attributes[$key])) {
+            $arr = explode(',', $this->attributes[$key]);
+            if (count($arr) < 1 || empty($arr[0])) {
                 throw new AttachException($message);
             }
         }
@@ -298,14 +311,15 @@ abstract class Elegant extends Model{
      * @param null $fields
      * @return array
      */
-    public function makeFieldsAliases($fields=null){
-        if(!$fields){
-            $fields=array_keys($this->getFields());
+    public function makeFieldsAliases($fields = null)
+    {
+        if (!$fields) {
+            $fields = array_keys($this->getFields());
         }
-        $class=get_class($this);
-        $result=[];
-        foreach($fields as $field){
-            $result[]=$class.'.'.$field.' AS '.$class.'_'.$field;
+        $class = get_class($this);
+        $result = [];
+        foreach ($fields as $field) {
+            $result[] = $class . '.' . $field . ' AS ' . $class . '_' . $field;
         }
         return $result;
     }
@@ -317,28 +331,28 @@ abstract class Elegant extends Model{
      * @param array $inFields
      * @return Elegant
      */
-    public function makeLikeWhere(\Illuminate\Database\Eloquent\Builder &$q, $keyword, $inFields){
+    public function makeLikeWhere(\Illuminate\Database\Eloquent\Builder &$q, $keyword, $inFields)
+    {
         $keyword = trim($keyword);
-        if(!is_array($inFields)){
-            $inFields=array($inFields);
+        if (!is_array($inFields)) {
+            $inFields = array($inFields);
         }
-        $q->where(function(\Illuminate\Database\Eloquent\Builder $q)use($keyword, $inFields){
-            foreach($inFields as $field){
-                if ($this->isOriginal($field)){
-                    if ( isSet($this->fields[$field]['searchable']) && $this->fields[$field]['searchable'] == true){
+        $q->where(function (\Illuminate\Database\Eloquent\Builder $q) use ($keyword, $inFields) {
+            foreach ($inFields as $field) {
+                if ($this->isOriginal($field)) {
+                    if (isSet($this->fields[$field]['searchable']) && $this->fields[$field]['searchable'] == true) {
                         $searchable = $this->fields[$field]['searchable'];
-                        if($searchable instanceof \Closure){
-                            $this->fields[$field]['searchable']($q,$keyword);
+                        if ($searchable instanceof \Closure) {
+                            $this->fields[$field]['searchable']($q, $keyword);
                         }
                     }
-                }
-                elseif (is_array($field) && count($field) == 2){
+                } elseif (is_array($field) && count($field) == 2) {
                     $relModel = \App($field[1]);
 
-                    if ( isSet($relModel->fields[$field[0]]['searchable']) && $relModel->fields[$field[0]]['searchable'] == true){
+                    if (isSet($relModel->fields[$field[0]]['searchable']) && $relModel->fields[$field[0]]['searchable'] == true) {
                         $searchable = $relModel->fields[$field[0]]['searchable'];
-                        if($searchable instanceof \Closure){
-                            $relModel->fields[$field[0]]['searchable']($q,$keyword);
+                        if ($searchable instanceof \Closure) {
+                            $relModel->fields[$field[0]]['searchable']($q, $keyword);
                         }
                     }
                 }
@@ -354,7 +368,8 @@ abstract class Elegant extends Model{
      * @param string $operator
      * @return Elegant
      */
-    public function setFieldSearchable($field, $type, $operator='='){
+    public function setFieldSearchable($field, $type, $operator = '=')
+    {
         $this->fields[$field]['searchable'] = Searchable::$type($field, $operator);
         return $this;
     }
@@ -363,20 +378,22 @@ abstract class Elegant extends Model{
      * @param array $params
      * @return \Illuminate\Database\Query\Builder|static
      */
-    public function searchInGrid(array $params=array()){
-        $q=$this->newQuery();
-        if(array_get($params,'fields')){
+    public function searchInGrid(array $params = array())
+    {
+        $q = $this->newQuery();
+        if (array_get($params, 'fields')) {
             $q->select($this->makeFieldsAliases($params['fields']));
-            $q->from($this->getTable().' AS '.get_class($this));
+            $q->from($this->getTable() . ' AS ' . get_class($this));
         }
         return $q;
     }
 
     /**
-    * @param $query
-    * @return mixed
+     * @param $query
+     * @return mixed
      */
-    protected function searchJoins($query){
+    protected function searchJoins($query)
+    {
         return $query;
     }
 
@@ -388,36 +405,37 @@ abstract class Elegant extends Model{
      * @param string $operator
      * @param boolean $defaultJoin
      */
-    public function search($input, $columns=array(), $operator='and', $defaultJoin=true){
+    public function search($input, $columns = array(), $operator = 'and', $defaultJoin = true)
+    {
         $query = $this->getQuery();
-        if (empty($columns)){
-            $columns[] = $this->table.'.*';
+        if (empty($columns)) {
+            $columns[] = $this->table . '.*';
         }
         $query->select($columns);
 
-        foreach ($input as $groupName=>$groupFields){
-            if (is_array($groupFields)){
-                foreach ($groupFields AS $name=>$val ){
-                    if(is_array($val) && in_array('null',$val)){
+        foreach ($input as $groupName => $groupFields) {
+            if (is_array($groupFields)) {
+                foreach ($groupFields AS $name => $val) {
+                    if (is_array($val) && in_array('null', $val)) {
                         unset($input[$groupName][$name]);
                     }
-                    if (empty($input[$groupName][$name])){
+                    if (empty($input[$groupName][$name])) {
                         unset($input[$groupName][$name]);
                     }
                 }
             }
         }
 
-        if ($defaultJoin){
+        if ($defaultJoin) {
             $query = $this->searchJoins($query);
         }
 
         #opakowane w where, aby inne where dodane wczesniej lub pozniej dzialaly prawidlowo
-        $query->where(function($query) use ($input, $operator){
-            foreach ($input AS $modelName=>$fields){
-                if (!empty($fields) && is_array($fields)){
+        $query->where(function ($query) use ($input, $operator) {
+            foreach ($input AS $modelName => $fields) {
+                if (!empty($fields) && is_array($fields)) {
                     $model = \App::make($modelName);
-                    foreach ($fields AS $field=>$value){
+                    foreach ($fields AS $field => $value) {
                         $query = $model->queryFieldSearch($field, $value, $query, $operator);
                     }
                 }
@@ -431,7 +449,8 @@ abstract class Elegant extends Model{
      * return validation|save|delete last exception
      * @return Netinteravtive/Elegant/Exception/DeletionException
      */
-    public function getError(){
+    public function getError()
+    {
         return $this->error;
     }
 
@@ -440,8 +459,9 @@ abstract class Elegant extends Model{
      * @throws Netinteravtive/Elegant/Exception/DeletionException
      * @return mixed
      */
-    public function delete(){
-        if(!parent::delete()){
+    public function delete()
+    {
+        if (!parent::delete()) {
             $this->error = new DeletionException(_("Can't delete record!"));
             throw $this->error;
         }
@@ -452,11 +472,12 @@ abstract class Elegant extends Model{
      * Zwraca pola po ktorych mozna sortowac
      * @return array
      */
-    public function getSortableFields(){
+    public function getSortableFields()
+    {
         $fields = array();
 
-        foreach ($this->fields AS $key=>$field){
-            if (array_get($field,'sortable')){
+        foreach ($this->fields AS $key => $field) {
+            if (array_get($field, 'sortable')) {
                 $fields[$key] = $field;
             }
         }
@@ -468,11 +489,12 @@ abstract class Elegant extends Model{
      * Zwraca pola, po ktorych mozna wyszukiwac
      * @return array
      */
-    public function getSearchableFields(){
+    public function getSearchableFields()
+    {
         $fields = array();
 
-        foreach ($this->fields AS $key=>$field){
-            if (array_get($field,'searchable')){
+        foreach ($this->fields AS $key => $field) {
+            if (array_get($field, 'searchable')) {
                 $fields[$key] = $field;
             }
         }
@@ -485,18 +507,19 @@ abstract class Elegant extends Model{
      * @param array $fieldsKeys
      * @return array
      */
-    public function getFieldsTitles($fieldsKeys=null){
-        if(is_null($fieldsKeys)){
-            $fieldsKeys=array_keys($this->getFields());
+    public function getFieldsTitles($fieldsKeys = null)
+    {
+        if (is_null($fieldsKeys)) {
+            $fieldsKeys = array_keys($this->getFields());
         }
-        if(!is_array($fieldsKeys)){
-            $fieldsKeys=array($fieldsKeys);
+        if (!is_array($fieldsKeys)) {
+            $fieldsKeys = array($fieldsKeys);
         }
-        $result=array();
-        $fields=$this->getFields();
-        foreach($fields as $key=>$field){
-            if(in_array($key,$fieldsKeys)){
-                $result[$key]=$field['title'];
+        $result = array();
+        $fields = $this->getFields();
+        foreach ($fields as $key => $field) {
+            if (in_array($key, $fieldsKeys)) {
+                $result[$key] = $field['title'];
             }
 
         }
@@ -511,9 +534,10 @@ abstract class Elegant extends Model{
      * @param string $operator
      * @return mixed
      */
-    public function queryFieldSearch($field, $keyword, $q, $operator='or'){
-        if (isSet($this->fields[$field]['searchable'])){
-            $this->fields[$field]['searchable']($q,$keyword, $operator);
+    public function queryFieldSearch($field, $keyword, $q, $operator = 'or')
+    {
+        if (isSet($this->fields[$field]['searchable'])) {
+            $this->fields[$field]['searchable']($q, $keyword, $operator);
         }
 
         return $q;
@@ -524,8 +548,9 @@ abstract class Elegant extends Model{
      * @param string $field
      * @return mixed
      */
-    public function getFieldTitle($field){
-        if (!isSet($this->fields[$field]['title'])){
+    public function getFieldTitle($field)
+    {
+        if (!isSet($this->fields[$field]['title'])) {
             return null;
         }
 
@@ -537,8 +562,9 @@ abstract class Elegant extends Model{
      * @param string $key
      * @return array
      */
-    public function getFieldRules($key){
-        if (isSet($this->fields[$key]['rules'])){
+    public function getFieldRules($key)
+    {
+        if (isSet($this->fields[$key]['rules'])) {
             return $this->fields[$key]['rules'];
         }
         return array();
@@ -550,31 +576,32 @@ abstract class Elegant extends Model{
      * @param array $fieldsKeys
      * @return array
      */
-    public function getFieldsRules($rulesGroups='any', $fieldsKeys=null){
-        $rulesGroups=Utils::paramToArray($rulesGroups);
+    public function getFieldsRules($rulesGroups = 'any', $fieldsKeys = null)
+    {
+        $rulesGroups = Utils::paramToArray($rulesGroups);
 
-        if(is_null($fieldsKeys)){
-            $fieldsKeys=array_keys($this->getFields());
+        if (is_null($fieldsKeys)) {
+            $fieldsKeys = array_keys($this->getFields());
         }
 
-        $fieldsKeys=Utils::paramToArray($fieldsKeys);
+        $fieldsKeys = Utils::paramToArray($fieldsKeys);
 
-        if(!in_array('any',$rulesGroups)){
-            array_push($rulesGroups,'any');
+        if (!in_array('any', $rulesGroups)) {
+            array_push($rulesGroups, 'any');
         }
 
-        $result=array();
-        $fields=$this->getFields();
-        foreach($fields as $key=>$field){
-            if(!in_array($key,$fieldsKeys) || !isSet($field['rules'])){
+        $result = array();
+        $fields = $this->getFields();
+        foreach ($fields as $key => $field) {
+            if (!in_array($key, $fieldsKeys) || !isSet($field['rules'])) {
                 continue;
             }
 
-            $rules=$field['rules'];
-            $result[$key]='';
-            foreach($rulesGroups as $ruleGroup){
-                if(in_array($ruleGroup,$rulesGroups)){
-                    $result[$key].='|'.array_get($rules,$ruleGroup);
+            $rules = $field['rules'];
+            $result[$key] = '';
+            foreach ($rulesGroups as $ruleGroup) {
+                if (in_array($ruleGroup, $rulesGroups)) {
+                    $result[$key] .= '|' . array_get($rules, $ruleGroup);
                 }
             }
         }
@@ -586,18 +613,19 @@ abstract class Elegant extends Model{
      * @param array $fieldsKeys
      * @return array
      */
-    public function getFieldsTypes(array $fieldsKeys=array()){
-        if(is_null($fieldsKeys)){
-            $fieldsKeys=array_keys($this->getFields());
+    public function getFieldsTypes(array $fieldsKeys = array())
+    {
+        if (is_null($fieldsKeys)) {
+            $fieldsKeys = array_keys($this->getFields());
         }
-        if(!is_array($fieldsKeys)){
-            $fieldsKeys=array($fieldsKeys);
+        if (!is_array($fieldsKeys)) {
+            $fieldsKeys = array($fieldsKeys);
         }
-        $result=array();
-        $fields=$this->getFields();
-        foreach($fields as $key=>$field){
-            if(in_array($key,$fieldsKeys)){
-                $result[$key]=$field['type'];
+        $result = array();
+        $fields = $this->getFields();
+        foreach ($fields as $key => $field) {
+            if (in_array($key, $fieldsKeys)) {
+                $result[$key] = $field['type'];
             }
         }
         return $result;
@@ -608,8 +636,9 @@ abstract class Elegant extends Model{
      * @param string $field
      * @return mixed
      */
-    public function getFieldType($field){
-        if (!isSet($this->fields[$field]['type'])){
+    public function getFieldType($field)
+    {
+        if (!isSet($this->fields[$field]['type'])) {
             return null;
         }
 
@@ -621,8 +650,9 @@ abstract class Elegant extends Model{
      * @param string $field
      * @return null
      */
-    public function getFieldFilters($field){
-        if (!isSet($this->fields[$field]['filters'])){
+    public function getFieldFilters($field)
+    {
+        if (!isSet($this->fields[$field]['filters'])) {
             return null;
         }
 
@@ -636,11 +666,11 @@ abstract class Elegant extends Model{
      * @param null|string $group
      * @return Elegant
      */
-    public function setFieldRules($field, $rules, $group=null){
-        if ($group === null){
+    public function setFieldRules($field, $rules, $group = null)
+    {
+        if ($group === null) {
             $this->fields[$field]['rules'] = $rules;
-        }
-        else{
+        } else {
             $this->fields[$field]['rules'][$group] = $rules;
         }
         return $this;
@@ -651,7 +681,8 @@ abstract class Elegant extends Model{
      * @param bool $enable
      * @return Elegant
      */
-    public function setValidationEnabled($enable=true){
+    public function setValidationEnabled($enable = true)
+    {
         $this->validationEnabled = $enable;
         return $this;
     }
@@ -661,7 +692,8 @@ abstract class Elegant extends Model{
      * @param string $field
      * @return bool
      */
-    public function isOriginal($field){
+    public function isOriginal($field)
+    {
         $fields = array_keys($this->getFields());
 
         return in_array($field, $fields);
@@ -673,7 +705,8 @@ abstract class Elegant extends Model{
      * @param string $field
      * @return bool
      */
-    public function isInFields($field){
+    public function isInFields($field)
+    {
         return $this->isOriginal($field);
     }
 
@@ -685,7 +718,7 @@ abstract class Elegant extends Model{
      */
     public function getDirty()
     {
-        $dirty =  parent::getDirty();
+        $dirty = parent::getDirty();
 
         $obj = new \stdClass();
         $obj->data = $dirty;
@@ -694,18 +727,16 @@ abstract class Elegant extends Model{
         \Event::fire('elegant.before.save', $obj);
         $dirty = $obj->data;
 
-        foreach ($dirty as $field => $value)
-        {
+        foreach ($dirty as $field => $value) {
             /**
              * usuwamy pola, ktore nie pochodza z modelu
              */
-            if (!$this->isOriginal($field)){
+            if (!$this->isOriginal($field)) {
                 unset($dirty[$field]);
-            }
-            /**
+            } /**
              * usuwamy haslo jesli jest puste
              */
-            elseif($this->getFieldType($field) == 'password' && empty($dirty[$field])){
+            elseif ($this->getFieldType($field) == 'password' && empty($dirty[$field])) {
                 unset($dirty[$field]);
             }
         }
@@ -717,7 +748,8 @@ abstract class Elegant extends Model{
      * zwraca obiekt walidatora
      * @return mixed
      */
-    public function getValidator(){
+    public function getValidator()
+    {
         return $this->validator;
     }
 
@@ -726,25 +758,26 @@ abstract class Elegant extends Model{
      * @param array $attributes
      * @return mixed
      */
-    public function fill(array $attributes){
-        if(count($attributes)){
+    public function fill(array $attributes)
+    {
+        if (count($attributes)) {
             $obj = new \stdClass();
             $obj->data = $attributes;
             $obj->Record = $this;
             \Event::fire('acl.filter.model.fill', $obj);
-            $attributes=$obj->data;
+            $attributes = $obj->data;
         }
 
         return parent::fill($attributes);
     }
 
 
-
     /**
      * @param string $key
      * @param mixed $value
      */
-    public function setAttribute($key, $value){
+    public function setAttribute($key, $value)
+    {
         $this->fireModelEvent('elegant.before.setAttribute', false);
         parent::setAttribute($key, $value);
         $this->fireModelEvent('elegant.after.setAttribute', false);
@@ -767,15 +800,26 @@ abstract class Elegant extends Model{
     /**
      * funckja, ktora zwraca wartosc pola modelu po jej przefiltrowaniu
      * @param string $field
+     * @param array $filters
+     * @param boolean $defaultFilters
      * @return mixed
      */
-    public function display($field){
+    public function display($field, $filters = array(), $defaultFilters = true)
+    {
         $obj = new \stdClass();
         $obj->value = $this->$field;
         $obj->field = $field;
         $obj->Record = $this;
 
-        \Event::fire('elegant.before.display', $obj);
+        if ($defaultFilters == true) {
+            \Event::fire('elegant.before.display', $obj);
+        }
+
+        if (!empty($filters)) {
+            DisplayLogic::apply($obj, $filters);
+        }
+
+
         return $obj->value;
     }
 
@@ -797,28 +841,28 @@ abstract class Elegant extends Model{
      * @return \Illuminate\Database\Eloquent\Collection|mixed|Collection
      */
     public function newCollection(array $models = array())
-	{
+    {
         try {
             $collection = \App::make('Collection', $models);
             return $collection;
-        }catch (\ReflectionException $e){
+        } catch (\ReflectionException $e) {
             return new Collection($models);
         }
-	}
+    }
 
     /**
      * Convert the model instance to an array.
      * @param boolean $displayFilter - default true
      * @return array
      */
-    public function toArray($displayFilter=false)
+    public function toArray($displayFilter = false)
     {
         $attributes = $this->attributesToArray();
 
-        $data =  array_merge($attributes, $this->relationsToArray());
+        $data = array_merge($attributes, $this->relationsToArray());
 
-        if ($displayFilter == true){
-            foreach ($data as $key=>$val){
+        if ($displayFilter == true) {
+            foreach ($data as $key => $val) {
                 $data[$key] = $this->display($key);
             }
         }

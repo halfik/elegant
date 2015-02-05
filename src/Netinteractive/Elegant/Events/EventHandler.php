@@ -1,8 +1,10 @@
 <?php
 namespace Netinteractive\Elegant\Events;
-use Illuminate\Support\Facades\Config;
 use Netinteractive\Elegant\Elegant;
-
+use Netinteractive\Elegant\Filters\Field\Display AS DisplayLogic;
+use Netinteractive\Elegant\Filters\Field\Fill AS FillLogic;
+use Netinteractive\Elegant\Filters\Field\Save AS SaveLogic;
+use Netinteractive\Elegant\Filters\Logic AS FiltersLogic;
 
 /**
  * Class ElegantEventHandler
@@ -10,49 +12,15 @@ use Netinteractive\Elegant\Elegant;
 class EventHandler {
 
     /**
-     * metoda parsuje filtry
-     * @param Elegant $model
-     * @param string $key
-     * @param string $type
-     * @return mixed
-     */
-    protected function _parseFilters($filters){
-        if (!empty($filters) && !is_array($filters)){
-            $filters = explode('|', str_replace(' ', '', $filters));
-        }
-
-        return $filters;
-    }
-
-
-    /**
      * filtry modyfikujace dane modelu w momencie proby ich wyswietlenia
      * @param stdClass $obj
      */
-    public function displayFilters($obj){
-        $definedFilters = \Config::get('elegant::filters.display');
-        $filters =  $this->_parseFilters( array_get($obj->Record->getFieldFilters($obj->field),'display') );
+    public function displayFilters($obj)
+    {
+        $filters =  FiltersLogic::parseFilters(array_get($obj->Record->getFieldFilters($obj->field),'display'));
 
         if (isSet($filters)){
-            foreach ($filters AS $filter){
-                $filterInfo = explode(':', $filter);
-                $filter = $filterInfo[0];
-
-                if ( !is_scalar($filter)){
-                    $obj->value = $filter($obj->value);
-                }
-                elseif (isSet($definedFilters[$filter])){
-                    if (isSet($filterInfo[1])){
-                        $params = explode(',', $filterInfo[1]);
-                        $params = array_map('trim',$params);
-
-                        $obj->value = $definedFilters[$filterInfo[0]]($obj->value , $params);
-                    }
-                    else{
-                        $obj->value = $definedFilters[$filterInfo[0]]($obj->value);
-                    }
-                }
-            }
+            DisplayLogic::apply($obj, $filters);
         }
     }
 
@@ -61,32 +29,13 @@ class EventHandler {
      * (nie modyfikuja danych w samym modelu)
      * @param stdClass $obj
      */
-    public function saveFilters($obj){
-        $definedFilters = \Config::get('elegant::filters.save');
+    public function saveFilters($obj)
+    {
         foreach ($obj->Record->getAttributes() AS $key=>$val){
-
-            $filters =  $this->_parseFilters( array_get($obj->Record->getFieldFilters($key),'save'));
+            $filters =  FiltersLogic::parseFilters( array_get($obj->Record->getFieldFilters($key),'save'));
 
             if (isSet($filters)){
-                foreach ($filters AS $filter){
-                    $filterInfo = explode(':', $filter);
-                    $filter = $filterInfo[0];
-
-                    if ( !is_scalar($filter)){
-                        $obj->data[$key] = $filter($obj->data[$key]);
-
-                    }
-                    elseif (isSet($definedFilters[$filter]) && isset($obj->data[$key])){
-                       if (isSet($filterInfo[1])){
-                            $params = explode(',', $filterInfo[1]);
-                            $params = array_map('trim',$params);
-                            $obj->data[$key] = $definedFilters[$filterInfo[0]]($obj->data[$key], $params);
-                        }
-                        else{
-                            $obj->data[$key] = $definedFilters[$filterInfo[0]]($obj->data[$key]);
-                        }
-                    }
-                }
+                SaveLogic::apply($obj, $filters);
             }
         }
     }
@@ -96,30 +45,11 @@ class EventHandler {
      * @param Elegant $model
      */
     public function fillFilters(Elegant $model){
-        $definedFilters = \Config::get('elegant::filters.fill');
-
         foreach ($model->getAttributes() AS $key=>$val){
-            $filters =  $this->_parseFilters( array_get($model->getFieldFilters($key),'fill'));
+            $filters =  FiltersLogic::parseFilters( array_get($model->getFieldFilters($key),'fill'));
 
             if (isSet($filters)){
-                foreach ($filters AS $filter){
-                    $filterInfo = explode(':', $filter);
-                    $filter = $filterInfo[0];
-
-                    if ( !is_scalar($filter)){
-                        $model->$key = $filter($model->$key);
-                    }
-                    elseif (isSet($definedFilters[$filter])){
-                        if (isSet($filterInfo[1])){
-                            $params = explode(',', $filterInfo[1]);
-                            $params = array_map('trim',$params);
-                            $model->$key = $definedFilters[$filterInfo[0]]($model->$key, $params);
-                        }
-                        else{
-                            $model->$key = $definedFilters[$filterInfo[0]]($model->$key);
-                        }
-                    }
-                }
+                FillLogic::apply($model, $filters);
             }
         }
     }
