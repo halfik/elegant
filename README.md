@@ -12,6 +12,8 @@ Elegant to bazowa klasa dla modeli. Rozszerzenie Eloquenta.
 - CollectionServiceProvider - usługa binduje klase Netinteractive\Elegant\Collection jako Collection, ktora pozniej wykorzystana jest w modelu. Chwilowo nie ma zastosowania.
 
 ## Wersje
+- 1.2.8
+    + fix bledow zwiazanych ze zmianami z poprzedniej wersji
 - 1.2.7
     + przeniesienie logiki mechanizmow filtrow pol do osobnych klas. namespace: Netinteractive\Elegant\Filters
     + zmiana w Elegant::display('field'). Doszly jeszcze 2 opcjonalne argumenty:

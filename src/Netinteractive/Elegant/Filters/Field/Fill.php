@@ -11,9 +11,10 @@ class Fill
     /**
      * mchanizm filtrow fill
      * @param \Netinteractive\Elegant\Elegant $model
+     * @param string $key
      * @param array $filters
      */
-    public static function apply(\Netinteractive\Elegant\Elegant $model, $filters)
+    public static function apply(\Netinteractive\Elegant\Elegant $model, $key, $filters)
     {
         $definedFilters = \Config::get('elegant::filters.fill');
 

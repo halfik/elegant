@@ -13,9 +13,10 @@ class Save
     /**
      * mchanizm filtrow save
      * @param stdClass $obj
+     * @param string $key
      * @param array $filters
      */
-    public static function apply($obj, $filters)
+    public static function apply($obj, $key, $filters)
     {
         $definedFilters = \Config::get('elegant::filters.save');
 

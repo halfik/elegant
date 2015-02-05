@@ -35,7 +35,7 @@ class EventHandler {
             $filters =  FiltersLogic::parseFilters( array_get($obj->Record->getFieldFilters($key),'save'));
 
             if (isSet($filters)){
-                SaveLogic::apply($obj, $filters);
+                SaveLogic::apply($obj, $key, $filters);
             }
         }
     }
@@ -49,7 +49,7 @@ class EventHandler {
             $filters =  FiltersLogic::parseFilters( array_get($model->getFieldFilters($key),'fill'));
 
             if (isSet($filters)){
-                FillLogic::apply($model, $filters);
+                FillLogic::apply($model, $key, $filters);
             }
         }
     }
