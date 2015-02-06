@@ -13,6 +13,8 @@ Elegant to bazowa klasa dla modeli. Rozszerzenie Eloquenta.
 
 
 ## Changelog
+### 1.2.10
+    * Rozbudowalem SearchTraita o metody: modifySearchQuery($query),  abstract public function Model();
 ### 1.2.9
     * Netinteractive\Elegant\Search\SearchTrait - trait, ktory do kontrolera dodaje akcje search (wyszukiwarke)
 ### 1.2.8

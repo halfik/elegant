@@ -1,4 +1,5 @@
 <?php  namespace Netinteractive\Elegant\Search;
+use Cartalyst\Sentry\Auth\Providers\ElegantProvider;
 
 /**
  * Class SearchTrait
@@ -7,6 +8,22 @@
  */
 trait SearchTrait
 {
+    /**
+     * metoda, ktora sluzy do przeciazania w kontrolerach, aby zmodyfikjowac zapytanie searcha
+     * @param $query
+     * @return mixed
+     */
+    protected function modifySearchQuery($query)
+    {
+        return $query;
+    }
+
+    /**
+     * Metoda musi zwrocic model
+     * @return Elegant
+     */
+    abstract public function Model();
+
     /**
      * wyszukiwarka
      * @param array $params
@@ -24,6 +41,8 @@ trait SearchTrait
         }
 
         $query = $this->Model()->search($params, $columns);
+
+        $this->modifySearchQuery($query);
 
         if (isSet($params['limit']) && is_numeric($params['limit'])){
             $query->limit($params['limit']);
