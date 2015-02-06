@@ -13,6 +13,14 @@ Elegant to bazowa klasa dla modeli. Rozszerzenie Eloquenta.
 
 
 ## Changelog
+### 1.2.11
+    * rozbudowana mozliwosci SearchTrait::search. Teraz przyjmuje nastepujace parametry w inpucie:
+    ** columns - lista kolumn w postaci tablicy,
+    ** operator - operator do whereow: or lub and
+    ** limit - limit dla query
+    ** orderBy - nazwa kolumny dla orderBy
+    ** orderByDir - asc lub desc
+    * Elegant::isField($field): boolean - metoda sprawdza, czy wskazane pole nalezy do modelu
 ### 1.2.10
     * Rozbudowalem SearchTraita o metody: modifySearchQuery($query),  abstract public function Model();
 ### 1.2.9

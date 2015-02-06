@@ -31,6 +31,11 @@ trait SearchTrait
      */
     public function search($params=array())
     {
+        $avaibleDir = array('asc', 'desc');
+        $avaibleOperator = array('and', 'or');
+        $dir = 'asc';
+        $operator = 'and';
+
         if (empty($params)){
             $params = Input::all();
         }
@@ -40,7 +45,12 @@ trait SearchTrait
             $columns = $params['columns'];
         }
 
-        $query = $this->Model()->search($params, $columns);
+
+        if (isSet($params['operator']) && in_array($params['operator'], $avaibleOperator)){
+            $operator = $params['operator'];
+        }
+
+        $query = $this->Model()->search($params, $columns, $operator);
 
         $this->modifySearchQuery($query);
 
@@ -48,16 +58,16 @@ trait SearchTrait
             $query->limit($params['limit']);
         }
 
-        if (isSet($params['orderBy'])){
-            $avaibleDir = array('asc', 'desc');
-            $dir = 'asc';
 
-            if (isSet($params['orderByDir']) && in_array($params['orderByDir'], $avaibleDir)){
-                $dir = $params['orderByDir'];
-            }
+        if (isSet($params['orderByDir']) && in_array($params['orderByDir'], $avaibleDir)){
+            $dir = $params['orderByDir'];
+        }
+
+        if (isSet($params['orderBy']) && $this->Model()->isField($params['orderBy'])){
 
             $query->orderBy($params['orderBy'], $dir);
         }
+
 
         $result = $query->get();
 

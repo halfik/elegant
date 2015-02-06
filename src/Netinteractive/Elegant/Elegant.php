@@ -754,6 +754,19 @@ abstract class Elegant extends Model
     }
 
     /**
+     * metoda zwraca informacje czy pole znauduje sie w modelu
+     * @param $field
+     * @return bool
+     */
+    public function isField($field)
+    {
+        if (isSet($this->fields[$field]) ){
+            return true;
+        }
+        return false;
+    }
+
+    /**
      * Przeciazony fill - odpalamy nasz filtr acl sprawdzajacy prawo zapisu pol
      * @param array $attributes
      * @return mixed
