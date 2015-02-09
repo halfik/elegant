@@ -15,7 +15,7 @@ abstract class Elegant extends Model
     /**
      * @var array
      */
-    protected $fields;
+    protected static $fields;
 
     /**
      * @var Netinteractive\Elegant\Exception\ValidationException
@@ -61,6 +61,17 @@ abstract class Elegant extends Model
     protected function init()
     {
 
+    }
+
+    /**
+     * metoda sluzy do zainicjowania pol modelu
+     * @param array $fields
+     * @return $this
+     */
+    public function initFields(array $fields)
+    {
+        self::$fields[get_class($this)] = $fields;
+        return $this;
     }
 
 
@@ -120,10 +131,11 @@ abstract class Elegant extends Model
      */
     public function getFields()
     {
-        if (!$this->fields) {
-            $this->fields = array();
+        if ( isSet(self::$fields[get_class($this)]) ){
+            return self::$fields[get_class($this)];
         }
-        return $this->fields;
+
+        return array();
     }
 
 
@@ -340,19 +352,25 @@ abstract class Elegant extends Model
         $q->where(function (\Illuminate\Database\Eloquent\Builder $q) use ($keyword, $inFields) {
             foreach ($inFields as $field) {
                 if ($this->isOriginal($field)) {
-                    if (isSet($this->fields[$field]['searchable']) && $this->fields[$field]['searchable'] == true) {
-                        $searchable = $this->fields[$field]['searchable'];
-                        if ($searchable instanceof \Closure) {
-                            $this->fields[$field]['searchable']($q, $keyword);
+                    $searchable = $this->getFieldSearchable($field);
+
+                    if ( $searchable ) {
+                         if ($searchable instanceof \Closure) {
+                             $searchable($q, $keyword);
                         }
                     }
-                } elseif (is_array($field) && count($field) == 2) {
+                }
+                /**
+                 * przypadek dla pol z innego modelu
+                 */
+                elseif (is_array($field) && count($field) == 2) {
+                    # $field[1] nazwa modelu
                     $relModel = \App($field[1]);
 
-                    if (isSet($relModel->fields[$field[0]]['searchable']) && $relModel->fields[$field[0]]['searchable'] == true) {
-                        $searchable = $relModel->fields[$field[0]]['searchable'];
+                    $searchable = $relModel->getFieldSearchable($field[0]);
+                    if ( $searchable ) {
                         if ($searchable instanceof \Closure) {
-                            $relModel->fields[$field[0]]['searchable']($q, $keyword);
+                            $searchable($q, $keyword);
                         }
                     }
                 }
@@ -363,6 +381,20 @@ abstract class Elegant extends Model
     }
 
     /**
+     * zwraca funkcje anonimowa, ktora decuduje o tym jak wyszukiwac po polu
+     * @param string $field
+     * @return mixed
+     */
+    public function getFieldSearchable($field)
+    {
+        if (!isSet(self::$fields[get_class($this)][$field]['searchable'])){
+            return false;
+        }
+
+        return self::$fields[get_class($this)][$field]['searchable'];
+    }
+
+    /**
      * @param string $field
      * @param string $type
      * @param string $operator
@@ -370,7 +402,7 @@ abstract class Elegant extends Model
      */
     public function setFieldSearchable($field, $type, $operator = '=')
     {
-        $this->fields[$field]['searchable'] = Searchable::$type($field, $operator);
+        self::$fields[get_class($this)][$field]['searchable'] = Searchable::$type($field, $operator);
         return $this;
     }
 
@@ -476,7 +508,7 @@ abstract class Elegant extends Model
     {
         $fields = array();
 
-        foreach ($this->fields AS $key => $field) {
+        foreach ($this->getFields() AS $key => $field) {
             if (array_get($field, 'sortable')) {
                 $fields[$key] = $field;
             }
@@ -493,7 +525,7 @@ abstract class Elegant extends Model
     {
         $fields = array();
 
-        foreach ($this->fields AS $key => $field) {
+        foreach ($this->getFields() AS $key => $field) {
             if (array_get($field, 'searchable')) {
                 $fields[$key] = $field;
             }
@@ -536,8 +568,9 @@ abstract class Elegant extends Model
      */
     public function queryFieldSearch($field, $keyword, $q, $operator = 'or')
     {
-        if (isSet($this->fields[$field]['searchable'])) {
-            $this->fields[$field]['searchable']($q, $keyword, $operator);
+
+        if (isSet( self::$fields[get_class($this)][$field]['searchable'])) {
+            self::$fields[get_class($this)][$field]['searchable']($q, $keyword, $operator);
         }
 
         return $q;
@@ -550,11 +583,11 @@ abstract class Elegant extends Model
      */
     public function getFieldTitle($field)
     {
-        if (!isSet($this->fields[$field]['title'])) {
+        if (!isSet( self::$fields[get_class($this)][$field]['title'])) {
             return null;
         }
 
-        return $this->fields[$field]['title'];
+        return  self::$fields[get_class($this)][$field]['title'];
     }
 
     /**
@@ -564,8 +597,8 @@ abstract class Elegant extends Model
      */
     public function getFieldRules($key)
     {
-        if (isSet($this->fields[$key]['rules'])) {
-            return $this->fields[$key]['rules'];
+        if (isSet( self::$fields[get_class($this)][$key]['rules'])) {
+            return  self::$fields[get_class($this)][$key]['rules'];
         }
         return array();
     }
@@ -638,11 +671,11 @@ abstract class Elegant extends Model
      */
     public function getFieldType($field)
     {
-        if (!isSet($this->fields[$field]['type'])) {
+        if (!isSet( self::$fields[get_class($this)][$field]['type'])) {
             return null;
         }
 
-        return $this->fields[$field]['type'];
+        return  self::$fields[get_class($this)][$field]['type'];
     }
 
     /**
@@ -652,11 +685,11 @@ abstract class Elegant extends Model
      */
     public function getFieldFilters($field)
     {
-        if (!isSet($this->fields[$field]['filters'])) {
+        if (!isSet( self::$fields[get_class($this)][$field]['filters'])) {
             return null;
         }
 
-        return $this->fields[$field]['filters'];
+        return  self::$fields[get_class($this)][$field]['filters'];
     }
 
     /**
@@ -669,9 +702,9 @@ abstract class Elegant extends Model
     public function setFieldRules($field, $rules, $group = null)
     {
         if ($group === null) {
-            $this->fields[$field]['rules'] = $rules;
+            self::$fields[get_class($this)][$field]['rules'] = $rules;
         } else {
-            $this->fields[$field]['rules'][$group] = $rules;
+            self::$fields[get_class($this)][$field]['rules'][$group] = $rules;
         }
         return $this;
     }
@@ -760,7 +793,7 @@ abstract class Elegant extends Model
      */
     public function isField($field)
     {
-        if (isSet($this->fields[$field]) ){
+        if (isSet( self::$fields[get_class($this)][$field]) ){
             return true;
         }
         return false;

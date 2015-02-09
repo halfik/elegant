@@ -13,6 +13,11 @@ Elegant to bazowa klasa dla modeli. Rozszerzenie Eloquenta.
 
 
 ## Changelog
+## 1.3.0
+    * zmiana sposobu definiowania pol modelu. Od tej wersji nie definiujemy pol poprze $this->fields = array();
+    Definiujemy je nastepujaco:
+    ```public function init(){ $fields=array(); $this->initFields($fields);)```
+
 ### 1.2.11
     * rozbudowana mozliwosci SearchTrait::search. Teraz przyjmuje nastepujace parametry w inpucie:
     ** columns - lista kolumn w postaci tablicy,
