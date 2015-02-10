@@ -568,9 +568,9 @@ abstract class Elegant extends Model
      */
     public function queryFieldSearch($field, $keyword, $q, $operator = 'or')
     {
-
         if (isSet( self::$fields[get_class($this)][$field]['searchable'])) {
-            self::$fields[get_class($this)][$field]['searchable']($q, $keyword, $operator);
+            $searchable = self::$fields[get_class($this)][$field]['searchable'];
+            $searchable($q, $keyword, $operator);
         }
 
         return $q;

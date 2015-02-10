@@ -13,6 +13,9 @@ Elegant to bazowa klasa dla modeli. Rozszerzenie Eloquenta.
 
 
 ## Changelog
+## 1.3.2
+    * Fix bledu w Elegant::queryFieldSearch
+
 ## 1.3.0
     * zmiana sposobu definiowania pol modelu. Od tej wersji nie definiujemy pol poprze $this->fields = array();
     Definiujemy je nastepujaco:
