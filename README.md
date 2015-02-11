@@ -13,6 +13,9 @@ Elegant to bazowa klasa dla modeli. Rozszerzenie Eloquenta.
 
 
 ## Changelog
+## 1.3.3
+    * Fix makeFieldsAliases table alias
+
 ## 1.3.2
     * Fix bledu w Elegant::queryFieldSearch
 

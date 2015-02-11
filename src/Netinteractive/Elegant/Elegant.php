@@ -331,7 +331,7 @@ abstract class Elegant extends Model
         $class = get_class($this);
         $result = [];
         foreach ($fields as $field) {
-            $result[] = $class . '.' . $field . ' AS ' . $class . '_' . $field;
+            $result[] = App($class)->getTable() . '.' . $field . ' AS ' . $class . '_' . $field;
         }
         return $result;
     }
