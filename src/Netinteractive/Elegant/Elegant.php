@@ -114,7 +114,7 @@ abstract class Elegant extends Model
 
     /**
      * Zwraca obiekt walidatora
-     * @return Illuminate\Support\Facades\Validator
+     * @return \Illuminate\Validation\Validator
      */
     public function validator()
     {
