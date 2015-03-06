@@ -3,31 +3,31 @@
     "license": "MIT",
     "type": "library",
     "homepage": "https://bitbucket.org/niteam/laravel-elegant",
-    "keywords": ["laravel", "model", "elegant", "netinteractive", "laravel4"],
-    "version": "1.3.5",
+    "keywords": ["laravel", "model", "blueprint", "mapper", "domain model", "elegant", "netinteractive", "laravel5"],
+    "version": "2.0.0",
     "description": "",
     "authors": [
         {
-            "name": "halfik",
-            "email": "halfik@gmail.com"
-        }
-    ],
-    "require": {
-        "netinteractive/utils": "1.0.*"
-    },
-    "repositories": [
+            "name": "Piotr Pryga",
+            "email": "halfik@gmail.com",
+            "role": "Owner"
+        },
         {
-            "type":"git",
-            "url": "https://bitbucket.org/niteam/laravel-utils"
+            "name": "Michał Szapowałow",
+            "email": "smikebox@gmail.com",
+            "role": "Developer"
         }
     ],
     "require": {
         "php": ">=5.4.0",
-        "illuminate/support": "4.2.*"
+        "illuminate/support": "5.0.*"
     },
     "autoload": {
+        "classmap": [
+            "src/migrations"
+        ],
         "psr-0": {
-            "Netinteractive\\Elegant": "src/"
+            "Netinteractive\\Elegant\\": "src/"
         }
     },
     "minimum-stability": "stable"
