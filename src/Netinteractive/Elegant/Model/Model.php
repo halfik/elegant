@@ -60,7 +60,7 @@ abstract class Model
     {
         foreach ($attributes as $key => $value)
         {
-            $this->$key = $value;
+            $this->setAttribute($key, $value);
         }
 
         return $this;
@@ -88,6 +88,7 @@ abstract class Model
         return $this->blueprint;
     }
 
+
     /**
      * Set a given attribute on the model
      *
@@ -97,7 +98,6 @@ abstract class Model
      */
     public function setAttribute($key, $value)
     {
-
         #we check if data if model attribute or not
         if ($this->getBlueprint()->isField($key)){
             $this->attributes[$key] = $value;
@@ -109,14 +109,14 @@ abstract class Model
     }
 
     /**
-     * Get an attribute from the model.
+     * Get an attribute from the model
      *
      * @param  string  $key
      * @return mixed
      */
     public function getAttribute($key)
     {
-        return $this->attributes[$key];
+        return isSet($this->attributes[$key]) ? $this->attributes[$key] : $this->external[$key];
     }
 
     /**
@@ -256,7 +256,7 @@ abstract class Model
     public function toArray()
     {
         $attributes = $this->attributes;
-        
+
 
         return $attributes;
     }
