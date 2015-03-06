@@ -15,7 +15,7 @@ namespace Netinteractive\Elegant\Model;
 abstract class Model
 {
     /**
-     * @var Netinteractive\Elegant\Model\Blueprint
+     * @var Blueprint
      */
     protected $blueprint;
 
@@ -69,10 +69,10 @@ abstract class Model
     /**
      * Sets model blueprint
      *
-     * @param Netinteractive\Elegant\Model\Blueprint $blueprint
+     * @param Blueprint $blueprint
      * @return $this
      */
-    public function setBlueprint(Netinteractive\Elegant\Model\Blueprint $blueprint)
+    public function setBlueprint(Blueprint $blueprint)
     {
         $this->blueprint = $blueprint;
         return $this;
@@ -81,7 +81,7 @@ abstract class Model
     /**
      * Returns model blueprint
      *
-     * @return Netinteractive\Elegant\Model\Blueprint
+     * @return Blueprint
      */
     public function getBlueprint()
     {
