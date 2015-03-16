@@ -7,7 +7,7 @@
  */
 
 namespace Netinteractive\Elegant\Model\Mapper;
-use Netinteractive\Elegant\Query\Builder;
+
 
 /**
  * Class DbMapper
@@ -22,45 +22,25 @@ abstract class DbMapper
      */
     protected $connection;
 
-    /**
-     * The database query grammar instance.
-     *
-     * @var \Illuminate\Database\Query\Grammars\Grammar
-     */
-    protected $grammar;
-
-    /**
-     * The database query post processor instance.
-     *
-     * @var \Illuminate\Database\Query\Processors\Processor
-     */
-    protected $processor;
-
 
     /**
      * Create a new db mapper
      *
      * @return void
      */
-    public function __construct()
+    public function __construct($connection=null)
     {
-        $dbManager = \App::make('DatabaseManager');
-        
-        $this->grammar = $grammar;
-        $this->processor = $processor;
-        $this->connection = $connection;
+        $this->connection = \App('db')->connection($connection);
     }
+
 
     public function getQuery()
     {
-        return \App::make('Builder', array($this->connection, $this->grammar, $this->processor));
+        return \App::make('Builder', array($this->connection,  $this->connection->getQueryGrammar(), $this->connection->getPostProcessor()));
     }
 
     public function makeFindQuery()
     {
 
     }
-
-/*+ getQuery(): QueryBuilder
-+ makeFindQuery(): QueryBilder*/
 } 

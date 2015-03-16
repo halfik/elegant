@@ -47,7 +47,13 @@ abstract class Model
      */
     public function __construct(array $attributes = array())
     {
+        $this->init();
         $this->fill($attributes);
+    }
+
+    public function init()
+    {
+        return $this;
     }
 
 

@@ -18,7 +18,7 @@ class ElegantServiceProvider extends ServiceProvider {
 	 */
 	public function boot()
 	{
-		$this->package('netinteractive/elegant');
+
 	}
 
 	/**
@@ -28,7 +28,8 @@ class ElegantServiceProvider extends ServiceProvider {
 	 */
 	public function register()
 	{
-		//
+
+        \App::bind('Builder', 'Netinteractive\Elegant\Query\Builder');
 	}
 
 	/**
