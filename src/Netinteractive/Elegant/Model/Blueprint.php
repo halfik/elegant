@@ -17,9 +17,9 @@ abstract class Blueprint
 
     /**
      * Blueprint instance
-     * @var null|Netinteractive\Elegant\Model\Blueprint
+     * @var array
      */
-    protected static $intance = null;
+    protected static $instances = array();
 
     /**
      * @var array
@@ -59,15 +59,28 @@ abstract class Blueprint
 
     /**
      * Creates Blueprint instance
-     * @return Blueprint|Netinteractive\Elegant\Model\Blueprint|null
+     * @return Blueprint|null
      */
     static public function getInstance()
     {
-        if (!self::$intance){
-            self::$intance = new self();
+        $class=get_called_class();
+        if (empty(self::$instances[$class])) {
+            $num = func_num_args();
+            $args = func_get_args();
+
+            $code = "self::\$instances[\$class]=new " . get_called_class() . "(";
+
+            for ($i = 1; $i < $num; $i++) {
+                $code .= "\$args[" . $i . "]";
+                if ($i < $num - 1) {
+                    $code .= ",";
+                }
+            }
+            $code .= ");";
+            eval ($code);
         }
 
-        return self::$intance;
+        return self::$instances[$class];
     }
 
 
