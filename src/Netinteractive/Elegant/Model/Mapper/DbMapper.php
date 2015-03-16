@@ -24,6 +24,9 @@ abstract class DbMapper implements MapperInterface
     protected $connection;
 
 
+    protected $modelName;
+
+
     /**
      * Create a new db mapper
      *
@@ -65,7 +68,7 @@ abstract class DbMapper implements MapperInterface
      */
     public function find($id, array $columns=array('*'))
     {
-        $model = \App::make($this->getModelName());
+        $model = $this->createModel();
 
         $this->getQuery()->from($model->getBlueprint()->getTable())->find($id, $columns);
     }
@@ -89,7 +92,10 @@ abstract class DbMapper implements MapperInterface
      */
     public function createModel(array $data = array())
     {
+        $model = \App::make($this->getModelName());
+        $model->fill($data);
 
+        return $model;
     }
 
     /**
@@ -99,7 +105,7 @@ abstract class DbMapper implements MapperInterface
      */
     public function getModelName()
     {
-
+        return $this->modelName;
     }
 
     /**
