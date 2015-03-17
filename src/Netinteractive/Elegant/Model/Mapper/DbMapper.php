@@ -7,6 +7,7 @@
  */
 
 namespace Netinteractive\Elegant\Model\Mapper;
+use Netinteractive\Elegant\Exception\PrimaryKeyException;
 use Netinteractive\Elegant\Model\MapperInterface;
 use Netinteractive\Elegant\Model\Model;
 
@@ -37,15 +38,45 @@ abstract class DbMapper implements MapperInterface
         $this->connection = \App('db')->connection($connection);
     }
 
+
+    /**
+     * Returns model Blueprint
+     * @return \Netinteractive\Elegant\Model\Blueprint
+     */
+    protected function getBlueprint()
+    {
+        return $this->createModel()->getBlueprint();
+    }
+
+
+    /**
+     * Method checkcs if blueprint primary keys are same with input array keys
+     *
+     * @param int|array $ids
+     * @throws \Netinteractive\Elegant\Exception\PrimaryKeyException
+     */
+    protected function checkPrimaryKey($ids)
+    {
+        $primaryKey = $this->getBlueprint()->getPrimaryKey();
+        if (count($primaryKey) > 1){
+            if ($primaryKey != array_keys($ids)){
+                throw new PrimaryKeyException();
+            }
+        }
+    }
+
+
     /**
      * Delete record
      *
      * @param integer $id
      * @return $this
      */
-    public function delete($id)
+    public function delete($ids)
     {
+        $this->checkPrimaryKey($ids);
 
+        return $this->getQuery()->from($this->getBlueprint()->getTable())->delete($ids);
     }
 
     /**
@@ -57,20 +88,27 @@ abstract class DbMapper implements MapperInterface
     public function save(Model $model)
     {
 
+
+        return $this;
     }
 
     /**
      * Find one model
      *
-     * @param $id
+     * @param $ids
      * @param array $columns
      * @return Model
      */
-    public function find($id, array $columns=array('*'))
+    public function find($ids, array $columns=array('*'))
     {
-        $model = $this->createModel();
+        $this->checkPrimaryKey($ids);
 
-        $this->getQuery()->from($model->getBlueprint()->getTable())->find($id, $columns);
+        $data = $this->getQuery()->from($this->getBlueprint()->getTable())->find($ids, $columns);
+
+        $model = $this->createModel((array) $data);
+        $model->exists = true;
+
+        return $model;
     }
 
     /**
@@ -94,6 +132,7 @@ abstract class DbMapper implements MapperInterface
     {
         $model = \App::make($this->getModelName());
         $model->fill($data);
+        $model->exists = false;
 
         return $model;
     }

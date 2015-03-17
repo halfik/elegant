@@ -37,7 +37,11 @@ abstract class Model
      */
     protected $original = array();
 
-
+    /**
+     * Information if model already exists in data base
+     * @var bool
+     */
+    public $exists = false;
 
     /**
      * Create a new Model instance.
