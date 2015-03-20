@@ -112,7 +112,15 @@ abstract class Blueprint
      */
     public function getSortableFields()
     {
+        $fields = array();
 
+        foreach ($this->getFields() AS $key => $field) {
+            if (array_get($field, 'sortable')) {
+                $fields[$key] = $field;
+            }
+        }
+
+        return $fields;
     }
 
     /**
@@ -135,12 +143,26 @@ abstract class Blueprint
 
     /**
      * Returns list of fields titles
-     *
+     * @param array $fieldKeys
      * @return
      */
-    public function getFieldsTitles()
+    public function getFieldsTitles(array $fieldsKeys = array())
     {
+        if (empty($fieldsKeys)) {
+            $fieldsKeys = array_keys($this->getFields());
+        }
+        if (!is_array($fieldsKeys)) {
+            $fieldsKeys = array($fieldsKeys);
+        }
+        $result = array();
+        $fields = $this->getFields();
+        foreach ($fields as $key => $field) {
+            if (in_array($key, $fieldsKeys)) {
+                $result[$key] = $field['title'];
+            }
 
+        }
+        return $result;
     }
 
     /**
@@ -151,7 +173,12 @@ abstract class Blueprint
      */
     public function getFieldTitle($fieldKey)
     {
+        $fields = $this->getFields();
+        if (!isSet( $fields[$fieldKey]['title'])) {
+            return null;
+        }
 
+        return  $fields[$fieldKey]['title'];
     }
 
     /**
@@ -207,7 +234,11 @@ abstract class Blueprint
      */
     public function getFieldRules($fieldKey)
     {
-
+        $fields = $this->getFields();
+        if (isSet($fields[$fieldKey]['rules'])) {
+            return  $fields[$fieldKey]['rules'];
+        }
+        return array();
     }
 
     /**
@@ -218,7 +249,20 @@ abstract class Blueprint
      */
     public function getFieldsTypes($fieldsKeys = array())
     {
-
+        if (is_null($fieldsKeys)) {
+            $fieldsKeys = array_keys($this->getFields());
+        }
+        if (!is_array($fieldsKeys)) {
+            $fieldsKeys = array($fieldsKeys);
+        }
+        $result = array();
+        $fields = $this->getFields();
+        foreach ($fields as $key => $field) {
+            if (in_array($key, $fieldsKeys)) {
+                $result[$key] = $field['type'];
+            }
+        }
+        return $result;
     }
 
     /**
@@ -229,7 +273,12 @@ abstract class Blueprint
      */
     public function getFieldType($fieldKey)
     {
+        $fields = $this->getFields();
+        if (!isSet( $fields[$fieldKey]['type'] )) {
+            return null;
+        }
 
+        return $fields[$fieldKey]['type'];
     }
 
     /**
@@ -243,7 +292,11 @@ abstract class Blueprint
      */
     public function setFieldRules($fieldKey, array $rules, $group='all')
     {
-
+        if ($group === null) {
+            $this->fields[$fieldKey]['rules'] = $rules;
+        } else {
+            $this->fields[$fieldKey]['rules'][$group] = $rules;
+        }
         return $this;
     }
 

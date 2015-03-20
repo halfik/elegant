@@ -68,7 +68,6 @@ class Builder extends BaseBuilder
             }else{
                 $this->where('id', '=', $ids);
             }
-
         }
 
         $sql = $this->grammar->compileDelete($this);
