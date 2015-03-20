@@ -41,6 +41,12 @@ abstract class Blueprint
      */
     protected $primaryKey = array();
 
+    /**
+     * Indicates if the IDs are auto-incrementing.
+     *
+     * @var bool
+     */
+    public  $incrementing = true;
 
 
     /**
@@ -302,5 +308,7 @@ abstract class Blueprint
     {
         return $this->relations[$relation];
     }
+
+
 
 } 

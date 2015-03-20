@@ -8,8 +8,11 @@
 
 namespace Netinteractive\Elegant\Model\Mapper;
 use Netinteractive\Elegant\Exception\PrimaryKeyException;
+use Netinteractive\Elegant\Exception\PrimaryKeyIncrementException;
 use Netinteractive\Elegant\Model\MapperInterface;
 use Netinteractive\Elegant\Model\Model;
+use Netinteractive\Elegant\Query\Builder;
+
 
 /**
  * Class DbMapper
@@ -87,12 +90,39 @@ abstract class DbMapper implements MapperInterface
      */
     public function save(Model $model)
     {
-
         $model->validate($model->getDirty());
+
+        $query = $this->getQuery();
+        $query->from($model->getBlueprint()->getTable());
+
+        #check if we are editing or creating
+        if (!$model->exists){
+            $attributes = $model->getAttributes();
+
+            #check if we have autoincrementing on PK
+            if ($model->getBlueprint()->incrementing == true){
+                $primaryKey = $model->getBlueprint()->getPrimaryKey();
+
+                #check if we have single field PK
+                if (count($primaryKey) != 1){
+                    throw new PrimaryKeyIncrementException();
+                }
+
+                if (is_array($primaryKey)){
+                    $primaryKey = $primaryKey[0];
+                }
+
+                $id = $query->insertGetId($attributes, $primaryKey);
+                $model->setAttribute($primaryKey, $id);;
+            }else{
+                $query->insert($attributes);
+            }
+        }else{
+
+        }
 
         return $this;
     }
-
 
 
     /**
