@@ -90,6 +90,13 @@ abstract class DbMapper implements MapperInterface
      */
     public function save(Model $model)
     {
+        $dirty = $model->getDirty();
+
+        #check if anything has changed
+        if (count($dirty) == 0){
+            return $this;
+        }
+
         $model->validate($model->getDirty());
 
         $query = $this->getQuery();
@@ -100,28 +107,42 @@ abstract class DbMapper implements MapperInterface
             $attributes = $model->getAttributes();
 
             #check if we have autoincrementing on PK
-            if ($model->getBlueprint()->incrementing == true){
-                $primaryKey = $model->getBlueprint()->getPrimaryKey();
-
-                #check if we have single field PK
-                if (count($primaryKey) != 1){
-                    throw new PrimaryKeyIncrementException();
-                }
-
-                if (is_array($primaryKey)){
-                    $primaryKey = $primaryKey[0];
-                }
+            if ($model->getBlueprint()->incrementingPk){
+                $primaryKey = $model->getBlueprint()->incrementingPk;
 
                 $id = $query->insertGetId($attributes, $primaryKey);
+
                 $model->setAttribute($primaryKey, $id);;
             }else{
                 $query->insert($attributes);
             }
-        }else{
-
+        }
+        else{
+            $this->setKeysForSaveQuery($query, $model)->update($dirty);
         }
 
+        $model->syncOriginal();
+
         return $this;
+    }
+
+    /**
+     * Set the keys for a save update query.
+     * @param Builder $query
+     * @param Model $model
+     * @return Builder
+     *
+     */
+    protected function setKeysForSaveQuery(Builder $query, Model $model)
+    {
+        $pk = $model->getBlueprint()->getPrimaryKey();
+
+        foreach ($pk AS $part){
+            $query->where($part, '=', $model->$part);
+        }
+
+
+        return $query;
     }
 
 

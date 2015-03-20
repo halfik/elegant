@@ -42,11 +42,11 @@ abstract class Blueprint
     protected $primaryKey = array();
 
     /**
-     * Indicates if the IDs are auto-incrementing.
+     * Indicates if the there is a primaryKey or part of it that is are auto-incrementing.
      *
      * @var bool
      */
-    public  $incrementing = true;
+    public  $incrementingPk = null;
 
 
     /**

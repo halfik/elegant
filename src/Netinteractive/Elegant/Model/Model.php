@@ -70,8 +70,7 @@ abstract class Model
      */
     public function fill(array $attributes)
     {
-        foreach ($attributes as $key => $value)
-        {
+        foreach ($attributes as $key => $value){
             $this->setAttribute($key, $value);
         }
 
