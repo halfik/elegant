@@ -158,7 +158,7 @@ abstract class DbMapper implements MapperInterface
     {
         $this->checkPrimaryKey($ids);
 
-        $data = $this->getQuery()->from($this->getBlueprint()->getTable())->find($ids, $columns);
+        $data = $this->getQuery()->find($ids, $columns);
 
         $model = $this->createModel((array) $data);
         $model->exists = true;
@@ -193,7 +193,7 @@ abstract class DbMapper implements MapperInterface
     public function search($input, $columns = array(), $operator = 'and', $defaultJoin = true)
     {
         $query = $this->getQuery();
-        $query->from($this->getBlueprint()->getTable());
+
 
         if (empty($columns)) {
             $columns[] = $this->getBlueprint()->getTable(). '.*';
@@ -217,7 +217,7 @@ abstract class DbMapper implements MapperInterface
             $query = $this->searchJoins($query);
         }
 
-        #we build single where here becouse of othere wheres that can be add later
+        #we build single where here becouse of otherse wheres that can be add later (or where added before)
         $query->where(function ($query) use ($input, $operator) {
             foreach ($input AS $modelName => $fields) {
 
@@ -294,11 +294,9 @@ abstract class DbMapper implements MapperInterface
      */
     public function getQuery()
     {
-        return \App::make('Builder', array($this->connection,  $this->connection->getQueryGrammar(), $this->connection->getPostProcessor()));
-    }
+        $query =  \App::make('Builder', array($this->connection,  $this->connection->getQueryGrammar(), $this->connection->getPostProcessor()));
+        $query->from($this->getBlueprint()->getTable());
 
-    public function getFindQuery()
-    {
-
+        return $query;
     }
 } 
