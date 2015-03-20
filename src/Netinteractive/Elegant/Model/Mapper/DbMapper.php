@@ -9,6 +9,7 @@
 namespace Netinteractive\Elegant\Model\Mapper;
 use Netinteractive\Elegant\Exception\PrimaryKeyException;
 use Netinteractive\Elegant\Exception\PrimaryKeyIncrementException;
+use Netinteractive\Elegant\Model\Collection;
 use Netinteractive\Elegant\Model\MapperInterface;
 use Netinteractive\Elegant\Model\Model;
 use Netinteractive\Elegant\Query\Builder;
@@ -169,11 +170,98 @@ abstract class DbMapper implements MapperInterface
      * Find collection of models
      *
      * @param array $params
+     * @param array $columns
+     * @param string $operator
+     * @param bool $defaultJoin
      * @return mixed
      */
-    public function findMany(array $params)
+    public function findMany(array $params, $columns = array('*'), $operator = 'and', $defaultJoin = true)
     {
+        return new Collection($this->search($params, $columns, $operator, $defaultJoin)->get());
+    }
 
+
+    /**
+     * Search
+     *
+     * @param $input
+     * @param array $columns
+     * @param string $operator
+     * @param bool $defaultJoin
+     * @return mixed
+     */
+    public function search($input, $columns = array(), $operator = 'and', $defaultJoin = true)
+    {
+        $query = $this->getQuery();
+        $query->from($this->getBlueprint()->getTable());
+
+        if (empty($columns)) {
+            $columns[] = $this->getBlueprint()->getTable(). '.*';
+        }
+        $query->select($columns);
+
+        foreach ($input as $groupName => $groupFields) {
+            if (is_array($groupFields)) {
+                foreach ($groupFields AS $name => $val) {
+                    if (is_array($val) && in_array('null', $val)) {
+                        unset($input[$groupName][$name]);
+                    }
+                    if (empty($input[$groupName][$name])) {
+                        unset($input[$groupName][$name]);
+                    }
+                }
+            }
+        }
+
+        if ($defaultJoin) {
+            $query = $this->searchJoins($query);
+        }
+
+        #we build single where here becouse of othere wheres that can be add later
+        $query->where(function ($query) use ($input, $operator) {
+            foreach ($input AS $modelName => $fields) {
+
+                if (!empty($fields) && is_array($fields)) {
+                    $model = \App::make($modelName);
+                    foreach ($fields AS $field => $value) {
+                        $query = $this->queryFieldSearch($model, $field, $value, $query, $operator);
+                    }
+                }
+            }
+        });
+
+        return $query;
+    }
+
+    /**
+     * Adds where to query object based on searchable defined in blueprint
+     *
+     * @param string $fieldKey
+     * @param string $keyword
+     * @param Query $q
+     * @param string $operator
+     * @return mixed
+     */
+    public function queryFieldSearch(Model $model, $fieldKey, $keyword, $q, $operator = 'or')
+    {
+        $searchableFields = $model->getBlueprint()->getSearchableFields();
+
+        if (isSet($searchableFields[$fieldKey])){
+            $searchable = $searchableFields[$fieldKey]['searchable'];
+            $searchable($q, $keyword, $operator);
+        }
+
+        return $q;
+    }
+
+    /**
+     * Method for serach query modifications
+     * @param Builder $query
+     * @return mixed
+     */
+    protected function searchJoins(Builder $query)
+    {
+        return $query;
     }
 
     /**

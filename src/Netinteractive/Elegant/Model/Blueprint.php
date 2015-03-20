@@ -122,7 +122,15 @@ abstract class Blueprint
      */
     public function getSearchableFields()
     {
+        $fields = array();
 
+        foreach ($this->getFields() AS $key => $field) {
+            if (array_get($field, 'searchable')) {
+                $fields[$key] = $field;
+            }
+        }
+
+        return $fields;
     }
 
     /**

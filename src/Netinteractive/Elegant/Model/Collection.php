@@ -1,6 +1,4 @@
-<?php
-
-namespace Netinteractive\Elegant\Model;
+<?php namespace Netinteractive\Elegant\Model;
 
 use Illuminate\Support\Collection AS BaseCollection;
 
