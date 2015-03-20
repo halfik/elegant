@@ -173,11 +173,11 @@ abstract class DbMapper implements MapperInterface
      * @param array $columns
      * @param string $operator
      * @param bool $defaultJoin
-     * @return mixed
+     * @return Collection
      */
     public function findMany(array $params, $columns = array('*'), $operator = 'and', $defaultJoin = true)
     {
-        return new Collection($this->search($params, $columns, $operator, $defaultJoin)->get());
+        return \App::make('ElegantCollection', array($this->search($params, $columns, $operator, $defaultJoin)->get()));
     }
 
 

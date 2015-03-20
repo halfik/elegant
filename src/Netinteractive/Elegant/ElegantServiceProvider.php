@@ -30,6 +30,8 @@ class ElegantServiceProvider extends ServiceProvider {
 	{
 
         \App::bind('Builder', 'Netinteractive\Elegant\Query\Builder');
+        \App::bind('ElegantCollection', 'Netinteractive\Elegant\Model\Collection');
+
 	}
 
 	/**
