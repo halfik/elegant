@@ -42,11 +42,6 @@ abstract class Blueprint
     protected $primaryKey = array();
 
 
-    /**
-     * @var bool
-     */
-    protected $validationEnabled = true;
-
 
     /**
      * Constructor
@@ -137,10 +132,10 @@ abstract class Blueprint
     /**
      * Returns field title
      *
-     * @param string $field
+     * @param string $fieldKey
      * @return string
      */
-    public function getFieldTitle($field)
+    public function getFieldTitle($fieldKey)
     {
 
     }
@@ -149,21 +144,54 @@ abstract class Blueprint
      * Return list of fields validation rules
      *
      * @param string|array $rulesGroups
-     * @param array $fields
+     * @param array $fieldsKeys
      * @return array
      */
-    public function getFieldsRules($rulesGroups='all', $fields=array())
+    public function getFieldsRules($rulesGroups='all', $fieldsKeys=array())
     {
 
+        if (!is_array($rulesGroups)){
+            $rulesGroups = array_map('trim', explode(',', $rulesGroups));
+        }
+
+        if (is_null($fieldsKeys)) {
+            $fieldsKeys = array_keys($this->getFields());
+        }
+
+        if (!is_array($fieldsKeys)){
+            $fieldsKeys = array_map('trim', explode(',', $fieldsKeys));
+        }
+
+        if (!in_array('any', $rulesGroups)) {
+            array_push($rulesGroups, 'any');
+        }
+
+        $result = array();
+        $fields = $this->getFields();
+        foreach ($fields as $key => $field) {
+            if (!in_array($key, $fieldsKeys) || !isSet($field['rules'])) {
+                continue;
+            }
+
+            $rules = $field['rules'];
+            $result[$key] = '';
+            foreach ($rulesGroups as $ruleGroup) {
+                if (in_array($ruleGroup, $rulesGroups)) {
+                    $result[$key] .= '|' . array_get($rules, $ruleGroup);
+                }
+            }
+        }
+
+        return $result;
     }
 
     /**
      * Return list of specific field validation rules
      *
-     * @param string $field
+     * @param string $fieldKey
      * @return array
      */
-    public function getFieldRules($field)
+    public function getFieldRules($fieldKey)
     {
 
     }
@@ -171,10 +199,10 @@ abstract class Blueprint
     /**
      * Returns list of fields types
      *
-     * @param array $fields
+     * @param array $fieldsKeys
      * @return array
      */
-    public function getFieldsTypes($fields = array())
+    public function getFieldsTypes($fieldsKeys = array())
     {
 
     }
@@ -182,10 +210,10 @@ abstract class Blueprint
     /**
      * Returns specific field type
      *
-     * @param string $field
+     * @param string $fieldKey
      * @return string|null
      */
-    public function getFieldType($field)
+    public function getFieldType($fieldKey)
     {
 
     }
@@ -193,13 +221,13 @@ abstract class Blueprint
     /**
      * Set validation rules for a field
      *
-     * @param string $field
+     * @param string $fieldKey
      * @param array $rules
      * @param string $group
      *
      * @return $this
      */
-    public function setFieldRules($field, array $rules, $group='all')
+    public function setFieldRules($fieldKey, array $rules, $group='all')
     {
 
         return $this;
@@ -208,12 +236,12 @@ abstract class Blueprint
     /**
      * Checks if field exists in the fields list
      *
-     * @param string $field
+     * @param string $fieldKey
      * @return boolean
      */
-    public function isField($field)
+    public function isField($fieldKey)
     {
-        return false;
+        return in_array($fieldKey, array_keys($this->fields));
     }
 
     /**
@@ -275,24 +303,4 @@ abstract class Blueprint
         return $this->relations[$relation];
     }
 
-
-    /**
-     * Enables fields validations rules
-     * @return $this
-     */
-    public function enableValidation()
-    {
-        $this->validationEnabled = true;
-        return $this;
-    }
-
-    /**
-     * Disabled fields validations rules
-     * @return $this
-     */
-    public function disableValidation()
-    {
-        $this->validationEnabled = false;
-        return $this;
-    }
 } 

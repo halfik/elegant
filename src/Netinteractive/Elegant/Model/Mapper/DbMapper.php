@@ -88,9 +88,12 @@ abstract class DbMapper implements MapperInterface
     public function save(Model $model)
     {
 
+        $model->validate($model->getDirty());
 
         return $this;
     }
+
+
 
     /**
      * Find one model

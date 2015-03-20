@@ -1,12 +1,8 @@
-<?php
-/**
- * Created by PhpStorm.
- * User: halfik
- * Date: 06.03.15
- * Time: 10:57
- */
+<?php namespace Netinteractive\Elegant\Model;
 
-namespace Netinteractive\Elegant\Model;
+
+use Illuminate\Support\MessageBag AS MessageBag;
+use Netinteractive\Elegant\Exception\ValidationException;
 
 /**
  * Class Model
@@ -44,6 +40,12 @@ abstract class Model
     public $exists = false;
 
     /**
+     * @var bool
+     */
+    protected $validationEnabled = true;
+
+
+    /**
      * Create a new Model instance.
      *
      * @param  array  $attributes
@@ -77,6 +79,33 @@ abstract class Model
     }
 
     /**
+     * Method validates input data
+     * @param array $data
+     * @param string $rulesGroups
+     * @return $this
+     * @throws \Netinteractive\Elegant\Exception\ValidationException
+     */
+    public function validate(array $data, $rulesGroups = 'all')
+    {
+        if ($this->validationEnabled == false) {
+            return $this;
+        }
+
+        $messageBag = new MessageBag();
+        $validator = \Validator::make($data, $this->getBlueprint()->getFieldsRules($rulesGroups, array_keys($data)));
+
+        if ($validator->fails()) {
+            $messages = $validator->messages()->toArray();
+            foreach ($messages as $key => $message) {
+                $messageBag->add($key, $message);
+            }
+            throw new ValidationException($messageBag);
+        }
+
+        return $this;
+    }
+
+    /**
      * Sets model blueprint
      *
      * @param Blueprint $blueprint
@@ -96,6 +125,26 @@ abstract class Model
     public function getBlueprint()
     {
         return $this->blueprint;
+    }
+
+    /**
+     * Enables data validations rules
+     * @return $this
+     */
+    public function enableValidation()
+    {
+        $this->validationEnabled = true;
+        return $this;
+    }
+
+    /**
+     * Disabled data validations rules
+     * @return $this
+     */
+    public function disableValidation()
+    {
+        $this->validationEnabled = false;
+        return $this;
     }
 
 
@@ -265,13 +314,10 @@ abstract class Model
      */
     public function toArray()
     {
-        $attributes = $this->attributes;
-
+        $attributes = array_merge($this->attributes, $this->external);
 
         return $attributes;
     }
-
-
 
 
     /**
