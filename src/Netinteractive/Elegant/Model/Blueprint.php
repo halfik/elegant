@@ -27,9 +27,9 @@ abstract class Blueprint
     protected $fields = array();
 
     /**
-     * @var array
+     * @var null|Netinteractive\Elegant\Model\Relation\Manager
      */
-    protected $relations = array();
+    protected $relations = null;
 
     /**
      * @var string
@@ -55,6 +55,7 @@ abstract class Blueprint
     protected function __construct()
     {
         $this->init();
+        $this->relations = \App('ElegantRelationManager');
     }
 
 

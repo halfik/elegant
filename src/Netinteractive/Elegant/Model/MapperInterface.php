@@ -8,7 +8,7 @@
 
 namespace Netinteractive\Elegant\Model;
 
-use Netinteractive\Elegant\Model\Model;
+use Netinteractive\Elegant\Model\Record;
 
 /**
  * Interface MapperInterface
@@ -30,7 +30,7 @@ interface MapperInterface {
      * @param Model $model
      * @return $this
      */
-    function save(Model $model);
+    function save(Record $model);
 
     /**
      * Find one model
@@ -50,18 +50,18 @@ interface MapperInterface {
     function findMany(array $params);
 
     /**
-     * Create new model
+     * Create new record
      *
      * @param array $data
-     * @return Model
+     * @return Netinteractive\Elegant\Model\Record;
      */
-    function createModel(array $data = array());
+    function createRecord(array $data = array());
 
     /**
-     * get name of moles class
+     * Returns record class name
      *
      * @return string
      */
-    function getModelName();
+    function getRecordClass();
 
 } 

@@ -8,12 +8,12 @@
 
 namespace Netinteractive\Elegant\Model\Mapper;
 use Netinteractive\Elegant\Exception\PrimaryKeyException;
-use Netinteractive\Elegant\Exception\PrimaryKeyIncrementException;
 use Netinteractive\Elegant\Model\Collection;
 use Netinteractive\Elegant\Model\MapperInterface;
-use Netinteractive\Elegant\Model\Model;
+use Netinteractive\Elegant\Model\Record;
 use Netinteractive\Elegant\Query\Builder;
 
+use Illuminate\Database\Eloquent\Relations\Relation;
 
 /**
  * Class DbMapper
@@ -28,8 +28,11 @@ abstract class DbMapper implements MapperInterface
      */
     protected $connection;
 
-
-    protected $modelName;
+    /**
+     * Record class name
+     * @var string
+     */
+    protected $recordName;
 
 
     /**
@@ -44,29 +47,37 @@ abstract class DbMapper implements MapperInterface
 
 
     /**
+     * Create new model
+     *
+     * @param array $data
+     * @return Netinteractive\Elegant\Model\Record
+     */
+    public function createRecord(array $data = array())
+    {
+        $record = \App::make($this->getRecordClass());
+        $record->fill($data);
+        $record->exists = false;
+
+        return $record;
+    }
+
+    /**
+     * Returns name of moles class
+     *
+     * @return string
+     */
+    public function getRecordClass()
+    {
+        return $this->recordName;
+    }
+
+    /**
      * Returns model Blueprint
      * @return \Netinteractive\Elegant\Model\Blueprint
      */
-    protected function getBlueprint()
+    public function getBlueprint()
     {
-        return $this->createModel()->getBlueprint();
-    }
-
-
-    /**
-     * Method checkcs if blueprint primary keys are same with input array keys
-     *
-     * @param int|array $ids
-     * @throws \Netinteractive\Elegant\Exception\PrimaryKeyException
-     */
-    protected function checkPrimaryKey($ids)
-    {
-        $primaryKey = $this->getBlueprint()->getPrimaryKey();
-        if (count($primaryKey) > 1){
-            if ($primaryKey != array_keys($ids)){
-                throw new PrimaryKeyException();
-            }
-        }
+        return $this->createRecord()->getBlueprint();
     }
 
 
@@ -74,7 +85,7 @@ abstract class DbMapper implements MapperInterface
      * Delete record
      *
      * @param integer $id
-     * @return $this
+     * @return int
      */
     public function delete($ids)
     {
@@ -86,10 +97,10 @@ abstract class DbMapper implements MapperInterface
     /**
      * Save model
      *
-     * @param Model $model
+     * @param Netinteractive\Elegant\Model\Record $model
      * @return $this
      */
-    public function save(Model $model)
+    public function save(Record $model)
     {
         $dirty = $model->getDirty();
 
@@ -127,32 +138,13 @@ abstract class DbMapper implements MapperInterface
         return $this;
     }
 
-    /**
-     * Set the keys for a save update query.
-     * @param Builder $query
-     * @param Model $model
-     * @return Builder
-     *
-     */
-    protected function setKeysForSaveQuery(Builder $query, Model $model)
-    {
-        $pk = $model->getBlueprint()->getPrimaryKey();
-
-        foreach ($pk AS $part){
-            $query->where($part, '=', $model->$part);
-        }
-
-
-        return $query;
-    }
-
 
     /**
      * Find one model
      *
      * @param $ids
      * @param array $columns
-     * @return Model
+     * @return Netinteractive\Elegant\Model\Record
      */
     public function find($ids, array $columns=array('*'))
     {
@@ -160,7 +152,7 @@ abstract class DbMapper implements MapperInterface
 
         $data = $this->getQuery()->find($ids, $columns);
 
-        $model = $this->createModel((array) $data);
+        $model = $this->createRecord((array) $data);
         $model->exists = true;
 
         return $model;
@@ -194,30 +186,32 @@ abstract class DbMapper implements MapperInterface
     {
         $query = $this->getQuery();
 
-
+        #if we have empty columns, we take all from table
         if (empty($columns)) {
             $columns[] = $this->getBlueprint()->getTable(). '.*';
         }
         $query->select($columns);
 
-        foreach ($input as $groupName => $groupFields) {
-            if (is_array($groupFields)) {
-                foreach ($groupFields AS $name => $val) {
+        #here we clean up incoming input from empty values
+        foreach ($input as $modelName => $fields) {
+            if (is_array($fields)) {
+                foreach ($fields AS $name => $val) {
                     if (is_array($val) && in_array('null', $val)) {
-                        unset($input[$groupName][$name]);
+                        unset($input[$modelName][$name]);
                     }
-                    if (empty($input[$groupName][$name])) {
-                        unset($input[$groupName][$name]);
+                    if (empty($input[$modelName][$name])) {
+                        unset($input[$modelName][$name]);
                     }
                 }
             }
         }
 
+        #we add to search query default join defined my developer in searchJoins method
         if ($defaultJoin) {
             $query = $this->searchJoins($query);
         }
 
-        #we build single where here becouse of otherse wheres that can be add later (or where added before)
+        #we wrap all ours search wheres  becouse of otherse wheres that can be add later (or where added before)
         $query->where(function ($query) use ($input, $operator) {
             foreach ($input AS $modelName => $fields) {
 
@@ -242,7 +236,7 @@ abstract class DbMapper implements MapperInterface
      * @param string $operator
      * @return mixed
      */
-    public function queryFieldSearch(Model $model, $fieldKey, $keyword, $q, $operator = 'or')
+    public function queryFieldSearch(Record $model, $fieldKey, $keyword, $q, $operator = 'or')
     {
         $searchableFields = $model->getBlueprint()->getSearchableFields();
 
@@ -254,40 +248,6 @@ abstract class DbMapper implements MapperInterface
         return $q;
     }
 
-    /**
-     * Method for serach query modifications
-     * @param Builder $query
-     * @return mixed
-     */
-    protected function searchJoins(Builder $query)
-    {
-        return $query;
-    }
-
-    /**
-     * Create new model
-     *
-     * @param array $data
-     * @return Model
-     */
-    public function createModel(array $data = array())
-    {
-        $model = \App::make($this->getModelName());
-        $model->fill($data);
-        $model->exists = false;
-
-        return $model;
-    }
-
-    /**
-     * get name of moles class
-     *
-     * @return string
-     */
-    public function getModelName()
-    {
-        return $this->modelName;
-    }
 
     /**
      * @return mixed`
@@ -298,5 +258,110 @@ abstract class DbMapper implements MapperInterface
         $query->from($this->getBlueprint()->getTable());
 
         return $query;
+    }
+
+
+    /**
+     * Method checkcs if blueprint primary keys are same with input array keys
+     *
+     * @param int|array $ids
+     * @throws \Netinteractive\Elegant\Exception\PrimaryKeyException
+     */
+    protected function checkPrimaryKey($ids)
+    {
+        $primaryKey = $this->getBlueprint()->getPrimaryKey();
+        if (count($primaryKey) > 1){
+            if ($primaryKey != array_keys($ids)){
+                throw new PrimaryKeyException();
+            }
+        }
+    }
+
+    /**
+     * Set the keys for a save update query.
+     * @param Builder $query
+     * @param Model $model
+     * @return Builder
+     *
+     */
+    protected function setKeysForSaveQuery(Builder $query, Model $model)
+    {
+        $pk = $model->getBlueprint()->getPrimaryKey();
+
+        foreach ($pk AS $part){
+            $query->where($part, '=', $model->$part);
+        }
+
+
+        return $query;
+    }
+
+
+    /**
+     * Method for serach query modifications (method to be overwriten)
+     * @param Builder $query
+     * @return mixed
+     */
+    protected function searchJoins(Builder $query)
+    {
+        return $query;
+    }
+
+
+    #RELATIONS
+
+    /**
+     * Eagerly load the relationship on a set of models.
+     *
+     * @param  array     $models
+     * @param  string    $name
+     * @param  \Closure  $constraints
+     * @return array
+     */
+    protected function loadRelation(array $models, $name, Closure $constraints)
+    {
+        // First we will "back up" the existing where conditions on the query so we can
+        // add our eager constraints. Then we will merge the wheres that were on the
+        // query back to it in order that any where conditions might be specified.
+        $relation = $this->getRelation($name);
+
+        $relation->addEagerConstraints($models);
+
+        call_user_func($constraints, $relation);
+
+        $models = $relation->initRelation($models, $name);
+
+        // Once we have the results, we just match those back up to their parent models
+        // using the relationship instance. Then we just return the finished arrays
+        // of models which have been eagerly hydrated and are readied for return.
+        $results = $relation->getEager();
+
+        return $relation->match($models, $results, $name);
+    }
+
+    /**
+     * Get the relation instance for the given relation name.
+     *
+     * @param  string  $relation
+     * @return \Illuminate\Database\Eloquent\Relations\Relation
+     */
+    public function getRelation($relation)
+    {
+        // We want to run a relationship query without any constrains so that we will
+        // not have to remove these where clauses manually which gets really hacky
+        // and is error prone while we remove the developer's own where clauses.
+        $query = Relation::noConstraints(function() use ($relation)
+        {
+            return $this->createRelation($relation);
+        });
+
+
+
+        return $query;
+    }
+
+    public function createRelation($relation)
+    {
+
     }
 } 
