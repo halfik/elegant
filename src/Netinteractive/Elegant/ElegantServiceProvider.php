@@ -29,9 +29,11 @@ class ElegantServiceProvider extends ServiceProvider {
 	public function register()
 	{
 
-        \App::bind('Builder', 'Netinteractive\Elegant\Query\Builder');
-        \App::bind('ElegantCollection', 'Netinteractive\Elegant\Model\Collection');
-        \App::bind('ElegantRelationManager', 'Netinteractive\Elegant\Model\Collection');
+        \App::bind('Builder', '\Netinteractive\Elegant\Query\Builder');
+        \App::bind('ElegantCollection', '\Netinteractive\Elegant\Model\Collection');
+        \App::bind('ElegantRelationManager', '\Netinteractive\Elegant\Model\Relation\Manager');
+        \App::bind('ElegantRelationDbTranslator', '\Netinteractive\Elegant\Model\Relation\Translator\DbTranslator');
+
 
 	}
 

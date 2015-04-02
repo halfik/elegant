@@ -280,11 +280,11 @@ abstract class DbMapper implements MapperInterface
     /**
      * Set the keys for a save update query.
      * @param Builder $query
-     * @param Model $model
+     * @param Record $model
      * @return Builder
      *
      */
-    protected function setKeysForSaveQuery(Builder $query, Model $model)
+    protected function setKeysForSaveQuery(Builder $query, Record $model)
     {
         $pk = $model->getBlueprint()->getPrimaryKey();
 

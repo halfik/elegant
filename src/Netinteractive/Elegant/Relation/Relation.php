@@ -2,30 +2,25 @@
 
 use Closure;
 use Netinteractive\Elegant\Query\Builder;
-use Netinteractive\Elegant\Model\Model;
+use Netinteractive\Elegant\Model\Record;
+use Netinteractive\Elegant\Model\Collection;
+use Illuminate\Database\Query\Expression;
 
 abstract class Relation {
 
 	/**
 	 * The Eloquent query builder instance.
 	 *
-	 * @var Netinteractive\Elegant\Query\Builder
+	 * @var \Netinteractive\Elegant\Query\Builder
 	 */
 	protected $query;
 
 	/**
-	 * The parent model instance.
+	 * The parent record instance.
 	 *
-	 * @var \Illuminate\Database\Eloquent\Model
+	 * @var \Netinteractive\Elegant\Model\Record
 	 */
 	protected $parent;
-
-	/**
-	 * The related model instance.
-	 *
-	 * @var \Illuminate\Database\Eloquent\Model
-	 */
-	protected $related;
 
 	/**
 	 * Indicates if the relation is adding constraints.
@@ -37,15 +32,14 @@ abstract class Relation {
 	/**
 	 * Create a new relation instance.
 	 *
-	 * @param  \Illuminate\Database\Eloquent\Builder  $query
-	 * @param  \Illuminate\Database\Eloquent\Model  $parent
+	 * @param  \Netinteractive\Elegant\Query\Builder  $query
+	 * @param  \Netinteractive\Elegant\Model\Record  $parent
 	 * @return void
 	 */
-	public function __construct(Builder $query, Model $parent)
+	public function __construct(Builder $query, Record $parent)
 	{
 		$this->query = $query;
 		$this->parent = $parent;
-		$this->related = $query->getModel();
 
 		$this->addConstraints();
 	}
@@ -60,29 +54,29 @@ abstract class Relation {
 	/**
 	 * Set the constraints for an eager load of the relation.
 	 *
-	 * @param  array  $models
+	 * @param  array  $records
 	 * @return void
 	 */
-	abstract public function addEagerConstraints(array $models);
+	abstract public function addEagerConstraints(array $records);
 
 	/**
-	 * Initialize the relation on a set of models.
+	 * Initialize the relation on a set of records.
 	 *
-	 * @param  array   $models
+	 * @param  array   $records
 	 * @param  string  $relation
 	 * @return array
 	 */
-	abstract public function initRelation(array $models, $relation);
+	abstract public function initRelation(array $records, $relation);
 
 	/**
 	 * Match the eagerly loaded results to their parents.
 	 *
-	 * @param  array   $models
-	 * @param  \Illuminate\Database\Eloquent\Collection  $results
+	 * @param  array   $records
+	 * @param  \Netinteractive\Elegant\Model\Collection  $results
 	 * @param  string  $relation
 	 * @return array
 	 */
-	abstract public function match(array $models, Collection $results, $relation);
+	abstract public function match(array $records, Collection $results, $relation);
 
 	/**
 	 * Get the results of the relationship.
@@ -101,17 +95,7 @@ abstract class Relation {
 		return $this->get();
 	}
 
-	/**
-	 * Touch all of the related models for the relationship.
-	 *
-	 * @return void
-	 */
-	public function touch()
-	{
-		$column = $this->getRelated()->getUpdatedAtColumn();
 
-		$this->rawUpdate(array($column => $this->getRelated()->freshTimestampString()));
-	}
 
 	/**
 	 * Run a raw update against the base query.
@@ -127,9 +111,9 @@ abstract class Relation {
 	/**
 	 * Add the constraints for a relationship count query.
 	 *
-	 * @param  \Illuminate\Database\Eloquent\Builder  $query
-	 * @param  \Illuminate\Database\Eloquent\Builder  $parent
-	 * @return \Illuminate\Database\Eloquent\Builder
+	 * @param  \Netinteractive\Elegant\Query\Builder  $query
+	 * @param  \Netinteractive\Elegant\Query\Builder  $parent
+	 * @return \Netinteractive\Elegant\Query\Builder
 	 */
 	public function getRelationCountQuery(Builder $query, Builder $parent)
 	{
@@ -216,45 +200,6 @@ abstract class Relation {
 		return $this->parent->getQualifiedKeyName();
 	}
 
-	/**
-	 * Get the related model of the relation.
-	 *
-	 * @return \Illuminate\Database\Eloquent\Model
-	 */
-	public function getRelated()
-	{
-		return $this->related;
-	}
-
-	/**
-	 * Get the name of the "created at" column.
-	 *
-	 * @return string
-	 */
-	public function createdAt()
-	{
-		return $this->parent->getCreatedAtColumn();
-	}
-
-	/**
-	 * Get the name of the "updated at" column.
-	 *
-	 * @return string
-	 */
-	public function updatedAt()
-	{
-		return $this->parent->getUpdatedAtColumn();
-	}
-
-	/**
-	 * Get the name of the related model's "updated at" column.
-	 *
-	 * @return string
-	 */
-	public function relatedUpdatedAt()
-	{
-		return $this->related->getUpdatedAtColumn();
-	}
 
 	/**
 	 * Wrap the given value with the parent query's grammar.

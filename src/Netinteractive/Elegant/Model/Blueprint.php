@@ -1,12 +1,5 @@
-<?php
-/**
- * Created by PhpStorm.
- * User: halfik
- * Date: 06.03.15
- * Time: 10:57
- */
-
-namespace Netinteractive\Elegant\Model;
+<?php namespace Netinteractive\Elegant\Model;
+use Netinteractive\Elegant\Model\Relation\Manager;
 
 /**
  * Class Blueprint
@@ -27,9 +20,9 @@ abstract class Blueprint
     protected $fields = array();
 
     /**
-     * @var null|Netinteractive\Elegant\Model\Relation\Manager
+     * @var null|\Netinteractive\Elegant\Model\Relation\Manager
      */
-    protected $relations = null;
+    protected $relationManager = null;
 
     /**
      * @var string
@@ -54,8 +47,12 @@ abstract class Blueprint
      */
     protected function __construct()
     {
+        $relationManager = \App('ElegantRelationManager');
+        $relationManager->registerTranslator('db', \App('ElegantRelationDbTranslator'));
+
+        $this->relationManager = $relationManager;
+
         $this->init();
-        $this->relations = \App('ElegantRelationManager');
     }
 
 
@@ -352,25 +349,24 @@ abstract class Blueprint
     }
 
     /**
-     * Return list of relations
+     * Return relation manager object
      * @return array
      */
-    public function getRelations()
+    public function getRelationManager()
     {
-        return $this->relations;
+        return $this->relationManager;
     }
 
     /**
-     * Get a specified relationship.
-     *
-     * @param  string  $relation
-     * @return array
+     * Sets relationship manager
+     * @param Manager $manager
+     * @return $this
      */
-    public function getRelation($relation)
+    public function setRelationManager(Manager $manager)
     {
-        return $this->relations[$relation];
+        $this->relationManager = $manager;
+        return $this;
     }
-
 
 
 } 

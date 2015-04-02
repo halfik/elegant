@@ -5,10 +5,10 @@ use Illuminate\Support\MessageBag AS MessageBag;
 use Netinteractive\Elegant\Exception\ValidationException;
 
 /**
- * Class Model
+ * Class Record
  * @package Netinteractive\Elegant\Model
  */
-abstract class Model
+abstract class Record
 {
     /**
      * @var Blueprint
@@ -16,25 +16,25 @@ abstract class Model
     protected $blueprint;
 
     /**
-     * Model attributes
+     * Record attributes
      * @var array
      */
     protected $attributes = array();
 
     /**
-     * Model external attributes (attributes that dosnt normaly belong to this model)
+     * Record external attributes (attributes that dosnt normaly belong to this record)
      * @var array
      */
     protected $external = array();
 
     /**
-     * Model original attributes (before any changes were made)
+     * Record original attributes (before any changes were made)
      * @var array
      */
     protected $original = array();
 
     /**
-     * Information if model already exists in data base
+     * Information if record already exists in data base
      * @var bool
      */
     public $exists = false;
@@ -46,7 +46,7 @@ abstract class Model
 
 
     /**
-     * Create a new Model instance.
+     * Create a new Record instance.
      *
      * @param  array  $attributes
      * @return void
@@ -64,7 +64,7 @@ abstract class Model
 
 
     /**
-     * Fills model with data
+     * Fills record with data
      * @param array $attributes
      * @return $this
      */
@@ -105,7 +105,7 @@ abstract class Model
     }
 
     /**
-     * Sets model blueprint
+     * Sets record blueprint
      *
      * @param Blueprint $blueprint
      * @return $this
@@ -117,7 +117,7 @@ abstract class Model
     }
 
     /**
-     * Returns model blueprint
+     * Returns record blueprint
      *
      * @return Blueprint
      */
@@ -148,7 +148,7 @@ abstract class Model
 
 
     /**
-     * Set a given attribute on the model
+     * Set a given attribute on the record
      *
      * @param  string  $key
      * @param  mixed   $value
@@ -156,7 +156,7 @@ abstract class Model
      */
     public function setAttribute($key, $value)
     {
-        #we check if data if model attribute or not
+        #we check if data if record attribute or not
         if ($this->getBlueprint()->isField($key)){
             $this->attributes[$key] = $value;
         }else{
@@ -167,7 +167,7 @@ abstract class Model
     }
 
     /**
-     * Get an attribute from the model
+     * Get an attribute from the record
      *
      * @param  string  $key
      * @return mixed
@@ -178,7 +178,7 @@ abstract class Model
     }
 
     /**
-     * Get all of the current attributes on the model
+     * Get all of the current attributes on the record
      *
      * @return array
      */
@@ -199,7 +199,7 @@ abstract class Model
     }
 
     /**
-     * Return list of external attributes (attributes that don't belong to this model)
+     * Return list of external attributes (attributes that don't belong to this record)
      * @return array
      */
     public function getExternals()
@@ -210,7 +210,7 @@ abstract class Model
 
 
     /**
-     * Determine if the model or given attribute(s) have been modified.
+     * Determine if the record or given attribute(s) have been modified.
      *
      * @param  array|string|null  $attributes
      * @return bool
@@ -286,7 +286,7 @@ abstract class Model
 
 
     /**
-     * Convert the model instance to JSON.
+     * Convert the record instance to JSON.
      *
      * @param  int  $options
      * @return string
@@ -307,7 +307,7 @@ abstract class Model
     }
 
     /**
-     * Convert the model instance to an array.
+     * Convert the record instance to an array.
      *
      * @return array
      */
@@ -320,7 +320,7 @@ abstract class Model
 
 
     /**
-     * Convert the model to its string representation.
+     * Convert the record to its string representation.
      *
      * @return string
      */
@@ -331,7 +331,7 @@ abstract class Model
 
 
     /**
-     * Dynamically retrieve attributes on the model.
+     * Dynamically retrieve attributes on the record.
      *
      * @param  string  $key
      * @return mixed
@@ -342,7 +342,7 @@ abstract class Model
     }
 
     /**
-     * Dynamically set attributes on the model.
+     * Dynamically set attributes on the record.
      *
      * @param  string  $key
      * @param  mixed   $value
@@ -354,7 +354,7 @@ abstract class Model
     }
 
     /**
-     * Determine if an attribute exists on the model.
+     * Determine if an attribute exists on the record.
      *
      * @param  string  $key
      * @return bool
@@ -365,7 +365,7 @@ abstract class Model
     }
 
     /**
-     * Unset an attribute on the model.
+     * Unset an attribute on the record.
      *
      * @param  string  $key
      * @return void
