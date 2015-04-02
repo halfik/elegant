@@ -48,11 +48,25 @@ class Manager
      */
     public function getTranslator($name)
     {
-        if (!isSet($this->relations[$name])){
+        if (!isSet($this->translators[$name])){
             throw new TranslatorNotRegisteredException($name);
         }
 
         return $this->translators[$name];
+    }
+
+    /**
+     * Method checks if translator is registered
+     * @param string $name
+     * @return bool
+     */
+    public function hasTranslator($name)
+    {
+        if (!isSet($this->translators[$name])){
+            return false;
+        }
+
+        return true;
     }
 
     /**

@@ -58,6 +58,12 @@ abstract class DbMapper implements MapperInterface
         $record->fill($data);
         $record->exists = false;
 
+        #we check if there is registered db relationship translator and we pass QueryBuilder
+        if ($record->getBlueprint()->getRelationManager()->hasTranslator('db')){
+            \debug(343434);
+           // $record->getBlueprint()->getRelationManager()->getTranslator('db')->setQuery($this->getQuery());
+        }
+
         return $record;
     }
 
@@ -77,7 +83,24 @@ abstract class DbMapper implements MapperInterface
      */
     public function getBlueprint()
     {
-        return $this->createRecord()->getBlueprint();
+        $oReflectionClass = new \ReflectionClass($this->getRecordClass());
+
+        $properties =  $oReflectionClass->getStaticProperties ();
+
+        if ( ! empty($properties) ){
+            foreach ( $properties as $property => $val ){
+                if ( $property == 'blueprints'){
+                    var_dump($val); exit;
+                }
+
+            }
+        }
+
+
+        var_dump($properties); exit;
+
+        return $this->getRecordClass()->getBlueprint();
+       // return $this->createRecord()->getBlueprint();
     }
 
 
@@ -97,43 +120,43 @@ abstract class DbMapper implements MapperInterface
     /**
      * Save model
      *
-     * @param Netinteractive\Elegant\Model\Record $model
+     * @param Netinteractive\Elegant\Model\Record $record
      * @return $this
      */
-    public function save(Record $model)
+    public function save(Record $record)
     {
-        $dirty = $model->getDirty();
+        $dirty = $record->getDirty();
 
         #check if anything has changed
         if (count($dirty) == 0){
             return $this;
         }
 
-        $model->validate($model->getDirty());
+        $record->validate($record->getDirty());
 
         $query = $this->getQuery();
-        $query->from($model->getBlueprint()->getTable());
+        $query->from($record->getBlueprint()->getTable());
 
         #check if we are editing or creating
-        if (!$model->exists){
-            $attributes = $model->getAttributes();
+        if (!$record->exists){
+            $attributes = $record->getAttributes();
 
             #check if we have autoincrementing on PK
-            if ($model->getBlueprint()->incrementingPk){
-                $primaryKey = $model->getBlueprint()->incrementingPk;
+            if ($record->getBlueprint()->incrementingPk){
+                $primaryKey = $record->getBlueprint()->incrementingPk;
 
                 $id = $query->insertGetId($attributes, $primaryKey);
 
-                $model->setAttribute($primaryKey, $id);;
+                $record->setAttribute($primaryKey, $id);;
             }else{
                 $query->insert($attributes);
             }
         }
         else{
-            $this->setKeysForSaveQuery($query, $model)->update($dirty);
+            $this->setKeysForSaveQuery($query, $record)->update($dirty);
         }
 
-        $model->syncOriginal();
+        $record->syncOriginal();
 
         return $this;
     }
@@ -309,59 +332,20 @@ abstract class DbMapper implements MapperInterface
 
 
     #RELATIONS
-
     /**
-     * Eagerly load the relationship on a set of models.
+     * Set the relationships that should be eager loaded.
      *
-     * @param  array     $models
-     * @param  string    $name
-     * @param  \Closure  $constraints
-     * @return array
+     * @param  mixed  $relations
+     * @return $this
      */
-    protected function loadRelation(array $models, $name, Closure $constraints)
+    public function with($relations)
     {
-        // First we will "back up" the existing where conditions on the query so we can
-        // add our eager constraints. Then we will merge the wheres that were on the
-        // query back to it in order that any where conditions might be specified.
-        $relation = $this->getRelation($name);
+        if (is_string($relations)) $relations = func_get_args();
 
-        $relation->addEagerConstraints($models);
+        $eagers = $this->parseRelations($relations);
 
-        call_user_func($constraints, $relation);
+        $this->eagerLoad = array_merge($this->eagerLoad, $eagers);
 
-        $models = $relation->initRelation($models, $name);
-
-        // Once we have the results, we just match those back up to their parent models
-        // using the relationship instance. Then we just return the finished arrays
-        // of models which have been eagerly hydrated and are readied for return.
-        $results = $relation->getEager();
-
-        return $relation->match($models, $results, $name);
-    }
-
-    /**
-     * Get the relation instance for the given relation name.
-     *
-     * @param  string  $relation
-     * @return \Illuminate\Database\Eloquent\Relations\Relation
-     */
-    public function getRelation($relation)
-    {
-        // We want to run a relationship query without any constrains so that we will
-        // not have to remove these where clauses manually which gets really hacky
-        // and is error prone while we remove the developer's own where clauses.
-        $query = Relation::noConstraints(function() use ($relation)
-        {
-            return $this->createRelation($relation);
-        });
-
-
-
-        return $query;
-    }
-
-    public function createRelation($relation)
-    {
-
+        return $this;
     }
 } 

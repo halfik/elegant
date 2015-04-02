@@ -11,9 +11,9 @@ use Netinteractive\Elegant\Exception\ValidationException;
 abstract class Record
 {
     /**
-     * @var Blueprint
+     * @var array
      */
-    protected $blueprint;
+    static protected $blueprints = array();
 
     /**
      * Record attributes
@@ -110,10 +110,9 @@ abstract class Record
      * @param Blueprint $blueprint
      * @return $this
      */
-    public function setBlueprint(Blueprint $blueprint)
+    public static function setBlueprint(Blueprint $blueprint)
     {
-        $this->blueprint = $blueprint;
-        return $this;
+      //  self::$blueprint[get_class(self)] = $blueprint;
     }
 
     /**
@@ -121,9 +120,11 @@ abstract class Record
      *
      * @return Blueprint
      */
-    public function getBlueprint()
+    public static function getBlueprint()
     {
-        return $this->blueprint;
+        return get_class(self);
+        exit;
+        return self::$blueprint[get_class(self)];
     }
 
     /**

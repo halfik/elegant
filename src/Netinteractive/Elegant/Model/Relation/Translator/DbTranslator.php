@@ -1,6 +1,7 @@
 <?php namespace Netinteractive\Elegant\Model\Relation\Translator;
 
-use Netinteractive\Elegant\Model\Relation\TranslatorInterface;
+use \Netinteractive\Elegant\Model\Relation\TranslatorInterface;
+use \Netinteractive\Elegant\Query\Builder;
 use \Illuminate\Database\Eloquent\Relations\HasOne;
 
 /**
@@ -9,6 +10,10 @@ use \Illuminate\Database\Eloquent\Relations\HasOne;
  */
 class DbTranslator implements TranslatorInterface
 {
+    /**
+     * @var \Netinteractive\Elegant\Query\Builder
+     */
+    protected $query = null;
 
     public function get($type, $params)
     {
@@ -30,6 +35,27 @@ class DbTranslator implements TranslatorInterface
         }
 
         return $relation;
+    }
+
+    /**
+     * Set up query builder object
+     * @param Builder $query
+     * @return $this
+     */
+    public function setQuery(Builder $query)
+    {
+        \debug(11);
+       // $this->query = $query;
+        return $this;
+    }
+
+    /**
+     * Returns Query Builder object
+     * @return \Netinteractive\Elegant\Query\Builder
+     */
+    public function getQuery()
+    {
+        return $this->query;
     }
 
 
