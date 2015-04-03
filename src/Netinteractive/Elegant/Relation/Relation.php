@@ -22,6 +22,15 @@ abstract class Relation {
 	 */
 	protected $parent;
 
+    /**
+     * The related model instance.
+     *
+     * @var \Illuminate\Database\Eloquent\Model
+     */
+    protected $related;
+
+
+
 	/**
 	 * Indicates if the relation is adding constraints.
 	 *
@@ -43,6 +52,16 @@ abstract class Relation {
 
 		$this->addConstraints();
 	}
+
+    /**
+     * @param Record $related
+     * @return $this
+     */
+    public function setRelated(Record $related)
+    {
+        $this->related = $related;
+        return $this;
+    }
 
 	/**
 	 * Set the base constraints on the relation query.
@@ -76,7 +95,7 @@ abstract class Relation {
 	 * @param  string  $relation
 	 * @return array
 	 */
-	abstract public function match(array $records, Collection $results, $relation);
+	abstract public function match( array $records, Collection $results, $relation);
 
 	/**
 	 * Get the results of the relationship.
@@ -85,6 +104,7 @@ abstract class Relation {
 	 */
 	abstract public function getResults();
 
+
 	/**
 	 * Get the relationship for eager loading.
 	 *
@@ -92,7 +112,7 @@ abstract class Relation {
 	 */
 	public function getEager()
 	{
-		return $this->get();
+		return $this->getRecords();
 	}
 
 
@@ -106,22 +126,6 @@ abstract class Relation {
 	public function rawUpdate(array $attributes = array())
 	{
 		return $this->query->update($attributes);
-	}
-
-	/**
-	 * Add the constraints for a relationship count query.
-	 *
-	 * @param  \Netinteractive\Elegant\Query\Builder  $query
-	 * @param  \Netinteractive\Elegant\Query\Builder  $parent
-	 * @return \Netinteractive\Elegant\Query\Builder
-	 */
-	public function getRelationCountQuery(Builder $query, Builder $parent)
-	{
-		$query->select(new Expression('count(*)'));
-
-		$key = $this->wrap($this->getQualifiedParentKeyName());
-
-		return $query->where($this->getHasCompareKey(), '=', new Expression($key));
 	}
 
 	/**
@@ -145,22 +149,6 @@ abstract class Relation {
 	}
 
 	/**
-	 * Get all of the primary keys for an array of models.
-	 *
-	 * @param  array   $models
-	 * @param  string  $key
-	 * @return array
-	 */
-	protected function getKeys(array $models, $key = null)
-	{
-		return array_unique(array_values(array_map(function($value) use ($key)
-		{
-			return $key ? $value->getAttribute($key) : $value->getKey();
-
-		}, $models)));
-	}
-
-	/**
 	 * Get the underlying query for the relation.
 	 *
 	 * @return \Illuminate\Database\Eloquent\Builder
@@ -168,16 +156,6 @@ abstract class Relation {
 	public function getQuery()
 	{
 		return $this->query;
-	}
-
-	/**
-	 * Get the base query builder driving the Eloquent builder.
-	 *
-	 * @return \Illuminate\Database\Query\Builder
-	 */
-	public function getBaseQuery()
-	{
-		return $this->query->getQuery();
 	}
 
 	/**
@@ -190,27 +168,6 @@ abstract class Relation {
 		return $this->parent;
 	}
 
-	/**
-	 * Get the fully qualified parent key name.
-	 *
-	 * @return string
-	 */
-	public function getQualifiedParentKeyName()
-	{
-		return $this->parent->getQualifiedKeyName();
-	}
-
-
-	/**
-	 * Wrap the given value with the parent query's grammar.
-	 *
-	 * @param  string  $value
-	 * @return string
-	 */
-	public function wrap($value)
-	{
-		return $this->parent->newQueryWithoutScopes()->getQuery()->getGrammar()->wrap($value);
-	}
 
 	/**
 	 * Handle dynamic method calls to the relationship.
@@ -227,5 +184,38 @@ abstract class Relation {
 
 		return $result;
 	}
+
+    /**
+     * Get all of the primary keys for an array of models.
+     *
+     * @param  array   $records
+     * @param  string  $keys
+     * @return array
+     */
+    protected function getKeys(array $records, $keys = null)
+    {
+        $responseKeys = array();
+
+        #keys array init
+        foreach ($keys AS $key){
+            $responseKeys[$key] = array();
+        }
+
+        #gathering and grouping keys
+        foreach ($records AS $record){
+            foreach ($keys AS $key){
+                if (isSet($record->{$key})){
+                    $responseKeys[$key][] = $record->{$key};
+                }
+            }
+        }
+
+        #unique on key values
+        foreach ($responseKeys AS $key=>$val){
+            $responseKeys[$key] = array_unique($responseKeys[$key]);
+        }
+
+        return $responseKeys;
+    }
 
 }

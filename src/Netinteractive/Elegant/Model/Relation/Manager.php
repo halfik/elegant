@@ -81,7 +81,7 @@ class Manager
             throw new RelationDoesntExistsException($relationName);
         }
 
-        return $this->$this->relations[$relationName];
+        return $this->relations[$relationName];
     }
 
     /**
@@ -95,6 +95,11 @@ class Manager
             return false;
         }
         return true;
+    }
+
+    public function createRelation($type, $record, $relationName)
+    {
+        return $this->getTranslator($type)->get($record, $this->getRelation($relationName));
     }
 
 

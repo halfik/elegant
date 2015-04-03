@@ -1,12 +1,5 @@
-<?php
-/**
- * Created by PhpStorm.
- * User: halfik
- * Date: 06.03.15
- * Time: 10:58
- */
+<?php namespace Netinteractive\Elegant\Model\Mapper;
 
-namespace Netinteractive\Elegant\Model\Mapper;
 use Netinteractive\Elegant\Exception\PrimaryKeyException;
 use Netinteractive\Elegant\Model\Collection;
 use Netinteractive\Elegant\Model\MapperInterface;
@@ -19,7 +12,7 @@ use Illuminate\Database\Eloquent\Relations\Relation;
  * Class DbMapper
  * @package Netinteractive\Elegant\Model\Mapper
  */
-abstract class DbMapper implements MapperInterface
+class DbMapper implements MapperInterface
 {
     /**
      * The database connection instance.
@@ -34,15 +27,31 @@ abstract class DbMapper implements MapperInterface
      */
     protected $recordName;
 
+    /**
+     * @var \Netinteractive\Elegant\Model\Record
+     */
+    protected $emptyRecord = null;
+
+    /**
+     * @var \Netinteractive\Elegant\Model\Blueprint
+     */
+    protected $blueprint = null;
+
+    /**
+     * @var \Netinteractive\Elegant\Query\Builder
+     */
+    protected $query = null;
+
 
     /**
      * Create a new db mapper
      *
      * @return void
      */
-    public function __construct($connection=null)
+    public function __construct($recordClass, $connection=null)
     {
         $this->connection = \App('db')->connection($connection);
+        $this->setRecordClass($recordClass);
     }
 
 
@@ -50,19 +59,14 @@ abstract class DbMapper implements MapperInterface
      * Create new model
      *
      * @param array $data
-     * @return Netinteractive\Elegant\Model\Record
+     * @return \Netinteractive\Elegant\Model\Record
      */
     public function createRecord(array $data = array())
     {
-        $record = \App::make($this->getRecordClass());
+        $record = clone $this->emptyRecord;
+
         $record->fill($data);
         $record->exists = false;
-
-        #we check if there is registered db relationship translator and we pass QueryBuilder
-        if ($record->getBlueprint()->getRelationManager()->hasTranslator('db')){
-            \debug(343434);
-           // $record->getBlueprint()->getRelationManager()->getTranslator('db')->setQuery($this->getQuery());
-        }
 
         return $record;
     }
@@ -78,29 +82,35 @@ abstract class DbMapper implements MapperInterface
     }
 
     /**
+     * Sets record class name
+     * @param string $name
+     * @return $this
+     */
+    public function setRecordClass($name)
+    {
+        $this->recordName = $name;
+
+        $this->emptyRecord = \App::make($this->getRecordClass());
+        $this->blueprint = $this->emptyRecord->getBlueprint();
+
+        #we check if there is registered db relationship translator and we pass QueryBuilder
+        if ($this->emptyRecord ->getBlueprint()->getRelationManager()->hasTranslator('db')){
+            $this->emptyRecord->getBlueprint()->getRelationManager()->getTranslator('db')->setQuery($this->getQuery());
+        }
+
+        $this->query = null;
+
+        return $this;
+    }
+
+
+    /**
      * Returns model Blueprint
      * @return \Netinteractive\Elegant\Model\Blueprint
      */
     public function getBlueprint()
     {
-        $oReflectionClass = new \ReflectionClass($this->getRecordClass());
-
-        $properties =  $oReflectionClass->getStaticProperties ();
-
-        if ( ! empty($properties) ){
-            foreach ( $properties as $property => $val ){
-                if ( $property == 'blueprints'){
-                    var_dump($val); exit;
-                }
-
-            }
-        }
-
-
-        var_dump($properties); exit;
-
-        return $this->getRecordClass()->getBlueprint();
-       // return $this->createRecord()->getBlueprint();
+        return $this->blueprint;
     }
 
 
@@ -120,7 +130,7 @@ abstract class DbMapper implements MapperInterface
     /**
      * Save model
      *
-     * @param Netinteractive\Elegant\Model\Record $record
+     * @param \Netinteractive\Elegant\Model\Record $record
      * @return $this
      */
     public function save(Record $record)
@@ -167,7 +177,7 @@ abstract class DbMapper implements MapperInterface
      *
      * @param $ids
      * @param array $columns
-     * @return Netinteractive\Elegant\Model\Record
+     * @return \Netinteractive\Elegant\Model\Record
      */
     public function find($ids, array $columns=array('*'))
     {
@@ -273,14 +283,22 @@ abstract class DbMapper implements MapperInterface
 
 
     /**
-     * @return mixed`
+     * @return \Netinteractive\Elegant\Query\Builder
      */
     public function getQuery()
     {
-        $query =  \App::make('Builder', array($this->connection,  $this->connection->getQueryGrammar(), $this->connection->getPostProcessor()));
-        $query->from($this->getBlueprint()->getTable());
+        #query builder object init
+        if ($this->query == null){
+            $this->query = \App::make('Builder', array($this->connection,  $this->connection->getQueryGrammar(), $this->connection->getPostProcessor()));
+            $this->query->from($this->getBlueprint()->getTable());
+        }
 
-        return $query;
+        #we pass record  to query builder
+        if ($this->query->getRecord() == null){
+            $this->query->setRecord($this->createRecord());
+        }
+
+        return clone $this->query;
     }
 
 
@@ -331,21 +349,16 @@ abstract class DbMapper implements MapperInterface
     }
 
 
-    #RELATIONS
     /**
-     * Set the relationships that should be eager loaded.
+     * Adding relation to the query object
      *
-     * @param  mixed  $relations
-     * @return $this
+     * @param  array|string  $relations
+     * @return \Netinteractive\Elegant\Query\Builder
      */
     public function with($relations)
     {
         if (is_string($relations)) $relations = func_get_args();
 
-        $eagers = $this->parseRelations($relations);
-
-        $this->eagerLoad = array_merge($this->eagerLoad, $eagers);
-
-        return $this;
+        return $this->getQuery()->with($relations);
     }
 } 

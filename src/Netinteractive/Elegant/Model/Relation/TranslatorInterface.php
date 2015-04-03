@@ -1,5 +1,6 @@
 <?php namespace Netinteractive\Elegant\Model\Relation;
 
+use Netinteractive\Elegant\Model\Record;
 
 /**
  * Interface TranslatorInterface
@@ -9,9 +10,9 @@ interface TranslatorInterface
 {
     /**
      * Returns relation object
-     * @param $type
-     * @param $params
+     * @param  Netinteractive\Elegant\Model\Record  $record
+     * @param  array  $relationData
      * @return mixed
      */
-    public function get($type, $params);
+    public function get(Record $record, array $relationData);
 } 

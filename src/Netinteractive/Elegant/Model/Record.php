@@ -11,9 +11,9 @@ use Netinteractive\Elegant\Exception\ValidationException;
 abstract class Record
 {
     /**
-     * @var array
+     * @var Blueprint
      */
-    static protected $blueprints = array();
+    protected $blueprint;
 
     /**
      * Record attributes
@@ -32,6 +32,12 @@ abstract class Record
      * @var array
      */
     protected $original = array();
+
+    /**
+     * Related records
+     * @var array
+     */
+    protected $relations = array();
 
     /**
      * Information if record already exists in data base
@@ -110,9 +116,10 @@ abstract class Record
      * @param Blueprint $blueprint
      * @return $this
      */
-    public static function setBlueprint(Blueprint $blueprint)
+    public function setBlueprint(Blueprint $blueprint)
     {
-      //  self::$blueprint[get_class(self)] = $blueprint;
+        $this->blueprint = $blueprint;
+        return $this;
     }
 
     /**
@@ -120,11 +127,9 @@ abstract class Record
      *
      * @return Blueprint
      */
-    public static function getBlueprint()
+    public function getBlueprint()
     {
-        return get_class(self);
-        exit;
-        return self::$blueprint[get_class(self)];
+        return clone $this->blueprint;
     }
 
     /**
@@ -286,6 +291,46 @@ abstract class Record
     }
 
 
+    ##RELATIONS
+
+    /**
+     * @param $type
+     * @param $relation
+     * @return mixed
+     */
+    public function getRelation($type, $relation)
+    {
+        return $this->getBlueprint()->getRelationManager()->createRelation($type, $this, $relation);
+    }
+
+    /**
+     * Set the specific relationship in the record.
+     *
+     * @param  string  $relation
+     * @param  mixed   $value
+     * @return $this
+     */
+    public function setRelation($relation, $value)
+    {
+        $this->relations[$relation] = $value;
+
+        return $this;
+    }
+
+    /**
+     * Set the entire relations array on the model.
+     *
+     * @param  array  $relations
+     * @return $this
+     */
+    public function setRelations(array $relations)
+    {
+        $this->relations = $relations;
+
+        return $this;
+    }
+
+
     /**
      * Convert the record instance to JSON.
      *
@@ -296,6 +341,7 @@ abstract class Record
     {
         return json_encode($this->toArray(), $options);
     }
+
 
     /**
      * Convert the object into something JSON serializable.
@@ -314,9 +360,23 @@ abstract class Record
      */
     public function toArray()
     {
-        $attributes = array_merge($this->attributes, $this->external);
+        $relations = array();
 
-        return $attributes;
+        #here we are converting related record to array
+        foreach ($this->relations AS $relationName=>$data){
+            if ( $data instanceof \Netinteractive\Elegant\Model\Record ){
+                $relations[$relationName] = $data->toArray();
+            }
+            else{
+                foreach ($data AS $record){
+                    if ( $record instanceof \Netinteractive\Elegant\Model\Record ){
+                        $relations[] = $record->toArray();
+                    }
+                }
+            }
+        }
+        
+        return array_merge($this->attributes, $this->external, $relations);
     }
 
 
@@ -362,7 +422,7 @@ abstract class Record
      */
     public function __isset($key)
     {
-        return ((isset($this->attributes[$key]) || isset($this->external[$key])) );
+        return ((isset($this->attributes[$key]) || isset($this->external[$key])) || isset($this->relations[$key]) );
     }
 
     /**
@@ -373,7 +433,7 @@ abstract class Record
      */
     public function __unset($key)
     {
-        unset($this->attributes[$key], $this->external[$key]);
+        unset($this->attributes[$key], $this->external[$key], $this->relations[$key]);
     }
 
 } 
