@@ -375,7 +375,7 @@ abstract class Record
                 }
             }
         }
-        
+
         return array_merge($this->attributes, $this->external, $relations);
     }
 

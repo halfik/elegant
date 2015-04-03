@@ -91,7 +91,7 @@ class Builder extends BaseBuilder
      * Execute the query and get the first result.
      *
      * @param  array  $columns
-     * @return \Illuminate\Database\Eloquent\Model|static|null
+     * @return \Netinteractive\Elegant\Model\Record|static|null
      */
     public function first($columns = array('*'))
     {
