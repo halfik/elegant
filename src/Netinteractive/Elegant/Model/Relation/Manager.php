@@ -99,7 +99,7 @@ class Manager
 
     public function createRelation($type, $record, $relationName)
     {
-        return $this->getTranslator($type)->get($record, $this->getRelation($relationName));
+        return $this->getTranslator($type)->get($record, $relationName, $this->getRelation($relationName));
     }
 
 
@@ -143,7 +143,7 @@ class Manager
      * @param  string  $relatedModel
      * @param  string  $foreignKey
      * @param  string  $localKey
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     * @return $this
      */
     public function hasMany($relationName, $relatedModel, $foreignKey = null, $localKey = null)
     {
@@ -160,7 +160,7 @@ class Manager
      * @param  string  $foreignKey
      * @param  string  $otherKey
      * @param  string  $relation
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     * @return $this
      */
     public function belongsToMany($relationName, $relatedModel, $table = null, $foreignKey = null, $otherKey = null, $relation = null)
     {

@@ -16,7 +16,7 @@ class HasMany extends HasOneOrMany
      */
     public function getResults()
     {
-        return $this->query->getRecords();
+        return $this->query->get();
     }
 
     /**

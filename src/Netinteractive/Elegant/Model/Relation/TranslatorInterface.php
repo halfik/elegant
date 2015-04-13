@@ -10,9 +10,10 @@ interface TranslatorInterface
 {
     /**
      * Returns relation object
-     * @param  Netinteractive\Elegant\Model\Record  $record
+     * @param  \Netinteractive\Elegant\Model\Record  $record
+     * @param  string $relationName
      * @param  array  $relationData
      * @return mixed
      */
-    public function get(Record $record, array $relationData);
+    public function get(Record $record, $relationName, array $relationData);
 } 

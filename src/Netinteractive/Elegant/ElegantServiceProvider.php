@@ -2,7 +2,12 @@
 
 use Illuminate\Support\ServiceProvider;
 
-class ElegantServiceProvider extends ServiceProvider {
+/**
+ * Class ElegantServiceProvider
+ * @package Netinteractive\Elegant
+ */
+class ElegantServiceProvider extends ServiceProvider
+{
 
 	/**
 	 * Indicates if loading of the provider is deferred.
@@ -28,13 +33,15 @@ class ElegantServiceProvider extends ServiceProvider {
 	 */
 	public function register()
 	{
-
-        \App::bind('Builder', '\Netinteractive\Elegant\Query\Builder');
+        \App::bind('ElegantQueryBuilder', '\Netinteractive\Elegant\Query\Builder');
+        \App::bind('ElegantModelQueryBuilder', '\Netinteractive\Elegant\Model\Query\Builder');
         \App::bind('ElegantCollection', '\Netinteractive\Elegant\Model\Collection');
         \App::bind('ElegantRelationManager', '\Netinteractive\Elegant\Model\Relation\Manager');
         \App::bind('ElegantRelationDbTranslator', '\Netinteractive\Elegant\Model\Relation\Translator\DbTranslator');
 
-
+        \App::bind('ElegantDbMapper', function($app, $params){
+            return new \Netinteractive\Elegant\Model\Mapper\DbMapper($params[0]);
+        });
 	}
 
 	/**

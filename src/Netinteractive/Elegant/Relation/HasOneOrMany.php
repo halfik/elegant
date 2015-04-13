@@ -1,7 +1,7 @@
 <?php namespace Netinteractive\Elegant\Relation;
 
 use Netinteractive\Elegant\Exception\PkFkSizeException;
-use Netinteractive\Elegant\Query\Builder;
+use Netinteractive\Elegant\Model\Query\Builder;
 use Netinteractive\Elegant\Model\Record;
 use Netinteractive\Elegant\Model\Collection;
 
@@ -194,7 +194,7 @@ abstract class HasOneOrMany extends Relation
      *
      * @return string
      */
-    public function getForeignKey()
+    public function getForeignKey(Record $record=null)
     {
         return $this->foreignKey;
     }

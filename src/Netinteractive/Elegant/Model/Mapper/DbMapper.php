@@ -4,7 +4,7 @@ use Netinteractive\Elegant\Exception\PrimaryKeyException;
 use Netinteractive\Elegant\Model\Collection;
 use Netinteractive\Elegant\Model\MapperInterface;
 use Netinteractive\Elegant\Model\Record;
-use Netinteractive\Elegant\Query\Builder;
+use Netinteractive\Elegant\Model\Query\Builder;
 
 use Illuminate\Database\Eloquent\Relations\Relation;
 
@@ -38,7 +38,7 @@ class DbMapper implements MapperInterface
     protected $blueprint = null;
 
     /**
-     * @var \Netinteractive\Elegant\Query\Builder
+     * @var \Netinteractive\Elegant\Model\Query\Builder
      */
     protected $query = null;
 
@@ -289,7 +289,7 @@ class DbMapper implements MapperInterface
     {
         #query builder object init
         if ($this->query == null){
-            $this->query = \App::make('Builder', array($this->connection,  $this->connection->getQueryGrammar(), $this->connection->getPostProcessor()));
+            $this->query = \App::make('ElegantModelQueryBuilder', array($this->connection,  $this->connection->getQueryGrammar(), $this->connection->getPostProcessor()));
             $this->query->from($this->getBlueprint()->getTable());
         }
 

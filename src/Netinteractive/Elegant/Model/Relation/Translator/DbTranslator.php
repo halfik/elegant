@@ -2,10 +2,12 @@
 
 use Netinteractive\Elegant\Model\Record;
 use \Netinteractive\Elegant\Model\Relation\TranslatorInterface;
-use \Netinteractive\Elegant\Query\Builder;
+use \Netinteractive\Elegant\Model\Query\Builder;
 use \Illuminate\Database\Eloquent\Relations\HasOne;
 use Netinteractive\Elegant\Relation\BelongsTo;
+use Netinteractive\Elegant\Relation\BelongsToMany;
 use Netinteractive\Elegant\Relation\HasMany;
+use Netinteractive\Elegant\Relation\Relation;
 
 /**
  * Class DbTranslator
@@ -14,7 +16,7 @@ use Netinteractive\Elegant\Relation\HasMany;
 class DbTranslator implements TranslatorInterface
 {
     /**
-     * @var \Netinteractive\Elegant\Query\Builder
+     * @var \Netinteractive\Elegant\Model\Query\Builder
      */
     protected $query = null;
 
@@ -25,14 +27,14 @@ class DbTranslator implements TranslatorInterface
      * @param array $relationData
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo|mixed|null
      */
-    public function get(Record $record, array $relationData)
+    public function get(Record $record, $relationName, array $relationData)
     {
         $this->record = $record;
         $relation = null;
 
         switch ($relationData[0]) {
             case 'belongsTo':
-                $relation = $this->belongsTo($relationData[1], $relationData[2], $relationData[3], $relationData[4]);
+                $relation = $this->belongsTo($relationData[1], $relationData[2], $relationData[3], $relationName);
                 break;
             case 'hasOne':
 
@@ -41,7 +43,7 @@ class DbTranslator implements TranslatorInterface
                 $relation = $this->hasMany($relationData[1], $relationData[2], $relationData[3]);
                 break;
             case 'belongsToMany':
-                echo "i equals belongsToMany";
+                $relation = $this->belongsToMany($relationData[1], $relationData[2][0], $relationData[2][1], $relationData[2][2], $relationName);
                 break;
         }
 
@@ -73,17 +75,13 @@ class DbTranslator implements TranslatorInterface
      * Define a one-to-one relationship.
      *
      * @param  string  $related
-     * @param  string  $foreignKey
-     * @param  string  $localKey
+     * @param  string|array  $foreignKey
+     * @param  string|array  $localKey
      * @return \Netinteractive\Elegant\Relation\HasOne
      */
-    public function hasOne($related, $foreignKey = null, $localKey = null)
+    public function hasOne($related, $foreignKey, $localKey)
     {
-        $foreignKey = $foreignKey ?: $this->getForeignKey();
-
         $instance = \App($related);
-
-        $localKey = $localKey ?: $this->getKeyName();
 
         return new HasOne($instance->newQuery(), $this, $instance->getTable().'.'.$foreignKey, $localKey);
     }
@@ -115,27 +113,8 @@ class DbTranslator implements TranslatorInterface
      * @param  string  $relation
      * @return \Netinteractive\Elegant\Relation\BelongsTo
      */
-    public function belongsTo($related, $foreignKey = null, $otherKey = null, $relation = null)
+    public function belongsTo($related, $foreignKey, $otherKey, $relation)
     {
-
-        // If no relation name was given, we will use this debug backtrace to extract
-        // the calling method's name and use that as the relationship name as most
-        // of the time this will be what we desire to use for the relationships.
-        if (is_null($relation))
-        {
-            list(, $caller) = debug_backtrace(false, 2);
-
-            $relation = $caller['function'];
-        }
-
-        // If no foreign key was supplied, we can use a backtrace to guess the proper
-        // foreign key name by using the name of the relationship function, which
-        // when combined with an "_id" should conventionally match the columns.
-        if (is_null($foreignKey))
-        {
-            $foreignKey = snake_case($relation).'__id';
-        }
-
         $instance = \App($related);
 
 
@@ -144,12 +123,28 @@ class DbTranslator implements TranslatorInterface
         // actually be responsible for retrieving and hydrating every relations.
         $query = $this->getQuery();
 
+        return new BelongsTo($query, $instance, $this->record, $foreignKey, $otherKey, $relation);
+    }
 
-        $otherKey = $otherKey ?: $instance->getBlueprint()->getPrimaryKey();
-        $relation = new BelongsTo($query, $instance, $this->record, $foreignKey, $otherKey, $relation);
+    /**
+     * Define a many-to-many relationship.
+     *
+     * @param  string        $related
+     * @param  string        $table
+     * @param  string|array  $foreignKey
+     * @param  string|array  $otherKey
+     * @param  string        $relation
+     * @return \Netinteractive\Elegant\Relation\BelongsToMany
+     */
+    public function belongsToMany($related, $table, $foreignKey, $otherKey, $relation)
+    {
+        $instance = \App($related);
 
-        $relation->getKeys();
+        // Now we're ready to create a new query builder for the related model and
+        // the relationship instances for the relation. The relations will set
+        // appropriate query constraint and entirely manages the hydrations.
+        $dbMapper = \App('ElegantDbMapper', array($related));
 
-        return $relation;
+        return new BelongsToMany( $dbMapper->getQuery(), $instance, $this->record, $table, $foreignKey, $otherKey, $relation);
     }
 } 

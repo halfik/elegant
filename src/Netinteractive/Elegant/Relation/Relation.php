@@ -1,7 +1,7 @@
 <?php namespace Netinteractive\Elegant\Relation;
 
 use Closure;
-use Netinteractive\Elegant\Query\Builder;
+use Netinteractive\Elegant\Model\Query\Builder;
 use Netinteractive\Elegant\Model\Record;
 use Netinteractive\Elegant\Model\Collection;
 use Illuminate\Database\Query\Expression;
@@ -29,6 +29,12 @@ abstract class Relation {
      */
     protected $related;
 
+    /**
+     * The many to many relationship methods.
+     *
+     * @var array
+     */
+    public static $manyMethods = array('belongsToMany', 'morphToMany', 'morphedByMany');
 
 
 	/**
@@ -112,7 +118,7 @@ abstract class Relation {
 	 */
 	public function getEager()
 	{
-		return $this->getRecords();
+		return $this->get();
 	}
 
 
@@ -169,6 +175,16 @@ abstract class Relation {
 	}
 
 
+    /**
+     * Get the default foreign key name for the record.
+     * @param Record $record
+     * @return string
+     */
+    public function getForeignKey(Record $record)
+    {
+        return snake_case($record->getBlueprint()->getTable().'__id');
+    }
+
 	/**
 	 * Handle dynamic method calls to the relationship.
 	 *
@@ -186,15 +202,24 @@ abstract class Relation {
 	}
 
     /**
-     * Get all of the primary keys for an array of models.
+     * Get all of the primary keys for an array of records.
      *
      * @param  array   $records
      * @param  string  $keys
      * @return array
      */
-    protected function getKeys(array $records, $keys = null)
+    protected function getKeys(array $records, $keys = array())
     {
         $responseKeys = array();
+
+        if (empty($keys)){
+            foreach ($records AS $record){
+                $recordKeys = $record->getBlueprint()->getPrimaryKey();
+                foreach ($recordKeys AS $key){
+                    $keys[] = $key;
+                }
+            }
+        }
 
         #keys array init
         foreach ($keys AS $key){

@@ -1,7 +1,7 @@
 <?php namespace Netinteractive\Elegant\Relation;
 
 use Netinteractive\Elegant\Exception\PkFkSizeException;
-use Netinteractive\Elegant\Query\Builder;
+use Netinteractive\Elegant\Model\Query\Builder;
 use Netinteractive\Elegant\Model\Record;
 use Netinteractive\Elegant\Model\Collection;
 
@@ -86,7 +86,6 @@ class BelongsTo extends Relation
      */
     public function addConstraints()
     {
-
         if (static::$constraints) {
             // For belongs to relationships, which are essentially the inverse of has one
             // or has many relationships, we need to actually query on the primary key
@@ -95,7 +94,6 @@ class BelongsTo extends Relation
             $fkList = $this->foreignKey;
 
             foreach ($this->otherKey AS $otherKey) {
-                echo $otherKey; exit;
                 $fk = array_shift($fkList);
                 $this->query->where($table . '.' . $otherKey, '=', $this->parent->{$fk});
             }
@@ -112,7 +110,6 @@ class BelongsTo extends Relation
      */
     public function addEagerConstraints(array $records)
     {
-
         $keys = $this->getEagerRecordKeys($records);
         $this->query->from($this->related->getBlueprint()->getTable());
 
@@ -229,7 +226,6 @@ class BelongsTo extends Relation
             $this->parent->setAttribute($fk, $record->getAttribute(array_shift($otherKeys)));
         }
 
-
         return $this->parent->setRelation($this->relation, $record);
     }
 
@@ -253,7 +249,7 @@ class BelongsTo extends Relation
      *
      * @return string
      */
-    public function getForeignKey()
+    public function getForeignKey(Record $record=null)
     {
         return $this->foreignKey;
     }

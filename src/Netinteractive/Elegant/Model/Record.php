@@ -370,7 +370,7 @@ abstract class Record
             else{
                 foreach ($data AS $record){
                     if ( $record instanceof \Netinteractive\Elegant\Model\Record ){
-                        $relations[] = $record->toArray();
+                        $relations[$relationName] = $record->toArray();
                     }
                 }
             }
