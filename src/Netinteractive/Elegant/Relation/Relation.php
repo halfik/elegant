@@ -1,6 +1,7 @@
 <?php namespace Netinteractive\Elegant\Relation;
 
 use Closure;
+use Netinteractive\Elegant\Relation\Pivot;
 use Netinteractive\Elegant\Model\Query\Builder;
 use Netinteractive\Elegant\Model\Record;
 use Netinteractive\Elegant\Model\Collection;
@@ -183,6 +184,20 @@ abstract class Relation {
     public function getForeignKey(Record $record)
     {
         return snake_case($record->getBlueprint()->getTable().'__id');
+    }
+
+    /**
+     * Create a new pivot model instance.
+     *
+     * @param  \Netinteractive\Elegant\Model\Record $parent
+     * @param  array   $attributes
+     * @param  string  $table
+     * @param  bool    $exists
+     * @return \Netinteractive\Elegant\Relation\Pivot
+     */
+    public function newPivot(Record $parent, array $attributes, $table, $exists)
+    {
+        return new Pivot($parent, $attributes, $table, $exists);
     }
 
 	/**

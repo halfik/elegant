@@ -125,10 +125,14 @@ abstract class Record
     /**
      * Returns record blueprint
      *
-     * @return Blueprint
+     * @return Blueprint|null
      */
     public function getBlueprint()
     {
+        if (!$this->blueprint){
+            return null;
+        }
+
         return clone $this->blueprint;
     }
 
@@ -162,12 +166,20 @@ abstract class Record
      */
     public function setAttribute($key, $value)
     {
-        #we check if data if record attribute or not
-        if ($this->getBlueprint()->isField($key)){
-            $this->attributes[$key] = $value;
+        $blueprint = $this->getBlueprint();
+
+        #we check if we have a blueprint if not, then each field is an attribute
+        if ($blueprint){
+            #we take from blueprint information if field is a record field (database) or additional field
+            if ($blueprint->isField($key)){
+                $this->attributes[$key] = $value;
+            }else{
+                $this->external[$key] = $value;
+            }
         }else{
-            $this->external[$key] = $value;
+            $this->attributes[$key] = $value;
         }
+
 
         return $this;
     }
@@ -180,7 +192,17 @@ abstract class Record
      */
     public function getAttribute($key)
     {
-        return isSet($this->attributes[$key]) ? $this->attributes[$key] : $this->external[$key];
+        $response = null;
+
+        if (isSet($this->attributes[$key])){
+            $response = $this->attributes[$key];
+        }elseif (isSet($this->external[$key])){
+            $response = $this->attributes[$key];
+        }elseif (isSet($this->relations[$key])){
+            $response = $this->relations[$key];
+        }
+
+        return $response;
     }
 
     /**

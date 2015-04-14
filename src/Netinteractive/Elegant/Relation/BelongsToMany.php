@@ -89,1009 +89,346 @@ class BelongsToMany extends Relation
 		parent::__construct($query, $parent);
 	}
 
-	/**
-	 * Get the results of the relationship.
-	 *
-	 * @return mixed
-	 */
-	public function getResults()
-	{
-		return $this->get();
-	}
+    /**
+     * Set the base constraints on the relation query.
+     *
+     * @return void
+     */
+    public function addConstraints()
+    {
+        $this->setJoin();
 
-	/**
-	 * Set a where clause for a pivot table column.
-	 *
-	 * @param  string  $column
-	 * @param  string  $operator
-	 * @param  mixed   $value
-	 * @param  string  $boolean
-	 * @return \Netinteractive\Elegant\Relation\BelongsToMany
-	 */
-	public function wherePivot($column, $operator = null, $value = null, $boolean = 'and')
-	{
-		$this->pivotWheres[] = func_get_args();
-
-		return $this->where($this->table.'.'.$column, $operator, $value, $boolean);
-	}
-
-	/**
-	 * Set an or where clause for a pivot table column.
-	 *
-	 * @param  string  $column
-	 * @param  string  $operator
-	 * @param  mixed   $value
-	 * @return \Netinteractive\Elegant\Relation\BelongsToMany
-	 */
-	public function orWherePivot($column, $operator = null, $value = null)
-	{
-		return $this->wherePivot($column, $operator, $value, 'or');
-	}
-
-	/**
-	 * Execute the query and get the first result.
-	 *
-	 * @param  array   $columns
-	 * @return mixed
-	 */
-	public function first($columns = array('*'))
-	{
-		$results = $this->take(1)->get($columns);
-
-		return count($results) > 0 ? $results->first() : null;
-	}
-
-	/**
-	 * Execute the query and get the first result or throw an exception.
-	 *
-	 * @param  array  $columns
-	 * @return \Netinteractive\Elegant\Model\Record|static
-	 *
-	 * @throws \Netinteractive\Elegant\Exception\RecordNotFoundException
-	 */
-	public function firstOrFail($columns = array('*'))
-	{
-		if ( ! is_null($record = $this->first($columns))){
-            return $record;
-        }
-
-		throw new RecordNotFoundException();
-	}
-
-	/**
-	 * Execute the query as a "select" statement.
-	 *
-	 * @param  array  $columns
-	 * @return \Netinteractive\Elegant\Model\Collection
-	 */
-	public function get($columns = array('*'))
-	{
-		// First we'll add the proper select columns onto the query so it is run with
-		// the proper columns. Then, we will get the results and hydrate out pivot
-		// models with the result of those columns as a separate model relation.
-		$columns = $this->query->getQuery()->columns ? array() : $columns;
-
-		$select = $this->getSelectColumns($columns);
-
-		$record = $this->query->addSelect($select)->getModels();
-
-		$this->hydratePivotRelation($record);
-
-		// If we actually found models we will also eager load any relationships that
-		// have been specified as needing to be eager loaded. This will solve the
-		// n + 1 query problem for the developer and also increase performance.
-		if (count($record) > 0)
-		{
-            $record = $this->query->eagerLoadRelations($record);
-		}
-
-		return new Collection($record);
-	}
-
-	/**
-	 * Get a paginator for the "select" statement.
-	 *
-	 * @param  int    $perPage
-	 * @param  array  $columns
-	 * @return \Illuminate\Pagination\Paginator
-	 */
-	public function paginate($perPage = null, $columns = array('*'))
-	{
-		$this->query->addSelect($this->getSelectColumns($columns));
-
-		$paginator = $this->query->paginate($perPage, $columns);
-
-		$this->hydratePivotRelation($paginator->items());
-
-		return $paginator;
-	}
-
-	/**
-	 * Hydrate the pivot table relationship on the models.
-	 *
-	 * @param  array  $models
-	 * @return void
-	 */
-	protected function hydratePivotRelation(array $models)
-	{
-		// To hydrate the pivot relationship, we will just gather the pivot attributes
-		// and create a new Pivot model, which is basically a dynamic model that we
-		// will set the attributes, table, and connections on so it they be used.
-		foreach ($models as $model)
-		{
-			$pivot = $this->newExistingPivot($this->cleanPivotAttributes($model));
-
-			$model->setRelation('pivot', $pivot);
-		}
-	}
-
-	/**
-	 * Get the pivot attributes from a model.
-	 *
-	 * @param  \Netinteractive\Elegant\Model\Record  $model
-	 * @return array
-	 */
-	protected function cleanPivotAttributes(Record $record)
-	{
-		$values = array();
-
-		foreach ($record->getAttributes() as $key => $value)
-		{
-			// To get the pivots attributes we will just take any of the attributes which
-			// begin with "pivot_" and add those to this arrays, as well as unsetting
-			// them from the parent's models since they exist in a different table.
-			if (strpos($key, 'pivot_') === 0)
-			{
-				$values[substr($key, 6)] = $value;
-
-				unset($record->$key);
-			}
-		}
-
-		return $values;
-	}
-
-	/**
-	 * Set the base constraints on the relation query.
-	 *
-	 * @return void
-	 */
-	public function addConstraints()
-	{
-		$this->setJoin();
-
-		if (static::$constraints){
+        if (static::$constraints){
             $this->setWhere();
         }
-	}
+    }
 
-	/**
-	 * Add the constraints for a relationship count query.
-	 *
-	 * @param  \Netinteractive\Elegant\Model\Query\Builder  $query
-	 * @param  \Netinteractive\Elegant\Model\Query\Builder   $parent
-	 * @return \Netinteractive\Elegant\Model\Query\Builder
+    /**
+     * Set the constraints for an eager load of the relation.
+     *
+     * @param  array  $records
+     * @return void
      */
-	public function getRelationCountQuery(Builder $query, Builder $parent)
-	{
-		if ($parent->getQuery()->getFrom() == $query->getQuery()->getFrom())
-		{
-			return $this->getRelationCountQueryForSelfJoin($query, $parent);
-		}
+    public function addEagerConstraints(array $records)
+    {
+        $fkList = $this->getForeignKey();
+        $fkValueList = $this->getKeys($records);
 
-		$this->setJoin($query);
+        foreach ($fkList AS $fk){
+            $this->query->whereIn($fk, $fkValueList);
+        }
 
-		return parent::getRelationCountQuery($query, $parent);
-	}
+    }
 
-	/**
-	 * Add the constraints for a relationship count query on the same table.
-	 *
-	 * @param  \Netinteractive\Elegant\Model\Query\Builder   $query
-	 * @param  \Netinteractive\Elegant\Model\Query\Builder   $parent
-	 * @return \Netinteractive\Elegant\Model\Query\Builder
+    /**
+     * Initialize the relation on a set of models.
+     *
+     * @param  array   $records
+     * @param  string  $relation
+     * @return array
      */
-	public function getRelationCountQueryForSelfJoin(Builder $query, Builder $parent)
-	{
-		$query->select(new Expression('count(*)'));
+    public function initRelation(array $records, $relation)
+    {
+        foreach ($records as $record){
+            $record->setRelation($relation, new Collection());
+        }
 
-		$tablePrefix = $this->query->getQuery()->getConnection()->getTablePrefix();
+        return $records;
+    }
 
-		$query->from($this->table.' as '.$tablePrefix.$hash = $this->getRelationCountHash());
+    /**
+     * Get the results of the relationship.
+     *
+     * @return mixed
+     */
+    public function getResults()
+    {
+        return $this->get();
+    }
 
-		$key = $this->wrap($this->getQualifiedParentKeyName());
+    /**
+     * Execute the query as a "select" statement.
+     *
+     * @param  array  $columns
+     * @return \Netinteractive\Elegant\Model\Collection
+     */
+    public function get($columns = array('*'))
+    {
 
-		return $query->where($hash.'.'.$this->foreignKey, '=', new Expression($key));
-	}
+        // First we'll add the proper select columns onto the query so it is run with
+        // the proper columns. Then, we will get the results and hydrate out pivot
+        // models with the result of those columns as a separate model relation.
+        $columns = $this->query->columns ? array() : $columns;
 
-	/**
-	 * Get a relationship join table hash.
-	 *
-	 * @return string
-	 */
-	public function getRelationCountHash()
-	{
-		return 'self_'.md5(microtime(true));
-	}
+        $select = $this->getSelectColumns($columns);
 
-	/**
-	 * Set the select clause for the relation query.
-	 *
-	 * @param  array  $columns
-	 * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
-	 */
-	protected function getSelectColumns(array $columns = array('*'))
-	{
-		if ($columns == array('*'))
-		{
-			$columns = array($this->related->getTable().'.*');
-		}
+        $records = $this->query->addSelect($select)->get();
 
-		return array_merge($columns, $this->getAliasedPivotColumns());
-	}
+        $this->hydratePivotRelation($records->toArray());
 
-	/**
-	 * Get the pivot columns for the relation.
-	 *
-	 * @return array
-	 */
-	protected function getAliasedPivotColumns()
-	{
-		$defaults = array($this->foreignKey, $this->otherKey);
+        // If we actually found models we will also eager load any relationships that
+        // have been specified as needing to be eager loaded. This will solve the
+        // n + 1 query problem for the developer and also increase performance.
+        if (count($records) > 0) {
+            $records = $this->query->eagerLoadRelations($records->toArray());
+        }
 
-		// We need to alias all of the pivot columns with the "pivot_" prefix so we
-		// can easily extract them out of the models and put them into the pivot
-		// relationships when they are retrieved and hydrated into the models.
-		$columns = array();
+        return \App::make('ElegantCollection', array($records));
+    }
 
-		foreach (array_merge($defaults, $this->pivotColumns) as $column)
-		{
-			$columns[] = $this->table.'.'.$column.' as pivot_'.$column;
-		}
+    /**
+     * Match the eagerly loaded results to their parents.
+     *
+     * @param  array   $records
+     * @param  \Netinteractive\Elegant\Model\Collection  $results
+     * @param  string  $relation
+     * @return array
+     */
+    public function match(array $records, Collection $results, $relation)
+    {
+        $dictionary = $this->buildDictionary($results);
 
-		return array_unique($columns);
-	}
+        // Once we have an array dictionary of child objects we can easily match the
+        // children back to their parent using the dictionary and the keys on the
+        // the parent models. Then we will return the hydrated models back out.
+        foreach ($records as $record)
+        {
+            $recordPkList = $record->getBlueprint()->getPrimaryKey();
 
-	/**
-	 * Determine whether the given column is defined as a pivot column.
-	 *
-	 * @param  string  $column
-	 * @return bool
-	 */
-	protected function hasPivotColumn($column)
-	{
-		return in_array($column, $this->pivotColumns);
-	}
+            foreach ($recordPkList AS $recordPk){
+                if (isset($dictionary[$key = $recordPk]))
+                {
+                    $collection = \App::make('ElegantCollection', array($dictionary[$key]));
+                    $record->setRelation($relation, $collection);
+                }
+            }
 
-	/**
-	 * Set the join clause for the relation query.
-	 *
-	 * @param  \Netinteractive\Elegant\Model\Query\Builder|null
-	 * @return $this
-	 */
-	protected function setJoin($query = null)
-	{
+        }
 
-		// We need to join to the intermediate table on the related model's primary
-		// key column with the intermediate table's foreign key for the related
-		// model instance. Then we can set the "where" for the parent models.
-		$baseTable = $this->related->getBlueprint()->getTable();
+        return $records;
+    }
 
-		$keys = $this->related->getBlueprint()->getPrimaryKey();
+    /**
+     * Get the fully qualified foreign key for the relation.
+     *
+     * @return string
+     */
+    public function getForeignKey(Record $record=null)
+    {
+        $response = array();
+
+        foreach ($this->foreignKey AS $fk){
+            $response[] = $this->table.'.'.$fk;
+        }
+
+        return $response;
+    }
+
+    /**
+     * Get the fully qualified "other key" for the relation.
+     *
+     * @return string
+     */
+    public function getOtherKey()
+    {
+        $response = array();
+
+        foreach ($this->otherKey AS $fk){
+            $response[] = $this->table.'.'.$fk;
+        }
+
+        return $response;
+    }
+
+    /**
+     * Get the intermediate table for the relationship.
+     *
+     * @return string
+     */
+    public function getTable()
+    {
+        return $this->table;
+    }
+
+    /**
+     * Create a new existing pivot model instance.
+     *
+     * @param  array  $attributes
+     * @return \Netinteractive\Elegant\Relation\Pivot
+     */
+    public function newExistingPivot(array $attributes = array())
+    {
+        return $this->createNewPivot($attributes, true);
+    }
+
+    /**
+     * Create a new pivot model instance.
+     *
+     * @param  array  $attributes
+     * @param  bool   $exists
+     * @return \Netinteractive\Elegant\Relation\Pivot
+     */
+    public function createNewPivot(array $attributes = array(), $exists = false)
+    {
+        $pivot = $this->newPivot($this->parent, $attributes, $this->table, $exists);
+
+        return $pivot->setPivotKeys($this->foreignKey, $this->otherKey);
+    }
+
+    /**
+     * Set the join clause for the relation query.
+     *
+     * @param  \Netinteractive\Elegant\Model\Query\Builder|null
+     * @return $this
+     */
+    protected function setJoin($query = null)
+    {
+        $query = $query ?: $this->query;
+
+        // We need to join to the intermediate table on the related model's primary
+        // key column with the intermediate table's foreign key for the related
+        // model instance. Then we can set the "where" for the parent models.
+        $baseTable = $this->related->getBlueprint()->getTable();
+
+        $keys = $this->related->getBlueprint()->getPrimaryKey();
         $otherKeys = $this->getOtherKey();
 
-        $this->query->join($this->table, function($join) use($keys, $baseTable, $otherKeys){
+        $query->join($this->table, function($join) use($keys, $baseTable, $otherKeys){
             foreach ($keys AS $index=>$key){
                 if (isSet($otherKeys[$index])){
                     $key = $baseTable.'.'.$key;
                     $join->on($key, '=', $otherKeys[$index]);
                 }
-
             }
         });
 
-
-		return $this;
-	}
-
-	/**
-	 * Set the where clause for the relation query.
-	 *
-	 * @return $this
-	 */
-	protected function setWhere()
-	{
-		$foreign = $this->getForeignKey();
-
-		$this->query->where($foreign, '=', $this->parent->getKey());
-
-		return $this;
-	}
-
-	/**
-	 * Set the constraints for an eager load of the relation.
-	 *
-	 * @param  array  $records
-	 * @return void
-	 */
-	public function addEagerConstraints(array $records)
-	{
-		$this->query->whereIn($this->getForeignKey(), $this->getKeys($records));
-	}
-
-	/**
-	 * Initialize the relation on a set of models.
-	 *
-	 * @param  array   $records
-	 * @param  string  $relation
-	 * @return array
-	 */
-	public function initRelation(array $records, $relation)
-	{
-		foreach ($records as $record)
-		{
-            $record->setRelation($relation, new Collection());
-		}
-
-		return $records;
-	}
-
-	/**
-	 * Match the eagerly loaded results to their parents.
-	 *
-	 * @param  array   $models
-	 * @param  \Netinteractive\Elegant\Model\Collection  $results
-	 * @param  string  $relation
-	 * @return array
-	 */
-	public function match(array $models, Collection $results, $relation)
-	{
-		$dictionary = $this->buildDictionary($results);
-
-		// Once we have an array dictionary of child objects we can easily match the
-		// children back to their parent using the dictionary and the keys on the
-		// the parent models. Then we will return the hydrated models back out.
-		foreach ($models as $model)
-		{
-			if (isset($dictionary[$key = $model->getKey()]))
-			{
-				$collection = $this->related->newCollection($dictionary[$key]);
-
-				$model->setRelation($relation, $collection);
-			}
-		}
-
-		return $models;
-	}
-
-	/**
-	 * Build model dictionary keyed by the relation's foreign key.
-	 *
-	 * @param  \Netinteractive\Elegant\Model\Collection  $results
-	 * @return array
-	 */
-	protected function buildDictionary(Collection $results)
-	{
-		$foreign = $this->foreignKey;
-
-		// First we will build a dictionary of child models keyed by the foreign key
-		// of the relation so that we will easily and quickly match them to their
-		// parents without having a possibly slow inner loops for every models.
-		$dictionary = array();
-
-		foreach ($results as $result)
-		{
-			$dictionary[$result->pivot->$foreign][] = $result;
-		}
-
-		return $dictionary;
-	}
-
-	/**
-	 * Touch all of the related models for the relationship.
-	 *
-	 * E.g.: Touch all roles associated with this user.
-	 *
-	 * @return void
-	 */
-	public function touch()
-	{
-		$key = $this->getRelated()->getKeyName();
-
-		$columns = $this->getRelatedFreshUpdate();
-
-		// If we actually have IDs for the relation, we will run the query to update all
-		// the related model's timestamps, to make sure these all reflect the changes
-		// to the parent models. This will help us keep any caching synced up here.
-		$ids = $this->getRelatedIds();
-
-		if (count($ids) > 0)
-		{
-			$this->getRelated()->newQuery()->whereIn($key, $ids)->update($columns);
-		}
-	}
-
-	/**
-	 * Get all of the IDs for the related models.
-	 *
-	 * @return array
-	 */
-	public function getRelatedIds()
-	{
-		$related = $this->getRelated();
-
-		$fullKey = $related->getQualifiedKeyName();
-
-		return $this->getQuery()->select($fullKey)->lists($related->getKeyName());
-	}
-
-	/**
-	 * Find a related model by its primary key or return new instance of the related model.
-	 *
-	 * @param  mixed  $id
-	 * @param  array  $columns
-	 * @return \Netinteractive\Elegant\Model\Record
-	 */
-	public function findOrNew($id, $columns = ['*'])
-	{
-		if (is_null($instance = $this->find($id, $columns)))
-		{
-			$instance = $this->getRelated()->newInstance();
-		}
-
-		return $instance;
-	}
-
-	/**
-	 * Get the first related model record matching the attributes or instantiate it.
-	 *
-	 * @param  array  $attributes
-	 * @return \Netinteractive\Elegant\Model\Record
-	 */
-	public function firstOrNew(array $attributes)
-	{
-		if (is_null($instance = $this->where($attributes)->first()))
-		{
-			$instance = $this->related->newInstance();
-		}
-
-		return $instance;
-	}
-
-	/**
-	 * Get the first related record matching the attributes or create it.
-	 *
-	 * @param  array  $attributes
-	 * @return \Netinteractive\Elegant\Model\Record
-	 */
-	public function firstOrCreate(array $attributes, array $joining = [], $touch = true)
-	{
-		if (is_null($instance = $this->where($attributes)->first()))
-		{
-			$instance = $this->create($attributes, $joining, $touch);
-		}
-
-		return $instance;
-	}
-
-	/**
-	 * Create a new instance of the related model.
-	 *
-	 * @param  array  $attributes
-	 * @param  array  $joining
-	 * @param  bool   $touch
-	 * @return \Illuminate\Database\Eloquent\Model
-	 */
-	public function create(array $attributes, array $joining = array(), $touch = true)
-	{
-		$instance = $this->related->newInstance($attributes);
-
-		// Once we save the related model, we need to attach it to the base model via
-		// through intermediate table so we'll use the existing "attach" method to
-		// accomplish this which will insert the record and any more attributes.
-		$instance->save(array('touch' => false));
-
-		$this->attach($instance->getKey(), $joining, $touch);
-
-		return $instance;
-	}
-
-	/**
-	 * Create an array of new instances of the related models.
-	 *
-	 * @param  array  $records
-	 * @param  array  $joinings
-	 * @return \Illuminate\Database\Eloquent\Model
-	 */
-	public function createMany(array $records, array $joinings = array())
-	{
-		$instances = array();
-
-		foreach ($records as $key => $record)
-		{
-			$instances[] = $this->create($record, (array) array_get($joinings, $key), false);
-		}
-
-		$this->touchIfTouching();
-
-		return $instances;
-	}
-
-	/**
-	 * Sync the intermediate tables with a list of IDs or collection of models.
-	 *
-	 * @param  array  $ids
-	 * @param  bool   $detaching
-	 * @return array
-	 */
-	public function sync($ids, $detaching = true)
-	{
-		$changes = array(
-			'attached' => array(), 'detached' => array(), 'updated' => array(),
-		);
-
-		if ($ids instanceof Collection) $ids = $ids->modelKeys();
-
-		// First we need to attach any of the associated models that are not currently
-		// in this joining table. We'll spin through the given IDs, checking to see
-		// if they exist in the array of current ones, and if not we will insert.
-		$current = $this->newPivotQuery()->lists($this->otherKey);
-
-		$records = $this->formatSyncList($ids);
-
-		$detach = array_diff($current, array_keys($records));
-
-		// Next, we will take the differences of the currents and given IDs and detach
-		// all of the entities that exist in the "current" array but are not in the
-		// the array of the IDs given to the method which will complete the sync.
-		if ($detaching && count($detach) > 0)
-		{
-			$this->detach($detach);
-
-			$changes['detached'] = (array) array_map(function($v) { return (int) $v; }, $detach);
-		}
-
-		// Now we are finally ready to attach the new records. Note that we'll disable
-		// touching until after the entire operation is complete so we don't fire a
-		// ton of touch operations until we are totally done syncing the records.
-		$changes = array_merge(
-			$changes, $this->attachNew($records, $current, false)
-		);
-
-		if (count($changes['attached']) || count($changes['updated']))
-		{
-			$this->touchIfTouching();
-		}
-
-		return $changes;
-	}
-
-	/**
-	 * Format the sync list so that it is keyed by ID.
-	 *
-	 * @param  array  $records
-	 * @return array
-	 */
-	protected function formatSyncList(array $records)
-	{
-		$results = array();
-
-		foreach ($records as $id => $attributes)
-		{
-			if ( ! is_array($attributes))
-			{
-				list($id, $attributes) = array($attributes, array());
-			}
-
-			$results[$id] = $attributes;
-		}
-
-		return $results;
-	}
-
-	/**
-	 * Attach all of the IDs that aren't in the current array.
-	 *
-	 * @param  array  $records
-	 * @param  array  $current
-	 * @param  bool   $touch
-	 * @return array
-	 */
-	protected function attachNew(array $records, array $current, $touch = true)
-	{
-		$changes = array('attached' => array(), 'updated' => array());
-
-		foreach ($records as $id => $attributes)
-		{
-			// If the ID is not in the list of existing pivot IDs, we will insert a new pivot
-			// record, otherwise, we will just update this existing record on this joining
-			// table, so that the developers will easily update these records pain free.
-			if ( ! in_array($id, $current))
-			{
-				$this->attach($id, $attributes, $touch);
-
-				$changes['attached'][] = (int) $id;
-			}
-
-			// Now we'll try to update an existing pivot record with the attributes that were
-			// given to the method. If the model is actually updated we will add it to the
-			// list of updated pivot records so we return them back out to the consumer.
-			elseif (count($attributes) > 0 &&
-				$this->updateExistingPivot($id, $attributes, $touch))
-			{
-				$changes['updated'][] = (int) $id;
-			}
-		}
-
-		return $changes;
-	}
-
-	/**
-	 * Update an existing pivot record on the table.
-	 *
-	 * @param  mixed  $id
-	 * @param  array  $attributes
-	 * @param  bool   $touch
-	 * @return void
-	 */
-	public function updateExistingPivot($id, array $attributes, $touch = true)
-	{
-		if (in_array($this->updatedAt(), $this->pivotColumns))
-		{
-			$attributes = $this->setTimestampsOnAttach($attributes, true);
-		}
-
-		$updated = $this->newPivotStatementForId($id)->update($attributes);
-
-		if ($touch) $this->touchIfTouching();
-
-		return $updated;
-	}
-
-	/**
-	 * Attach a model to the parent.
-	 *
-	 * @param  mixed  $id
-	 * @param  array  $attributes
-	 * @param  bool   $touch
-	 * @return void
-	 */
-	public function attach($id, array $attributes = array(), $touch = true)
-	{
-		if ($id instanceof Model) $id = $id->getKey();
-
-		$query = $this->newPivotStatement();
-
-		$query->insert($this->createAttachRecords((array) $id, $attributes));
-
-		if ($touch) $this->touchIfTouching();
-	}
-
-	/**
-	 * Create an array of records to insert into the pivot table.
-	 *
-	 * @param  array  $ids
-	 * @param  array  $attributes
-	 * @return array
-	 */
-	protected function createAttachRecords($ids, array $attributes)
-	{
-		$records = array();
-
-		$timed = ($this->hasPivotColumn($this->createdAt()) ||
-			      $this->hasPivotColumn($this->updatedAt()));
-
-		// To create the attachment records, we will simply spin through the IDs given
-		// and create a new record to insert for each ID. Each ID may actually be a
-		// key in the array, with extra attributes to be placed in other columns.
-		foreach ($ids as $key => $value)
-		{
-			$records[] = $this->attacher($key, $value, $attributes, $timed);
-		}
-
-		return $records;
-	}
-
-	/**
-	 * Create a full attachment record payload.
-	 *
-	 * @param  int    $key
-	 * @param  mixed  $value
-	 * @param  array  $attributes
-	 * @param  bool   $timed
-	 * @return array
-	 */
-	protected function attacher($key, $value, $attributes, $timed)
-	{
-		list($id, $extra) = $this->getAttachId($key, $value, $attributes);
-
-		// To create the attachment records, we will simply spin through the IDs given
-		// and create a new record to insert for each ID. Each ID may actually be a
-		// key in the array, with extra attributes to be placed in other columns.
-		$record = $this->createAttachRecord($id, $timed);
-
-		return array_merge($record, $extra);
-	}
-
-	/**
-	 * Get the attach record ID and extra attributes.
-	 *
-	 * @param  mixed  $key
-	 * @param  mixed  $value
-	 * @param  array  $attributes
-	 * @return array
-	 */
-	protected function getAttachId($key, $value, array $attributes)
-	{
-		if (is_array($value))
-		{
-			return array($key, array_merge($value, $attributes));
-		}
-
-		return array($value, $attributes);
-	}
-
-	/**
-	 * Create a new pivot attachment record.
-	 *
-	 * @param  int   $id
-	 * @param  bool  $timed
-	 * @return array
-	 */
-	protected function createAttachRecord($id, $timed)
-	{
-		$record[$this->foreignKey] = $this->parent->getKey();
-
-		$record[$this->otherKey] = $id;
-
-		// If the record needs to have creation and update timestamps, we will make
-		// them by calling the parent model's "freshTimestamp" method which will
-		// provide us with a fresh timestamp in this model's preferred format.
-		if ($timed)
-		{
-			$record = $this->setTimestampsOnAttach($record);
-		}
-
-		return $record;
-	}
-
-	/**
-	 * Set the creation and update timestamps on an attach record.
-	 *
-	 * @param  array  $record
-	 * @param  bool   $exists
-	 * @return array
-	 */
-	protected function setTimestampsOnAttach(array $record, $exists = false)
-	{
-		$fresh = $this->parent->freshTimestamp();
-
-		if ( ! $exists && $this->hasPivotColumn($this->createdAt()))
-		{
-			$record[$this->createdAt()] = $fresh;
-		}
-
-		if ($this->hasPivotColumn($this->updatedAt()))
-		{
-			$record[$this->updatedAt()] = $fresh;
-		}
-
-		return $record;
-	}
-
-	/**
-	 * Detach models from the relationship.
-	 *
-	 * @param  int|array  $ids
-	 * @param  bool  $touch
-	 * @return int
-	 */
-	public function detach($ids = array(), $touch = true)
-	{
-		if ($ids instanceof Model) $ids = (array) $ids->getKey();
-
-		$query = $this->newPivotQuery();
-
-		// If associated IDs were passed to the method we will only delete those
-		// associations, otherwise all of the association ties will be broken.
-		// We'll return the numbers of affected rows when we do the deletes.
-		$ids = (array) $ids;
-
-		if (count($ids) > 0)
-		{
-			$query->whereIn($this->otherKey, (array) $ids);
-		}
-
-		if ($touch) $this->touchIfTouching();
-
-		// Once we have all of the conditions set on the statement, we are ready
-		// to run the delete on the pivot table. Then, if the touch parameter
-		// is true, we will go ahead and touch all related models to sync.
-		$results = $query->delete();
-
-		return $results;
-	}
-
-	/**
-	 * If we're touching the parent model, touch.
-	 *
-	 * @return void
-	 */
-	public function touchIfTouching()
-	{
-		if ($this->touchingParent()) $this->getParent()->touch();
-
-		if ($this->getParent()->touches($this->relationName)) $this->touch();
-	}
-
-	/**
-	 * Determine if we should touch the parent on sync.
-	 *
-	 * @return bool
-	 */
-	protected function touchingParent()
-	{
-		return $this->getRelated()->touches($this->guessInverseRelation());
-	}
-
-	/**
-	 * Attempt to guess the name of the inverse of the relation.
-	 *
-	 * @return string
-	 */
-	protected function guessInverseRelation()
-	{
-		return camel_case(str_plural(class_basename($this->getParent())));
-	}
-
-	/**
-	 * Create a new query builder for the pivot table.
-	 *
-	 * @return \Illuminate\Database\Query\Builder
-	 */
-	protected function newPivotQuery()
-	{
-		$query = $this->newPivotStatement();
-
-		foreach ($this->pivotWheres as $whereArgs)
-		{
-			call_user_func_array([$query, 'where'], $whereArgs);
-		}
-
-		return $query->where($this->foreignKey, $this->parent->getKey());
-	}
-
-	/**
-	 * Get a new plain query builder for the pivot table.
-	 *
-	 * @return \Illuminate\Database\Query\Builder
-	 */
-	public function newPivotStatement()
-	{
-		return $this->query->getQuery()->newQuery()->from($this->table);
-	}
-
-	/**
-	 * Get a new pivot statement for a given "other" ID.
-	 *
-	 * @param  mixed  $id
-	 * @return \Illuminate\Database\Query\Builder
-	 */
-	public function newPivotStatementForId($id)
-	{
-		return $this->newPivotQuery()->where($this->otherKey, $id);
-	}
-
-	/**
-	 * Create a new pivot model instance.
-	 *
-	 * @param  array  $attributes
-	 * @param  bool   $exists
-	 * @return \Illuminate\Database\Eloquent\Relations\Pivot
-	 */
-	public function newPivot(array $attributes = array(), $exists = false)
-	{
-		$pivot = $this->related->newPivot($this->parent, $attributes, $this->table, $exists);
-
-		return $pivot->setPivotKeys($this->foreignKey, $this->otherKey);
-	}
-
-	/**
-	 * Create a new existing pivot model instance.
-	 *
-	 * @param  array  $attributes
-	 * @return \Illuminate\Database\Eloquent\Relations\Pivot
-	 */
-	public function newExistingPivot(array $attributes = array())
-	{
-		return $this->newPivot($attributes, true);
-	}
-
-	/**
-	 * Set the columns on the pivot table to retrieve.
-	 *
-	 * @param  mixed  $columns
-	 * @return $this
-	 */
-	public function withPivot($columns)
-	{
-		$columns = is_array($columns) ? $columns : func_get_args();
-
-		$this->pivotColumns = array_merge($this->pivotColumns, $columns);
-
-		return $this;
-	}
-
-	/**
-	 * Get the related model's updated at column name.
-	 *
-	 * @return string
-	 */
-	public function getRelatedFreshUpdate()
-	{
-		return array($this->related->getUpdatedAtColumn() => $this->related->freshTimestamp());
-	}
-
-	/**
-	 * Get the key for comparing against the parent key in "has" query.
-	 *
-	 * @return string
-	 */
-	public function getHasCompareKey()
-	{
-		return $this->getForeignKey();
-	}
-
-	/**
-	 * Get the fully qualified foreign key for the relation.
-	 *
-	 * @return string
-	 */
-	public function getForeignKey(Record $record=null)
-	{
-        $fkList = array();
-
-        foreach ($this->foreignKey AS $fk){
-            $fkList[] = $this->table.'.'.$fk;
+        return $this;
+    }
+
+
+    /**
+     * Set the where clause for the relation query.
+     *
+     * @return $this
+     */
+    protected function setWhere()
+    {
+        $fkList = $this->getForeignKey();
+        $pkList = $this->parent->getKey();
+
+        foreach ($fkList AS $index=>$fk){
+            $this->query->where($fk, '=', $pkList[$index]);
         }
 
-		return $fkList;
-	}
+        return $this;
+    }
 
-	/**
-	 * Get the fully qualified "other key" for the relation.
-	 *
-	 * @return string
-	 */
-	public function getOtherKey()
-	{
-        $okList = array();
 
-        foreach ($this->otherKey AS $fk){
-            $okList[] = $this->table.'.'.$fk;
+    /**
+     * Set the select clause for the relation query.
+     *
+     * @param  array  $columns
+     * @return \Netinteractive\Elegant\Relation\BelongsToMany
+     */
+    protected function getSelectColumns(array $columns = array('*'))
+    {
+        if ($columns == array('*'))
+        {
+            $columns = array($this->related->getBlueprint()->getTable().'.*');
         }
 
-		return $okList;
-	}
+        return array_merge($columns, $this->getAliasedPivotColumns());
+    }
 
-	/**
-	 * Get the intermediate table for the relationship.
-	 *
-	 * @return string
-	 */
-	public function getTable()
-	{
-		return $this->table;
-	}
+    /**
+     * Get the pivot columns for the relation.
+     *
+     * @return array
+     */
+    protected function getAliasedPivotColumns()
+    {
+        $defaults = array_merge($this->foreignKey, $this->otherKey);
 
-	/**
-	 * Get the relationship name for the relationship.
-	 *
-	 * @return string
-	 */
-	public function getRelationName()
-	{
-		return $this->relationName;
-	}
+        // We need to alias all of the pivot columns with the "pivot_" prefix so we
+        // can easily extract them out of the models and put them into the pivot
+        // relationships when they are retrieved and hydrated into the models.
+        $columns = array();
+
+        foreach (array_merge($defaults, $this->pivotColumns) as $column){
+            $columns[] = $this->table.'.'.$column.' as pivot_'.$column;
+        }
+
+        return array_unique($columns);
+    }
+
+
+    /**
+     * Hydrate the pivot table relationship on the records.
+     *
+     * @param  array  $records
+     * @return void
+     */
+    protected function hydratePivotRelation(array $records)
+    {
+        // To hydrate the pivot relationship, we will just gather the pivot attributes
+        // and create a new Pivot model, which is basically a dynamic model that we
+        // will set the attributes, table, and connections on so it they be used.
+        foreach ($records as $record){
+            $pivot = $this->newExistingPivot($this->cleanPivotAttributes($record));
+            $record->setRelation('pivot', $pivot);
+        }
+    }
+
+    /**
+     * Get the pivot attributes from a model.
+     *
+     * @param  \Netinteractive\Elegant\Model\Record  $model
+     * @return array
+     */
+    protected function cleanPivotAttributes(Record $record)
+    {
+        $values = array();
+
+        foreach ($record->getAttributes() as $key => $value){
+            // To get the pivots attributes we will just take any of the attributes which
+            // begin with "pivot_" and add those to this arrays, as well as unsetting
+            // them from the parent's models since they exist in a different table.
+            if (strpos($key, 'pivot_') === 0){
+                $values[substr($key, 6)] = $value;
+
+                unset($record->$key);
+            }
+        }
+
+        return $values;
+    }
+
+    /**
+     * Build record dictionary keyed by the relation's foreign key.
+     *
+     * @param  \Netinteractive\Elegant\Model\Collection  $results
+     * @return array
+     */
+    protected function buildDictionary(Collection $results)
+    {
+        $fkList = $this->foreignKey;
+
+        // First we will build a dictionary of child records keyed by the foreign key
+        // of the relation so that we will easily and quickly match them to their
+        // parents without having a possibly slow inner loops for every models.
+        $dictionary = array();
+
+        foreach ($results as $result){
+
+           foreach ($fkList AS $fk){
+                $dictionary[$fk][] = $result;
+            }
+
+        }
+
+
+        return $dictionary;
+    }
+
 
 }

@@ -101,6 +101,24 @@ class Builder extends QueryBuilder
         return $records;
     }
 
+    /**
+     * Get the hydrated records without eager loading.
+     *
+     * @param  array  $columns
+     * @return \Netinteractive\Elegant\Model\Record[]
+     */
+    public function getRecords($columns = array('*'))
+    {
+        $results = $this->get($columns);
+        $recordList = array();
+
+        foreach ($results AS $data){
+            $recordList[] = \App::make($this->record)->fill($data);
+        }
+
+        return $recordList;
+    }
+
 
     ##RELATIONS
 
@@ -150,13 +168,12 @@ class Builder extends QueryBuilder
     public function eagerLoadRelations(array $records)
     {
         $relations = $this->getRelationsToLoad();
-        foreach ($relations as $name => $constraints)
-        {
+        foreach ($relations as $name => $constraints){
+
             // For nested eager loads we'll skip loading them here and they will be set as an
             // eager load on the query to retrieve the relation so that they will be eager
             // loaded on that query, because that is where they get hydrated as models.
-            if (strpos($name, '.') === false)
-            {
+            if (strpos($name, '.') === false){
                 $records = $this->loadRelated($records, $name, $constraints);
             }
         }
