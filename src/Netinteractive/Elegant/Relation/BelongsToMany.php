@@ -117,7 +117,6 @@ class BelongsToMany extends Relation
         foreach ($fkList AS $fk){
             $this->query->whereIn($fk, $fkValueList);
         }
-
     }
 
     /**
@@ -191,18 +190,15 @@ class BelongsToMany extends Relation
         // Once we have an array dictionary of child objects we can easily match the
         // children back to their parent using the dictionary and the keys on the
         // the parent models. Then we will return the hydrated models back out.
-        foreach ($records as $record)
-        {
-            $recordPkList = $record->getBlueprint()->getPrimaryKey();
+        foreach ($records as $record){
+            $recordPkList = $record->getKey();
 
             foreach ($recordPkList AS $recordPk){
-                if (isset($dictionary[$key = $recordPk]))
-                {
+                if (isset($dictionary[$key = $recordPk])){
                     $collection = \App::make('ElegantCollection', array($dictionary[$key]));
                     $record->setRelation($relation, $collection);
                 }
             }
-
         }
 
         return $records;
@@ -375,6 +371,7 @@ class BelongsToMany extends Relation
         // will set the attributes, table, and connections on so it they be used.
         foreach ($records as $record){
             $pivot = $this->newExistingPivot($this->cleanPivotAttributes($record));
+
             $record->setRelation('pivot', $pivot);
         }
     }
@@ -389,13 +386,12 @@ class BelongsToMany extends Relation
     {
         $values = array();
 
-        foreach ($record->getAttributes() as $key => $value){
+        foreach ($record->toArray() as $key => $value){
             // To get the pivots attributes we will just take any of the attributes which
             // begin with "pivot_" and add those to this arrays, as well as unsetting
             // them from the parent's models since they exist in a different table.
             if (strpos($key, 'pivot_') === 0){
                 $values[substr($key, 6)] = $value;
-
                 unset($record->$key);
             }
         }
@@ -419,11 +415,9 @@ class BelongsToMany extends Relation
         $dictionary = array();
 
         foreach ($results as $result){
-
            foreach ($fkList AS $fk){
-                $dictionary[$fk][] = $result;
-            }
-
+               $dictionary[$result->pivot->$fk][] = $result;
+           }
         }
 
 

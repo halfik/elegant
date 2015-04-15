@@ -196,9 +196,11 @@ abstract class Record
 
         if (isSet($this->attributes[$key])){
             $response = $this->attributes[$key];
-        }elseif (isSet($this->external[$key])){
-            $response = $this->attributes[$key];
-        }elseif (isSet($this->relations[$key])){
+        }
+        elseif (isSet($this->external[$key])){
+            $response = $this->external[$key];
+        }
+        elseif (isSet($this->relations[$key])){
             $response = $this->relations[$key];
         }
 
@@ -235,6 +237,22 @@ abstract class Record
         return $this->external;
     }
 
+    /**
+     * Get the value of the records's primary key(s)
+     *
+     * @return array
+     */
+    public function getKey()
+    {
+        $result = array();
+        $pkList =  $this->getBlueprint()->getPrimaryKey();
+
+        foreach ($pkList AS $pk){
+            $result[$pk] = $this->getAttribute($pk);
+        }
+
+        return $result;
+    }
 
 
     /**
@@ -392,7 +410,7 @@ abstract class Record
             else{
                 foreach ($data AS $record){
                     if ( $record instanceof \Netinteractive\Elegant\Model\Record ){
-                        $relations[$relationName] = $record->toArray();
+                        $relations[$relationName][] = $record->toArray();
                     }
                 }
             }
