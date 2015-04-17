@@ -75,11 +75,6 @@ class BelongsToMany extends Relation
             $otherKey = array($otherKey);
         }
 
-        #we check if key sizes are same
-        if (count($otherKey) <> count($foreignKey)) {
-            throw new PkFkSizeException($otherKey, $foreignKey);
-        }
-
 		$this->table = $table;
 		$this->otherKey = $otherKey;
 		$this->foreignKey = $foreignKey;
@@ -288,7 +283,9 @@ class BelongsToMany extends Relation
 
         $keys = $this->related->getBlueprint()->getPrimaryKey();
         $otherKeys = $this->getOtherKey();
+        echo '<pre>';
 
+        
         $query->join($this->table, function($join) use($keys, $baseTable, $otherKeys){
             foreach ($keys AS $index=>$key){
                 if (isSet($otherKeys[$index])){
