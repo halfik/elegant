@@ -1,7 +1,5 @@
 <?php namespace Netinteractive\Elegant\Relation;
 
-use Netinteractive\Elegant\Exception\PkFkSizeException;
-use Netinteractive\Elegant\Exception\RecordNotFoundException;
 use Netinteractive\Elegant\Model\Query\Builder;
 use Netinteractive\Elegant\Model\Record;
 use Netinteractive\Elegant\Model\Collection;
@@ -285,7 +283,7 @@ class BelongsToMany extends Relation
         $otherKeys = $this->getOtherKey();
         echo '<pre>';
 
-        
+
         $query->join($this->table, function($join) use($keys, $baseTable, $otherKeys){
             foreach ($keys AS $index=>$key){
                 if (isSet($otherKeys[$index])){

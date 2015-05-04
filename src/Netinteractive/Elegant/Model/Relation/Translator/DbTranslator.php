@@ -1,13 +1,12 @@
 <?php namespace Netinteractive\Elegant\Model\Relation\Translator;
 
 use Netinteractive\Elegant\Model\Record;
-use \Netinteractive\Elegant\Model\Relation\TranslatorInterface;
-use \Netinteractive\Elegant\Model\Query\Builder;
-use \Illuminate\Database\Eloquent\Relations\HasOne;
+use Netinteractive\Elegant\Model\Relation\TranslatorInterface;
+use Netinteractive\Elegant\Model\Query\Builder;
+use Netinteractive\Elegant\Relation\HasOne;
 use Netinteractive\Elegant\Relation\BelongsTo;
 use Netinteractive\Elegant\Relation\BelongsToMany;
 use Netinteractive\Elegant\Relation\HasMany;
-use Netinteractive\Elegant\Relation\Relation;
 
 /**
  * Class DbTranslator
@@ -16,16 +15,19 @@ use Netinteractive\Elegant\Relation\Relation;
 class DbTranslator implements TranslatorInterface
 {
     /**
-     * @var \Netinteractive\Elegant\Model\Query\Builder
+     * @var \Netinteractive\Elegant\Model\Query\Builder|null
      */
     protected $query = null;
 
+    /**
+     * @var \Netinteractive\Elegant\Model\Record|null
+     */
     protected $record = null;
 
     /**
      * @param Record $record
      * @param array $relationData
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo|mixed|null
+     * @return \Netinteractive\Elegant\Relation\Relation|mixed|null
      */
     public function get(Record $record, $relationName, array $relationData)
     {
@@ -37,7 +39,7 @@ class DbTranslator implements TranslatorInterface
                 $relation = $this->belongsTo($relationData[1], $relationData[2], $relationData[3], $relationName);
                 break;
             case 'hasOne':
-
+                $relation = $this->hasOne($relationData[1], $relationData[2], $relationData[3]);
                 break;
             case 'hasMany':
                 $relation = $this->hasMany($relationData[1], $relationData[2], $relationData[3]);
@@ -79,11 +81,13 @@ class DbTranslator implements TranslatorInterface
      * @param  string|array  $localKey
      * @return \Netinteractive\Elegant\Relation\HasOne
      */
-    public function hasOne($related, $foreignKey, $localKey)
+    public function hasOne($related, $foreignKey, $localKey=null)
     {
         $instance = \App($related);
 
-        return new HasOne($instance->newQuery(), $this, $instance->getTable().'.'.$foreignKey, $localKey);
+        $localKey = $localKey ? : $instance->getBlueprint()->getPrimaryKey();
+
+        return new HasOne($this->getQuery(), $instance, $this->record,  $foreignKey, $localKey);
     }
 
 

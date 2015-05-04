@@ -408,6 +408,7 @@ abstract class Record
                 $relations[$relationName] = $data->toArray();
             }
             else{
+
                 foreach ($data AS $record){
                     if ( $record instanceof \Netinteractive\Elegant\Model\Record ){
                         $relations[$relationName][] = $record->toArray();
