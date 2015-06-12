@@ -30,7 +30,7 @@ abstract class HasOneOrMany extends Relation
     /**
      * Create a new has many relationship instance.
      *
-     * @param  \Netinteractive\Elegant\Query\Builder $query
+     * @param  \Netinteractive\Elegant\Db\Query\Builder $query
      * @param  \Netinteractive\Elegant\Model\Record $parent
      * @param  string $foreignKey
      * @param  string $localKey

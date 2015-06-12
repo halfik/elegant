@@ -1,16 +1,7 @@
 Netinteractive\Elegant
-=====================
+======================
 
-Elegant to bazowa klasa dla modeli. Rozszerzenie Eloquenta.
-
-## Usługi
-- FiltersServiceProvider - usĹuga dostarcza 3 mechanizmĂłw filtrĂłw dla modelu:
-
-
-- CollectionServiceProvider - usĹuga binduje klase Netinteractive\Elegant\Collection jako Collection, ktora pozniej wykorzystana jest w modelu. Chwilowo nie ma zastosowania.
+Elegant is a domain model package. He is similar to laravels Eloquent and we used laravel code to build this package.
 
 
 ## Changelog
-
-### 2.0.0
-    * Display filter fix

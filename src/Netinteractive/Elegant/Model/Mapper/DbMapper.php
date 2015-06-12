@@ -244,7 +244,7 @@ class DbMapper implements MapperInterface
             $query = $this->searchJoins($query);
         }
 
-        #we wrap all ours search wheres  becouse of otherse wheres that can be add later (or where added before)
+        #we wrap all ours search wheres  because of others wheres that can be add later (or where added before)
         $query->where(function ($query) use ($input, $operator) {
             foreach ($input AS $modelName => $fields) {
 
@@ -273,8 +273,11 @@ class DbMapper implements MapperInterface
     {
         $searchableFields = $model->getBlueprint()->getSearchableFields();
 
+        #search translator
+        $translator = \App::make('ElegantSearchDbTranslator');
+
         if (isSet($searchableFields[$fieldKey])){
-            $searchable = $searchableFields[$fieldKey]['searchable'];
+            $searchable = $translator->translate($fieldKey, $searchableFields[$fieldKey]['searchable']);
             $searchable($q, $keyword, $operator);
         }
 
@@ -283,7 +286,7 @@ class DbMapper implements MapperInterface
 
 
     /**
-     * @return \Netinteractive\Elegant\Query\Builder
+     * @return \Netinteractive\Elegant\Db\Query\Builder
      */
     public function getQuery()
     {
@@ -353,7 +356,7 @@ class DbMapper implements MapperInterface
      * Adding relation to the query object
      *
      * @param  array|string  $relations
-     * @return \Netinteractive\Elegant\Query\Builder
+     * @return \Netinteractive\Elegant\Db\Query\Builder
      */
     public function with($relations)
     {

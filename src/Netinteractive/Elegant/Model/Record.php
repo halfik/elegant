@@ -3,12 +3,14 @@
 
 use Illuminate\Support\MessageBag AS MessageBag;
 use Netinteractive\Elegant\Exception\ValidationException;
+use Illuminate\Contracts\Support\Arrayable;
+use Illuminate\Contracts\Support\Jsonable;
 
 /**
  * Class Record
  * @package Netinteractive\Elegant\Model
  */
-abstract class Record
+abstract class Record implements Arrayable, Jsonable
 {
     /**
      * @var Blueprint
@@ -22,7 +24,7 @@ abstract class Record
     protected $attributes = array();
 
     /**
-     * Record external attributes (attributes that dosnt normaly belong to this record)
+     * Record external attributes (attributes that dosn't normaly belong to this record and won't be saved to data source)
      * @var array
      */
     protected $external = array();
@@ -408,10 +410,11 @@ abstract class Record
                 $relations[$relationName] = $data->toArray();
             }
             else{
-
-                foreach ($data AS $record){
-                    if ( $record instanceof \Netinteractive\Elegant\Model\Record ){
-                        $relations[$relationName][] = $record->toArray();
+                if (!empty($data)){
+                    foreach ($data AS $record){
+                        if ( $record instanceof \Netinteractive\Elegant\Model\Record ){
+                            $relations[$relationName][] = $record->toArray();
+                        }
                     }
                 }
             }

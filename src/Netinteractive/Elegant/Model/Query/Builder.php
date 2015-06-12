@@ -1,7 +1,7 @@
 <?php namespace Netinteractive\Elegant\Model\Query;
 
 
-use Netinteractive\Elegant\Query\Builder AS QueryBuilder;
+use Netinteractive\Elegant\Db\Query\Builder AS QueryBuilder;
 use Closure;
 use Netinteractive\Elegant\Model\Collection;
 use Netinteractive\Elegant\Model\Record;

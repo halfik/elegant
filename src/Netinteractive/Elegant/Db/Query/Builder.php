@@ -1,5 +1,5 @@
 <?php
-namespace Netinteractive\Elegant\Query;
+namespace Netinteractive\Elegant\Db\Query;
 
 use Illuminate\Database\ConnectionInterface;
 use Illuminate\Database\Query\Grammars\Grammar;
@@ -9,7 +9,7 @@ use Illuminate\Database\Query\Builder AS BaseBuilder;
 
 /**
  * Class Builder
- * @package Netinteractive\Elegant\Query
+ * @package Netinteractive\Elegant\Db\Query
  */
 class Builder extends BaseBuilder
 {
@@ -73,7 +73,7 @@ class Builder extends BaseBuilder
     /**
      * Get a new instance of the query builder.
      *
-     * @return \Netinteractive\Elegant\Query\Builder
+     * @return \Netinteractive\Elegant\Db\Query\Builder
      */
     public function newQuery()
     {
@@ -89,7 +89,7 @@ class Builder extends BaseBuilder
      */
     public function from($from, $alias = null)
     {
-        if ($from instanceof \Netinteractive\Elegant\Query\Builder) {
+        if ($from instanceof \Netinteractive\Elegant\Db\Query\Builder) {
             if (empty($alias)) {
                 $alias = $from->getFrom();
             }
@@ -416,7 +416,7 @@ class Builder extends BaseBuilder
      * @param  \Closure $callback
      * @param  string $boolean
      * @param  string $aliast
-     * @return \Illuminate\Database\Query\Builder|static
+     * @return \Netinteractive\Elegant\Db\Query\Builder|static
      */
     public function whereNested(\Closure $callback, $boolean = 'and', $alias = null)
     {
@@ -435,7 +435,7 @@ class Builder extends BaseBuilder
     /**
      * Add another query builder as a nested where to the query builder.
      *
-     * @param  \Illuminate\Database\Query\Builder|static $query
+     * @param  \Netinteractive\Elegant\Db\Query\Builder|static $query
      * @param  string $boolean
      * @return $this
      */
@@ -463,7 +463,7 @@ class Builder extends BaseBuilder
      * @param  string $operator
      * @param  mixed $value
      * @param  string $alias
-     * @return \Illuminate\Database\Query\Builder|static
+     * @return \Netinteractive\Elegant\Db\Query\Builder|static
      */
     public function orWhere($column, $operator = null, $value = null, $alias = null)
     {
@@ -500,7 +500,7 @@ class Builder extends BaseBuilder
      *
      * @param  string $sql
      * @param  array $bindings
-     * @return \Illuminate\Database\Query\Builder|static
+     * @return \Netinteractive\Elegant\Db\Query\Builder|static
      */
     public function orWhereRaw($sql, array $bindings = array(), $alias = null)
     {
@@ -539,7 +539,7 @@ class Builder extends BaseBuilder
      * @param  string $column
      * @param  array $values
      * @param  string $alias
-     * @return \Illuminate\Database\Query\Builder|static
+     * @return \Netinteractive\Elegant\Db\Query\Builder|static
      */
     public function orWhereBetween($column, array $values, $alias = null)
     {
@@ -553,7 +553,7 @@ class Builder extends BaseBuilder
      * @param  array $values
      * @param  string $boolean
      * @param  string $alias
-     * @return \Illuminate\Database\Query\Builder|static
+     * @return \Netinteractive\Elegant\Db\Query\Builder|static
      */
     public function whereNotBetween($column, array $values, $boolean = 'and', $alias = null)
     {
@@ -566,7 +566,7 @@ class Builder extends BaseBuilder
      * @param  string $column
      * @param  array $values
      * @param  string $alias
-     * @return \Illuminate\Database\Query\Builder|static
+     * @return \Netinteractive\Elegant\Db\Query\Builder|static
      */
     public function orWhereNotBetween($column, array $values, $alias = null)
     {
@@ -611,7 +611,7 @@ class Builder extends BaseBuilder
      * @param  \Closure $callback
      * @param  bool $not
      * @param  string $alias
-     * @return \Illuminate\Database\Query\Builder|static
+     * @return \Netinteractive\Elegant\Db\Query\Builder|static
      */
     public function orWhereExists(\Closure $callback, $not = false, $alias = null)
     {
@@ -624,7 +624,7 @@ class Builder extends BaseBuilder
      * @param  \Closure $callback
      * @param  string $boolean
      * @param  string $alias
-     * @return \Illuminate\Database\Query\Builder|static
+     * @return \Netinteractive\Elegant\Db\Query\Builder|static
      */
     public function whereNotExists(\Closure $callback, $boolean = 'and', $alias = null)
     {
@@ -636,7 +636,7 @@ class Builder extends BaseBuilder
      *
      * @param  \Closure $callback
      * @param  string $alias
-     * @return \Illuminate\Database\Query\Builder|static
+     * @return \Netinteractive\Elegant\Db\Query\Builder|static
      */
     public function orWhereNotExists(\Closure $callback, $alias = null)
     {
@@ -685,7 +685,7 @@ class Builder extends BaseBuilder
      *
      * @param  string $column
      * @param  mixed $values
-     * @return \Illuminate\Database\Query\Builder|static
+     * @return \Netinteractive\Elegant\Db\Query\Builder|static
      */
     public function orWhereIn($column, $values, $alias = null)
     {
@@ -698,7 +698,7 @@ class Builder extends BaseBuilder
      * @param  string $column
      * @param  mixed $values
      * @param  string $boolean
-     * @return \Illuminate\Database\Query\Builder|static
+     * @return \Netinteractive\Elegant\Db\Query\Builder|static
      */
     public function whereNotIn($column, $values, $boolean = 'and', $alias = null)
     {
@@ -710,7 +710,7 @@ class Builder extends BaseBuilder
      *
      * @param  string $column
      * @param  mixed $values
-     * @return \Illuminate\Database\Query\Builder|static
+     * @return \Netinteractive\Elegant\Db\Query\Builder|static
      */
     public function orWhereNotIn($column, $values, $alias = null)
     {
@@ -773,7 +773,7 @@ class Builder extends BaseBuilder
      * Add an "or where null" clause to the query.
      *
      * @param  string $column
-     * @return \Illuminate\Database\Query\Builder|static
+     * @return \Netinteractive\Elegant\Db\Query\Builder|static
      */
     public function orWhereNull($column, $alias = null)
     {
@@ -785,7 +785,7 @@ class Builder extends BaseBuilder
      *
      * @param  string $column
      * @param  string $boolean
-     * @return \Illuminate\Database\Query\Builder|static
+     * @return \Netinteractive\Elegant\Db\Query\Builder|static
      */
     public function whereNotNull($column, $boolean = 'and', $alias = null)
     {
@@ -796,7 +796,7 @@ class Builder extends BaseBuilder
      * Add an "or where not null" clause to the query.
      *
      * @param  string $column
-     * @return \Illuminate\Database\Query\Builder|static
+     * @return \Netinteractive\Elegant\Db\Query\Builder|static
      */
     public function orWhereNotNull($column, $alias = null)
     {
@@ -810,7 +810,7 @@ class Builder extends BaseBuilder
      * @param  string $operator
      * @param  int $value
      * @param  string $boolean
-     * @return \Illuminate\Database\Query\Builder|static
+     * @return \Netinteractive\Elegant\Db\Query\Builder|static
      */
     public function whereDate($column, $operator, $value, $boolean = 'and', $alias = null)
     {
@@ -824,7 +824,7 @@ class Builder extends BaseBuilder
      * @param  string $operator
      * @param  int $value
      * @param  string $boolean
-     * @return \Illuminate\Database\Query\Builder|static
+     * @return \Netinteractive\Elegant\Db\Query\Builder|static
      */
     public function whereDay($column, $operator, $value, $boolean = 'and', $alias = null)
     {
@@ -838,7 +838,7 @@ class Builder extends BaseBuilder
      * @param  string $operator
      * @param  int $value
      * @param  string $boolean
-     * @return \Illuminate\Database\Query\Builder|static
+     * @return \Netinteractive\Elegant\Db\Query\Builder|static
      */
     public function whereMonth($column, $operator, $value, $boolean = 'and', $alias = null)
     {
@@ -852,7 +852,7 @@ class Builder extends BaseBuilder
      * @param  string $operator
      * @param  int $value
      * @param  string $boolean
-     * @return \Illuminate\Database\Query\Builder|static
+     * @return \Netinteractive\Elegant\Db\Query\Builder|static
      */
     public function whereYear($column, $operator, $value, $boolean = 'and', $alias = null)
     {
@@ -896,6 +896,7 @@ class Builder extends BaseBuilder
 
         $this->where(function ($query) use ($wheres) {
             if (!empty($wheres)) {
+
                 $query->setWheres($wheres);
             }
 
@@ -917,7 +918,7 @@ class Builder extends BaseBuilder
             $comments .= "*/\n";
         }
 
-        #Here we build WITH statment (Postgresql)
+        #Here we build WITH statment (PostgreSQL)
         $with = '';
         $max = count($this->with);
 

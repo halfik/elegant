@@ -12,7 +12,7 @@ abstract class Relation {
 	/**
 	 * The Eloquent query builder instance.
 	 *
-	 * @var \Netinteractive\Elegant\Query\Builder
+	 * @var \Netinteractive\Elegant\Db\Query\Builder
 	 */
 	protected $query;
 
@@ -48,7 +48,7 @@ abstract class Relation {
 	/**
 	 * Create a new relation instance.
 	 *
-	 * @param  \Netinteractive\Elegant\Query\Builder  $query
+	 * @param  \Netinteractive\Elegant\Db\Query\Builder  $query
 	 * @param  \Netinteractive\Elegant\Model\Record  $parent
 	 * @return void
 	 */

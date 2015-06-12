@@ -37,7 +37,7 @@ class BelongsTo extends Relation
     /**
      * Create a new belongs to relationship instance.
      *
-     * @param  \Netinteractive\Elegant\Query\Builder $query
+     * @param  \Netinteractive\Elegant\Db\Query\Builder $query
      * @param  \Netinteractive\Elegant\Model\Record $related
      * @param  \Netinteractive\Elegant\Model\Record $parent
      * @param  string|array $foreignKey

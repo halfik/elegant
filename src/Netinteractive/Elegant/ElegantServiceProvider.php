@@ -33,11 +33,16 @@ class ElegantServiceProvider extends ServiceProvider
 	 */
 	public function register()
 	{
-        \App::bind('ElegantQueryBuilder', '\Netinteractive\Elegant\Query\Builder');
+        \App::bind('ElegantQueryBuilder', '\Netinteractive\Elegant\Db\Query\Builder');
         \App::bind('ElegantModelQueryBuilder', '\Netinteractive\Elegant\Model\Query\Builder');
         \App::bind('ElegantCollection', '\Netinteractive\Elegant\Model\Collection');
+
         \App::bind('ElegantRelationManager', '\Netinteractive\Elegant\Model\Relation\Manager');
         \App::bind('ElegantRelationDbTranslator', '\Netinteractive\Elegant\Model\Relation\Translator\DbTranslator');
+
+        \App::bind('ElegantSearchDbTranslator', '\Netinteractive\Elegant\Search\Db\Translator');
+
+
 
         \App::bind('ElegantDbMapper', function($app, $params){
             return new \Netinteractive\Elegant\Model\Mapper\DbMapper($params[0]);

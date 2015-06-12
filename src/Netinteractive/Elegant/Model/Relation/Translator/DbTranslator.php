@@ -65,7 +65,7 @@ class DbTranslator implements TranslatorInterface
 
     /**
      * Returns Query Builder object
-     * @return \Netinteractive\Elegant\Query\Builder
+     * @return \Netinteractive\Elegant\Db\Query\Builder
      */
     public function getQuery()
     {
