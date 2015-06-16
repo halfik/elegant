@@ -48,7 +48,7 @@ abstract class Blueprint
     protected function __construct()
     {
         $relationManager = \App('ElegantRelationManager');
-        $relationManager->registerTranslator('db', \App('ElegantRelationDbTranslator'));
+
 
         $this->relationManager = $relationManager;
 

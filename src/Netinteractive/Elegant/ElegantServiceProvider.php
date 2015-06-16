@@ -43,6 +43,7 @@ class ElegantServiceProvider extends ServiceProvider
         \App::bind('ElegantSearchDbTranslator', '\Netinteractive\Elegant\Search\Db\Translator');
 
 
+        \App::make('ElegantRelationManager')->registerTranslator('db', \App('ElegantRelationDbTranslator'));
 
         \App::bind('ElegantDbMapper', function($app, $params){
             return new \Netinteractive\Elegant\Model\Mapper\DbMapper($params[0]);

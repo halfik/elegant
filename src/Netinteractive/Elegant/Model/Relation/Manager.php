@@ -36,7 +36,7 @@ class Manager
      * @return $this
      */
     public function registerTranslator($name, TranslatorInterface $translator)
-    {
+    {   \debug(get_class($translator));
         $this->translators[$name] = $translator;
         return $this;
     }
