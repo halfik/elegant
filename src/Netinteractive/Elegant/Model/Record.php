@@ -42,7 +42,7 @@ abstract class Record implements Arrayable, Jsonable
     protected $relations = array();
 
     /**
-     * Information if record already exists in data base
+     * Information if record already exists in database
      * @var bool
      */
     public $exists = false;

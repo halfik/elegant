@@ -1,94 +1,119 @@
 Netinteractive\Elegant
 ======================
 
-Elegant is a domain model package. He is similar to laravels Eloquent and we used laravel code to build this package.
+Elegant is a domain model package. He is similar to laravels Eloquent and we used a lot of Eloquent code to build this package.
 
 
-In docs folder you can find more documentation about package. All examples are based on this 3 classes:
+## Services
+* ElegantServiceProvider - registers in App most important classes:
+     * ElegantDbMapper - class that allows to work with databases.
+     * ElegantQueryBuilder - database query builder.
+     * ElegantModelQueryBuilder - model query builder. Responsible for relations.
+     * ElegantCollection - data collection class
+     * ElegantRelationManager - class that allows to register relations translators for different data sources. ElegantServiceProvider register standard db translator.
+     * ElegantRelationDbTranslator - class that knows how to build database relations based on informations from blueprint
+     * ElegantSearchDbTranslator - class that knows how to build and add to query proper where statements based on blueprint informations.
+
+
+## Documentation
+
+In docs folder you can find more documentation about package.
+
+All examples are based on this 3 classes:
 
 ### User
-    <?php namespace Core2\Models\User;
+     <?php namespace Core2\Models\User;
 
-    use Netinteractive\Elegant\Model\Blueprint AS BaseBluePrint;
-    use Netinteractive\Elegant\Search\Searchable;
+     use Netinteractive\Elegant\Model\Blueprint AS BaseBluePrint;
+     use Netinteractive\Elegant\Search\Searchable;
 
-    class Blueprint extends BaseBluePrint
-    {
-       protected function init()
-        {
-            $this->setStorageName('users');
-            $this->primaryKey = array('id');
-            $this->incrementingPk = 'id';
+     class Blueprint extends BaseBluePrint
+     {
+        protected function init()
+         {
+             $this->setStorageName('users');
+             $this->primaryKey = array('id');
+             $this->incrementingPk = 'id';
 
-            $this->getRelationManager()->hasOne('patient','Patient', 'user__id','id');
+             $this->getRelationManager()->hasOne('patient','Patient', 'user__id','id');
 
-            $this->fields = array(
-                'login'=>array(
-                    'title'=>_('Login'),
-                    'type'=>'string',
-                    'sortable' => true,
-                    'searchable' => Searchable::$contains,
-                    'rules'=>array(
-                        'update'=>'required',
-                        'insert'=>'required|unique:users'
-                    )
-                ),
-                'email'=>array(
-                    'title'=>_('E-mail'),
-                    'type'=>'string',
-                    'sortable' => true,
-                    'searchable' => Searchable::$contains,
-                    'rules'=>array(
-                        'update'=>'required|email',
-                        'insert'=>'required|email|unique:users'
-                    )
-                ),
-                'first_name' => array(
-                    'title'=> _('First name'),
-                    'type'=>'string',
-                    'sortable' => true,
-                    'searchable' => Searchable::$contains,
-                    'rules'=>array(
-                        'update'=>'',
-                        'insert'=>''
-                    ),
-                    'filters' => array(
-                        'fill' => array(
-                            'stripTags'
-                        )
-                    )
-                ),
-                'last_name' => array(
-                    'title'=> _('Last name'),
-                    'type'=>'string',
-                    'sortable' => true,
-                    'searchable' => Searchable::$contains,
-                    'rules'=>array(
-                        'update'=>'',
-                        'insert'=>''
-                    ),
-                    'filters' => array(
-                        'fill' => array(
-                            'stripTags'
-                        )
-                    )
-                ),
-                'activated' => array(
-                    'title' => _('Is Active'),
-                    'type' => 'bool',
-                    'sortable' => true,
-                    'rules' => array(
-                        'any' => 'in:0,1'
-                    ),
-                    'filters' => array(
-                        'display' => array('bool'),
-                    )
-                )
-            );
+             $this->fields = array(
+                 'id' => array(
+                     'title' => 'Id',
+                     'type' => 'int',
+                     'sortable' => true,
+                     'rules' => array(
+                         'any' => 'integer',
+                         'update' => 'required'
+                     )
+                 ),
+                 'login'=>array(
+                     'title'=>_('Login'),
+                     'type'=>'string',
+                     'sortable' => true,
+                     'searchable' => Searchable::$contains,
+                     'rules'=>array(
+                         'update'=>'required',
+                         'insert'=>'required|unique:users'
+                     )
+                 ),
+                 'email'=>array(
+                     'title'=>_('E-mail'),
+                     'type'=>'string',
+                     'sortable' => true,
+                     'searchable' => Searchable::$contains,
+                     'rules'=>array(
+                         'update'=>'required|email',
+                         'insert'=>'required|email|unique:users'
+                     )
+                 ),
+                 'first_name' => array(
+                     'title'=> _('First name'),
+                     'type'=>'string',
+                     'sortable' => true,
+                     'searchable' => Searchable::$contains,
+                     'rules'=>array(
+                         'update'=>'',
+                         'insert'=>''
+                     ),
+                     'filters' => array(
+                         'fill' => array(
+                             'stripTags'
+                         )
+                     )
+                 ),
+                 'last_name' => array(
+                     'title'=> _('Last name'),
+                     'type'=>'string',
+                     'sortable' => true,
+                     'searchable' => Searchable::$contains,
+                     'rules'=>array(
+                         'update'=>'',
+                         'insert'=>''
+                     ),
+                     'filters' => array(
+                         'fill' => array(
+                             'stripTags'
+                         )
+                     )
+                 ),
+                 'activated' => array(
+                     'title' => _('Is Active'),
+                     'type' => 'bool',
+                     'sortable' => true,
+                     'rules' => array(
+                         'any' => 'in:0,1'
+                     ),
+                     'filters' => array(
+                         'display' => array('bool'),
+                     )
+                 )
+             );
 
-            return parent::init();
-        }
-    }
+             return parent::init();
+         }
+     }
+
 
 ### Patient
     <?php namespace Core2\Models\Patient;
@@ -133,10 +158,6 @@ In docs folder you can find more documentation about package. All examples are b
                     'rules' => array(
 
                     )
-                ),
-                'iq' => array(
-                    'title' => '222',
-                    'external' => true,
                 )
             );
 

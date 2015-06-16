@@ -141,7 +141,8 @@ class DbMapper implements MapperInterface
             return $this;
         }
 
-        $record->validate($record->getDirty());
+        #we always should validate all data not only dirty
+        $record->validate($record->getAttributes());
 
         $query = $this->getQuery();
         $query->from($record->getBlueprint()->getStorageName());

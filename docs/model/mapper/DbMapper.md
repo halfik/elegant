@@ -4,6 +4,16 @@ Class allows to read\write\delete data from database. In most cases you will use
 But if there is a need (you need to overwrite some methods) you can make custom DbMapper for specific record.
 
 
+### Methods
+* public function createRecord(array $data = array()) - created record and fill with $data (dosn't save it do database)
+* public function getRecordClass() - returns class name of record that mapper is currently working with
+* public function setRecordClass($name) - sets class name of record
+* public function getBlueprint() - returns blueprint object
+* public function delete($ids) - deleted rows from database
+* public function save(Record $record) - saves record to database
+
+
+
 ### Examples:
 
 Getting a record (with related patientData data) :
@@ -13,6 +23,21 @@ Getting a record (with related patientData data) :
             ->with('patientData')
             ->find('1')
             ;
+
+Getting records with related rows:
+
+    $dbMapper = new DbMapper('PatientData');
+    $results = $dbMapper
+        ->with('patient.user')
+        ->get()
+    ;
+
+    $results = $dbMapper
+                ->with(array('patient' => function($q){
+                   $q->where('patient.pesel', '=', '35101275448');
+                }))
+                ->get()
+    ;
 
 Getting a collection:
 

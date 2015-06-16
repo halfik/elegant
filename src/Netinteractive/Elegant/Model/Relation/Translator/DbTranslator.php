@@ -27,7 +27,8 @@ class DbTranslator implements TranslatorInterface
     /**
      * constructor
      */
-    public function __construct(){
+    public function __construct()
+    {
         $this->query = \App::make('ElegantModelQueryBuilder');
     }
 

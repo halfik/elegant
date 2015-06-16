@@ -48,8 +48,6 @@ abstract class Blueprint
     protected function __construct()
     {
         $relationManager = \App('ElegantRelationManager');
-
-
         $this->relationManager = $relationManager;
 
         $this->init();
