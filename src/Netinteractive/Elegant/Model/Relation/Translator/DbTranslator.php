@@ -25,6 +25,13 @@ class DbTranslator implements TranslatorInterface
     protected $record = null;
 
     /**
+     * constructor
+     */
+    public function __construct(){
+        $this->query = \App::make('ElegantModelQueryBuilder');
+    }
+
+    /**
      * @param Record $record
      * @param array $relationData
      * @return \Netinteractive\Elegant\Relation\Relation|mixed|null
@@ -125,11 +132,6 @@ class DbTranslator implements TranslatorInterface
         // for the related models and returns the relationship instance which will
         // actually be responsible for retrieving and hydrating every relations.
         $query = $this->getQuery();
-        if ($relation == 'user'){
-            echo get_class($query); //exit;
-        }else{
-            echo get_class($query).'<br>';
-        }
 
         return new BelongsTo($query, $instance, $this->record, $foreignKey, $otherKey, $relation);
     }

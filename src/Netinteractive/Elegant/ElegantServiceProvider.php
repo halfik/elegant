@@ -33,8 +33,29 @@ class ElegantServiceProvider extends ServiceProvider
 	 */
 	public function register()
 	{
-        \App::bind('ElegantQueryBuilder', '\Netinteractive\Elegant\Db\Query\Builder');
-        \App::bind('ElegantModelQueryBuilder', '\Netinteractive\Elegant\Model\Query\Builder');
+        \App::bind('ElegantDbMapper', function($app, $params){
+            return new \Netinteractive\Elegant\Model\Mapper\DbMapper($params[0]);
+        });
+
+        \App::bind('ElegantQueryBuilder', function($app, $params){
+            $connection = \App::make('db')->connection(\Config::get('database.default'));
+
+            $processor = $connection->getPostProcessor();
+            $grammar = $connection->getQueryGrammar();
+
+            return new \Netinteractive\Elegant\Db\Query\Builder($connection, $grammar, $processor);
+        });
+
+        \App::bind('ElegantModelQueryBuilder', function($app, $params){
+            $connection = \App::make('db')->connection(\Config::get('database.default'));
+
+            $processor = $connection->getPostProcessor();
+            $grammar = $connection->getQueryGrammar();
+
+            return new \Netinteractive\Elegant\Model\Query\Builder($connection, $grammar, $processor);
+        });
+
+
         \App::bind('ElegantCollection', '\Netinteractive\Elegant\Model\Collection');
 
         \App::bind('ElegantRelationManager', '\Netinteractive\Elegant\Model\Relation\Manager');
@@ -45,9 +66,7 @@ class ElegantServiceProvider extends ServiceProvider
 
         \App::make('ElegantRelationManager')->registerTranslator('db', \App('ElegantRelationDbTranslator'));
 
-        \App::bind('ElegantDbMapper', function($app, $params){
-            return new \Netinteractive\Elegant\Model\Mapper\DbMapper($params[0]);
-        });
+
 	}
 
 	/**

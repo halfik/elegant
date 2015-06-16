@@ -1,9 +1,9 @@
 <?php
 namespace Netinteractive\Elegant\Db\Query;
 
-use Illuminate\Database\ConnectionInterface;
-use Illuminate\Database\Query\Grammars\Grammar;
-use Illuminate\Database\Query\Processors\Processor;
+use Illuminate\Database\ConnectionInterface AS ConnectionInterface;
+use Illuminate\Database\Query\Grammars\Grammar AS Grammar;
+use Illuminate\Database\Query\Processors\Processor AS Processor;
 use Illuminate\Database\Query\Builder AS BaseBuilder;
 
 
@@ -54,7 +54,7 @@ class Builder extends BaseBuilder
     {
         $this->bindings['with'] = array();
 
-        if (!$connection) {
+        /*if (!$connection) {
             $connection = \App::make('db')->connection(\Config::get('database.default'));
         }
 
@@ -64,7 +64,7 @@ class Builder extends BaseBuilder
 
         if (!$grammar) {
             $grammar = $connection->getQueryGrammar();
-        }
+        }*/
 
         return parent::__construct($connection, $grammar, $processor);
     }

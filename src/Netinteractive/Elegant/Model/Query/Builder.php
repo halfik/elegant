@@ -6,6 +6,10 @@ use Closure;
 use Netinteractive\Elegant\Model\Collection;
 use Netinteractive\Elegant\Model\Record;
 use Netinteractive\Elegant\Relation\Relation;
+use Illuminate\Database\ConnectionInterface AS ConnectionInterface;
+use Illuminate\Database\Query\Grammars\Grammar AS Grammar;
+use Illuminate\Database\Query\Processors\Processor AS Processor;
+use Illuminate\Database\Query\Builder AS BaseBuilder;
 
 
 /**
@@ -35,6 +39,19 @@ class Builder extends QueryBuilder
      * @var array
      */
     protected $macros = array();
+
+    /**
+    * Create a new query builder instance.
+    *
+    * @param  \Illuminate\Database\ConnectionInterface $connection
+    * @param  \Illuminate\Database\Query\Grammars\Grammar $grammar
+    * @param  \Illuminate\Database\Query\Processors\Processor $processor
+    */
+    public function __construct(ConnectionInterface $connection = null, Grammar $grammar = null, Processor $processor = null)
+    {
+        parent::__construct($connection, $grammar, $processor);
+    }
+
 
     /**
      * Execute the query as a "select" statement.
