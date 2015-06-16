@@ -97,6 +97,12 @@ class Manager
         return true;
     }
 
+    /**
+     * @param string $type
+     * @param $record
+     * @param string $relationName
+     * @return mixed
+     */
     public function createRelation($type, $record, $relationName)
     {
         return $this->getTranslator($type)->get($record, $relationName, $this->getRelation($relationName));

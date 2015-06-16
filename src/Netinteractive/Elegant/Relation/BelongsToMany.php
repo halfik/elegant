@@ -165,6 +165,7 @@ class BelongsToMany extends Relation
             $records = $this->query->eagerLoadRelations($records->toArray());
         }
 
+
         return \App::make('ElegantCollection', array($records));
     }
 
@@ -277,11 +278,10 @@ class BelongsToMany extends Relation
         // We need to join to the intermediate table on the related model's primary
         // key column with the intermediate table's foreign key for the related
         // model instance. Then we can set the "where" for the parent models.
-        $baseTable = $this->related->getBlueprint()->getTable();
+        $baseTable = $this->related->getBlueprint()->getStorageName();
 
         $keys = $this->related->getBlueprint()->getPrimaryKey();
         $otherKeys = $this->getOtherKey();
-        echo '<pre>';
 
 
         $query->join($this->table, function($join) use($keys, $baseTable, $otherKeys){
@@ -325,7 +325,7 @@ class BelongsToMany extends Relation
     {
         if ($columns == array('*'))
         {
-            $columns = array($this->related->getBlueprint()->getTable().'.*');
+            $columns = array($this->related->getBlueprint()->getStorageName().'.*');
         }
 
         return array_merge($columns, $this->getAliasedPivotColumns());

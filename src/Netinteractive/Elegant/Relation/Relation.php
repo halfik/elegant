@@ -5,12 +5,11 @@ use Netinteractive\Elegant\Relation\Pivot;
 use Netinteractive\Elegant\Model\Query\Builder;
 use Netinteractive\Elegant\Model\Record;
 use Netinteractive\Elegant\Model\Collection;
-use Illuminate\Database\Query\Expression;
 
 abstract class Relation {
 
 	/**
-	 * The Eloquent query builder instance.
+	 * The Elegant query builder instance.
 	 *
 	 * @var \Netinteractive\Elegant\Db\Query\Builder
 	 */
@@ -26,16 +25,9 @@ abstract class Relation {
     /**
      * The related model instance.
      *
-     * @var \Illuminate\Database\Eloquent\Model
+     * @var \Netinteractive\Elegant\Model\Record
      */
     protected $related;
-
-    /**
-     * The many to many relationship methods.
-     *
-     * @var array
-     */
-    public static $manyMethods = array('belongsToMany', 'morphToMany', 'morphedByMany');
 
 
 	/**
@@ -115,7 +107,7 @@ abstract class Relation {
 	/**
 	 * Get the relationship for eager loading.
 	 *
-	 * @return \Illuminate\Database\Eloquent\Collection
+	 * @return \Netinteractive\Elegant\Model\Collection
 	 */
 	public function getEager()
 	{
@@ -158,7 +150,7 @@ abstract class Relation {
 	/**
 	 * Get the underlying query for the relation.
 	 *
-	 * @return \Illuminate\Database\Eloquent\Builder
+	 * @return \Netinteractive\Elegant\Model\Record
 	 */
 	public function getQuery()
 	{
@@ -168,7 +160,7 @@ abstract class Relation {
 	/**
 	 * Get the parent model of the relation.
 	 *
-	 * @return \Illuminate\Database\Eloquent\Model
+	 * @return \Netinteractive\Elegant\Model\Record
 	 */
 	public function getParent()
 	{
@@ -183,7 +175,7 @@ abstract class Relation {
      */
     public function getForeignKey(Record $record)
     {
-        return snake_case($record->getBlueprint()->getTable().'__id');
+        return snake_case($record->getBlueprint()->getStorageName().'__id');
     }
 
     /**

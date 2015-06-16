@@ -20,6 +20,17 @@ class HasMany extends HasOneOrMany
     }
 
     /**
+     * Returns related records
+     * (We need to set proper class empty record on query builder)
+     * @return Collection|static[]
+     */
+    public function get()
+    {
+        $this->query->setRecord($this->related);
+        return $this->query->get();
+    }
+
+    /**
      * Initialize the relation on a set of models.
      *
      * @param  array $records
@@ -28,9 +39,8 @@ class HasMany extends HasOneOrMany
      */
     public function initRelation(array $records, $relation)
     {
-
         foreach ($records as $record) {
-            $record->setRelation($relation, \App('ElegantCollection', array( $this->related)));
+            $record->setRelation($relation, \App('ElegantCollection', array($this->related)) );
         }
 
         return $records;

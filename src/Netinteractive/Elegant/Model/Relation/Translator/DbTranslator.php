@@ -121,11 +121,15 @@ class DbTranslator implements TranslatorInterface
     {
         $instance = \App($related);
 
-
-        // Once we have the foreign key names, we'll just create a new Eloquent query
+        // Once we have the foreign key names, we'll just create a new Elegant query
         // for the related models and returns the relationship instance which will
         // actually be responsible for retrieving and hydrating every relations.
         $query = $this->getQuery();
+        if ($relation == 'user'){
+            echo get_class($query); //exit;
+        }else{
+            echo get_class($query).'<br>';
+        }
 
         return new BelongsTo($query, $instance, $this->record, $foreignKey, $otherKey, $relation);
     }

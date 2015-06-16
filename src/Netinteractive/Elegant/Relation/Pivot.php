@@ -6,13 +6,10 @@ use Netinteractive\Elegant\Model\Record;
 
 /**
  * Class Pivot
- * @package Illuminate\Database\Eloquent\Relations
+ * @package Netinteractive\Elegant\Relation
  */
 class Pivot extends Record
 {
-
-
-
 	/**
 	 * The parent record of the relationship.
 	 *

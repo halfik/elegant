@@ -6,7 +6,6 @@ use Netinteractive\Elegant\Model\MapperInterface;
 use Netinteractive\Elegant\Model\Record;
 use Netinteractive\Elegant\Model\Query\Builder;
 
-use Illuminate\Database\Eloquent\Relations\Relation;
 
 /**
  * Class DbMapper
@@ -124,7 +123,7 @@ class DbMapper implements MapperInterface
     {
         $this->checkPrimaryKey($ids);
 
-        return $this->getQuery()->from($this->getBlueprint()->getTable())->delete($ids);
+        return $this->getQuery()->from($this->getBlueprint()->getStorageName())->delete($ids);
     }
 
     /**
@@ -145,7 +144,7 @@ class DbMapper implements MapperInterface
         $record->validate($record->getDirty());
 
         $query = $this->getQuery();
-        $query->from($record->getBlueprint()->getTable());
+        $query->from($record->getBlueprint()->getStorageName());
 
         #check if we are editing or creating
         if (!$record->exists){
@@ -221,7 +220,7 @@ class DbMapper implements MapperInterface
 
         #if we have empty columns, we take all from table
         if (empty($columns)) {
-            $columns[] = $this->getBlueprint()->getTable(). '.*';
+            $columns[] = $this->getBlueprint()->getStorageName(). '.*';
         }
         $query->select($columns);
 
@@ -293,7 +292,7 @@ class DbMapper implements MapperInterface
         #query builder object init
         if ($this->query == null){
             $this->query = \App::make('ElegantModelQueryBuilder', array($this->connection,  $this->connection->getQueryGrammar(), $this->connection->getPostProcessor()));
-            $this->query->from($this->getBlueprint()->getTable());
+            $this->query->from($this->getBlueprint()->getStorageName());
         }
 
         #we pass record  to query builder
@@ -306,7 +305,7 @@ class DbMapper implements MapperInterface
 
 
     /**
-     * Method checkcs if blueprint primary keys are same with input array keys
+     * Method checks if blueprint primary keys are same with input array keys
      *
      * @param int|array $ids
      * @throws \Netinteractive\Elegant\Exception\PrimaryKeyException

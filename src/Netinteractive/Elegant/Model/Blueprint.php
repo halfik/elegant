@@ -27,7 +27,7 @@ abstract class Blueprint
     /**
      * @var string
      */
-    protected $table;
+    protected $storage;
 
     /**
      * @var array
@@ -309,18 +309,43 @@ abstract class Blueprint
         return in_array($fieldKey, array_keys($this->fields));
     }
 
+
     /**
-     * Returns table name
-     * @return string
+     * function checks if field is external or not.
+     * (external fields are not saved to the data source)
+     * @param string $fieldKey
+     * @return bool
      */
-    public function getTable()
+    public function isExternal($fieldKey)
     {
-        return $this->table;
+        if (!$this->isField($fieldKey)){
+            return false;
+        }
+
+        if ( !isSet($this->fields[$fieldKey]['external']) ||  $this->fields[$fieldKey]['external'] == false){
+            return false;
+        }
+
+        return true;
     }
 
-    public function setTable($name)
+    /**
+     * Returns data storage name
+     * @return string
+     */
+    public function getStorageName()
     {
-        $this->table = $name;
+        return $this->storage;
+    }
+
+    /**
+     *  Sets data storage name
+     * @param string $name
+     * @return $this
+     */
+    public function setStorageName($name)
+    {
+        $this->storage = $name;
         return $this;
     }
 

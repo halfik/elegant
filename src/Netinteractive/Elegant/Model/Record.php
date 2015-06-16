@@ -65,9 +65,12 @@ abstract class Record implements Arrayable, Jsonable
         $this->fill($attributes);
     }
 
+    /**
+     * class init
+     */
     public function init()
     {
-        return $this;
+
     }
 
 
@@ -172,16 +175,19 @@ abstract class Record implements Arrayable, Jsonable
 
         #we check if we have a blueprint if not, then each field is an attribute
         if ($blueprint){
-            #we take from blueprint information if field is a record field (database) or additional field
+            #we take from blueprint information if field is a record field
             if ($blueprint->isField($key)){
-                $this->attributes[$key] = $value;
-            }else{
-                $this->external[$key] = $value;
+                #we check if field should be stored in data storage or it's external data
+                if (!$blueprint->isExternal($key)){
+                    $this->attributes[$key] = $value;
+                }else{
+                    $this->external[$key] = $value;
+                }
             }
+
         }else{
             $this->attributes[$key] = $value;
         }
-
 
         return $this;
     }
@@ -355,7 +361,6 @@ abstract class Record implements Arrayable, Jsonable
     public function setRelation($relation, $value)
     {
         $this->relations[$relation] = $value;
-
         return $this;
     }
 

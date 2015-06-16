@@ -80,6 +80,17 @@ class BelongsTo extends Relation
     }
 
     /**
+     * Returns related records
+     * (We need to set proper class empty record on query builder)
+     * @return Collection|static[]
+     */
+    public function get()
+    {
+        $this->query->setRecord($this->related);
+        return $this->query->get();
+    }
+
+    /**
      * Set the base constraints on the relation query.
      *
      * @return void
@@ -90,7 +101,7 @@ class BelongsTo extends Relation
             // For belongs to relationships, which are essentially the inverse of has one
             // or has many relationships, we need to actually query on the primary key
             // of the related models matching on the foreign key that's on a parent.
-            $table = $this->related->getBlueprint()->getTable();
+            $table = $this->related->getBlueprint()->getStorageName();
             $fkList = $this->foreignKey;
 
             foreach ($this->otherKey AS $otherKey) {
@@ -111,13 +122,13 @@ class BelongsTo extends Relation
     public function addEagerConstraints(array $records)
     {
         $keys = $this->getEagerRecordKeys($records);
-        $this->query->from($this->related->getBlueprint()->getTable());
+        $this->query->from($this->related->getBlueprint()->getStorageName());
 
         // We'll grab the primary key name of the related models since it could be set to
         // a non-standard name and not "id". We will then construct the constraint for
         // our eagerly loading query so it returns the proper models from execution.
         foreach ($this->otherKey AS $otherKey) {
-            $key = $this->related->getBlueprint()->getTable() . '.' . $otherKey;
+            $key = $this->related->getBlueprint()->getStorageName() . '.' . $otherKey;
             $this->query->whereIn($key, array_shift($keys));
         }
     }
@@ -261,7 +272,7 @@ class BelongsTo extends Relation
      */
     public function getQualifiedForeignKey()
     {
-        return $this->parent->getBlueprint()->getTable() . '.' . $this->foreignKey;
+        return $this->parent->getBlueprint()->getStorageName() . '.' . $this->foreignKey;
     }
 
     /**

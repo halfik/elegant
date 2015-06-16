@@ -28,6 +28,14 @@ class Builder extends QueryBuilder
      */
     protected $relationsToLoad = array();
 
+
+    /**
+     * All of the registered builder macros.
+     *
+     * @var array
+     */
+    protected $macros = array();
+
     /**
      * Execute the query as a "select" statement.
      *
@@ -41,12 +49,11 @@ class Builder extends QueryBuilder
         // If we actually found models we will also eager load any relationships that
         // have been specified as needing to be eager loaded, which will solve the
         // n+1 query issue for the developers to avoid running a lot of queries.
-        if (count($records) > 0)
-        {
+        if (count($records) > 0){
             $records = $this->eagerLoadRelations($records);
         }
 
-        return new Collection($records);
+        return \App::make('ElegantCollection', array($records));
     }
 
     ##RECORD
@@ -78,7 +85,7 @@ class Builder extends QueryBuilder
     public function createRecords($columns = array('*'))
     {
         // First, we will simply get the raw results from the query builders which we
-        // can use to populate an array with Eloquent models. We will pass columns
+        // can use to populate an array with Elegant records. We will pass columns
         // that should be selected as well, which are typically just everything.
         $results = parent::get($columns);
 
@@ -150,9 +157,12 @@ class Builder extends QueryBuilder
 
     public function with($relations)
     {
-        if (is_string($relations)) $relations = func_get_args();
+        if (is_string($relations)){
+            $relations = func_get_args();
+        }
 
         $parsed = $this->parseRelations($relations);
+
 
         $this->setRelationsToLoad(array_merge($this->getRelationsToLoad(), $parsed));
 
@@ -168,6 +178,7 @@ class Builder extends QueryBuilder
     public function eagerLoadRelations(array $records)
     {
         $relations = $this->getRelationsToLoad();
+
         foreach ($relations as $name => $constraints){
 
             // For nested eager loads we'll skip loading them here and they will be set as an
@@ -194,7 +205,6 @@ class Builder extends QueryBuilder
         // and is error prone while we remove the developer's own where clauses.
         $query = Relation::noConstraints(function() use ($relation)
         {
-
             return $this->getRecord()->getRelation('db', $relation);
         });
 
@@ -205,8 +215,7 @@ class Builder extends QueryBuilder
         // is loaded. In this way they will all trickle down as they are loaded.
         if (count($nested) > 0)
         {
-            //$query->getQuery()->with($nested);
-            $query->with($nested);
+            $query->getQuery()->with($nested);
         }
 
         return $query;
@@ -291,7 +300,7 @@ class Builder extends QueryBuilder
 
         call_user_func($constraints, $relation);
 
-        $records = $relation->initRelation($records, $name);
+        $records =  $relation->initRelation($records, $name);
 
         // Once we have the results, we just match those back up to their parent models
         // using the relationship instance. Then we just return the finished arrays
@@ -338,6 +347,54 @@ class Builder extends QueryBuilder
         $dots = str_contains($name, '.');
 
         return $dots && starts_with($name, $relation.'.');
+    }
+
+    /**
+     * Extend the builder with a given callback.
+     *
+     * @param  string    $name
+     * @param  \Closure  $callback
+     * @return void
+     */
+    public function macro($name, Closure $callback)
+    {
+        $this->macros[$name] = $callback;
+    }
+
+    /**
+     * Get the given macro by name.
+     *
+     * @param  string  $name
+     * @return \Closure
+     */
+    public function getMacro($name)
+    {
+        return array_get($this->macros, $name);
+    }
+
+    /**
+     * Dynamically handle calls into the query instance.
+     *
+     * @param  string  $method
+     * @param  array   $parameters
+     * @return mixed
+     */
+    public function __call($method, $parameters)
+    {
+        if (isset($this->macros[$method]))
+        {
+            array_unshift($parameters, $this);
+
+            return call_user_func_array($this->macros[$method], $parameters);
+        }
+        elseif (method_exists($this->model, $scope = 'scope'.ucfirst($method)))
+        {
+            return $this->callScope($scope, $parameters);
+        }
+
+        $result = call_user_func_array(array($this->query, $method), $parameters);
+
+        return in_array($method, $this->passthru) ? $result : $this;
     }
 }
 
