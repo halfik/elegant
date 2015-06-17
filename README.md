@@ -6,14 +6,17 @@ Elegant is a domain model package. He is similar to laravels Eloquent and we use
 
 ## Services
 * ElegantServiceProvider - registers in App most important classes:
-     * ElegantDbMapper - class that allows to work with databases.
-     * ElegantQueryBuilder - database query builder.
-     * ElegantModelQueryBuilder - model query builder. Responsible for relations.
-     * ElegantCollection - data collection class
-     * ElegantRelationManager - class that allows to register relations translators for different data sources. ElegantServiceProvider register standard db translator.
-     * ElegantRelationDbTranslator - class that knows how to build database relations based on informations from blueprint
-     * ElegantSearchDbTranslator - class that knows how to build and add to query proper where statements based on blueprint informations.
+     * ni.elegant.model.mapper.db - class that allows to work with databases.
+     * ni.elegant.db.query.builder - database query builder.
+     * ni.elegant.model.query.builder - model query builder. Responsible for relations.
+     * ni.elegant.model.collection - data collection class
+     * ni.elegant.model.relation.manager- class that allows to register relations translators for different data sources. ElegantServiceProvider register standard db translator.
+     * ni.elegant.model.relation.translator.db - class that knows how to build database relations based on informations from blueprint
+     * ni.elegant.search.db.translator - class that knows how to build and add to query proper where statements based on blueprint informations.
 
+
+## Events
+    ni.elegant.mapper.search - event is fired in DbMapper in search method. You can use it to modify search query object.
 
 ## Documentation
 

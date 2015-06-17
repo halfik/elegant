@@ -29,7 +29,7 @@ class DbTranslator implements TranslatorInterface
      */
     public function __construct()
     {
-        $this->query = \App::make('ElegantModelQueryBuilder');
+        $this->query = \App::make('ni.elegant.model.query.builder');
     }
 
     /**
@@ -154,7 +154,7 @@ class DbTranslator implements TranslatorInterface
         // Now we're ready to create a new query builder for the related model and
         // the relationship instances for the relation. The relations will set
         // appropriate query constraint and entirely manages the hydrations.
-        $dbMapper = \App('ElegantDbMapper', array($related));
+        $dbMapper = \App('ni.elegant.model.mapper.db', array($related));
 
         return new BelongsToMany( $dbMapper->getQuery(), $instance, $this->record, $table, $foreignKey, $otherKey, $relation);
     }

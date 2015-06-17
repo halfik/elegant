@@ -163,7 +163,7 @@ abstract class HasOneOrMany extends Relation
     {
         $value = $dictionary[$key];
 
-        return $type == 'one' ? reset($value) : \App('ElegantCollection', array($value));
+        return $type == 'one' ? reset($value) : \App('ni.elegant.model.collection', array($value));
     }
 
     /**

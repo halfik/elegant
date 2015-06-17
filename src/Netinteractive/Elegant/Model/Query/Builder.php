@@ -70,7 +70,7 @@ class Builder extends QueryBuilder
             $records = $this->eagerLoadRelations($records);
         }
 
-        return \App::make('ElegantCollection', array($records));
+        return \App::make('ni.elegant.model.collection', array($records));
     }
 
     ##RECORD

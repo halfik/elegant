@@ -40,7 +40,7 @@ class HasMany extends HasOneOrMany
     public function initRelation(array $records, $relation)
     {
         foreach ($records as $record) {
-            $record->setRelation($relation, \App('ElegantCollection', array($this->related)) );
+            $record->setRelation($relation, \App('ni.elegant.model.collection', array($this->related)) );
         }
 
         return $records;

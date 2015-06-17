@@ -33,12 +33,19 @@ But if there is a need (you need to overwrite some methods) you can make custom 
 
         Finds single record.
 
-* findMany(array $params, $columns = array('*'), $operator = 'and', $defaultJoin = true) :\Netinteractive\Elegant\Model\Collection
+* findMany(array $params, $columns = array('*'), $operator = 'and') :\Netinteractive\Elegant\Model\Collection
 
         This method allows to search database for records that meet the criteria set out in $params (Example 8). There is a requirement how to name $params.
-        As you can find in example 8 $params has to be array of arrays. Main array key is name of record (class name or name you bind in App). Value has to be
+
+        $params - As you can find in example 8 $params has to be array of arrays. Main array key is name of record (class name or name you bind in App). Value has to be
         array that contains this record field names (keys) and values you are looking for. Method uses search method to get build proper query object. All information about
         how to search by field is taken from record blueprint.
+
+        $columns - array of column names for select statment
+
+        $operator - 'and' or 'or'. There is no possibility to build query like: "WHERE x=1 AND (y=2 OR c=4)"
+
+        If you need to modify search query object (you want to add joins etc. etc.), there is a event you can use to do so: ni.elegant.mapper.search (Example 9)
 
 
 
@@ -133,3 +140,57 @@ Searching for specific records:
 
         $dbMapper = new DbMapper('Patient');
         $collection = $dbMapper->findMany($searchParams);
+
+### Example 9
+Bind event to modify mapper search query:
+
+In App\Providers\EventServiceProvider.php add this:
+
+
+    /**
+	 * The event handler mappings for the application.
+	 *
+	 * @var array
+	 */
+	protected $listen = [
+        'ni.elegant.mapper.search' => [
+            'App\Handlers\Events\Netinteractive\Elegant\Model\ModifySearch',
+        ],
+	];
+
+Then you can use: php artisan event:generate to generate proper handler.
+
+In App\Handlers\Events\Netinteractive\Elegant\Model you will find ModifySearch.php:
+
+    <?php namespace Core2\Handlers\Events\Netinteractive\Elegant\Model;
+
+    use Illuminate\Queue\InteractsWithQueue;
+    use Illuminate\Contracts\Queue\ShouldBeQueued;
+    use Netinteractive\Elegant\Db\Query\Builder AS Builder;
+
+
+    class ModifySearch
+    {
+
+        /**
+         * Create the event handler.
+         *
+         * @return void
+         */
+        public function __construct()
+        {
+            //
+        }
+
+        /**
+         * Handle the event.
+         *
+         * @param  Builder  $event
+         * @return void
+         */
+        public function handle(Builder $q)
+        {
+            $q->join('patient_data', 'patient_data.patient__id', '=', 'patient.id');
+        }
+
+    }

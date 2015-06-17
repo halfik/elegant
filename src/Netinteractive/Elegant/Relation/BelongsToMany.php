@@ -166,7 +166,7 @@ class BelongsToMany extends Relation
         }
 
 
-        return \App::make('ElegantCollection', array($records));
+        return \App::make('ni.elegant.model.collection', array($records));
     }
 
     /**
@@ -189,7 +189,7 @@ class BelongsToMany extends Relation
 
             foreach ($recordPkList AS $recordPk){
                 if (isset($dictionary[$key = $recordPk])){
-                    $collection = \App::make('ElegantCollection', array($dictionary[$key]));
+                    $collection = \App::make('ni.elegant.model.collection', array($dictionary[$key]));
                     $record->setRelation($relation, $collection);
                 }
             }

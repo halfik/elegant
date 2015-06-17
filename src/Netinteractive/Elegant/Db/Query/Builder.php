@@ -77,7 +77,7 @@ class Builder extends BaseBuilder
      */
     public function newQuery()
     {
-        return App('ElegantQueryBuilder');
+        return App('ni.elegant.db.query.builder');
     }
 
     /**

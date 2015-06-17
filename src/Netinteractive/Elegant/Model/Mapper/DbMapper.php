@@ -203,7 +203,7 @@ class DbMapper implements MapperInterface
      */
     public function findMany(array $params, $columns = array('*'), $operator = 'and', $defaultJoin = true)
     {
-        return \App::make('ElegantCollection', array($this->search($params, $columns, $operator, $defaultJoin)->get()));
+        return \App::make('ni.elegant.model.collection', array($this->search($params, $columns, $operator, $defaultJoin)->get()));
     }
 
 
@@ -213,10 +213,9 @@ class DbMapper implements MapperInterface
      * @param $input
      * @param array $columns
      * @param string $operator
-     * @param bool $defaultJoin
      * @return mixed
      */
-    public function search($input, $columns = array(), $operator = 'and', $defaultJoin = true)
+    public function search($input, $columns = array(), $operator = 'and')
     {
         $query = $this->getQuery();
 
@@ -227,36 +226,33 @@ class DbMapper implements MapperInterface
         $query->select($columns);
 
         #here we clean up incoming input from empty values
-        foreach ($input as $modelName => $fields) {
+        foreach ($input as $recordName => $fields) {
             if (is_array($fields)) {
                 foreach ($fields AS $name => $val) {
                     if (is_array($val) && in_array('null', $val)) {
-                        unset($input[$modelName][$name]);
+                        unset($input[$recordName][$name]);
                     }
-                    if (empty($input[$modelName][$name])) {
-                        unset($input[$modelName][$name]);
+                    if (empty($input[$recordName][$name])) {
+                        unset($input[$recordName][$name]);
                     }
                 }
             }
-        }
-
-        #we add to search query default join defined my developer in searchJoins method
-        if ($defaultJoin) {
-            $query = $this->searchJoins($query);
         }
 
         #we wrap all ours search wheres  because of others wheres that can be add later (or where added before)
         $query->where(function ($query) use ($input, $operator) {
-            foreach ($input AS $modelName => $fields) {
-
+            foreach ($input AS $recordName => $fields) {
                 if (!empty($fields) && is_array($fields)) {
-                    $model = \App::make($modelName);
+                    $record = \App::make($recordName);
                     foreach ($fields AS $field => $value) {
-                        $query = $this->queryFieldSearch($model, $field, $value, $query, $operator);
+                        $query = $this->queryFieldSearch($record, $field, $value, $query, $operator);
                     }
                 }
             }
         });
+
+        #we add to search query default join defined my developer in searchJoins method
+        \Event::fire('ni.elegant.mapper.search', $query);
 
         return $query;
     }
@@ -270,12 +266,12 @@ class DbMapper implements MapperInterface
      * @param string $operator
      * @return mixed
      */
-    public function queryFieldSearch(Record $model, $fieldKey, $keyword, $q, $operator = 'or')
+    public function queryFieldSearch(Record $record, $fieldKey, $keyword, $q, $operator = 'or')
     {
-        $searchableFields = $model->getBlueprint()->getSearchableFields();
+        $searchableFields = $record->getBlueprint()->getSearchableFields();
 
         #search translator
-        $translator = \App::make('ElegantSearchDbTranslator');
+        $translator = \App::make('ni.elegant.search.db.translator');
 
         if (isSet($searchableFields[$fieldKey])){
             $searchable = $translator->translate($fieldKey, $searchableFields[$fieldKey]['searchable']);
@@ -293,7 +289,7 @@ class DbMapper implements MapperInterface
     {
         #query builder object init
         if ($this->query == null){
-            $this->query = \App::make('ElegantModelQueryBuilder', array($this->connection,  $this->connection->getQueryGrammar(), $this->connection->getPostProcessor()));
+            $this->query = \App::make('ni.elegant.model.query.builder', array($this->connection,  $this->connection->getQueryGrammar(), $this->connection->getPostProcessor()));
             $this->query->from($this->getBlueprint()->getStorageName());
         }
 
@@ -341,16 +337,6 @@ class DbMapper implements MapperInterface
         return $query;
     }
 
-
-    /**
-     * Method for serach query modifications (method to be overwriten)
-     * @param Builder $query
-     * @return mixed
-     */
-    protected function searchJoins(Builder $query)
-    {
-        return $query;
-    }
 
 
     /**

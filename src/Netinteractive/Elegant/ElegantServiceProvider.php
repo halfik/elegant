@@ -33,11 +33,11 @@ class ElegantServiceProvider extends ServiceProvider
 	 */
 	public function register()
 	{
-        \App::bind('ElegantDbMapper', function($app, $params){
+        \App::bind('ni.elegant.model.mapper.db', function($app, $params){
             return new \Netinteractive\Elegant\Model\Mapper\DbMapper($params[0]);
         });
 
-        \App::bind('ElegantQueryBuilder', function($app, $params){
+        \App::bind('ni.elegant.db.query.builder', function($app, $params){
             $connection = \App::make('db')->connection(\Config::get('database.default'));
 
             $processor = $connection->getPostProcessor();
@@ -46,7 +46,7 @@ class ElegantServiceProvider extends ServiceProvider
             return new \Netinteractive\Elegant\Db\Query\Builder($connection, $grammar, $processor);
         });
 
-        \App::bind('ElegantModelQueryBuilder', function($app, $params){
+        \App::bind('ni.elegant.model.query.builder', function($app, $params){
             $connection = \App::make('db')->connection(\Config::get('database.default'));
 
             $processor = $connection->getPostProcessor();
@@ -56,15 +56,15 @@ class ElegantServiceProvider extends ServiceProvider
         });
 
 
-        \App::bind('ElegantCollection', '\Netinteractive\Elegant\Model\Collection');
+        \App::bind('ni.elegant.model.collection', '\Netinteractive\Elegant\Model\Collection');
 
         \App::bind('ElegantRelationManager', '\Netinteractive\Elegant\Model\Relation\Manager');
-        \App::bind('ElegantRelationDbTranslator', '\Netinteractive\Elegant\Model\Relation\Translator\DbTranslator');
+        \App::bind('ni.elegant.model.relation.translator.db', '\Netinteractive\Elegant\Model\Relation\Translator\DbTranslator');
 
-        \App::bind('ElegantSearchDbTranslator', '\Netinteractive\Elegant\Search\Db\Translator');
+        \App::bind('ni.elegant.search.db.translator', '\Netinteractive\Elegant\Search\Db\Translator');
 
 
-        \App::make('ElegantRelationManager')->registerTranslator('db', \App('ElegantRelationDbTranslator'));
+        \App::make('ElegantRelationManager')->registerTranslator('db', \App('ni.elegant.model.relation.translator.db'));
 
 
 	}
