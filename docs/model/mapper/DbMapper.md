@@ -1,21 +1,51 @@
 # Netinteractive\Elegant\Model\Mapper\DbMapper
 
 Class allows to read\write\delete data from database. In most cases you will use standard DbMapper to work with all record classes.
-But if there is a need (you need to overwrite some methods) you can make custom DbMapper for specific record.
+But if there is a need (you need to overwrite some methods) you can make custom DbMapper for concrete record.
 
 
-### Methods
-* public function createRecord(array $data = array()) - created record and fill with $data (dosn't save it do database)
-* public function getRecordClass() - returns class name of record that mapper is currently working with
-* public function setRecordClass($name) - sets class name of record
-* public function getBlueprint() - returns blueprint object
-* public function delete($ids) - deleted rows from database
-* public function save(Record $record) - saves record to database
+## Methods
+* createRecord( array $data = array() ) : \Netinteractive\Elegant\Model\Record
+
+        Create a new record and fill it with $data (dosn't save it do database).
+
+* getRecordClass() : string
+
+        Returns class name of record that mapper is currently working with.
+
+* setRecordClass( string $name ) : $this
+
+        Sets record class name.
+
+* getBlueprint() : \Netinteractive\Elegant\Model\Blueprint
+
+        Returns record blueprint object.
+
+* delete( integer|array $ids) : int
+
+        Delete row (rows) from database.
+
+* save( \Netinteractive\Elegant\Model\Record $record ) : $this
+
+        Saves record to database.
+
+* find( int|array $ids, array $columns=array('*')) : \Netinteractive\Elegant\Model\Record
+
+        Finds single record.
+
+* findMany(array $params, $columns = array('*'), $operator = 'and', $defaultJoin = true) :\Netinteractive\Elegant\Model\Collection
+
+        This method allows to search database for records that meet the criteria set out in $params (Example 8). There is a requirement how to name $params.
+        As you can find in example 8 $params has to be array of arrays. Main array key is name of record (class name or name you bind in App). Value has to be
+        array that contains this record field names (keys) and values you are looking for. Method uses search method to get build proper query object. All information about
+        how to search by field is taken from record blueprint.
 
 
 
-### Examples:
+## Examples:
 
+
+### Example 1
 Getting a record (with related patientData data) :
 
      $dbMapper = new DbMapper('Patient');
@@ -24,6 +54,7 @@ Getting a record (with related patientData data) :
             ->find('1')
             ;
 
+### Example 2
 Getting records with related rows:
 
     $dbMapper = new DbMapper('PatientData');
@@ -39,6 +70,7 @@ Getting records with related rows:
                 ->get()
     ;
 
+### Example 3
 Getting a collection:
 
      $dbMapper = new DbMapper('Patient');
@@ -48,6 +80,7 @@ Getting a collection:
             ->get()
             ;
 
+### Example 4
 Creating a record (it dosn't save record do data storage):
 
     $dbMapper = new DbMapper('Patient');
@@ -59,6 +92,7 @@ Creating a record (it dosn't save record do data storage):
         )
     );
 
+### Example 5
 Saving record:
 
     $dbMapper = new DbMapper('Patient');
@@ -72,11 +106,13 @@ Saving record:
     $dbMapper->save($record);
 
 
+### Example 6
 Deleting a record:
 
     $dbMapper = new DbMapper('Patient');
-    $patient = $dbMapper->delete(1);
+    $dbMapper->delete(1);
 
+### Example 7
 Updating a record:
 
     $dbMapper = new DbMapper('Patient');
@@ -88,6 +124,7 @@ Updating a record:
     $record->first_name = 'New name';
     $dbMapper->save($record);
 
+### Example 8
 Searching for specific records:
 
         $searchParams = array(

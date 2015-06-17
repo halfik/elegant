@@ -141,9 +141,10 @@ class DbMapper implements MapperInterface
             return $this;
         }
 
-        #we always should validate all data not only dirty
+        #we always should validate all data not only that actually was changed
         $record->validate($record->getAttributes());
 
+        #we prepare database query object
         $query = $this->getQuery();
         $query->from($record->getBlueprint()->getStorageName());
 
@@ -173,7 +174,7 @@ class DbMapper implements MapperInterface
 
 
     /**
-     * Find one model
+     * Finds single record
      *
      * @param $ids
      * @param array $columns
@@ -185,14 +186,14 @@ class DbMapper implements MapperInterface
 
         $data = $this->getQuery()->find($ids, $columns);
 
-        $model = $this->createRecord((array) $data);
-        $model->exists = true;
+        $record = $this->createRecord((array) $data);
+        $record->exists = true;
 
-        return $model;
+        return $record;
     }
 
     /**
-     * Find collection of models
+     * Find collection of records
      *
      * @param array $params
      * @param array $columns
