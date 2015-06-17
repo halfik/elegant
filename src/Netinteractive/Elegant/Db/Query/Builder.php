@@ -84,16 +84,7 @@ class Builder extends BaseBuilder
     {
         $this->with[$alias] = $query;
         $this->mergeBindings($query);
-        return $this;
-    }
 
-    /**
-     * Turns on/off query filters
-     * @param bool $allow
-     */
-    public function allowFilter($allow = true)
-    {
-        $this->allowQueryFilter = $allow;
         return $this;
     }
 
@@ -146,7 +137,7 @@ class Builder extends BaseBuilder
 
 
     /**
-     * Execute the query and get the first result.
+     * Execute the query and returns the first found record.
      *
      * @param  array $columns
      * @return \Netinteractive\Elegant\Model\Record|static|null
@@ -157,7 +148,7 @@ class Builder extends BaseBuilder
     }
 
     /**
-     * Returns table name
+     * Returns from value
      * @return string
      */
     public function getFrom()
@@ -333,7 +324,6 @@ class Builder extends BaseBuilder
             } else {
                 $this->bindings[$type][] = $value;
             }
-
         }
 
         return $this;
@@ -905,7 +895,7 @@ class Builder extends BaseBuilder
     }
 
     /**
-     * Get the SQL representation of the query.
+     * Returns the SQL representation of the query.
      *
      * @return string
      */
@@ -916,11 +906,14 @@ class Builder extends BaseBuilder
 
     /**
      * Remove order by from query
+     * @return $this
      */
     public function removeOrder()
     {
         $this->orders = null;
         $this->bindings['order'] = [];
+
+        return $this;
     }
 
     /**

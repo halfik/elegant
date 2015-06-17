@@ -7,77 +7,80 @@ We have added some functionality to original Elegant query builder. New things w
 * with statements (Example 2)
 * selecting from other builder object (Example 3)
 * overriding already bind where values. To do able to do so, you have to use $alias parameter when building where statement (Example 4).
-
+* ni.elegant.db.builder.modify event that allows to modify query before execution
+* we are removing double join statements
 
 
 ## Methods
 
-* addWith(Netinteractive\Elegant\Query\Builder $query, string $alias) - it won't work with mysql. It works with postgresql and allows to build
-with statments (Example 2)
+* newQuery(): \Netinteractive\Elegant\Db\Query\Builder
 
-    WITH patient_with AS (
-    	SELECT
-    		*
-    	FROM
-    		"patient"
-    	WHERE
-    		"id" > '10'
-    	AND "id" < '999'
-    ) SELECT
-    	*
-    FROM
-    	"patient_data"
-    INNER JOIN "patient_with" ON "patient_with"."id" = "patient_data"."patient__id"
+        It uses IoC to create object (\App('ni.elegant.db.query.builder')), so can use own QueryBuilder class to work with package.
 
 
-* function addComment($comment) - it adds comment to sql query.
-  It's usefull when you build query in one place of your application and have mechanism in other that modifies query.
-  This kind of global mechanics aren't safe in use and can lead to many bugs that gona be hard to find.
-  So it's good idea to allow them to add comment to query if and when they modify it.
+* from(mixed $from, $alias = null) : $this
+
+        You can select from "tableName" or other Builder object. $alias is used when you select from other Builder object.
+        If you do not specify it, by default it takes table name from passed object.
+
+
+* addWith(Netinteractive\Elegant\Query\Builder $query, string $alias) : $this
+
+        It won't work with mysql. It works with postgresql and allows to build with statement (Example 2).
+
+
+* find( int|array $ids, $columns = array('*') ) : mixed
+
+        Allows to find a single record. Id may consist of multiple fields.
+
+
+* delete( int|array $ids = null) : int
+
+        Delete records and return information how many records were deleted.
+
+
+* first( array $columns = array('*') ) : \Netinteractive\Elegant\Model\Record|static|null
+
+        Execute the query and returns the first found record.
+
+
+* getFrom() : string
+
+        Returns from value. In most cases it will be table name. But if you are selecting from another Builder, then this method will return sql string.
+
+
+*  addComment( string $comment ) : $this
+
+        It adds comment to sql query.
+        It's useful when you want to build query in one place of your application and have mechanism in other that modifies query.
+        This kind of global mechanics aren't safe in use and can lead to many bugs that are going to be hard to find.
+        So it's good idea to allow them to add comment to query if and when they modify it.
+
+
+* setBinding( string $type, string $alias, mixed $value ) : bool
+
+        Method allows  to change values already bind to the query. See Example 3.
+
+
+* addBinding(string $value, string $type = 'where', string $alias = null) : $this
+
+        Add a binding to the query.
+
+
+* where (string $column, string $operator = null, mixed $value = null, string $boolean = 'and', string $alias = null) : $this
+
+        Allows to build where. All where methods were taken from Eloquent builder. We only add $alias to each of them as last parameter. So we won't list all of them here.
+
+* toSql(): string
+
+        Returns the SQL representation of the query.
+
+* removeOrder() : $this
+
+        Removed order from query.
 
 
 
-* allowFilter($allow = true) - it turns on/off QueryBuilder filter mechanism. Its described in this document.
-
-
-* from($from, $alias = null) - we override this method to allow building more complex queries. Example:
-            $dbMapper = new DbMapper('Patient');
-
-            $q = $dbMapper
-                ->getQuery()
-                ->from($dbMapper->getQuery(), 'my_alias')
-                ->whereIn('user__id',  array('213', '215'))
-                ->where('created_at', '>', '2015-02-15')
-            ;
-
-            $results = $q->get();
-
-This will give as this sql:
-
-            SELECT
-                *
-            FROM
-                (SELECT * FROM `patient`) AS my_alias
-            WHERE
-                (
-                    `user__id` IN ('213', '215')
-                    AND `created_at` > '2015-02-15'
-                )
-
-
-
-* setBinding($type, $alias, $value) - method allows coder to change values already binded to query. Example:
-        $dbMapper = new DbMapper('Patient');
-
-        $q = $dbMapper
-            ->getQuery()
-            ->whereIn('user__id',  array('213', '215'))
-            ->where('created_at', '>', '2015-02-15', 'and', 'created_at')
-        ;
-
-        $q->setBinding('where', 'created_at', '2015-02-14');
-
-        $results = $q->get();
 
 Please notice that to be allowed to change value of already binded value, first you have give it an alias when using
 where methods.

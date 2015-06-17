@@ -81,6 +81,11 @@ Things you should define in init() method:
 
         checks if $fieldKey is a field
 
+*   isFieldRequired( string $key, string $action=null) : bool
+
+       checks if field is required
+
+
 *   isExternal( $fieldKey ) : bool
 
         checks if field is external or not (external defined fields are not saved to data source)
