@@ -13,11 +13,6 @@ use Illuminate\Database\Query\Builder AS BaseBuilder;
  */
 class Builder extends BaseBuilder
 {
-    /**
-     * Defines if additional query filters are avaible
-     * @var bool
-     */
-    protected $allowQueryFilter = true;
 
     /**
      * List of QueryBuilder objects to build WITH statment
@@ -192,7 +187,7 @@ class Builder extends BaseBuilder
     public function setBinding($type, $alias, $value)
     {
         if (isSet($this->bindings[$type][$alias])) {
-            $this->addComment("[Binding] [$alias] " . $this->bindings[$type][$alias] . ' => ' . $value);
+            $this->addComment("[Rebinding] [$alias] " . $this->bindings[$type][$alias] . ' => ' . $value);
             $this->bindings[$type][$alias] = $value;
             return true;
         }
@@ -459,7 +454,7 @@ class Builder extends BaseBuilder
         }
 
 
-        $this->addBinding($bindings, 'where');
+        $this->addBinding($bindings, 'where', $alias);
 
         return $this;
     }
@@ -644,7 +639,7 @@ class Builder extends BaseBuilder
         }
 
 
-        $this->addBinding($values, 'where');
+        $this->addBinding($values, 'where', $alias);
 
         return $this;
     }
@@ -846,8 +841,7 @@ class Builder extends BaseBuilder
             $this->wheres[] = compact('column', 'type', 'boolean', 'operator', 'value');
         }
 
-
-        $this->addBinding($value, 'where');
+        $this->addBinding($value, 'where', $alias);
 
         return $this;
     }
@@ -872,10 +866,8 @@ class Builder extends BaseBuilder
             return $query;
         });
 
-        #Here we check if additional Query Filters are avaible. If so, we fire the Event
-        if ($this->allowQueryFilter == true) {
-            \Event::fire('query.filter.role', array($this), false);
-        }
+        #Here we fire event that will allow to modify query
+        \Event::fire('ni.elegant.db.builder.modify', array($this), false);
 
         #Here we add comments to Sql
         $comments = '';

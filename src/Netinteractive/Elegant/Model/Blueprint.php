@@ -308,6 +308,29 @@ abstract class Blueprint
         return in_array($fieldKey, array_keys($this->fields));
     }
 
+    /**
+     * Check if field is required
+     * @param $key
+     * @param string $action
+     * @return bool
+     */
+    public function isFieldRequired($key, $action=null)
+    {
+        foreach (self::$fields[get_class($this)][$key]['rules'] AS $group=>$rules){
+            if ($action == null || $action == $group){
+                $rules_array = explode('|', $rules);
+
+                foreach($rules_array as $rule){
+                    if($rule == 'required'){
+                        return true;
+                    }
+                }
+            }
+        }
+
+        return false;
+    }
+
 
     /**
      * function checks if field is external or not.

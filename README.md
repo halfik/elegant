@@ -17,6 +17,7 @@ Elegant is a domain model package. He is similar to laravels Eloquent and we use
 
 ## Events
     ni.elegant.mapper.search - event is fired in DbMapper in search method. You can use it to modify search query object.
+    ni.elegant.db.builder.modify - event is fired in Db\Query\Builder and allows to modify query before execution.
 
 ## Important
 There is the requirement for naming foreign keys. If you wont meet this requirement - relations won't work.
