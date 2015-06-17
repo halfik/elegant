@@ -20,18 +20,6 @@ class Builder extends BaseBuilder
     protected $allowQueryFilter = true;
 
     /**
-     * All of the available clause operators.
-     *
-     * @var array
-     */
-    protected $operators = array(
-        '=', '<', '>', '<=', '>=', '<>', '!=',
-        'like', 'not like', 'between', 'ilike',
-        '&', '|', '^', '<<', '>>',
-        'rlike', 'regexp', 'not regexp', '&&', '<@', '@>', '||'
-    );
-
-    /**
      * List of QueryBuilder objects to build WITH statment
      * @var array
      */
@@ -54,18 +42,6 @@ class Builder extends BaseBuilder
     {
         $this->bindings['with'] = array();
 
-        /*if (!$connection) {
-            $connection = \App::make('db')->connection(\Config::get('database.default'));
-        }
-
-        if (!$processor) {
-            $processor = $connection->getPostProcessor();
-        }
-
-        if (!$grammar) {
-            $grammar = $connection->getQueryGrammar();
-        }*/
-
         return parent::__construct($connection, $grammar, $processor);
     }
 
@@ -77,7 +53,7 @@ class Builder extends BaseBuilder
      */
     public function newQuery()
     {
-        return App('ni.elegant.db.query.builder');
+        return \App('ni.elegant.db.query.builder');
     }
 
     /**
@@ -105,7 +81,7 @@ class Builder extends BaseBuilder
 
     /**
      * Binds QueryObject to $alias and later makes SQL WITH statement
-     * @param Builder $query
+     * @param \Netinteractive\Elegant\Db\Query\Builder $query
      * @param $alias
      * @return $this
      */
@@ -298,13 +274,6 @@ class Builder extends BaseBuilder
         // We'll add that Closure to the query then return back out immediately.
         if ($column instanceof \Closure) {
             return $this->whereNested($column, $boolean, $alias);
-        }
-
-        // If the given operator is not found in the list of valid operators we will
-        // assume that the developer is just short-cutting the '=' operators and
-        // we will set the operators to '=' and set the values appropriately.
-        if (!in_array(strtolower($operator), $this->operators, true)) {
-            list($value, $operator) = array($operator, '=');
         }
 
         // If the value is a Closure, it means the developer is performing an entire

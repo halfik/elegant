@@ -1,29 +1,37 @@
 # Netinteractive\Elegant\Query\Builder
 
+We have added some functionality to original Elegant query builder. New things you can do when compared to Eloquent builder:
+
+* we throwed away list of available clause operators, so now anything is possible when you are building where statment.
+* we've added the possibility to add sql comments (Example 1)
+* we've added the possibility to build with statments (Example 2)
+* we've added the possibility to build nested queries (Example 3)
 
 
-* function addWith(Builder $query, $alias) - it won't work with mysql. It works with postgresql. It allows to build
-statments like this one:
+## Methods
 
-            WITH my_filter AS (
-                SELECT * FROM uses WHERE first_name == 'John'
-            )
+* addWith(Netinteractive\Elegant\Query\Builder $query, string $alias) - it won't work with mysql. It works with postgresql and allows to build
+with statments (Example 2)
 
-            SELECT * FROM profiles
-            INNER JOIN my_filter ON my_filter.id = profiles.user_id
+    WITH my_filter AS (
+        SELECT * FROM uses WHERE first_name == 'John'
+    )
+
+    SELECT * FROM profiles
+    INNER JOIN my_filter ON my_filter.id = profiles.user_id
 
 
-* public function addComment($comment) - it adds comment to sql query.
+* function addComment($comment) - it adds comment to sql query.
   It's usefull when you build query in one place of your application and have mechanism in other that modifies query.
   This kind of global mechanics aren't safe in use and can lead to many bugs that gona be hard to find.
   So it's good idea to allow them to add comment to query if and when they modify it.
 
 
 
-* function allowFilter($allow = true) - it turns on/off QueryBuilder filter mechanism. Its described in this document.
+* allowFilter($allow = true) - it turns on/off QueryBuilder filter mechanism. Its described in this document.
 
 
-* function from($from, $alias = null) - we override this method to allow building more complex queries. Example:
+* from($from, $alias = null) - we override this method to allow building more complex queries. Example:
             $dbMapper = new DbMapper('Patient');
 
             $q = $dbMapper
@@ -84,3 +92,9 @@ acl filters (we use in our projects):
 
 This mechanism is global. This $policyPatient function will trigger only for patient acl role. So if patient role will
 try to get any data from policy table - this function will trigger automaticly and modify query.
+
+
+## Examples
+
+### Example 2
+
