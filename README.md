@@ -24,9 +24,17 @@ In example if you have patient_data table where you have foreign key from patien
 Also we recommend pivot table names to looke like this: table_one__table_two
 
 
+## Package versioning
+
+x.y.z -
+    x - a whole new version of package, where architecture is completely changed
+    y - we change it always when package is no more compatible with lasted version (no matter why)
+    z - we chage it when we fix bug or add new features and package is still compatible
+
 ## Documentation
 
 In docs folder you can find more documentation about package.
+
 
 All examples are based on this 3 classes:
 
