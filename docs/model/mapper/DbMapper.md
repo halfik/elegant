@@ -47,6 +47,14 @@ But if there is a need (you need to overwrite some methods) you can make custom 
 
         If you need to modify search query object (you want to add joins etc. etc.), there is a event you can use to do so: ni.elegant.mapper.search (Example 9)
 
+* getQuery() : \Netinteractive\Elegant\Db\Query\Builder
+
+    Returns query builder object.
+
+* with( array|string $relations ) : \Netinteractive\Elegant\Db\Query\Builder
+
+    Prepaer query builder object that will allow to get records with related records. See Example 10.
+
 
 
 ## Examples:
@@ -194,3 +202,13 @@ In App\Handlers\Events\Netinteractive\Elegant\Model you will find ModifySearch.p
         }
 
     }
+
+
+### Example 10
+Code below will return you collection of patient_data records related patient records (and user records related with patient).
+
+    $dbMapper = new DbMapper('PatientData');
+    $results = $dbMapper
+        ->with('patient.user')
+        ->get()
+     ;

@@ -18,6 +18,10 @@ Elegant is a domain model package. He is similar to laravels Eloquent and we use
 ## Events
     ni.elegant.mapper.search - event is fired in DbMapper in search method. You can use it to modify search query object.
 
+## Important
+There is the requirement for naming foreign keys. If you wont meet this requirement - relations won't work.
+In example if you have patient_data table where you have foreign key from patient table it has to be named: patient__id (related: table_name + __ + field_name)
+
 ## Documentation
 
 In docs folder you can find more documentation about package.

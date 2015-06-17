@@ -283,6 +283,7 @@ class DbMapper implements MapperInterface
 
 
     /**
+     * Returns query builder object
      * @return \Netinteractive\Elegant\Db\Query\Builder
      */
     public function getQuery()
