@@ -28,34 +28,93 @@ Things you should define in init() method:
 * external - defines if field value should be saved to data storage when you save record
 * rules - validation rules. same as you can find in Eloquent.
 
-## Most important methods
-* static public function getInstance() - returns instance of blueprint
-* protected function init() - allows to init object (please do not override constructor)
-* public function getFields() - returns all informations about fields
-* public function getSortableFields() - returns list of all fields that were defined as sortable
-* public function  getSearchableFields() - returns list of all fields that were defined as searchable
-* public function getFieldsTitles(array $fieldsKeys = array()) - returns list of fields titles
-* public function getFieldTitle($fieldKey) - returns field title
-* public function getFieldsRules($rulesGroups='all', $fieldsKeys=array()) - returns fields validations rules
-* public function getFieldRules($fieldKey) - returns pointed field validations rules
-* public function getFieldsTypes($fieldsKeys = array()) - returns list of fields types
-* public function getFieldType($fieldKey) - returns pointed field type
-* public function setFieldRules($fieldKey, array $rules, $group='all') - set validation rules for pointed field
-* public function isField($fieldKey) - checks if $fieldKey is a field
-* public function isExternal($fieldKey) - checks if field is external or not (external defined fields are not saved to data source)
-* public function getStorageName() - returns data storage name (in example database table name)
-* public function setStorageName($name) - sets data storage name
-* public function getPrimaryKey() - returns primary key
-* public function setPrimaryKey($key) - sets primary key
-* public function getRelationManager() - returns relation manager object
-*  public function setRelationManager(Manager $manager) - sets relation manger object
+## Methods
+*   static  getInstance() : Netinteractive\Elegant\Model\Blueprint
+
+        returns instance of blueprint
+
+*   init() : void
+
+        allows to init object (please do not override constructor)
+
+*   getFields() : array
+
+        returns all informations about fields
+
+*   getSortableFields() : array
+
+        returns list of all fields that were defined as sortable
+
+*   getSearchableFields() : array
+
+        returns list of all fields that were defined as searchable
+
+*   getFieldsTitles( array $fieldsKeys = array() ) : array
+
+        returns list of fields titles
+
+*   getFieldTitle( $fieldKey ) : null|string
+
+        returns field title
+
+*   getFieldsRules($rulesGroups='all', $fieldsKeys=array()) : array
+
+        returns fields validations rules
+
+*   getFieldRules( $fieldKey ) : array
+
+        returns pointed field validations rules
+
+*   getFieldsTypes( $fieldsKeys = array() ) : array
+
+        returns list of fields types
+
+*   getFieldType( $fieldKey ) : string|null
+
+        returns pointed field type
+
+*   setFieldRules( $fieldKey, array $rules, $group='all ') : $this
+
+        set validation rules for pointed field
+
+*   isField( $fieldKey ) : bool
+
+        checks if $fieldKey is a field
+
+*   isExternal( $fieldKey ) : bool
+
+        checks if field is external or not (external defined fields are not saved to data source)
+
+*   getStorageName() : null|string
+
+        returns data storage name (in example database table name)
+
+*   setStorageName( $name ) : $this
+
+        sets data storage name
+
+*   getPrimaryKey() : array
+
+        returns primary key
+
+*   setPrimaryKey( string|array $key ) : $this
+
+        sets primary key
+
+*   getRelationManager() : \Netinteractive\Elegant\Model\Relation\Manager|null
+
+        returns relation manager object
+
+*   setRelationManager( \Netinteractive\Elegant\Model\Relation\Manager $manager ) : $this
+
+        sets relation manger object
 
 
 ## Examples
 
 ### Example 1
 
-    namespace Core2\Models\Patient;
+    namespace App\Models\Patient;
 
     use Netinteractive\Elegant\Model\Blueprint AS BaseBluePrint;
     use Netinteractive\Elegant\Search\Searchable;

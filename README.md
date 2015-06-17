@@ -21,6 +21,8 @@ Elegant is a domain model package. He is similar to laravels Eloquent and we use
 ## Important
 There is the requirement for naming foreign keys. If you wont meet this requirement - relations won't work.
 In example if you have patient_data table where you have foreign key from patient table it has to be named: patient__id (related: table_name + __ + field_name)
+Also we recommend pivot table names to looke like this: table_one__table_two
+
 
 ## Documentation
 
@@ -28,8 +30,14 @@ In docs folder you can find more documentation about package.
 
 All examples are based on this 3 classes:
 
+### Binding
+    \App::bind('Patient', 'App\Models\Patient\Record');
+    \App::bind('PatientData', 'App\Models\PatientData\Record');
+    \App::bind('User', 'App\Models\User\Record');
+
+
 ### User
-     <?php namespace Core2\Models\User;
+     <?php namespace App\Models\User;
 
      use Netinteractive\Elegant\Model\Blueprint AS BaseBluePrint;
      use Netinteractive\Elegant\Search\Searchable;
@@ -123,7 +131,7 @@ All examples are based on this 3 classes:
 
 
 ### Patient
-    <?php namespace Core2\Models\Patient;
+    <?php namespace App\Models\Patient;
 
     use Netinteractive\Elegant\Model\Blueprint AS BaseBluePrint;
     use Netinteractive\Elegant\Search\Searchable;
@@ -174,7 +182,7 @@ All examples are based on this 3 classes:
 
 ### PatientData
 
-    <?php namespace Core2\Models\PatientData;
+    <?php namespace App\Models\PatientData;
 
     use Netinteractive\Elegant\Model\Blueprint AS BaseBluePrint;
     use Netinteractive\Elegant\Search\Searchable;

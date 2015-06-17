@@ -53,7 +53,7 @@ But if there is a need (you need to overwrite some methods) you can make custom 
 
 * with( array|string $relations ) : \Netinteractive\Elegant\Db\Query\Builder
 
-    Prepaer query builder object that will allow to get records with related records. See Example 10.
+    Prepaer query builder object that will allow to get records with related records. See Example 2.
 
 
 
@@ -170,7 +170,7 @@ Then you can use: php artisan event:generate to generate proper handler.
 
 In App\Handlers\Events\Netinteractive\Elegant\Model you will find ModifySearch.php:
 
-    <?php namespace Core2\Handlers\Events\Netinteractive\Elegant\Model;
+    <?php namespace App\Handlers\Events\Netinteractive\Elegant\Model;
 
     use Illuminate\Queue\InteractsWithQueue;
     use Illuminate\Contracts\Queue\ShouldBeQueued;
@@ -202,13 +202,3 @@ In App\Handlers\Events\Netinteractive\Elegant\Model you will find ModifySearch.p
         }
 
     }
-
-
-### Example 10
-Code below will return you collection of patient_data records related patient records (and user records related with patient).
-
-    $dbMapper = new DbMapper('PatientData');
-    $results = $dbMapper
-        ->with('patient.user')
-        ->get()
-     ;

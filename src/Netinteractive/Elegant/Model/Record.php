@@ -15,7 +15,7 @@ abstract class Record implements Arrayable, Jsonable
     /**
      * @var Blueprint
      */
-    protected $blueprint;
+    protected $blueprint = null;
 
     /**
      * Record attributes
@@ -118,7 +118,7 @@ abstract class Record implements Arrayable, Jsonable
     /**
      * Sets record blueprint
      *
-     * @param Blueprint $blueprint
+     * @param \Netinteractive\Elegant\Model $blueprint
      * @return $this
      */
     public function setBlueprint(Blueprint $blueprint)
@@ -134,11 +134,7 @@ abstract class Record implements Arrayable, Jsonable
      */
     public function getBlueprint()
     {
-        if (!$this->blueprint){
-            return null;
-        }
-
-        return clone $this->blueprint;
+        return  $this->blueprint;
     }
 
     /**
@@ -196,7 +192,7 @@ abstract class Record implements Arrayable, Jsonable
      * Get an attribute from the record
      *
      * @param  string  $key
-     * @return mixed
+     * @return mixed|null
      */
     public function getAttribute($key)
     {

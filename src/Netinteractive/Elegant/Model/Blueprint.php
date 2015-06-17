@@ -27,7 +27,7 @@ abstract class Blueprint
     /**
      * @var string
      */
-    protected $storage;
+    protected $storage = null;
 
     /**
      * @var array
@@ -121,7 +121,6 @@ abstract class Blueprint
 
     /**
      * Returns list of fields which can be searched
-     *
      * @return array
      */
     public function getSearchableFields()
@@ -165,7 +164,7 @@ abstract class Blueprint
      * Returns field title
      *
      * @param string $fieldKey
-     * @return string
+     * @return null|string
      */
     public function getFieldTitle($fieldKey)
     {
@@ -186,7 +185,6 @@ abstract class Blueprint
      */
     public function getFieldsRules($rulesGroups='all', $fieldsKeys=array())
     {
-
         if (!is_array($rulesGroups)){
             $rulesGroups = array_map('trim', explode(',', $rulesGroups));
         }
@@ -231,10 +229,12 @@ abstract class Blueprint
     public function getFieldRules($fieldKey)
     {
         $fields = $this->getFields();
+        $result = array();
         if (isSet($fields[$fieldKey]['rules'])) {
-            return  $fields[$fieldKey]['rules'];
+            $result =  $fields[$fieldKey]['rules'];
         }
-        return array();
+
+        return $result;
     }
 
     /**
@@ -290,7 +290,8 @@ abstract class Blueprint
     {
         if ($group === null) {
             $this->fields[$fieldKey]['rules'] = $rules;
-        } else {
+        }
+        else {
             $this->fields[$fieldKey]['rules'][$group] = $rules;
         }
         return $this;
@@ -329,7 +330,7 @@ abstract class Blueprint
 
     /**
      * Returns data storage name
-     * @return string
+     * @return null|string
      */
     public function getStorageName()
     {
@@ -373,7 +374,7 @@ abstract class Blueprint
 
     /**
      * Return relation manager object
-     * @return array
+     * @return \Netinteractive\Elegant\Model\Relation\Manager|null
      */
     public function getRelationManager()
     {
@@ -382,7 +383,7 @@ abstract class Blueprint
 
     /**
      * Sets relationship manager
-     * @param Manager $manager
+     * @param \Netinteractive\Elegant\Model\Relation\Manager $manager
      * @return $this
      */
     public function setRelationManager(Manager $manager)

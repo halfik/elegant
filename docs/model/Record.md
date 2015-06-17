@@ -2,18 +2,42 @@
 
 Record represent a single data row. Example 1 show how basic class will looks like.
 
-* fill($attributes) - fill record with data (Example 2)
-* validate(array $data, $rulesGroups = 'all') - validates data using record validators (Example 3). It will throw ValidationException if validation fails.
-  Validation is fired automatically when mapper tries to save record.
-* setBlueprint(Blueprint $blueprint) - you can set other Blueprint object  to be used by record
-* getBlueprint() - returns record blueprint. Blueprint contains (or it should) all informations about record fields.
-* enableValidation() - enables validation
-* disableValidation() - disables validation
-* setAttribute($key, $value) - sets attribute value. If attribute is not defined in Blueprint it won't set it. There are 2 types of attributes (
-    when you access to record attribute it dosn't matter what kind it is):
-    * external - attributes that belongs to record but aren't stored in data storage
-    * attributes - attributes that are stored in data storage
-* getAttribute($key) - gets attribute value or related rows (Example 4).
+* fill( $attributes ) : $this
+
+        Fill record with data (Example 2).
+
+* validate( array $data, $rulesGroups = 'all' ) : $this
+
+        Validates data using record validators (Example 3). It will throw \Netinteractive\Elegant\Exception\ValidationException if validation fails.
+        Validation is fired automatically when mapper tries to save record. And it always validate all data, not only those that have been changed.
+
+* setBlueprint( \Netinteractive\Elegant\Model\Blueprint $blueprint) : $this
+
+        Sets record blueprint.
+
+* getBlueprint() : \Netinteractive\Elegant\Model\Blueprint|Null
+
+        Returns record blueprint. Blueprint contains (or it should) all informations about record fields.
+
+* enableValidation() : $this
+
+        Enables data validation.
+
+* disableValidation() : $this
+
+        Disables data validation.
+
+* setAttribute( string $key, string $value )  : $this
+
+        Sets attribute value. If attribute is not defined in Blueprint it won't set it. There are 2 types of attributes (
+        when you access to record attribute it dosn't matter what kind it is):
+
+            * external - attributes that belongs to record but aren't stored in data storage
+            * attributes - attributes that are stored in data storage
+
+* getAttribute( string $key ) : mixed|null
+
+        Gets attribute value or related rows (Example 4).
 
 
 
@@ -22,7 +46,7 @@ Record represent a single data row. Example 1 show how basic class will looks li
 
 ### Example 1
 
-    <?php namespace Core2\Models\Patient;
+    <?php namespace App\Models\Patient;
 
     use Netinteractive\Elegant\Model\Record AS BaseRecord;
 
@@ -44,7 +68,6 @@ Record represent a single data row. Example 1 show how basic class will looks li
     $record->fill( array(
       'user__id' => 9,
       'pesel'    => '35101275448',
-      'weight'       => '80',
     ));
 
 
@@ -72,8 +95,7 @@ Record represent a single data row. Example 1 show how basic class will looks li
         echo $patient->pesel.'<br>';
         if (count($patient->patientData)){
             foreach ($patient->patientData as $patientData){
-
-                echo $patientData->med__id.' :: '.$patientData->phone.'<br>';
+                echo $patientData->phone.'<br>';
             }
         }
     }

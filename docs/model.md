@@ -3,11 +3,11 @@
 Elegant model consists of two parts: Blueprint and Record. Model is separate from the data source. Mappers allows access to different data sources.
 So single model can work with many data sources. It allows in example to read data from xml(data source 1)  and then just save them to database (data source 2).
 
-* Blueprint - defines (describes) what record is (data types, validatiors, informations how to present data and so on)
+* Blueprint - defines (describes) what record is (data types, validators, informations how to present data and so on)
 * Record - keeps single data row and business logic
 
 ### Example of user Record
-    <?php namespace Core2\Models\User;
+    <?php namespace App\Models\User;
 
     use Netinteractive\Elegant\Model\Record AS BaseRecord;
 
@@ -23,7 +23,7 @@ So single model can work with many data sources. It allows in example to read da
 
 
 ### Example of user Blueprint
-    <?php namespace Core2\Models\User;
+    <?php namespace App\Models\User;
 
     use Netinteractive\Elegant\Model\Blueprint AS BaseBluePrint;
     use Netinteractive\Elegant\Search\Searchable;
