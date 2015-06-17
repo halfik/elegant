@@ -144,7 +144,9 @@ class Builder extends BaseBuilder
      */
     public function first($columns = array('*'))
     {
-        return $this->take(1)->get($columns)->first();
+        $results = $this->take(1)->get($columns);
+
+        return count($results) > 0 ? reset($results) : null;
     }
 
     /**

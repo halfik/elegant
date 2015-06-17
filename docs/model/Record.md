@@ -1,6 +1,6 @@
 # Netinteractive\Elegant\Model\Record
 
-Record represent a single data row. Example 1 show how basic class will looks like.
+Record represent a single data row. Example 1 show how basic class will looks like. Use getBluePrint() to get to any informations about fields.
 
 * fill( $attributes ) : $this
 

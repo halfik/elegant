@@ -49,7 +49,12 @@ class DbMapper implements MapperInterface
      */
     public function __construct($recordClass, $connection=null)
     {
-        $this->connection = \App::make('db')->connection($connection);
+        if (!$connection){
+            $this->connection = \App::make('db')->connection($connection);
+        }else{
+            $this->connection = $connection;
+        }
+
         $this->setRecordClass($recordClass);
     }
 

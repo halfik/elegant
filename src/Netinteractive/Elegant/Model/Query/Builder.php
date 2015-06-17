@@ -3,7 +3,6 @@
 
 use Netinteractive\Elegant\Db\Query\Builder AS QueryBuilder;
 use Closure;
-use Netinteractive\Elegant\Model\Collection;
 use Netinteractive\Elegant\Model\Record;
 use Netinteractive\Elegant\Relation\Relation;
 use Illuminate\Database\ConnectionInterface AS ConnectionInterface;
