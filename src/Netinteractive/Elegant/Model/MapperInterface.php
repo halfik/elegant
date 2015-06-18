@@ -11,10 +11,10 @@ interface MapperInterface
     /**
      * Delete record
      *
-     * @param integer $id
-     * @return $this
+     * @param \Netinteractive\Elegant\Model\Record $record
+     * @return int
      */
-    function delete($id);
+     function delete(Record $record);
 
     /**
      * Save model

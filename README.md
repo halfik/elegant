@@ -16,8 +16,22 @@ Elegant is a domain model package. He is similar to laravels Eloquent and we use
 
 
 ## Events
-    ni.elegant.mapper.search - event is fired in DbMapper in search method. You can use it to modify search query object.
-    ni.elegant.db.builder.modify - event is fired in Db\Query\Builder and allows to modify query before execution.
+* Netinteractive\Elegant\Model\Mapper\DbMapper
+
+        ni.elegant.mapper.search.$recordClass    - event is fired in search method. You can use it to modify search query object.
+        ni.elegant.mapper.saving.$recordClass    - event is fired before record is save to database.
+        ni.elegant.mapper.saved.$recordClass     - event is fired after record is save to database.
+        ni.elegant.mapper.updating.$recordClass  - event is fired  before record update on database.
+        ni.elegant.mapper.updated.$recordClass   - event is fired after record update on database.
+        ni.elegant.mapper.creating.$recordClass  - event is fired  before record is inserted to database.
+        ni.elegant.mapper.created.$recordClass   - event is fired after record is inserted to database.
+        ni.elegant.mapper.deleting.$recordClass  - event is fired before record is deleted from database.
+        ni.elegant.mapper.deleted.$recordClass   - event is fired after record is deleted from database.
+
+
+*  Netinteractive\Elegant\Db\Query\Builder
+
+        ni.elegant.db.builder.modify           - event allows to modify query before execution.
 
 ## Important
 There is the requirement for naming foreign keys. If you wont meet this requirement - relations won't work.

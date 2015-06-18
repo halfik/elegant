@@ -125,14 +125,26 @@ class DbMapper implements MapperInterface
     /**
      * Delete record
      *
-     * @param integer $id
+     * @param \Netinteractive\Elegant\Model\Record $record
      * @return int
      */
-    public function delete($ids)
+    public function delete(Record $record)
     {
-        $this->checkPrimaryKey($ids);
+        \Event::fire('ni.elegant.mapper.deleting.'.$this->getRecordClass(), $record);
 
-        return $this->getQuery()->from($this->getBlueprint()->getStorageName())->delete($ids);
+        $query  = $this->getQuery()->from($this->getBlueprint()->getStorageName());
+
+        $pkList = $record->getBlueprint()->getPrimaryKey();
+
+        foreach ($pkList AS $pk){
+            $query->where($pk, $record->$pk);
+        }
+
+        $result =  $query->delete();
+
+        \Event::fire('ni.elegant.mapper.deleted.'.$this->getRecordClass(), $record);
+
+        return $result;
     }
 
     /**
@@ -154,7 +166,6 @@ class DbMapper implements MapperInterface
             }
         }
 
-
         #we always should validate all data not only that actually was changed
         $record->validate($record->getAttributes());
 
@@ -162,8 +173,12 @@ class DbMapper implements MapperInterface
         $query = $this->getQuery();
         $query->from($record->getBlueprint()->getStorageName());
 
+        \Event::fire('ni.elegant.mapper.saving.'.$this->getRecordClass(), $record);
+
         #check if we are editing or creating
         if (!$record->exists){
+            \Event::fire('ni.elegant.mapper.creating.'.$this->getRecordClass(), $record);
+
             $attributes = $record->getAttributes();
 
             #check if we have autoincrementing on PK
@@ -172,16 +187,24 @@ class DbMapper implements MapperInterface
 
                 $id = $query->insertGetId($attributes, $primaryKey);
 
-                $record->setAttribute($primaryKey, $id);;
+                $record->setAttribute($primaryKey, $id);
             }else{
                 $query->insert($attributes);
             }
+
+            \Event::fire('ni.elegant.mapper.created.'.$this->getRecordClass(), $record);
         }
         else{
+            \Event::fire('ni.elegant.mapper.updating.'.$this->getRecordClass(), $record);
+
             $this->setKeysForSaveQuery($query, $record)->update($dirty);
+
+            \Event::fire('ni.elegant.mapper.updated.'.$this->getRecordClass(), $record);
         }
 
         $record->syncOriginal();
+
+        \Event::fire('ni.elegant.mapper.saved.'.$this->getRecordClass(), $record);
 
         return $this;
     }
@@ -270,7 +293,7 @@ class DbMapper implements MapperInterface
         });
 
         #we add to search query default join defined my developer in searchJoins method
-        \Event::fire('ni.elegant.mapper.search', $query);
+        \Event::fire('ni.elegant.mapper.search.'.$this->getRecordClass(), $query);
 
         return $query;
     }

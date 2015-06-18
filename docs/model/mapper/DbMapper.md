@@ -3,6 +3,17 @@
 Class allows to read\write\delete data from database. In most cases you will use standard DbMapper to work with all record classes.
 But if there is a need (you need to overwrite some methods) you can make custom DbMapper for concrete record.
 
+## Events
+All events names depends on record class mapper is currently working with.
+
+* ni.elegant.mapper.search.$recordClass    - you can use it to modify search query object. (see Example 9)
+* ni.elegant.mapper.saving.$recordClass    - event is fired before record save.
+* ni.elegant.mapper.saved.$recordClass     - event is fired after record save.
+* ni.elegant.mapper.updating.$recordClass  - event is fired before record update.
+* ni.elegant.mapper.updated.$recordClass   - event is fired after record update.
+* ni.elegant.mapper.deleting.$recordClass  - event is fired before record is deleted from database.
+* ni.elegant.mapper.deleted.$recordClass   - event is fired after record is deleted from database.
+
 
 ## Methods
 * createRecord( array $data = array() ) : \Netinteractive\Elegant\Model\Record
@@ -21,9 +32,9 @@ But if there is a need (you need to overwrite some methods) you can make custom 
 
         Returns record blueprint object.
 
-* delete( integer|array $ids) : int
+* delete( \Netinteractive\Elegant\Model\Record $record ) : int
 
-        Delete row (rows) from database.
+        Delete row from database.
 
 * save( \Netinteractive\Elegant\Model\Record $record ) : $this
 
@@ -154,7 +165,7 @@ Searching for specific records:
         $collection = $dbMapper->findMany($searchParams);
 
 ### Example 9
-Bind event to modify mapper search query:
+Bind event to modify mapper search query (I bind my record as Patient):
 
 In App\Providers\EventServiceProvider.php add this:
 
@@ -165,7 +176,7 @@ In App\Providers\EventServiceProvider.php add this:
 	 * @var array
 	 */
 	protected $listen = [
-        'ni.elegant.mapper.search' => [
+        'ni.elegant.mapper.search.Patient' => [
             'App\Handlers\Events\Netinteractive\Elegant\Model\ModifySearch',
         ],
 	];
