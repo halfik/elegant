@@ -14,5 +14,25 @@ Later we are going to add XML and CSV mappers.
 If you are going to create own mapper, please be sure it will work with real data source.
 Data source should allow read, write and delete data. If something don't allow at least one of this things, then it's not a data source.
 
-Please notice that in example DbMapper allows you to read data from one database and then save that data to another database.
+Please notice that in example DbMapper allows you to read data from one database and then save that data to another database (Example 1)
+
+
+
+## Examples
+
+### Example 1
+
+        $dbMapper = new DbMapper('Patient'); #this mappers is connected to postgresql database
+        $pgSqlPatient = $dbMapper->find(119);
+
+        $mySqlConnection = \DB::connection('mysql');
+
+        $pgSqlPatient->exists = false;
+
+        $dbMapper->setConnection($mySqlConnection);
+        $dbMapper->save($pgSqlPatient);
+
+        #OR
+        //$mySqlDbMapper = new DbMapper('Patient', $mySqlConnection);
+        //$mySqlDbMapper->save($pgSqlPatient);
 

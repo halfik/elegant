@@ -1,5 +1,4 @@
-<?php
-namespace Netinteractive\Elegant\Db\Query;
+<?php namespace Netinteractive\Elegant\Db\Query;
 
 use Illuminate\Database\ConnectionInterface AS ConnectionInterface;
 use Illuminate\Database\Query\Grammars\Grammar AS Grammar;
@@ -25,6 +24,7 @@ class Builder extends BaseBuilder
      * @var array
      */
     protected $comments = array();
+
 
     /**
      * Create a new query builder instance.
@@ -146,7 +146,7 @@ class Builder extends BaseBuilder
     {
         $results = $this->take(1)->get($columns);
 
-        return count($results) > 0 ? reset($results) : null;
+        return isSet($results[0]) ? $results[0] : null;
     }
 
     /**
@@ -915,6 +915,44 @@ class Builder extends BaseBuilder
         $this->orders = null;
         $this->bindings['order'] = [];
 
+        return $this;
+    }
+
+
+    /**
+     * Set the database connection instance.
+     * @param \Illuminate\Database\ConnectionInterface $connection
+     * @return $this
+     */
+    public function setConnection(ConnectionInterface $connection)
+    {
+        $this->connection = $connection;
+        $this->setProcessor($connection->getPostProcessor());
+        $this->setGrammar($connection->getQueryGrammar());
+
+        return $this;
+    }
+
+    /**
+     * Set the database query processor instance.
+     *
+     * @param \Illuminate\Database\Query\Processors\Processor $processor
+     */
+    public function setProcessor(Processor $processor)
+    {
+        $this->processor = $processor;
+        return $this;
+    }
+
+    /**
+     * Set the query grammar instance.
+     *
+     * @param \Illuminate\Database\Grammar $grammar
+     * @return $this
+     */
+    public function setGrammar(Grammar $grammar)
+    {
+        $this->grammar = $grammar;
         return $this;
     }
 

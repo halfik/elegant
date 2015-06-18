@@ -1,10 +1,12 @@
 <?php namespace Netinteractive\Elegant\Model\Mapper;
 
+use \Illuminate\Database\ConnectionInterface;
 use Netinteractive\Elegant\Exception\PrimaryKeyException;
 use Netinteractive\Elegant\Model\Collection;
 use Netinteractive\Elegant\Model\MapperInterface;
 use Netinteractive\Elegant\Model\Record;
 use Netinteractive\Elegant\Model\Query\Builder;
+
 
 
 /**
@@ -45,9 +47,11 @@ class DbMapper implements MapperInterface
     /**
      * Create a new db mapper
      *
+     * @param string $recordClass
+     * @param ConnectionInterface $connection
      * @return void
      */
-    public function __construct($recordClass, $connection=null)
+    public function __construct($recordClass, ConnectionInterface $connection=null)
     {
         if (!$connection){
             $this->connection = \App::make('db')->connection($connection);
@@ -139,12 +143,17 @@ class DbMapper implements MapperInterface
      */
     public function save(Record $record)
     {
-        $dirty = $record->getDirty();
+        #we want to check if anything has changed with record only when we are updating
+        #if we do this for new record it won't let us to read record from one database and save it to another one
+        if ($record->exists == true){
+            $dirty = $record->getDirty();
 
-        #check if anything has changed
-        if (count($dirty) == 0){
-            return $this;
+            #check if anything has changed
+            if (count($dirty) == 0){
+                return $this;
+            }
         }
+
 
         #we always should validate all data not only that actually was changed
         $record->validate($record->getAttributes());
@@ -190,6 +199,10 @@ class DbMapper implements MapperInterface
         $this->checkPrimaryKey($ids);
 
         $data = $this->getQuery()->find($ids, $columns);
+
+        if (!is_array($data) && $data instanceof \Illuminate\Contracts\Support\Arrayable){
+            $data = $data->toArray();
+        }
 
         $record = $this->createRecord((array) $data);
         $record->exists = true;
@@ -304,6 +317,8 @@ class DbMapper implements MapperInterface
             $this->query->setRecord($this->createRecord());
         }
 
+        $this->query->setConnection($this->connection);
+
         return clone $this->query;
     }
 
@@ -323,6 +338,23 @@ class DbMapper implements MapperInterface
             }
         }
     }
+
+    /**
+     * Sets database connection
+     *
+     * @param ConnectionInterface $connection
+     * @return $this
+     */
+    public function setConnection(ConnectionInterface $connection)
+    {
+        $this->connection = $connection;
+
+        if ($this->query){
+            $this->query->setConnection($connection);
+        }
+        return $this;
+    }
+
 
     /**
      * Set the keys for a save update query.

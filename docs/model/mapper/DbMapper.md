@@ -49,11 +49,15 @@ But if there is a need (you need to overwrite some methods) you can make custom 
 
 * getQuery() : \Netinteractive\Elegant\Db\Query\Builder
 
-    Returns query builder object.
+        Returns query builder object. This method always sets query builder connection to the one we have in mapper to be sure they are the same.
+
+* setConnection(\Illuminate\Database\ConnectionInterface  $connection) : $this
+
+        Sets connection to database
 
 * with( array|string $relations ) : \Netinteractive\Elegant\Db\Query\Builder
 
-    Prepaer query builder object that will allow to get records with related records. See Example 2.
+        Prepare query builder object that will allow to get records with related records. See Example 2.
 
 
 

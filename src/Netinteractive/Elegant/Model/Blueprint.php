@@ -1,4 +1,5 @@
 <?php namespace Netinteractive\Elegant\Model;
+
 use Netinteractive\Elegant\Model\Relation\Manager;
 
 /**
@@ -305,7 +306,7 @@ abstract class Blueprint
      */
     public function isField($fieldKey)
     {
-        return in_array($fieldKey, array_keys($this->fields));
+        return in_array((string)$fieldKey, array_keys($this->fields));
     }
 
     /**
