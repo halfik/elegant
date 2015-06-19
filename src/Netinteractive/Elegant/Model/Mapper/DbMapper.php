@@ -166,9 +166,6 @@ class DbMapper implements MapperInterface
             }
         }
 
-        #we always should validate all data not only that actually was changed
-        $record->validate($record->getAttributes());
-
         #we prepare database query object
         $query = $this->getQuery();
         $query->from($record->getBlueprint()->getStorageName());
@@ -187,6 +184,9 @@ class DbMapper implements MapperInterface
             \Event::fire('ni.elegant.mapper.before.save', $obj);
 
             $attributes = $obj->data;
+
+            #we always should validate all data not only that actually was changed
+            $record->validate($attributes);
 
             #check if we have autoincrementing on PK
             if ($record->getBlueprint()->incrementingPk){
@@ -208,7 +208,9 @@ class DbMapper implements MapperInterface
 
             \Event::fire('ni.elegant.mapper.before.save', $obj);
 
-             $dirty =  $obj->data;
+            $dirty =  $obj->data;
+            #we always should validate all data not only that actually was changed
+            $record->validate(array_merge($record->getAttributes(), $dirty));
 
             \Event::fire('ni.elegant.mapper.updating.'.$this->getRecordClass(), $record);
 

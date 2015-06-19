@@ -32,6 +32,7 @@ Elegant is a domain model package. He is similar to laravels Eloquent and we use
         ni.elegant.mapper.created.$recordClass   - event is fired after record is inserted to database.
         ni.elegant.mapper.deleting.$recordClass  - event is fired before record is deleted from database.
         ni.elegant.mapper.deleted.$recordClass   - event is fired after record is deleted from database.
+        ni.elegant.mapper.before.save            - event allows to modify data that are send to data source (but not modify record data)
 
 
 *  Netinteractive\Elegant\Db\Query\Builder
