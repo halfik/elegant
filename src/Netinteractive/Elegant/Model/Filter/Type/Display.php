@@ -16,10 +16,9 @@ class Display
      */
     public static function apply($obj, $filters)
     {
-        $definedFilters = \Config::get('elegant::filters.display');
+        $serializer = new \SuperClosure\Serializer;
+        $definedFilters = config('netinteractive/elegant/filters.display');
 
-        \debug(config('filters.display'));
-        \debug(config('ni-elegant-filters.display'));
         foreach ($filters AS $filter){
             if ( !is_scalar($filter)){
                 $obj->value = $filter($obj->value);
@@ -28,14 +27,16 @@ class Display
                 $filterInfo = explode(':', $filter, 2);
                 $filter = $filterInfo[0];
                 if (isSet($definedFilters[$filter])){
+                    $filter = $serializer->unserialize($definedFilters[$filterInfo[0]]);
+
                     if (isSet($filterInfo[1])){
                         $params = explode(',', $filterInfo[1]);
                         $params = array_map('trim',$params);
 
-                        $obj->value = $definedFilters[$filterInfo[0]]($obj->value , $params);
+                        $obj->value = $filter($obj->value , $params);
                     }
                     else{
-                        $obj->value = $definedFilters[$filterInfo[0]]($obj->value);
+                        $obj->value = $filter($obj->value);
                     }
                 }
             }

@@ -2,8 +2,6 @@
 
 $serializer = new SuperClosure\Serializer;
 
-
-
 return array(
     'display' => array(
         'bool' => $serializer->serialize(function ($value, $params = array()) {
@@ -117,13 +115,6 @@ return array(
             }),
         'phone' => $serializer->serialize(function ($value, $params = array()) {
                 return str_replace(array(')', '(', ' ', '-'), '', $value);
-            }),
-        'stripTags' => $serializer->serialize(function ($value, $params = array()) {
-                $allowed = isSet($params['allowed']) ? $params['allowed'] : implode('', $params);
-                return strip_tags($value, $allowed);
-            }),
-        'bank_account' => $serializer->serialize(function ($value, $params = array()) {
-                return str_replace(array('PL', ' '), '', $value);
             }),
         'hour' =>$serializer->serialize( function ($value, $params = array()) {
                 if (is_int($value)) {

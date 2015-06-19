@@ -16,7 +16,8 @@ class Fill
      */
     public static function apply(\Netinteractive\Elegant\Model\Record $record, $key, $filters)
     {
-        $definedFilters = \Config::get('elegant::filters.fill');
+        $serializer = new \SuperClosure\Serializer;
+        $definedFilters = config('netinteractive/elegant/filters.fill');
 
         foreach ($filters AS $filter){
             $filterInfo = explode(':', $filter, 2);
@@ -26,14 +27,15 @@ class Fill
                 $record->$key = $filter($record->$key);
             }
             elseif (isSet($definedFilters[$filter])){
+                $filter = $serializer->unserialize($definedFilters[$filterInfo[0]]);
+
                 if (isSet($filterInfo[1])){
                     $params = explode(',', $filterInfo[1]);
                     $params = array_map('trim',$params);
-
-                    $record->$key = $definedFilters[$filterInfo[0]]($record->$key, $params);
+                    $record->$key = $filter($record->$key, $params);
                 }
                 else{
-                    $record->$key = $definedFilters[$filterInfo[0]]($record->$key);
+                   $record->$key = $filter($record->$key);
                 }
             }
         }

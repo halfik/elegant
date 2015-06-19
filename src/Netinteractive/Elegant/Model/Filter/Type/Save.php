@@ -16,7 +16,8 @@ class Save
      */
     public static function apply($obj, $key, $filters)
     {
-        $definedFilters = \Config::get('elegant::filters.save');
+        $serializer = new \SuperClosure\Serializer;
+        $definedFilters = config('netinteractive/elegant/filters.save');
 
         foreach ($filters AS $filter){
             $filterInfo = explode(':', $filter, 2);
@@ -27,13 +28,15 @@ class Save
 
             }
             elseif (isSet($definedFilters[$filter]) && isset($obj->data[$key])){
+                $filter = $serializer->unserialize($definedFilters[$filterInfo[0]]);
+
                 if (isSet($filterInfo[1])){
                     $params = explode(',', $filterInfo[1]);
                     $params = array_map('trim',$params);
-                    $obj->data[$key] = $definedFilters[$filterInfo[0]]($obj->data[$key], $params);
+                    $obj->data[$key] = $filter($obj->data[$key], $params);
                 }
                 else{
-                    $obj->data[$key] = $definedFilters[$filterInfo[0]]($obj->data[$key]);
+                    $obj->data[$key] = $filter($obj->data[$key]);
                 }
             }
         }
