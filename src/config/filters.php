@@ -11,11 +11,8 @@ return array(
         'per100'=>function($value, $field, $params=array(100)){
                 return $value.' / '.$params[0];
             },
-        'day' => function ($value, $params = array()) {
-                return $value . ' ' . _('dniach');
-            },
         'date' => function ($value, $params = array('Y-m-d')) {
-                if ($value instanceof Carbon\Carbon) {
+                if ($value instanceof \Carbon\Carbon) {
                     $value->setToStringFormat($params[0]);
                     return $value->__toString();
                 } else {
@@ -72,11 +69,11 @@ return array(
                 # is $break present between $limit and the end of the string?
                 if(false !== ($breakpoint = strpos($value, $break, $limit))) {
                     if($breakpoint < strlen($value) - 1) {
-                        $string = substr($value, 0, $breakpoint) . $pad;
+                        $value = substr($value, 0, $breakpoint) . $pad;
                     }
                 }
 
-                return $string;
+                return $value;
             },
         'upper' => function ($value, $params = array()) {
                 return strtoupper($value);

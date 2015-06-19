@@ -5,7 +5,7 @@ Elegant is a domain model package. He is similar to laravels Eloquent and we use
 
 
 ## Services
-* ElegantServiceProvider - registers in App most important classes:
+* Netinteractive\Elegant\ElegantServiceProvider - registers in App most important classes:
      * ni.elegant.model.mapper.db - class that allows to work with databases.
      * ni.elegant.db.query.builder - database query builder.
      * ni.elegant.model.query.builder - model query builder. Responsible for relations.
@@ -14,10 +14,10 @@ Elegant is a domain model package. He is similar to laravels Eloquent and we use
      * ni.elegant.model.relation.translator.db - class that knows how to build database relations based on informations from blueprint
      * ni.elegant.search.db.translator - class that knows how to build and add to query proper where statements based on blueprint informations.
 
-* FiltersServiceProvider - provides record filter mechanism (that allows to manipulate record data)
-      +   \Event::listen('eloquent.elegant.after.setAttribute: *', 'Netinteractive\Elegant\Events\EventHandler@fillFilters');
-      +	\Event::listen('elegant.before.save', 'Netinteractive\Elegant\Events\EventHandler@saveFilters');
-      +	\Event::listen('elegant.before.display', 'Netinteractive\Elegant\Events\EventHandler@displayFilters');
+* Netinteractive\Elegant\FiltersServiceProvider - provides record filter mechanism (it allows to manipulate record data)
+     * \Event::listen('ni.elegant.record.after.fill', 'Netinteractive\Elegant\Model\Filter\Event\Handler@fillFilters');
+     * \Event::listen('ni.elegant.mapper.before.save', 'Netinteractive\Elegant\Model\Filter\Event\Handler@saveFilters');
+     * \Event::listen('ni.elegant.record.display', 'Netinteractive\Elegant\Model\Filter\Event\Handler@displayFilters');
 
 
 ## Events
@@ -40,8 +40,9 @@ Elegant is a domain model package. He is similar to laravels Eloquent and we use
 
 * Netinteractive\Elegant\Model\Record
 
-        ni.elegant.record.fill                   - event allows to modify data before record is filled
-        ni.elegant.record.display                - event allows to modify data before they are displayed
+        ni.elegant.record.before.fill           - event allows to modify data before record is filled
+        ni.elegant.record.after.fill            - event allows to modify record after it is filled
+        ni.elegant.record.display               - event allows to modify data before they are displayed
 
 
 

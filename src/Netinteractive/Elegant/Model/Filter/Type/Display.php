@@ -17,7 +17,7 @@ class Display
     public static function apply($obj, $filters)
     {
         $definedFilters = \Config::get('elegant::filters.display');
-
+        \debug($definedFilters);
         foreach ($filters AS $filter){
             if ( !is_scalar($filter)){
                 $obj->value = $filter($obj->value);

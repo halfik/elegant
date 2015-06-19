@@ -15,11 +15,11 @@ class Handler
 {
     /**
      * applys display filters
-     * @param stdClass $obj
+     * @param \stdClass $obj
      */
-    public function displayFilters($obj)
+    public function displayFilters(\stdClass $obj)
     {
-        $filters =  Logic::parseFilters($obj->getBluePrint()->getFieldFilters($obj->field, 'display'));
+        $filters =  Logic::parseFilters($obj->record->getBluePrint()->getFieldFilters($obj->field, 'display'));
 
         if (isSet($filters)){
             Display::apply($obj, $filters);
@@ -28,9 +28,9 @@ class Handler
 
     /**
      * applys save filters
-     * @param stdClass $obj
+     * @param \stdClass $obj
      */
-    public function saveFilters($obj)
+    public function saveFilters(\stdClass $obj)
     {
         foreach ($obj->record->getAttributes() AS $key=>$val){
             $filters =  Logic::parseFilters( $obj->record->getBluePrint()->getFieldFilters($key, 'save' ));
@@ -43,15 +43,15 @@ class Handler
 
     /**
      * apllys fill filters
-     * @param \Netinteractive\Elegant\Model\Record $record
+     * @param \stdClass $record
      */
-    public function fillFilters(Record $record)
+    public function fillFilters(\stdClass $obj)
     {
-        foreach ($record->getAttributes() AS $key=>$val){
-            $filters =  Logic::parseFilters( $record->getBluePrint()->getFieldFilters($key, 'fill') );
+        foreach ($obj->record->getAttributes() AS $key=>$val){
+            $filters =  Logic::parseFilters( $obj->record->getBluePrint()->getFieldFilters($key, 'fill') );
 
             if (isSet($filters)){
-                Fill::apply($record, $key, $filters);
+                Fill::apply($obj->record, $key, $filters);
             }
         }
     }

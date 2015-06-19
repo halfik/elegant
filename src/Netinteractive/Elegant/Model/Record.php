@@ -81,22 +81,23 @@ abstract class Record implements Arrayable, Jsonable
      */
     public function fill(array $attributes)
     {
-        if (count($attributes)) {
-            $obj = new \stdClass();
-            $obj->data = $attributes;
-            $obj->record = $this;
+        $obj = new \stdClass();
+        $obj->data = $attributes;
+        $obj->record = $this;
 
-            \Event::fire('ni.elegant.record.fill', $obj);
+        \Event::fire('ni.elegant.record.before.fill', $obj);
 
-            $attributes = $obj->data;
-        }
+        $attributes = $obj->data;
 
         foreach ($attributes as $key => $value){
             $this->setAttribute($key, $value);
         }
 
+        \Event::fire('ni.elegant.record.after.fill', $obj);
+
         return $this;
     }
+
 
     /**
      * Method validates input data

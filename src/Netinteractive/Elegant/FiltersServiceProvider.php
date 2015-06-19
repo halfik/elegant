@@ -34,8 +34,8 @@ class FiltersServiceProvider extends ServiceProvider
     public function register()
     {
 
-        \Event::listen('ni.elegant.record.fill', 'Netinteractive\Elegant\Model\Filter\Event\Handler@fillFilters');
-        \Event::listen('ni.elegant.mapper.mapper.before.save', 'Netinteractive\Elegant\Model\Filter\Event\Handler@saveFilters');
+        \Event::listen('ni.elegant.record.after.fill', 'Netinteractive\Elegant\Model\Filter\Event\Handler@fillFilters');
+        \Event::listen('ni.elegant.mapper.before.save', 'Netinteractive\Elegant\Model\Filter\Event\Handler@saveFilters');
         \Event::listen('ni.elegant.record.display', 'Netinteractive\Elegant\Model\Filter\Event\Handler@displayFilters');
     }
 
