@@ -23,7 +23,9 @@ class FiltersServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-
+        $this->publishes([
+            __DIR__.'/../../config/filters.php' => config_path('netinteractive/elegant/filters.php'),
+        ]);
     }
 
     /**
@@ -33,6 +35,10 @@ class FiltersServiceProvider extends ServiceProvider
      */
     public function register()
     {
+
+        $this->mergeConfigFrom(
+            __DIR__.'/../../config/filters.php', 'ni-elegant-filters'
+        );
 
         \Event::listen('ni.elegant.record.after.fill', 'Netinteractive\Elegant\Model\Filter\Event\Handler@fillFilters');
         \Event::listen('ni.elegant.mapper.before.save', 'Netinteractive\Elegant\Model\Filter\Event\Handler@saveFilters');
