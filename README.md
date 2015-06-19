@@ -14,6 +14,11 @@ Elegant is a domain model package. He is similar to laravels Eloquent and we use
      * ni.elegant.model.relation.translator.db - class that knows how to build database relations based on informations from blueprint
      * ni.elegant.search.db.translator - class that knows how to build and add to query proper where statements based on blueprint informations.
 
+* FiltersServiceProvider - provides record filter mechanism (that allows to manipulate record data)
+      +   \Event::listen('eloquent.elegant.after.setAttribute: *', 'Netinteractive\Elegant\Events\EventHandler@fillFilters');
+      +	\Event::listen('elegant.before.save', 'Netinteractive\Elegant\Events\EventHandler@saveFilters');
+      +	\Event::listen('elegant.before.display', 'Netinteractive\Elegant\Events\EventHandler@displayFilters');
+
 
 ## Events
 * Netinteractive\Elegant\Model\Mapper\DbMapper
@@ -31,7 +36,14 @@ Elegant is a domain model package. He is similar to laravels Eloquent and we use
 
 *  Netinteractive\Elegant\Db\Query\Builder
 
-        ni.elegant.db.builder.modify           - event allows to modify query before execution.
+        ni.elegant.db.builder.modify             - event allows to modify query before execution.
+
+* Netinteractive\Elegant\Model\Record
+
+        ni.elegant.record.fill                   - event allows to modify data before record is filled
+        ni.elegant.record.display                - event allows to modify data before they are displayed
+
+
 
 ## Important
 There is the requirement for naming foreign keys. If you wont meet this requirement - relations won't work.

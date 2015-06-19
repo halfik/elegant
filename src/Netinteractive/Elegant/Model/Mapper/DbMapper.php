@@ -173,6 +173,11 @@ class DbMapper implements MapperInterface
         $query = $this->getQuery();
         $query->from($record->getBlueprint()->getStorageName());
 
+        $obj = new \stdClass();
+        $obj->data = $record->getAttributes();
+        $obj->record = $record;
+        \Event::fire('ni.elegant.mapper.mapper.before.save', $obj);
+
         \Event::fire('ni.elegant.mapper.saving.'.$this->getRecordClass(), $record);
 
         #check if we are editing or creating
@@ -408,7 +413,9 @@ class DbMapper implements MapperInterface
      */
     public function with($relations)
     {
-        if (is_string($relations)) $relations = func_get_args();
+        if (is_string($relations)) {
+            $relations = func_get_args();
+        }
 
         return $this->getQuery()->with($relations);
     }

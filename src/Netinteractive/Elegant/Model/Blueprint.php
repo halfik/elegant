@@ -278,6 +278,26 @@ abstract class Blueprint
         return $fields[$fieldKey]['type'];
     }
 
+
+    /**
+     * Returns field filters
+     * @param string $field
+     * @param string $type
+     * @return null|array
+     */
+    public function getFieldFilters($field, $type=null)
+    {
+        $fields = $this->getFields();
+
+        if ($type == null){
+            $filters =  isSet($fields[$field]['filters']) ? $fields[$field]['filters'] : null;
+        }else{
+            $filters = isSet($fields[$field]['filters'][$type]) ? $fields[$field]['filters'][$type] : null;
+        }
+
+        return $filters;
+    }
+
     /**
      * Set validation rules for a field
      *

@@ -81,6 +81,16 @@ abstract class Record implements Arrayable, Jsonable
      */
     public function fill(array $attributes)
     {
+        if (count($attributes)) {
+            $obj = new \stdClass();
+            $obj->data = $attributes;
+            $obj->record = $this;
+
+            \Event::fire('ni.elegant.record.fill', $obj);
+
+            $attributes = $obj->data;
+        }
+
         foreach ($attributes as $key => $value){
             $this->setAttribute($key, $value);
         }
@@ -209,6 +219,33 @@ abstract class Record implements Arrayable, Jsonable
         }
 
         return $response;
+    }
+
+    /**
+     * Apply display filters and returns field value and
+     * @param string $field
+     * @param array $filters
+     * @param boolean $defaultFilters
+     * @return mixed
+     */
+    public function display($field, $filters = array(), $defaultFilters = true)
+    {
+        $obj = new \stdClass();
+
+        $obj->value = $this->$field;
+        $obj->field = $field;
+        $obj->record = $this;
+
+        if ($defaultFilters == true) {
+            \Event::fire('ni.elegant.record.display', $obj);
+        }
+
+        if (!empty($filters)) {
+            DisplayLogic::apply($obj, $filters);
+        }
+
+
+        return $obj->value;
     }
 
     /**
