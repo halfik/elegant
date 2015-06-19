@@ -173,10 +173,6 @@ class DbMapper implements MapperInterface
         $query = $this->getQuery();
         $query->from($record->getBlueprint()->getStorageName());
 
-        $obj = new \stdClass();
-        $obj->data = $record->getAttributes();
-        $obj->record = $record;
-        \Event::fire('ni.elegant.mapper.mapper.before.save', $obj);
 
         \Event::fire('ni.elegant.mapper.saving.'.$this->getRecordClass(), $record);
 
@@ -184,7 +180,13 @@ class DbMapper implements MapperInterface
         if (!$record->exists){
             \Event::fire('ni.elegant.mapper.creating.'.$this->getRecordClass(), $record);
 
-            $attributes = $record->getAttributes();
+            $obj = new \stdClass();
+            $obj->data = $record->getAttributes();
+            $obj->record = $record;
+
+            \Event::fire('ni.elegant.mapper.before.save', $obj);
+
+            $attributes = $obj->data;
 
             #check if we have autoincrementing on PK
             if ($record->getBlueprint()->incrementingPk){
@@ -200,9 +202,17 @@ class DbMapper implements MapperInterface
             \Event::fire('ni.elegant.mapper.created.'.$this->getRecordClass(), $record);
         }
         else{
+            $obj = new \stdClass();
+            $obj->data = $record->getDirty();
+            $obj->record = $record;
+
+            \Event::fire('ni.elegant.mapper.before.save', $obj);
+
+             $dirty =  $obj->data;
+
             \Event::fire('ni.elegant.mapper.updating.'.$this->getRecordClass(), $record);
 
-            $this->setKeysForSaveQuery($query, $record)->update($dirty);
+            $this->setKeysForSaveQuery($query, $record)->update( $dirty );
 
             \Event::fire('ni.elegant.mapper.updated.'.$this->getRecordClass(), $record);
         }

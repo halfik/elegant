@@ -25,7 +25,6 @@ class Save
 
             if ( !is_scalar($filter)){
                 $obj->data[$key] = $filter($obj->data[$key]);
-
             }
             elseif (isSet($definedFilters[$filter]) && isset($obj->data[$key])){
                 $filter = $serializer->unserialize($definedFilters[$filterInfo[0]]);
