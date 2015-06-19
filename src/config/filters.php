@@ -92,6 +92,9 @@ return array(
         'firstToUpper' => $serializer->serialize(function ($value, $params = array()) {
                 return ucfirst($value);
             }),
+        'phone' => $serializer->serialize(function ($value, $params = array()) {
+                return str_replace(array(')', '(', ' ', '-'), '', $value);
+            }),
         'price' =>$serializer->serialize( function ($value, $params = array()) {
                 return str_replace(',', '.', $value);
             }),
@@ -115,6 +118,10 @@ return array(
             }),
         'phone' => $serializer->serialize(function ($value, $params = array()) {
                 return str_replace(array(')', '(', ' ', '-'), '', $value);
+            }),
+        'stripTags' => $serializer->serialize(function ($value, $params = array()) {
+                $allowed = isSet($params['allowed']) ? $params['allowed'] : implode('', $params);
+                return strip_tags($value, $allowed);
             }),
         'hour' =>$serializer->serialize( function ($value, $params = array()) {
                 if (is_int($value)) {
