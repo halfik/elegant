@@ -20,7 +20,8 @@
     ],
     "require": {
         "php": ">=5.4.0",
-        "illuminate/support": "5.0.*"
+        "illuminate/support": "5.0.*",
+        "jeremeamia/superclosure": "2.2.*"
     },
     "autoload": {
         "classmap": [

@@ -37,7 +37,7 @@ class FiltersServiceProvider extends ServiceProvider
     {
 
         $this->mergeConfigFrom(
-            __DIR__.'/../../config/filters.php', 'ni-elegant-filters'
+            __DIR__.'/../../config/filters.php', 'netinteractive/elegant/filters'
         );
 
         \Event::listen('ni.elegant.record.after.fill', 'Netinteractive\Elegant\Model\Filter\Event\Handler@fillFilters');
