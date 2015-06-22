@@ -23,19 +23,24 @@ class Save
             $filterInfo = explode(':', $filter, 2);
             $filter = $filterInfo[0];
 
-            if ( !is_scalar($filter)){
+            if ( is_callable($filter)){
                 $obj->data[$key] = $filter($obj->data[$key]);
             }
-            elseif (isSet($definedFilters[$filter]) && isset($obj->data[$key])){
-                $filter = $serializer->unserialize($definedFilters[$filterInfo[0]]);
+            else{
+                $filterInfo = explode(':', $filter, 2);
+                $filter = $filterInfo[0];
 
-                if (isSet($filterInfo[1])){
-                    $params = explode(',', $filterInfo[1]);
-                    $params = array_map('trim',$params);
-                    $obj->data[$key] = $filter($obj->data[$key], $params);
-                }
-                else{
-                    $obj->data[$key] = $filter($obj->data[$key]);
+                if (isSet($definedFilters[$filter]) && isset($obj->data[$key])){
+                    $filter = $serializer->unserialize($definedFilters[$filterInfo[0]]);
+
+                    if (isSet($filterInfo[1])){
+                        $params = explode(',', $filterInfo[1]);
+                        $params = array_map('trim',$params);
+                        $obj->data[$key] = $filter($obj->data[$key], $params);
+                    }
+                    else{
+                        $obj->data[$key] = $filter($obj->data[$key]);
+                    }
                 }
             }
         }

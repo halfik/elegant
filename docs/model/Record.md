@@ -2,6 +2,46 @@
 
 Record represent a single data row. Example 1 show how basic class will looks like. Use getBluePrint() to get to any informations about fields.
 
+## Filters (data manipulators)
+
+We created a mechanism that allows programmer to manipulate record data on 3 different levels:
+
+* you can modify data when the record is filled
+* you can modify data when the record is save to data source
+* you can modify data when it's displayed
+
+It's not a default mechanism. You have to add 'Netinteractive\Elegant\FiltersServiceProvider' to your application providers list.
+
+All filters are defined in config file. You can easy add you own filters any time you want. Config file is published in:
+
+        config/netinteractive/elegant/filters.php
+
+or you can define them inline in blueprints (Example 5)
+
+Because L5 cache configs we are not allowed to define anonymous functions in configs. We solved this problem by using jeremeamia/superclosure package, that allows to serialize and unserialize functions.
+
+### Fill filter
+
+It is fired in fill method. It won't work if you assign data to record any other way (we decided that sometimes programmer would want to bypass this filter mechanism).
+So each time you fill record by fill method (notice that when you read data from data source it is always filled by this method) you will allow data to by modify before it's
+assigned to record object. In Example 6 you can find how to define filters.
+
+### Save filter
+
+This filter doesn't modify record itself. It allows to modify data that are pass to data source. Each time we want to save record, a copy of record data is pass to data source.
+Save filters modify copy. Good example here would be floating-point numbers notation. Lets say we have a price field on model that is decimal. We need to keep it decimal to be able to do
+math on price (sum 2 prices etc. etc.) but we need to save this data source with "," instead "." decimals separator. Then we can use save filter.
+
+### Display filter
+
+Display filters modify data when you display it. There is a special function for this: display. We could fire this filter any time you try to get field value but it would be inflexible.
+In example 5 and 6 you can see how we can use date filter to modify how date is presented by default. Sometimes you will have to present same date differently from default. If this is a case
+then you can apply different filters (Example 7).
+
+
+
+## Methods
+
 * fill( $attributes ) : $this
 
         Fill record with data (Example 2).
@@ -99,4 +139,235 @@ Record represent a single data row. Example 1 show how basic class will looks li
             }
         }
     }
+
+
+### Example 5
+    <?php namespace Core2\Models\PatientData;
+
+    use Netinteractive\Elegant\Model\Blueprint AS BaseBluePrint;
+    use Netinteractive\Elegant\Search\Searchable;
+
+    class Blueprint extends BaseBluePrint
+    {
+       protected function init()
+        {
+            $this->setStorageName('patient_data');
+            $this->primaryKey = array('id');
+            $this->incrementingPk = 'id';
+
+            #Seting up relations
+            $this->getRelationManager()->belongsTo('patient','Patient', array('patient__id'), array('id'));
+
+
+            #Seting up fields
+            $this->fields = array(
+                'id' => array(
+                    'title' => 'Id',
+                    'type' => 'int',
+                    'sortable' => true,
+                    'rules' => array(
+                        'any' => 'integer',
+                        'update' => 'required'
+                    )
+                ),
+                'patient__id' => array(
+                    'title' => _('Patient id'),
+                    'type' => 'int',
+                    'rules' => array(
+                        'any' => 'required|integer|exists:patient,id',
+                    )
+                ),
+                'patient__pesel' => array(
+                    'title' => _('Pesel'),
+                    'type' => 'string',
+                    'sortable' => true,
+                    'searchable' => Searchable::$ends,
+                    'rules' => array(
+
+                    )
+                ),
+                'first_name' => array(
+                    'title' => _('First name'),
+                    'type' => 'string',
+                    'sortable' => true,
+                    'searchable' => Searchable::$ends,
+                    'rules' => array(
+                        'any' => 'required|max:100'
+                    ),
+                    'filters' => array(
+                        'fill' => array(
+                            'stripTags',
+                            function ($value){
+                                return ucfirst($value);
+                            }
+                        )
+                    )
+                ),
+                'last_name' => array(
+                    'title' => _('Last name'),
+                    'type' => 'string',
+                    'sortable' => true,
+                    'searchable' => Searchable::$ends,
+                    'rules' => array(
+                        'any' => 'required|max:100'
+                    ),
+                    'filters' => array(
+                        'fill' => array(
+                            'stripTags'
+                        )
+                    )
+                ),
+                'birth_date' => array(
+                    'title' => _('Birth date'),
+                    'type' => 'date',
+                    'searchable' => '=',
+                    'rules' => array(
+                        'any' => 'required|date',
+                    ),
+                    'filters' => array(
+                        'display' => 'date: Y.m.d'
+                    )
+                ),
+                'phone' => array(
+                    'title' => _('Phone'),
+                    'type' => 'string',
+                    'sortable' => true,
+                    'searchable' => Searchable::$ends,
+                    'rules' => array(
+                        'any' => 'required|max:20'
+                    ),
+                    'filters' => array(
+                        'fill' => array(
+                            'stripTags'
+                        ),
+                        'save' => array(
+                            'phone'
+                        ),
+                    )
+                ),
+            );
+
+            return parent::init();
+        }
+    }
+
+
+### Example 6
+
+    <?php namespace Core2\Models\PatientData;
+
+    use Netinteractive\Elegant\Model\Blueprint AS BaseBluePrint;
+    use Netinteractive\Elegant\Search\Searchable;
+
+    class Blueprint extends BaseBluePrint
+    {
+       protected function init()
+        {
+            $this->setStorageName('patient_data');
+            $this->primaryKey = array('id');
+            $this->incrementingPk = 'id';
+
+            #Seting up relations
+            $this->getRelationManager()->belongsTo('patient','Patient', array('patient__id'), array('id'));
+
+
+            #Seting up fields
+            $this->fields = array(
+                'id' => array(
+                    'title' => 'Id',
+                    'type' => 'int',
+                    'sortable' => true,
+                    'rules' => array(
+                        'any' => 'integer',
+                        'update' => 'required'
+                    )
+                ),
+                'patient__id' => array(
+                    'title' => _('Patient id'),
+                    'type' => 'int',
+                    'rules' => array(
+                        'any' => 'required|integer|exists:patient,id',
+                    )
+                ),
+                'patient__pesel' => array(
+                    'title' => _('Pesel'),
+                    'type' => 'string',
+                    'sortable' => true,
+                    'searchable' => Searchable::$ends,
+                    'rules' => array(
+
+                    )
+                ),
+                'first_name' => array(
+                    'title' => _('First name'),
+                    'type' => 'string',
+                    'sortable' => true,
+                    'searchable' => Searchable::$ends,
+                    'rules' => array(
+                        'any' => 'required|max:100'
+                    ),
+                    'filters' => array(
+                        'fill' => array(
+                            'stripTags'
+                        )
+                    )
+                ),
+                'last_name' => array(
+                    'title' => _('Last name'),
+                    'type' => 'string',
+                    'sortable' => true,
+                    'searchable' => Searchable::$ends,
+                    'rules' => array(
+                        'any' => 'required|max:100'
+                    ),
+                    'filters' => array(
+                        'fill' => array(
+                            'stripTags'
+                        )
+                    )
+                ),
+                'birth_date' => array(
+                    'title' => _('Birth date'),
+                    'type' => 'date',
+                    'searchable' => '=',
+                    'rules' => array(
+                        'any' => 'required|date',
+                    ),
+                    'filters' => array(
+                        'display' => 'date: Y.m.d'
+                    )
+                ),
+                'phone' => array(
+                    'title' => _('Phone'),
+                    'type' => 'string',
+                    'sortable' => true,
+                    'searchable' => Searchable::$ends,
+                    'rules' => array(
+                        'any' => 'required|max:20'
+                    ),
+                    'filters' => array(
+                        'fill' => array(
+                            'stripTags'
+                        ),
+                        'save' => array(
+                            'phone'
+                        ),
+                    )
+                ),
+            );
+
+            return parent::init();
+        }
+    }
+
+
+### Example 7
+        $dbMapper = new DbMapper('PatientData');
+        $records = $dbMapper->getQuery()->limit(1)->get();
+
+        $records[0]->fill(array('first_name'=>'<a>test</a>'));
+        $records[0]->fill(array('phone'=>'('.rand(100,999).') 50 40 30'));
+
+        echo \DisplayFilter::run( $records[0]->birth_date, array('date: Y'))."<br>";
+
 

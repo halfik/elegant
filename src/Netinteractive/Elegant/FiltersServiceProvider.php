@@ -1,6 +1,7 @@
 <?php namespace Netinteractive\Elegant;
 
 use Illuminate\Support\ServiceProvider;
+use Illuminate\Foundation\AliasLoader;
 
 /**
  * Class ElegantServiceProvider
@@ -26,6 +27,8 @@ class FiltersServiceProvider extends ServiceProvider
         $this->publishes([
             __DIR__.'/../../config/filters.php' => config_path('netinteractive/elegant/filters.php'),
         ]);
+
+
     }
 
     /**
@@ -43,6 +46,11 @@ class FiltersServiceProvider extends ServiceProvider
         \Event::listen('ni.elegant.record.after.fill', 'Netinteractive\Elegant\Model\Filter\Event\Handler@fillFilters');
         \Event::listen('ni.elegant.mapper.before.save', 'Netinteractive\Elegant\Model\Filter\Event\Handler@saveFilters');
         \Event::listen('ni.elegant.record.display', 'Netinteractive\Elegant\Model\Filter\Event\Handler@displayFilters');
+
+        $this->app->booting(function()
+        {
+            AliasLoader::getInstance()->alias('DisplayFilter','Netinteractive\Elegant\Model\Filter\Loader');
+        });
     }
 
     /**
@@ -52,7 +60,7 @@ class FiltersServiceProvider extends ServiceProvider
      */
     public function provides()
     {
-        return [];
+        return ['DisplayFilter'];
     }
 
 }

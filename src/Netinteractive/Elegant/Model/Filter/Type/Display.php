@@ -20,7 +20,7 @@ class Display
         $definedFilters = config('netinteractive/elegant/filters.display');
 
         foreach ($filters AS $filter){
-            if ( !is_scalar($filter)){
+            if ( is_callable($filter)){
                 $obj->value = $filter($obj->value);
             }
             else{

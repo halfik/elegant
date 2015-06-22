@@ -18,6 +18,7 @@ Elegant is a domain model package. He is similar to laravels Eloquent and we use
      * \Event::listen('ni.elegant.record.after.fill', 'Netinteractive\Elegant\Model\Filter\Event\Handler@fillFilters');
      * \Event::listen('ni.elegant.mapper.before.save', 'Netinteractive\Elegant\Model\Filter\Event\Handler@saveFilters');
      * \Event::listen('ni.elegant.record.display', 'Netinteractive\Elegant\Model\Filter\Event\Handler@displayFilters');
+     * DisplayFilter::run - alias that allows to apply display filters on data
 
 
 ## Events
@@ -32,7 +33,7 @@ Elegant is a domain model package. He is similar to laravels Eloquent and we use
         ni.elegant.mapper.created.$recordClass   - event is fired after record is inserted to database.
         ni.elegant.mapper.deleting.$recordClass  - event is fired before record is deleted from database.
         ni.elegant.mapper.deleted.$recordClass   - event is fired after record is deleted from database.
-        ni.elegant.mapper.before.save            - event allows to modify data that are send to data source (but not modify record data)
+        ni.elegant.mapper.before.save            - event allows to modify data that are send to data source (but not modify record data).
 
 
 *  Netinteractive\Elegant\Db\Query\Builder
@@ -41,9 +42,9 @@ Elegant is a domain model package. He is similar to laravels Eloquent and we use
 
 * Netinteractive\Elegant\Model\Record
 
-        ni.elegant.record.before.fill           - event allows to modify data before record is filled
-        ni.elegant.record.after.fill            - event allows to modify record after it is filled
-        ni.elegant.record.display               - event allows to modify data before they are displayed
+        ni.elegant.record.before.fill           - event allows to modify data before record is filled.
+        ni.elegant.record.after.fill            - event allows to modify record after it is filled.
+        ni.elegant.record.display               - event allows to modify data before they are displayed.
 
 
 
