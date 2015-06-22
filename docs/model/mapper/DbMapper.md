@@ -66,6 +66,10 @@ All events names depends on record class mapper is currently working with.
 
         Sets connection to database
 
+* getConnection() : \Illuminate\Database\Connection|ConnectionInterface
+
+         Returns database connection
+
 * with( array|string $relations ) : \Netinteractive\Elegant\Db\Query\Builder
 
         Prepare query builder object that will allow to get records with related records. See Example 2.

@@ -1,6 +1,6 @@
 <?php namespace Netinteractive\Elegant\Model\Mapper;
 
-use \Illuminate\Database\ConnectionInterface;
+use Illuminate\Database\ConnectionInterface;
 use Netinteractive\Elegant\Exception\PrimaryKeyException;
 use Netinteractive\Elegant\Model\Collection;
 use Netinteractive\Elegant\Model\MapperInterface;
@@ -64,17 +64,20 @@ class DbMapper implements MapperInterface
 
 
     /**
-     * Create new model
+     * Create new record
      *
      * @param array $data
+     * @param bool $exists
+     *
      * @return \Netinteractive\Elegant\Model\Record
      */
-    public function createRecord(array $data = array())
+    public function createRecord(array $data = array(), $exists = false)
     {
         $record = clone $this->emptyRecord;
 
         $record->fill($data);
-        $record->exists = false;
+        $record->syncOriginal();
+        $record->exists = $exists;
 
         return $record;
     }
@@ -140,12 +143,34 @@ class DbMapper implements MapperInterface
             $query->where($pk, $record->$pk);
         }
 
-        $result =  $query->delete();
+        if ($record->getBlueprint()->softDelete()){
+            $result = $this->softDelete($record, $query);
+        }else{
+            $result =  $query->delete();
+        }
+
+
+        #it dosn't we just deleted it
+        $record->exists = false;
 
         \Event::fire('ni.elegant.mapper.deleted.'.$this->getRecordClass(), $record);
 
         return $result;
     }
+
+
+    /**
+     * @param \Netinteractive\Elegant\Model\Record $record
+     * @param \Netinteractive\Elegant\Db\Query\Builder $query
+     * @return mixed
+     */
+    protected function softDelete(Record $record, Builder $query)
+    {
+        $record->setDeletedAt( $time = $record->freshTimestamp() );
+
+        return $query->update(array($record->getBlueprint()->getDeletedAt() => $record->fromDateTime($time, $this->getDateFormat())));
+    }
+
 
     /**
      * Save model
@@ -166,6 +191,7 @@ class DbMapper implements MapperInterface
             }
         }
 
+
         #we prepare database query object
         $query = $this->getQuery();
         $query->from($record->getBlueprint()->getStorageName());
@@ -176,6 +202,12 @@ class DbMapper implements MapperInterface
         #check if we are editing or creating
         if (!$record->exists){
             \Event::fire('ni.elegant.mapper.creating.'.$this->getRecordClass(), $record);
+
+
+            #we check if record has created_at and updated_at fields, if so we allow record to set proper values for this fields
+            if ($record->getBlueprint()->hasTimestamps()){
+                $record->updateTimestamps();
+            }
 
             $obj = new \stdClass();
             $obj->data = $record->getAttributes();
@@ -202,6 +234,12 @@ class DbMapper implements MapperInterface
             \Event::fire('ni.elegant.mapper.created.'.$this->getRecordClass(), $record);
         }
         else{
+
+            #we check if record has created_at and updated_at fields, if so we allow record to set proper values for this fields
+            if ($record->getBlueprint()->hasTimestamps()){
+                $record->updateTimestamps();
+            }
+
             $obj = new \stdClass();
             $obj->data = $record->getDirty();
             $obj->record = $record;
@@ -209,6 +247,7 @@ class DbMapper implements MapperInterface
             \Event::fire('ni.elegant.mapper.before.save', $obj);
 
             $dirty =  $obj->data;
+
             #we always should validate all data not only that actually was changed
             $record->validate(array_merge($record->getAttributes(), $dirty));
 
@@ -379,6 +418,18 @@ class DbMapper implements MapperInterface
         }
     }
 
+
+    /**
+     * Returns database connection
+     * @return \Illuminate\Database\Connection|ConnectionInterface
+     */
+    public function getConnection()
+    {
+        return $this->connection;
+    }
+
+
+
     /**
      * Sets database connection
      *
@@ -414,6 +465,18 @@ class DbMapper implements MapperInterface
 
         return $query;
     }
+
+
+    /**
+     * Get the format for database stored dates.
+     *
+     * @return string
+     */
+    protected function getDateFormat()
+    {
+        return $this->getConnection()->getQueryGrammar()->getDateFormat();
+    }
+
 
 
 

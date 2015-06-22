@@ -44,6 +44,22 @@ abstract class Blueprint
 
 
     /**
+     * Indicates if the record should be timestamped.
+     *
+     * @var bool
+     */
+    protected $timestamps = true;
+
+
+    /**
+     * Indicates if the record should be soft deleted.
+     *
+     * @var bool
+     */
+    protected $softDelete = false;
+
+
+    /**
      * Constructor
      */
     protected function __construct()
@@ -52,7 +68,24 @@ abstract class Blueprint
         $this->relationManager = $relationManager;
 
         $this->init();
+        static::bootTraits();
     }
+
+
+    /**
+     * Boot all of the bootable traits
+     *
+     * @return void
+     */
+    protected static function bootTraits()
+    {
+        foreach (class_uses_recursive(get_called_class()) as $trait){
+            if (method_exists(get_called_class(), $method = 'boot'.class_basename($trait))){
+                forward_static_call([get_called_class(), $method]);
+            }
+        }
+    }
+
 
 
     /**
@@ -354,7 +387,7 @@ abstract class Blueprint
 
 
     /**
-     * function checks if field is external or not.
+     * Function checks if field is external or not.
      * (external fields are not saved to the data source)
      * @param string $fieldKey
      * @return bool
@@ -370,6 +403,25 @@ abstract class Blueprint
         }
 
         return true;
+    }
+
+
+    /**
+     * Returns information if record has timestamps (created_at and updated_at)
+     * @return bool
+     */
+    public function hasTimestamps()
+    {
+        return $this->timestamps;
+    }
+
+    /**
+     * Returns information if record should be soft deleted
+     * @return bool
+     */
+    public function softDelete()
+    {
+        return $this->softDelete;
     }
 
     /**
@@ -437,4 +489,36 @@ abstract class Blueprint
     }
 
 
+
+    ## AT COLUMNS
+
+
+    /**
+     * Returns the name of the "created at" field.
+     * @return string
+     */
+    public function getCreatedAt()
+    {
+        return 'created_at';
+    }
+
+
+    /**
+     * Returns the name of the "updated at" field.
+     * @return string
+     */
+    public function getUpdatedAt()
+    {
+        return 'updated_at';
+    }
+
+
+    /**
+     * Returns the name of the "deleted at" field.
+     * @return string
+     */
+    public function getDeletedAt()
+    {
+        return 'deleted_at';
+    }
 } 

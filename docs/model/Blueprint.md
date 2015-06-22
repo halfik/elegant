@@ -21,12 +21,14 @@ Things you should define in init() method:
 
 
 ### About fields
-* title - is a field title that you should present on views
-* type  - type of field. possible values: int, text, date, dateTime, time, bool (and any other you want). Type can be used in example to generate form for record.
-* sortable - defines if use can sort data by this field or not: true|false
+* title      - is a field title that you should present on views
+* type       - type of field. possible values: int, text, date, dateTime, time, bool (and any other you want). Type can be used in example to generate form for record.
+* sortable   - defines if use can sort data by this field or not: true|false
 * searchable - defines if and how we can search by this field (see Searchable.md)
-* external - defines if field value should be saved to data storage when you save record
-* rules - validation rules. same as you can find in Eloquent.
+* external   - defines if field value should be saved to data storage when you save record
+* rules      - validation rules. same as you can find in Eloquent.
+* timestamps - indicates if the record should be timestamped (crated_at and updated_at)
+* softDelete - indicates if the record should be soft deleted (deleted_at column)
 
 ## Methods
 *   static  getInstance() : Netinteractive\Elegant\Model\Blueprint
@@ -89,6 +91,16 @@ Things you should define in init() method:
 *   isExternal( $fieldKey ) : bool
 
         checks if field is external or not (external defined fields are not saved to data source)
+
+
+*   hasTimestamps() : bool
+
+        returns information if record has timestamps (created_at and updated_at)
+
+*   softDelete() :  bool
+
+        returns information if record should be soft deleted
+
 
 *   getStorageName() : null|string
 

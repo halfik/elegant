@@ -5,6 +5,7 @@ use Illuminate\Support\MessageBag AS MessageBag;
 use Netinteractive\Elegant\Exception\ValidationException;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Contracts\Support\Jsonable;
+use Carbon\Carbon;
 
 /**
  * Class Record
@@ -62,7 +63,25 @@ abstract class Record implements Arrayable, Jsonable
     public function __construct(array $attributes = array())
     {
         $this->init();
+
         $this->fill($attributes);
+        $this->syncOriginal();
+
+        static::bootTraits();
+    }
+
+    /**
+     * Boot all of the bootable traits
+     *
+     * @return void
+     */
+    protected static function bootTraits()
+    {
+        foreach (class_uses_recursive(get_called_class()) as $trait){
+            if (method_exists(get_called_class(), $method = 'boot'.class_basename($trait))){
+                forward_static_call([get_called_class(), $method]);
+            }
+        }
     }
 
     /**
@@ -271,12 +290,26 @@ abstract class Record implements Arrayable, Jsonable
     }
 
     /**
-     * Return list of external attributes (attributes that don't belong to this record)
+     * Returns list of external attributes (attributes that don't belong to this record)
      * @return array
      */
     public function getExternals()
     {
         return $this->external;
+    }
+
+
+    /**
+     * Returns list of attributes  in their original state
+     * @return array
+     */
+    public function getOriginals()
+    {
+        if (empty($this->original)){
+            $this->syncOriginal();
+        }
+
+        return $this->original;
     }
 
     /**
@@ -307,13 +340,18 @@ abstract class Record implements Arrayable, Jsonable
     {
         $dirty = $this->getDirty();
 
-        if (is_null($attributes)) return count($dirty) > 0;
+        if (is_null($attributes)){
+            return count($dirty) > 0;
+        }
 
-        if ( ! is_array($attributes)) $attributes = func_get_args();
+        if ( ! is_array($attributes)){
+            $attributes = func_get_args();
+        }
 
-        foreach ($attributes as $attribute)
-        {
-            if (array_key_exists($attribute, $dirty)) return true;
+        foreach ($attributes as $attribute){
+            if (array_key_exists($attribute, $dirty)){
+                return true;
+            }
         }
 
         return false;
@@ -328,15 +366,11 @@ abstract class Record implements Arrayable, Jsonable
     {
         $dirty = array();
 
-        foreach ($this->attributes as $key => $value)
-        {
-            if ( ! array_key_exists($key, $this->original))
-            {
+        foreach ($this->attributes as $key => $value){
+            if ( ! array_key_exists($key, $this->original)){
                 $dirty[$key] = $value;
             }
-            elseif ($value !== $this->original[$key] &&
-                ! $this->originalIsNumericallyEquivalent($key))
-            {
+            elseif ($value !== $this->original[$key] && !$this->originalIsNumericallyEquivalent($key)){
                 $dirty[$key] = $value;
             }
         }
@@ -371,6 +405,130 @@ abstract class Record implements Arrayable, Jsonable
 
         return $this;
     }
+
+
+    /**
+     * Sync a single original attribute with its current value.
+     *
+     * @param  string  $attribute
+     * @return $this
+     */
+    public function syncOriginalAttribute($attribute)
+    {
+        $this->original[$attribute] = $this->attributes[$attribute];
+
+        return $this;
+    }
+
+
+    /**
+     * Convert a DateTime to a storable string.
+     *
+     * @param  \DateTime|int  $value
+     * @param string $format
+     * @return string
+     */
+    public function fromDateTime($value, $format='Y-m-d H:i:s')
+    {
+        // If the value is already a DateTime instance, we will just skip the rest of
+        // these checks since they will be a waste of time, and hinder performance
+        // when checking the field. We will just return the DateTime right away.
+        if ( !($value instanceof \DateTime) ){
+            // If the value is totally numeric, we will assume it is a UNIX timestamp and
+            // format the date as such. Once we have the date in DateTime form we will
+            // format it according to the proper format for the database connection.
+            if (is_numeric($value))
+            {
+                $value = Carbon::createFromTimestamp($value);
+            }
+
+            // If the value is in simple year, month, day format, we will format it using
+            // that setup. This is for simple "date" fields which do not have hours on
+            // the field. This conveniently picks up those dates and format correct.
+            elseif (preg_match('/^(\d{4})-(\d{2})-(\d{2})$/', $value))
+            {
+                $value = Carbon::createFromFormat('Y-m-d', $value)->startOfDay();
+            }
+
+            // If this value is some other type of string, we'll create the DateTime with
+            // the format used by the database connection. Once we get the instance we
+            // can return back the finally formatted DateTime instances to the devs.
+            else
+            {
+                $value = Carbon::createFromFormat($format, $value);
+            }
+        }
+
+
+        return $value->format($format);
+    }
+
+
+
+     ## TIEMSTAMP COLUMNS
+
+    /**
+     * Get a fresh timestamp for the model.
+     *
+     * @return \Carbon\Carbon
+     */
+    public function freshTimestamp()
+    {
+        return new Carbon();
+    }
+
+    /**
+     * Update the creation and update timestamps.
+     *
+     * @return void
+     */
+    public function updateTimestamps()
+    {
+        $time = $this->freshTimestamp();
+
+        if ( !$this->isDirty($this->getBlueprint()->getUpdatedAt())){
+            $this->setUpdatedAt($time);
+        }
+
+        if ( !$this->exists && !$this->isDirty($this->getBlueprint()->getCreatedAt())){
+            $this->setCreatedAt($time);
+        }
+    }
+
+    /**
+     * Set the value of the "created at" attribute.
+     *
+     * @param  mixed  $value
+     * @return void
+     */
+    public function setCreatedAt($value)
+    {
+        $this->attributes[$this->getBlueprint()->getCreatedAt()] = $value;
+    }
+
+    /**
+     * Set the value of the "updated at" attribute.
+     *
+     * @param  mixed  $value
+     * @return void
+     */
+    public function setUpdatedAt($value)
+    {
+        $this->attributes[$this->getBlueprint()->getUpdatedAt()] = $value;
+    }
+
+    /**
+     * Set the value of the "deleted at" attribute.
+     *
+     * @param  mixed  $value
+     * @return void
+     */
+    public function setDeletedAt($value)
+    {
+        $this->attributes[$this->getBlueprint()->getDeletedAt()] = $value;
+    }
+
+
 
 
     ##RELATIONS
@@ -410,6 +568,11 @@ abstract class Record implements Arrayable, Jsonable
 
         return $this;
     }
+
+
+
+
+    ##TO ARRAY, JSON, STRING
 
 
     /**

@@ -116,6 +116,7 @@ class Builder extends QueryBuilder
 
             $loadedRecord = clone $record;
             $loadedRecord->fill((array) $result);
+            $loadedRecord->syncOriginal();
             $loadedRecord->exists = true;
 
             $records[] = $loadedRecord;

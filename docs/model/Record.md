@@ -34,9 +34,9 @@ math on price (sum 2 prices etc. etc.) but we need to save this data source with
 
 ### Display filter
 
-Display filters modify data when you display it. There is a special function for this: display. We could fire this filter any time you try to get field value but it would be inflexible.
+Display filters modify data when you display it. There is a special function for this: display (example 7). We could fire this filter any time you try to get field value but it would be inflexible.
 In example 5 and 6 you can see how we can use date filter to modify how date is presented by default. Sometimes you will have to present same date differently from default. If this is a case
-then you can apply different filters (Example 7).
+then you can apply different filters (Example 8).
 
 
 
@@ -78,6 +78,28 @@ then you can apply different filters (Example 7).
 * getAttribute( string $key ) : mixed|null
 
         Gets attribute value or related rows (Example 4).
+
+
+* getAttributes() : array
+
+        Returns attributes names and values.
+
+* getExternals() : array
+
+        Returns list of external attributes (attributes that don't belong to this record).
+
+* getOriginals(): array
+
+        Returns list of attributes  in their original state (before any changes were made on record).
+
+
+* display(string $field, array $filters = array(), bool $defaultFilters = true) : mixed
+
+        Apply display filters on attribute value and returns it.
+        Usage:
+               * display('my_field') - will apply filters defined in blueprint
+               * display('my_field', array('additional_filter')) - apply filters defined in blueprint and passed in $filters params in that order.
+               * display('my_field', array('additional_filter'), false) - will apply only passsed filters
 
 
 
@@ -361,13 +383,18 @@ then you can apply different filters (Example 7).
     }
 
 
-### Example 7
+### Example 8
         $dbMapper = new DbMapper('PatientData');
         $records = $dbMapper->getQuery()->limit(1)->get();
 
-        $records[0]->fill(array('first_name'=>'<a>test</a>'));
-        $records[0]->fill(array('phone'=>'('.rand(100,999).') 50 40 30'));
+        $records[0]->display('birth_date'); #will apply all display filters on birth_day
 
-        echo \DisplayFilter::run( $records[0]->birth_date, array('date: Y'))."<br>";
+
+
+### Example 8
+        $dbMapper = new DbMapper('PatientData');
+        $records = $dbMapper->getQuery()->limit(1)->get();
+
+        echo \DisplayFilter::run( $records[0]->birth_date, array('date: Y'))."<br>"; #will display year
 
 
