@@ -40,7 +40,7 @@ abstract class Record implements Arrayable, Jsonable
      * Related records
      * @var array
      */
-    protected $relations = array();
+    protected $related= array();
 
     /**
      * Information if record already exists in database
@@ -546,25 +546,25 @@ abstract class Record implements Arrayable, Jsonable
     /**
      * Set the specific relationship in the record.
      *
-     * @param  string  $relation
+     * @param  string  $related
      * @param  mixed   $value
      * @return $this
      */
-    public function setRelation($relation, $value)
+    public function setRelated($related, $value)
     {
-        $this->relations[$relation] = $value;
+        $this->related[$related] = $value;
         return $this;
     }
 
     /**
-     * Set the entire relations array on the model.
+     * Set the entire related records array on the record.
      *
-     * @param  array  $relations
+     * @param  array  $related
      * @return $this
      */
-    public function setRelations(array $relations)
+    public function setRawRelated(array $related)
     {
-        $this->relations = $relations;
+        $this->related  = $related;
 
         return $this;
     }
@@ -604,25 +604,25 @@ abstract class Record implements Arrayable, Jsonable
      */
     public function toArray()
     {
-        $relations = array();
+        $related = array();
 
         #here we are converting related record to array
-        foreach ($this->relations AS $relationName=>$data){
+        foreach ($this->related AS $relationName=>$data){
             if ( $data instanceof \Netinteractive\Elegant\Model\Record ){
-                $relations[$relationName] = $data->toArray();
+                $related[$relationName] = $data->toArray();
             }
             else{
                 if (!empty($data)){
                     foreach ($data AS $record){
                         if ( $record instanceof \Netinteractive\Elegant\Model\Record ){
-                            $relations[$relationName][] = $record->toArray();
+                            $related[$relationName][] = $record->toArray();
                         }
                     }
                 }
             }
         }
 
-        return array_merge($this->attributes, $this->external, $relations);
+        return array_merge($this->attributes, $this->external, $related);
     }
 
 

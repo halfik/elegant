@@ -181,7 +181,7 @@ class BelongsTo extends Relation
     public function initRelation(array $records, $relation)
     {
         foreach ($records as $record) {
-            $record->setRelation($relation, null);
+            $record->setRelated($relation, null);
         }
 
         return $records;
@@ -215,7 +215,7 @@ class BelongsTo extends Relation
         foreach ($records as $record) {
             foreach ($this->foreignKey AS $fk) {
                 if (isset($dictionary[$record->$fk])) {
-                    $record->setRelation($relation, $dictionary[$record->$fk]);
+                    $record->setRelated($relation, $dictionary[$record->$fk]);
                 }
             }
 
@@ -237,7 +237,7 @@ class BelongsTo extends Relation
             $this->parent->setAttribute($fk, $record->getAttribute(array_shift($otherKeys)));
         }
 
-        return $this->parent->setRelation($this->relation, $record);
+        return $this->parent->setRelated($this->relation, $record);
     }
 
     /**
@@ -251,7 +251,7 @@ class BelongsTo extends Relation
             $this->parent->setAttribute($fk, null);
         }
 
-        return $this->parent->setRelation($this->relation, null);
+        return $this->parent->setRelated($this->relation, null);
     }
 
 

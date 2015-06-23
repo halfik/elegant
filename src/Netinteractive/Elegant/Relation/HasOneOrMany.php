@@ -142,7 +142,7 @@ abstract class HasOneOrMany extends Relation
                 if (isset($dictionary[$key])) {
                     $value = $this->getRelationValue($dictionary, $key, $type);
 
-                    $record->setRelation($relation, $value);
+                    $record->setRelated($relation, $value);
                 }
             }
 

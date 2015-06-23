@@ -122,7 +122,7 @@ class BelongsToMany extends Relation
     public function initRelation(array $records, $relation)
     {
         foreach ($records as $record){
-            $record->setRelation($relation, new Collection());
+            $record->setRelated($relation, new Collection());
         }
 
         return $records;
@@ -190,7 +190,7 @@ class BelongsToMany extends Relation
             foreach ($recordPkList AS $recordPk){
                 if (isset($dictionary[$key = $recordPk])){
                     $collection = \App::make('ni.elegant.model.collection', array($dictionary[$key]));
-                    $record->setRelation($relation, $collection);
+                    $record->setRelated($relation, $collection);
                 }
             }
         }
@@ -367,7 +367,7 @@ class BelongsToMany extends Relation
         foreach ($records as $record){
             $pivot = $this->newExistingPivot($this->cleanPivotAttributes($record));
 
-            $record->setRelation('pivot', $pivot);
+            $record->setRelated('pivot', $pivot);
         }
     }
 

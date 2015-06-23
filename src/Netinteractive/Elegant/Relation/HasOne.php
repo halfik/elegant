@@ -30,7 +30,7 @@ class HasOne extends HasOneOrMany
 	public function initRelation(array $records, $relation)
 	{
 		foreach ($records as $record){
-            $record->setRelation($relation, null);
+            $record->setRelated($relation, null);
 		}
 
 		return $records;
