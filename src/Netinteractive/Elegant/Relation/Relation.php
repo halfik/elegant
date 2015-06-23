@@ -228,16 +228,22 @@ abstract class Relation {
             }
         }
 
+
         #keys array init
         foreach ($keys AS $key){
-            $responseKeys[$key] = array();
+            if (!isSet($responseKeys[$key])){
+                $responseKeys[$key] = array();
+            }
         }
 
         #gathering and grouping keys
         foreach ($records AS $record){
             foreach ($keys AS $key){
                 if (isSet($record->{$key})){
-                    $responseKeys[$key][] = $record->{$key};
+                    if (!in_array($record->{$key},  $responseKeys[$key])){
+                        $responseKeys[$key][] = $record->{$key};
+                    }
+
                 }
             }
         }

@@ -53,7 +53,7 @@ class DbTranslator implements TranslatorInterface
                 $relation = $this->hasMany($relationData[1], $relationData[2], $relationData[3]);
                 break;
             case 'belongsToMany':
-                $relation = $this->belongsToMany($relationData[1], $relationData[2], $relationData[3][0], $relationData[4][0], $relationName);
+                $relation = $this->belongsToMany($relationData[1], $relationData[2], $relationData[3], $relationData[4], $relationName);
                 break;
         }
 

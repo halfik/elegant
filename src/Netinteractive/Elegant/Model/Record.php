@@ -111,7 +111,7 @@ abstract class Record implements Arrayable, Jsonable
         foreach ($attributes as $key => $value){
             $this->setAttribute($key, $value);
         }
-
+        
         \Event::fire('ni.elegant.record.after.fill', $obj);
 
         return $this;
@@ -209,6 +209,10 @@ abstract class Record implements Arrayable, Jsonable
                 }else{
                     $this->external[$key] = $value;
                 }
+            }
+            #all pivot keys are external
+            elseif(strpos($key, 'pivot') !== false){
+                $this->external[$key] = $value;
             }
 
         }else{
@@ -612,6 +616,7 @@ abstract class Record implements Arrayable, Jsonable
                 $related[$relationName] = $data->toArray();
             }
             else{
+                $related[$relationName] = array();
                 if (!empty($data)){
                     foreach ($data AS $record){
                         if ( $record instanceof \Netinteractive\Elegant\Model\Record ){

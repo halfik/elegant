@@ -104,11 +104,15 @@ class BelongsToMany extends Relation
      */
     public function addEagerConstraints(array $records)
     {
-        $fkList = $this->getForeignKey();
+        $keys = $this->getForeignKey();
         $fkValueList = $this->getKeys($records);
 
-        foreach ($fkList AS $fk){
-            $this->query->whereIn($fk, $fkValueList);
+        $parentPk = $this->parent->getBlueprint()->getPrimaryKey();
+
+        foreach ($keys AS $index=>$fk){
+            if (isSet($parentPk[$index])){
+                $this->query->whereIn($fk, $fkValueList[$parentPk[$index]]);
+            }
         }
     }
 
@@ -121,8 +125,9 @@ class BelongsToMany extends Relation
      */
     public function initRelation(array $records, $relation)
     {
+
         foreach ($records as $record){
-            $record->setRelated($relation, new Collection());
+            $record->setRelated($relation, \App('ni.elegant.model.collection', array()));
         }
 
         return $records;
@@ -156,7 +161,7 @@ class BelongsToMany extends Relation
 
         $records = $this->query->addSelect($select)->get();
 
-        $this->hydratePivotRelation($records->toArray());
+        $this->hydratePivotRelation($records);
 
         // If we actually found models we will also eager load any relationships that
         // have been specified as needing to be eager loaded. This will solve the
@@ -198,10 +203,12 @@ class BelongsToMany extends Relation
         return $records;
     }
 
+
+
     /**
      * Get the fully qualified foreign key for the relation.
      *
-     * @return string
+     * @return array
      */
     public function getForeignKey(Record $record=null)
     {
@@ -217,7 +224,7 @@ class BelongsToMany extends Relation
     /**
      * Get the fully qualified "other key" for the relation.
      *
-     * @return string
+     * @return array
      */
     public function getOtherKey()
     {
@@ -356,10 +363,10 @@ class BelongsToMany extends Relation
     /**
      * Hydrate the pivot table relationship on the records.
      *
-     * @param  array  $records
+     * @param  \Netinteractive\Elegant\Model\Collection  $records
      * @return void
      */
-    protected function hydratePivotRelation(array $records)
+    protected function hydratePivotRelation(Collection $records)
     {
         // To hydrate the pivot relationship, we will just gather the pivot attributes
         // and create a new Pivot model, which is basically a dynamic model that we
@@ -372,16 +379,16 @@ class BelongsToMany extends Relation
     }
 
     /**
-     * Get the pivot attributes from a model.
+     * Get the pivot attributes from a record.
      *
-     * @param  \Netinteractive\Elegant\Model\Record  $model
+     * @param  \Netinteractive\Elegant\Model\Record  $record
      * @return array
      */
     protected function cleanPivotAttributes(Record $record)
     {
         $values = array();
 
-        foreach ($record->toArray() as $key => $value){
+        foreach ($record->getAttributes() as $key => $value){
             // To get the pivots attributes we will just take any of the attributes which
             // begin with "pivot_" and add those to this arrays, as well as unsetting
             // them from the parent's models since they exist in a different table.
