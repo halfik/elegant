@@ -196,24 +196,25 @@ class DbMapper implements MapperInterface
         $query = $this->getQuery();
         $query->from($record->getBlueprint()->getStorageName());
 
+        #here we prepare obj that will be passed to mapper events
+        $obj = new \stdClass();
+        $obj->data = array();
+        $obj->record = $record;
 
         \Event::fire('ni.elegant.mapper.saving.'.$this->getRecordClass(), $record);
 
+        #we check if record has created_at and updated_at fields, if so we allow record to set proper values for this fields
+        if ($record->getBlueprint()->hasTimestamps()){
+            $record->updateTimestamps();
+        }
+
         #check if we are editing or creating
         if (!$record->exists){
-            \Event::fire('ni.elegant.mapper.creating.'.$this->getRecordClass(), $record);
-
-
-            #we check if record has created_at and updated_at fields, if so we allow record to set proper values for this fields
-            if ($record->getBlueprint()->hasTimestamps()){
-                $record->updateTimestamps();
-            }
-
-            $obj = new \stdClass();
             $obj->data = $record->getAttributes();
-            $obj->record = $record;
 
             \Event::fire('ni.elegant.mapper.before.save', $obj);
+
+            \Event::fire('ni.elegant.mapper.creating.'.$this->getRecordClass(), $record);
 
             $attributes = $obj->data;
 
@@ -234,15 +235,7 @@ class DbMapper implements MapperInterface
             \Event::fire('ni.elegant.mapper.created.'.$this->getRecordClass(), $record);
         }
         else{
-
-            #we check if record has created_at and updated_at fields, if so we allow record to set proper values for this fields
-            if ($record->getBlueprint()->hasTimestamps()){
-                $record->updateTimestamps();
-            }
-
-            $obj = new \stdClass();
             $obj->data = $record->getDirty();
-            $obj->record = $record;
 
             \Event::fire('ni.elegant.mapper.before.save', $obj);
 
@@ -439,7 +432,7 @@ class DbMapper implements MapperInterface
     /**
      * Sets database connection
      *
-     * @param ConnectionInterface $connection
+     * @param \Illuminate\Database\ConnectionInterface\ConnectionInterface $connection
      * @return $this
      */
     public function setConnection(ConnectionInterface $connection)
@@ -455,19 +448,18 @@ class DbMapper implements MapperInterface
 
     /**
      * Set the keys for a save update query.
-     * @param Builder $query
-     * @param Record $model
-     * @return Builder
+     * @param \Netinteractive\Elegant\Model\Query\Builder $query
+     * @param \Netinteractive\Elegant\Model\Record $record
+     * @return \Netinteractive\Elegant\Model\Query\Builder
      *
      */
-    protected function setKeysForSaveQuery(Builder $query, Record $model)
+    protected function setKeysForSaveQuery(Builder $query, Record $record)
     {
-        $pk = $model->getBlueprint()->getPrimaryKey();
+        $pk = $record->getBlueprint()->getPrimaryKey();
 
         foreach ($pk AS $part){
-            $query->where($part, '=', $model->$part);
+            $query->where($query->getFrom().'.'.$part, '=', $record->$part);
         }
-
 
         return $query;
     }
