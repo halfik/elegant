@@ -53,7 +53,7 @@ class DbTranslator implements TranslatorInterface
                 $relation = $this->hasMany($relationData[1], $relationData[2], $relationData[3]);
                 break;
             case 'belongsToMany':
-                $relation = $this->belongsToMany($relationData[1], $relationData[2][0], $relationData[2][1], $relationData[2][2], $relationName);
+                $relation = $this->belongsToMany($relationData[1], $relationData[2], $relationData[3][0], $relationData[4][0], $relationName);
                 break;
         }
 
@@ -156,6 +156,6 @@ class DbTranslator implements TranslatorInterface
         // appropriate query constraint and entirely manages the hydrations.
         $dbMapper = \App('ni.elegant.model.mapper.db', array($related));
 
-        return new BelongsToMany( $dbMapper->getQuery(), $instance, $this->record, $table, $foreignKey, $otherKey, $relation);
+        return new BelongsToMany($dbMapper->getQuery(), $instance, $this->record, $table, $foreignKey, $otherKey, $relation);
     }
 } 

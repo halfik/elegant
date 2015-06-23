@@ -230,8 +230,7 @@ class Builder extends QueryBuilder
         // If there are nested relationships set on the query, we will put those onto
         // the query instances so that they can be handled after this relationship
         // is loaded. In this way they will all trickle down as they are loaded.
-        if (count($nested) > 0)
-        {
+        if (count($nested) > 0){
             $query->getQuery()->with($nested);
         }
 
@@ -341,10 +340,8 @@ class Builder extends QueryBuilder
         // We are basically looking for any relationships that are nested deeper than
         // the given top-level relationship. We will just check for any relations
         // that start with the given top relations and adds them to our arrays.
-        foreach ($relations AS $name => $constraints)
-        {
-            if ($this->isNested($name, $relation))
-            {
+        foreach ($relations AS $name => $constraints) {
+            if ($this->isNested($name, $relation)){
                 $nested[substr($name, strlen($relation.'.'))] = $constraints;
             }
         }

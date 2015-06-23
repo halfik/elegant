@@ -241,7 +241,7 @@ class BelongsTo extends Relation
     }
 
     /**
-     * Dissociate previously associated model from the given parent.
+     * Dissociate previously associated record from the given parent.
      *
      * @return \Netinteractive\Elegant\Model\Record
      */

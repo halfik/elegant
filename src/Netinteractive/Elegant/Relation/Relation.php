@@ -53,7 +53,7 @@ abstract class Relation {
 	}
 
     /**
-     * @param Record $related
+     * @param \Netinteractive\Elegant\Model\Record $related
      * @return $this
      */
     public function setRelated(Record $related)
@@ -170,7 +170,7 @@ abstract class Relation {
 
     /**
      * Get the default foreign key name for the record.
-     * @param Record $record
+     * @param \Netinteractive\Elegant\Model\Record $record
      * @return string
      */
     public function getForeignKey(Record $record)
