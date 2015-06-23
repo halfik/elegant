@@ -48,7 +48,7 @@ class DbMapper implements MapperInterface
      * Create a new db mapper
      *
      * @param string $recordClass
-     * @param ConnectionInterface $connection
+     * @param \Illuminate\Database\ConnectionInterface $connection
      * @return void
      */
     public function __construct($recordClass, ConnectionInterface $connection=null)
@@ -394,6 +394,12 @@ class DbMapper implements MapperInterface
         #we pass record  to query builder
         if ($this->query->getRecord() == null){
             $this->query->setRecord($this->createRecord());
+
+            # if record is softDelete type we ensure that query builder will take only none deleted records
+            if ($this->query->getRecord()->getBlueprint()->softDelete() === true){
+                $deletedAtColumns =  $this->query->getFrom().'.'. $this->query->getRecord()->getBlueprint()->getDeletedAt();
+                $this->query->whereNull($deletedAtColumns);
+            }
         }
 
         $this->query->setConnection($this->connection);
