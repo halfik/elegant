@@ -2,6 +2,7 @@
 
 use Illuminate\Database\ConnectionInterface;
 use Netinteractive\Elegant\Exception\PrimaryKeyException;
+use Netinteractive\Elegant\Exception\RecordNotFoundException;
 use Netinteractive\Elegant\Model\Collection;
 use Netinteractive\Elegant\Model\MapperInterface;
 use Netinteractive\Elegant\Model\Record;
@@ -294,6 +295,18 @@ class DbMapper implements MapperInterface
     public function findMany(array $params, $columns = array('*'), $operator = 'and', $defaultJoin = true)
     {
         return \App::make('ni.elegant.model.collection', array($this->search($params, $columns, $operator, $defaultJoin)->get()));
+    }
+
+
+    /**
+     * Execute the query and get the first result.
+     *
+     * @param  array  $columns
+     * @return \Netinteractive\Elegant\Model\Record|static|null
+     */
+    public function first(array $columns = array('*'))
+    {
+        return $this->getQuery()->take(1)->get($columns)->first();
     }
 
 

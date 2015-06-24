@@ -19,17 +19,17 @@ interface MapperInterface
     /**
      * Save model
      *
-     * @param Model $model
+     * @param \Netinteractive\Elegant\Model\Record $record
      * @return $this
      */
-    function save(Record $model);
+    function save(Record $record);
 
     /**
      * Find one model
      *
      * @param $id
      * @param array $columns
-     * @return Model
+     * @return \Netinteractive\Elegant\Model\Record
      */
     function find($id, array $columns);
 
@@ -40,6 +40,14 @@ interface MapperInterface
      * @return mixed
      */
     function findMany(array $params);
+
+
+    /**
+     * Find first record
+     * @param array $columns
+     * @return \Netinteractive\Elegant\Model\Record|static|null
+     */
+    function first(array $columns = array('*'));
 
     /**
      * Create new record
