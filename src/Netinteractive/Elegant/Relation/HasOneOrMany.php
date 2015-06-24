@@ -77,10 +77,10 @@ abstract class HasOneOrMany extends Relation
     /**
      * Set the constraints for an eager load of the relation.
      *
-     * @param  array $records
+     * @param  \Netinteractive\Elegant\Model\Collection $records
      * @return void
      */
-    public function addEagerConstraints(array $records)
+    public function addEagerConstraints(Collection $records)
     {
         $this->query->from($this->related->getBlueprint()->getStorageName());
 
@@ -96,12 +96,12 @@ abstract class HasOneOrMany extends Relation
     /**
      * Match the eagerly loaded results to their single parents.
      *
-     * @param  array $records
+     * @param  \Netinteractive\Elegant\Model\Collection $records
      * @param  \Netinteractive\Elegant\Model\Collection $results
      * @param  string $relation
      * @return array
      */
-    public function matchOne(array $records, Collection $results, $relation)
+    public function matchOne(Collection $records, Collection $results, $relation)
     {
         return $this->matchOneOrMany($records, $results, $relation, 'one');
     }
@@ -109,12 +109,12 @@ abstract class HasOneOrMany extends Relation
     /**
      * Match the eagerly loaded results to their many parents.
      *
-     * @param  array $records
+     * @param  \Netinteractive\Elegant\Model\Collection $records
      * @param  \Netinteractive\Elegant\Model\Collection $results
      * @param  string $relation
      * @return array
      */
-    public function matchMany(array $records, Collection $results, $relation)
+    public function matchMany(Collection $records, Collection $results, $relation)
     {
         return $this->matchOneOrMany($records, $results, $relation, 'many');
     }
@@ -122,13 +122,13 @@ abstract class HasOneOrMany extends Relation
     /**
      * Match the eagerly loaded results to their many parents.
      *
-     * @param  array $records
+     * @param  \Netinteractive\Elegant\Model\Collection $records
      * @param  \Netinteractive\Elegant\Model\Collection $results
      * @param  string $relation
      * @param  string $type
      * @return array
      */
-    protected function matchOneOrMany(array $records, Collection $results, $relation, $type)
+    protected function matchOneOrMany(Collection $records, Collection $results, $relation, $type)
     {
         $dictionary = $this->buildDictionary($results);
 

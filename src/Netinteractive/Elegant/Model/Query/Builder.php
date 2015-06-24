@@ -3,6 +3,7 @@
 
 use Netinteractive\Elegant\Db\Query\Builder AS QueryBuilder;
 use Closure;
+use Netinteractive\Elegant\Model\Collection;
 use Netinteractive\Elegant\Model\Record;
 use Netinteractive\Elegant\Relation\Relation;
 use Illuminate\Database\ConnectionInterface AS ConnectionInterface;
@@ -105,7 +106,7 @@ class Builder extends QueryBuilder
         // that should be selected as well, which are typically just everything.
         $results = parent::get($columns);
 
-        $records = array();
+        $records = \App::make('ni.elegant.model.collection', array());
 
         // Once we have the results, we can spin through them and instantiate a fresh
         // model instance for each records we retrieved from the database. We will
@@ -189,10 +190,10 @@ class Builder extends QueryBuilder
     /**
      * Eager load the relationships for the records.
      *
-     * @param  array  $records
+     * @param  Collections  $records
      * @return array
      */
-    public function eagerLoadRelations(array $records)
+    public function eagerLoadRelations(Collection $records)
     {
         $relations = $this->getRelationsToLoad();
 
@@ -300,12 +301,12 @@ class Builder extends QueryBuilder
     /**
      * Eagerly load the relationship on a set of models.
      *
-     * @param  array     $records
+     * @param  \Netinteractive\Elegant\Model\Collection      $records
      * @param  string    $name
      * @param  \Closure  $constraints
      * @return array
      */
-    protected function loadRelated(array $records, $name, Closure $constraints)
+    protected function loadRelated(Collection $records, $name, Closure $constraints)
     {
         // First we will "back up" the existing where conditions on the query so we can
         // add our eager constraints. Then we will merge the wheres that were on the

@@ -111,7 +111,7 @@ abstract class Record implements Arrayable, Jsonable
         foreach ($attributes as $key => $value){
             $this->setAttribute($key, $value);
         }
-        
+
         \Event::fire('ni.elegant.record.after.fill', $obj);
 
         return $this;
@@ -168,6 +168,18 @@ abstract class Record implements Arrayable, Jsonable
     }
 
     /**
+     * Function checks if record has a blueprint
+     * @return bool
+     */
+    public function hasBlueprint()
+    {
+        if ($this->blueprint instanceof Blueprint){
+            return true;
+        }
+        return false;
+    }
+
+    /**
      * Enables data validations rules
      * @return $this
      */
@@ -210,8 +222,7 @@ abstract class Record implements Arrayable, Jsonable
                     $this->external[$key] = $value;
                 }
             }
-            #all pivot keys are external
-            elseif(strpos($key, 'pivot') !== false){
+            else{
                 $this->external[$key] = $value;
             }
 
@@ -238,8 +249,8 @@ abstract class Record implements Arrayable, Jsonable
         elseif (isSet($this->external[$key])){
             $response = $this->external[$key];
         }
-        elseif (isSet($this->relations[$key])){
-            $response = $this->relations[$key];
+        elseif (isSet($this->related[$key])){
+            $response = $this->related[$key];
         }
 
         return $response;
@@ -673,7 +684,7 @@ abstract class Record implements Arrayable, Jsonable
      */
     public function __isset($key)
     {
-        return ((isset($this->attributes[$key]) || isset($this->external[$key])) || isset($this->relations[$key]) );
+        return ((isset($this->attributes[$key]) || isset($this->external[$key])) || isset($this->related[$key]) );
     }
 
     /**
@@ -684,7 +695,7 @@ abstract class Record implements Arrayable, Jsonable
      */
     public function __unset($key)
     {
-        unset($this->attributes[$key], $this->external[$key], $this->relations[$key]);
+        unset($this->attributes[$key], $this->external[$key], $this->related[$key]);
     }
 
 } 

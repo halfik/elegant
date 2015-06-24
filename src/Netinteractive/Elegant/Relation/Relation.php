@@ -72,29 +72,29 @@ abstract class Relation {
 	/**
 	 * Set the constraints for an eager load of the relation.
 	 *
-	 * @param  array  $records
+	 * @param  \Netinteractive\Elegant\Model\Collection  $records
 	 * @return void
 	 */
-	abstract public function addEagerConstraints(array $records);
+	abstract public function addEagerConstraints(Collection $records);
 
 	/**
 	 * Initialize the relation on a set of records.
 	 *
-	 * @param  array   $records
+	 * @param  \Netinteractive\Elegant\Model\Collection   $records
 	 * @param  string  $relation
 	 * @return array
 	 */
-	abstract public function initRelation(array $records, $relation);
+	abstract public function initRelation(Collection $records, $relation);
 
 	/**
 	 * Match the eagerly loaded results to their parents.
 	 *
-	 * @param  array   $records
+	 * @param  \Netinteractive\Elegant\Model\Collection   $records
 	 * @param  \Netinteractive\Elegant\Model\Collection  $results
 	 * @param  string  $relation
 	 * @return array
 	 */
-	abstract public function match( array $records, Collection $results, $relation);
+	abstract public function match( Collection $records, Collection $results, $relation);
 
 	/**
 	 * Get the results of the relationship.
@@ -209,13 +209,13 @@ abstract class Relation {
 	}
 
     /**
-     * Get all of the primary keys for an array of records.
+     * Get all of the primary keys of records.
      *
-     * @param  array   $records
+     * @param  \Netinteractive\Elegant\Model\Collectiob   $records
      * @param  string  $keys
      * @return array
      */
-    protected function getKeys(array $records, $keys = array())
+    protected function getKeys(Collection $records, $keys = array())
     {
         $responseKeys = array();
 

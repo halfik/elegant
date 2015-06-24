@@ -14,44 +14,50 @@ use Netinteractive\Elegant\Model\Record;
 class Handler
 {
     /**
-     * applys display filters
+     * applies display filters
      * @param \stdClass $obj
      */
     public function displayFilters(\stdClass $obj)
     {
-        $filters =  Logic::parseFilters($obj->record->getBluePrint()->getFieldFilters($obj->field, 'display'));
-
-        if (isSet($filters)){
-            Display::apply($obj, $filters);
-        }
-    }
-
-    /**
-     * applys save filters
-     * @param \stdClass $obj
-     */
-    public function saveFilters(\stdClass $obj)
-    {
-        foreach ($obj->record->getAttributes() AS $key=>$val){
-            $filters =  Logic::parseFilters( $obj->record->getBluePrint()->getFieldFilters($key, 'save' ));
+        if ($obj->record->hasBlueprint()){
+            $filters =  Logic::parseFilters($obj->record->getBluePrint()->getFieldFilters($obj->field, 'display'));
 
             if (isSet($filters)){
-                Save::apply($obj, $key, $filters);
+                Display::apply($obj, $filters);
             }
         }
     }
 
     /**
-     * apllys fill filters
-     * @param \stdClass $record
+     * applies save filters
+     * @param \stdClass $obj
+     */
+    public function saveFilters(\stdClass $obj)
+    {
+        if ($obj->record->hasBlueprint()){
+            foreach ($obj->record->getAttributes() AS $key=>$val){
+                $filters =  Logic::parseFilters( $obj->record->getBluePrint()->getFieldFilters($key, 'save' ));
+
+                if (isSet($filters)){
+                    Save::apply($obj, $key, $filters);
+                }
+            }
+        }
+    }
+
+    /**
+     * applies fill filters
+     * @param \stdClass $obj
      */
     public function fillFilters(\stdClass $obj)
     {
-        foreach ($obj->record->getAttributes() AS $key=>$val){
-            $filters =  Logic::parseFilters( $obj->record->getBluePrint()->getFieldFilters($key, 'fill') );
+        if ($obj->record->hasBlueprint()){
+            foreach ($obj->record->getAttributes() AS $key=>$val){
+                $filters =  Logic::parseFilters( $obj->record->getBluePrint()->getFieldFilters($key, 'fill') );
 
-            if (isSet($filters)){
-                Fill::apply($obj->record, $key, $filters);
+                if (isSet($filters)){
+                    Fill::apply($obj->record, $key, $filters);
+                }
             }
         }
     }

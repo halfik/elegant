@@ -116,10 +116,10 @@ class BelongsTo extends Relation
     /**
      * Set the constraints for an eager load of the relation.
      *
-     * @param  array $records
+     * @param  \Netinteractive\Elegant\Model\Collection $records
      * @return void
      */
-    public function addEagerConstraints(array $records)
+    public function addEagerConstraints(Collection $records)
     {
         $keys = $this->getEagerRecordKeys($records);
         $this->query->from($this->related->getBlueprint()->getStorageName());
@@ -136,10 +136,10 @@ class BelongsTo extends Relation
     /**
      * Gather the keys from an array of related records.
      *
-     * @param  array $records
+     * @param  \Netinteractive\Elegant\Model\Collection $records
      * @return array
      */
-    protected function getEagerRecordKeys(array $records)
+    protected function getEagerRecordKeys(Collection $records)
     {
         $keys = array();
 
@@ -174,11 +174,11 @@ class BelongsTo extends Relation
     /**
      * Initialize the relation on a set of models.
      *
-     * @param  array $records
+     * @param  \Netinteractive\Elegant\Model\Collection $records
      * @param  string $relation
      * @return array
      */
-    public function initRelation(array $records, $relation)
+    public function initRelation(Collection $records, $relation)
     {
         foreach ($records as $record) {
             $record->setRelated($relation, null);
@@ -190,12 +190,12 @@ class BelongsTo extends Relation
     /**
      * Match the eagerly loaded results to their parents.
      *
-     * @param  array $records
+     * @param  \Netinteractive\Elegant\Model\Collection $records
      * @param  \Netinteractive\Elegant\Model\Collection $results
      * @param  string $relation
      * @return array
      */
-    public function match(array $records, Collection $results, $relation)
+    public function match(Collection $records, Collection $results, $relation)
     {
 
         // First we will get to build a dictionary of the child models by their primary

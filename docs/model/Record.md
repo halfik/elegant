@@ -59,6 +59,10 @@ then you can apply different filters (Example 8).
 
         Returns record blueprint. Blueprint contains (or it should) all informations about record fields.
 
+* hasBlueprint() : bool
+
+        Method checks if record has a blueprint
+
 * enableValidation() : $this
 
         Enables data validation.

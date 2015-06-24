@@ -99,10 +99,10 @@ class BelongsToMany extends Relation
     /**
      * Set the constraints for an eager load of the relation.
      *
-     * @param  array  $records
+     * @param  \Netinteractive\Elegant\Model\Collection   $records
      * @return void
      */
-    public function addEagerConstraints(array $records)
+    public function addEagerConstraints(Collection $records)
     {
         $keys = $this->getForeignKey();
         $fkValueList = $this->getKeys($records);
@@ -119,11 +119,11 @@ class BelongsToMany extends Relation
     /**
      * Initialize the relation on a set of models.
      *
-     * @param  array   $records
+     * @param  \Netinteractive\Elegant\Model\Collection   $records
      * @param  string  $relation
      * @return array
      */
-    public function initRelation(array $records, $relation)
+    public function initRelation(Collection $records, $relation)
     {
 
         foreach ($records as $record){
@@ -167,9 +167,8 @@ class BelongsToMany extends Relation
         // have been specified as needing to be eager loaded. This will solve the
         // n + 1 query problem for the developer and also increase performance.
         if (count($records) > 0) {
-            $records = $this->query->eagerLoadRelations($records->toArray());
+            $records = $this->query->eagerLoadRelations($records);
         }
-
 
         return \App::make('ni.elegant.model.collection', array($records));
     }
@@ -177,12 +176,12 @@ class BelongsToMany extends Relation
     /**
      * Match the eagerly loaded results to their parents.
      *
-     * @param  array   $records
+     * @param  \Netinteractive\Elegant\Model\Collection   $records
      * @param  \Netinteractive\Elegant\Model\Collection  $results
      * @param  string  $relation
      * @return array
      */
-    public function match(array $records, Collection $results, $relation)
+    public function match(Collection $records, Collection $results, $relation)
     {
         $dictionary = $this->buildDictionary($results);
 
@@ -374,7 +373,7 @@ class BelongsToMany extends Relation
         foreach ($records as $record){
             $pivot = $this->newExistingPivot($this->cleanPivotAttributes($record));
 
-            $record->setRelated('pivot', $pivot);
+            $record->setRelated(Pivot::PREFIX, $pivot);
         }
     }
 
@@ -388,13 +387,14 @@ class BelongsToMany extends Relation
     {
         $values = array();
 
-        foreach ($record->getAttributes() as $key => $value){
+        foreach ($record->toArray() as $key => $value){
             // To get the pivots attributes we will just take any of the attributes which
             // begin with "pivot_" and add those to this arrays, as well as unsetting
             // them from the parent's models since they exist in a different table.
-            if (strpos($key, 'pivot_') === 0){
-                $values[substr($key, 6)] = $value;
+            if (strpos($key, Pivot::PREFIX.'_') === 0){
+                $values[substr($key, strlen(Pivot::PREFIX)+1)] = $value;
                 unset($record->$key);
+                \debug($record->toArray());
             }
         }
 
@@ -418,7 +418,7 @@ class BelongsToMany extends Relation
 
         foreach ($results as $result){
            foreach ($fkList AS $fk){
-               $dictionary[$result->pivot->$fk][] = $result;
+               $dictionary[$result->{Pivot::PREFIX}->$fk][] = $result;
            }
         }
 

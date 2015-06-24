@@ -23,11 +23,11 @@ class HasOne extends HasOneOrMany
 	/**
 	 * Initialize the relation on a set of models.
 	 *
-	 * @param  array   $records
+	 * @param  \Netinteractive\Elegant\Model\Collection   $records
 	 * @param  string  $relation
 	 * @return array
 	 */
-	public function initRelation(array $records, $relation)
+	public function initRelation(Collection $records, $relation)
 	{
 		foreach ($records as $record){
             $record->setRelated($relation, null);
@@ -39,12 +39,12 @@ class HasOne extends HasOneOrMany
 	/**
 	 * Match the eagerly loaded results to their parents.
 	 *
-	 * @param  array   $records
+	 * @param  \Netinteractive\Elegant\Model\Collection   $records
 	 * @param  \Netinteractive\Elegant\Model\Collection $results
 	 * @param  string  $relation
 	 * @return array
 	 */
-	public function match(array $records, Collection $results, $relation)
+	public function match(Collection $records, Collection $results, $relation)
 	{
 		return $this->matchOne($records, $results, $relation);
 	}

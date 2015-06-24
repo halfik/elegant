@@ -17,6 +17,8 @@ class Pivot extends Record
 	 */
 	protected $parent;
 
+    const PREFIX = 'pivot';
+
 
 	/**
 	 * Create a new pivot record instance.

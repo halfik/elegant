@@ -33,11 +33,11 @@ class HasMany extends HasOneOrMany
     /**
      * Initialize the relation on a set of models.
      *
-     * @param  array $records
+     * @param  \Netinteractive\Elegant\Model\Collection $records
      * @param  string $relation
      * @return array
      */
-    public function initRelation(array $records, $relation)
+    public function initRelation(Collection $records, $relation)
     {
         foreach ($records as $record) {
             $record->setRelated($relation, \App('ni.elegant.model.collection', array($this->related)) );
@@ -49,12 +49,12 @@ class HasMany extends HasOneOrMany
     /**
      * Match the eagerly loaded results to their parents.
      *
-     * @param  array $models
+     * @param  \Netinteractive\Elegant\Model\Collection $records
      * @param  \Netinteractive\Elegant\Model\Collection $results
      * @param  string $relation
      * @return array
      */
-    public function match(array $records, Collection $results, $relation)
+    public function match(Collection $records, Collection $results, $relation)
     {
         return $this->matchMany($records, $results, $relation);
     }
