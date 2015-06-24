@@ -20,6 +20,10 @@ All events names depends on record class mapper is currently working with.
 
         Create a new record and fill it with $data (dosn't save it do database).
 
+* createMany(array $data=array()) :  \Netinteractive\Elegant\Model\Collection
+
+        Create collection of records.
+
 * getRecordClass() : string
 
         Returns class name of record that mapper is currently working with.
@@ -39,6 +43,10 @@ All events names depends on record class mapper is currently working with.
 * save( \Netinteractive\Elegant\Model\Record $record ) : $this
 
         Saves record to database.
+
+* saveMany(\Netinteractive\Elegant\Model\Collection $records) : $this
+
+    Saves collection of records
 
 * find( int|array $ids, array $columns=array('*')) : \Netinteractive\Elegant\Model\Record
 

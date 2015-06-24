@@ -179,6 +179,8 @@ abstract class Record implements Arrayable, Jsonable
         return false;
     }
 
+
+
     /**
      * Enables data validations rules
      * @return $this
@@ -415,7 +417,7 @@ abstract class Record implements Arrayable, Jsonable
      * @return $this
      */
     public function syncOriginal()
-    {
+{
         $this->original = $this->attributes;
 
         return $this;
@@ -545,10 +547,10 @@ abstract class Record implements Arrayable, Jsonable
 
 
 
-
     ##RELATIONS
 
     /**
+     * Creates and returns relation object
      * @param $type
      * @param $relation
      * @return mixed
@@ -559,15 +561,44 @@ abstract class Record implements Arrayable, Jsonable
     }
 
     /**
+     * Returns related records
+     * @param string|null $name
+     * @return mixed
+     */
+    public function getRelated($name=null)
+    {
+        if (!empty($name)){
+           return isSet( $this->related[$name] )?  $this->related[$name] : array();
+        }
+
+        return $this->related;
+    }
+
+    /**
+     * Checks if record has any related records
+     * @param string|null $name
+     * @return bool
+     */
+    public function hasRelated($name=null)
+    {
+        if (!empty($name)){
+            return isSet( $this->related[$name]) && count($this->related)>0 ? true : false;
+        }
+
+        return count($this->related)>0 ? true: false;
+    }
+
+
+    /**
      * Set the specific relationship in the record.
      *
-     * @param  string  $related
-     * @param  mixed   $value
+     * @param  string  $name
+     * @param  mixed   $records
      * @return $this
      */
-    public function setRelated($related, $value)
+    public function setRelated($name, $records)
     {
-        $this->related[$related] = $value;
+        $this->related[$name] = $records;
         return $this;
     }
 

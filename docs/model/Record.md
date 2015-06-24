@@ -46,10 +46,7 @@ then you can apply different filters (Example 8).
 
         Fill record with data (Example 2).
 
-* validate( array $data, $rulesGroups = 'all' ) : $this
-
-        Validates data using record validators (Example 3). It will throw \Netinteractive\Elegant\Exception\ValidationException if validation fails.
-        Validation is fired automatically when mapper tries to save record. And it always validate all data, not only those that have been changed.
+###Blueprint
 
 * setBlueprint( \Netinteractive\Elegant\Model\Blueprint $blueprint) : $this
 
@@ -63,6 +60,8 @@ then you can apply different filters (Example 8).
 
         Method checks if record has a blueprint
 
+###Validation
+
 * enableValidation() : $this
 
         Enables data validation.
@@ -70,6 +69,14 @@ then you can apply different filters (Example 8).
 * disableValidation() : $this
 
         Disables data validation.
+
+* validate( array $data, $rulesGroups = 'all' ) : $this
+
+        Validates data using record validators (Example 3). It will throw \Netinteractive\Elegant\Exception\ValidationException if validation fails.
+        Validation is fired automatically when mapper tries to save record. And it always validate all data, not only those that have been changed.
+
+
+###Attributes
 
 * setAttribute( string $key, string $value )  : $this
 
@@ -96,6 +103,26 @@ then you can apply different filters (Example 8).
 
         Returns list of attributes  in their original state (before any changes were made on record).
 
+
+###Relations
+
+* getRelation(string $type, string $relation) : mixed
+
+        Creates and returns relation object
+
+* getRelated(string $name=null) : mixed
+
+        Returns related records
+
+*  hasRelated(string $name=null) : bool
+
+        Checks if record has any related records
+
+* setRelated(string $name, mixed $records) : $this
+
+        Assigns related records to parent
+
+###Data presentation
 
 * display(string $field, array $filters = array(), bool $defaultFilters = true) : mixed
 

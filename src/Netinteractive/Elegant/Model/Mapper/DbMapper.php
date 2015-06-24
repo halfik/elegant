@@ -83,6 +83,24 @@ class DbMapper implements MapperInterface
         return $record;
     }
 
+
+    /**
+     * Create Collection of records
+     *
+     * @param array $data
+     * @return \Netinteractive\Elegant\Model\Collection
+     */
+    public function createMany(array $data=array())
+    {
+        $collection = \App::make('ni.elegant.model.collection', array());
+
+        foreach ($data AS $row){
+            $collection->add($this->createRecord($row));
+        }
+
+        return $collection;
+    }
+
     /**
      * Returns name of moles class
      *
@@ -177,85 +195,118 @@ class DbMapper implements MapperInterface
      * Save model
      *
      * @param \Netinteractive\Elegant\Model\Record $record
+     * @param bool $touchRelated
      * @return $this
      */
-    public function save(Record $record)
+    public function save(Record $record, $touchRelated = false)
     {
         #we want to check if anything has changed with record only when we are updating
         #if we do this for new record it won't let us to read record from one database and save it to another one
         if ($record->exists == true){
             $dirty = $record->getDirty();
 
-            #check if anything has changed
-            if (count($dirty) == 0){
+            #check if anything has changed and if we dont have to touch related
+            if (count($dirty) == 0 && $touchRelated === false){
                 return $this;
             }
         }
+        
+        if (count($dirty) > 0){
+            #we prepare database query object
+            $query = $this->getQuery();
+            $query->from($record->getBlueprint()->getStorageName());
 
+            #here we prepare obj that will be passed to mapper events
+            $obj = new \stdClass();
+            $obj->data = array();
+            $obj->record = $record;
 
-        #we prepare database query object
-        $query = $this->getQuery();
-        $query->from($record->getBlueprint()->getStorageName());
+            \Event::fire('ni.elegant.mapper.saving.'.$this->getRecordClass(), $record);
 
-        #here we prepare obj that will be passed to mapper events
-        $obj = new \stdClass();
-        $obj->data = array();
-        $obj->record = $record;
-
-        \Event::fire('ni.elegant.mapper.saving.'.$this->getRecordClass(), $record);
-
-        #we check if record has created_at and updated_at fields, if so we allow record to set proper values for this fields
-        if ($record->getBlueprint()->hasTimestamps()){
-            $record->updateTimestamps();
-        }
-
-        #check if we are editing or creating
-        if (!$record->exists){
-            $obj->data = $record->getAttributes();
-
-            \Event::fire('ni.elegant.mapper.before.save', $obj);
-
-            \Event::fire('ni.elegant.mapper.creating.'.$this->getRecordClass(), $record);
-
-            $attributes = $obj->data;
-
-            #we always should validate all data not only that actually was changed
-            $record->validate($attributes);
-
-            #check if we have autoincrementing on PK
-            if ($record->getBlueprint()->incrementingPk){
-                $primaryKey = $record->getBlueprint()->incrementingPk;
-
-                $id = $query->insertGetId($attributes, $primaryKey);
-
-                $record->setAttribute($primaryKey, $id);
-            }else{
-                $query->insert($attributes);
+            #we check if record has created_at and updated_at fields, if so we allow record to set proper values for this fields
+            if ($record->getBlueprint()->hasTimestamps()){
+                $record->updateTimestamps();
             }
 
-            \Event::fire('ni.elegant.mapper.created.'.$this->getRecordClass(), $record);
+            #check if we are editing or creating
+            if (!$record->exists){
+                $obj->data = $record->getAttributes();
+
+                \Event::fire('ni.elegant.mapper.before.save', $obj);
+
+                \Event::fire('ni.elegant.mapper.creating.'.$this->getRecordClass(), $record);
+
+                $attributes = $obj->data;
+
+                #we always should validate all data not only that actually was changed
+                $record->validate($attributes);
+
+                #check if we have autoincrementing on PK
+                if ($record->getBlueprint()->incrementingPk){
+                    $primaryKey = $record->getBlueprint()->incrementingPk;
+
+                    $id = $query->insertGetId($attributes, $primaryKey);
+
+                    $record->setAttribute($primaryKey, $id);
+                }else{
+                    $query->insert($attributes);
+                }
+
+                \Event::fire('ni.elegant.mapper.created.'.$this->getRecordClass(), $record);
+            }
+            else{
+                $obj->data = $record->getDirty();
+
+                \Event::fire('ni.elegant.mapper.before.save', $obj);
+
+                $dirty =  $obj->data;
+
+                #we always should validate all data not only that actually was changed
+                $record->validate(array_merge($record->getAttributes(), $dirty));
+
+                \Event::fire('ni.elegant.mapper.updating.'.$this->getRecordClass(), $record);
+
+                $this->setKeysForSaveQuery($query, $record)->update( $dirty );
+
+                \Event::fire('ni.elegant.mapper.updated.'.$this->getRecordClass(), $record);
+            }
+
+            $record->syncOriginal();
+
+            \Event::fire('ni.elegant.mapper.saved.'.$this->getRecordClass(), $record);
         }
-        else{
-            $obj->data = $record->getDirty();
 
-            \Event::fire('ni.elegant.mapper.before.save', $obj);
 
-            $dirty =  $obj->data;
 
-            #we always should validate all data not only that actually was changed
-            $record->validate(array_merge($record->getAttributes(), $dirty));
-
-            \Event::fire('ni.elegant.mapper.updating.'.$this->getRecordClass(), $record);
-
-            $this->setKeysForSaveQuery($query, $record)->update( $dirty );
-
-            \Event::fire('ni.elegant.mapper.updated.'.$this->getRecordClass(), $record);
+        #we touch related records
+        if ($touchRelated === true && $record->hasRelated()){
+            foreach ($record->getRelated() AS $records){
+                if ($records instanceof Record){
+                    $this->save($records, true);
+                }
+                elseif ($record instanceof Collection){
+                    $this->saveMany($records, true);
+                }
+            }
         }
 
-        $record->syncOriginal();
+        return $this;
+    }
 
-        \Event::fire('ni.elegant.mapper.saved.'.$this->getRecordClass(), $record);
 
+
+    /**
+     * Saves collection of records
+     *
+     * @param \Netinteractive\Elegant\Model\Collection $records
+     * @param bool $touchRelated
+     * @return $this
+     */
+    public function saveMany(Collection $records, $touchRelated = false)
+    {
+        foreach ($records AS $record){
+            $this->save($record, $touchRelated);
+        }
         return $this;
     }
 
@@ -290,7 +341,7 @@ class DbMapper implements MapperInterface
      * @param array $columns
      * @param string $operator
      * @param bool $defaultJoin
-     * @return Collection
+     * @return \Netinteractive\Elegant\Model\Collection
      */
     public function findMany(array $params, $columns = array('*'), $operator = 'and', $defaultJoin = true)
     {

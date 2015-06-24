@@ -117,6 +117,7 @@ class Builder extends QueryBuilder
 
             $loadedRecord = clone $record;
             $loadedRecord->fill((array) $result);
+
             $loadedRecord->syncOriginal();
             $loadedRecord->exists = true;
 
@@ -180,7 +181,6 @@ class Builder extends QueryBuilder
         }
 
         $parsed = $this->parseRelations($relations);
-
 
         $this->setRelationsToLoad(array_merge($this->getRelationsToLoad(), $parsed));
 

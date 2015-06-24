@@ -11,7 +11,7 @@ abstract class Relation {
 	/**
 	 * The Elegant query builder instance.
 	 *
-	 * @var \Netinteractive\Elegant\Db\Query\Builder
+	 * @var \Netinteractive\Elegant\Model\Query\Builder
 	 */
 	protected $query;
 
@@ -111,6 +111,8 @@ abstract class Relation {
 	 */
 	public function getEager()
 	{
+        #we have to set proper record on query so builder can clone and return proper objects
+        $this->query->setRecord($this->related);
 		return $this->get();
 	}
 

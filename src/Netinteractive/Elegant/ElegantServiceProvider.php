@@ -58,13 +58,13 @@ class ElegantServiceProvider extends ServiceProvider
 
         \App::bind('ni.elegant.model.collection', '\Netinteractive\Elegant\Model\Collection');
 
-        \App::bind('ElegantRelationManager', '\Netinteractive\Elegant\Model\Relation\Manager');
+        \App::bind('ni.elegant.model.relation.manager', '\Netinteractive\Elegant\Model\Relation\Manager');
         \App::bind('ni.elegant.model.relation.translator.db', '\Netinteractive\Elegant\Model\Relation\Translator\DbTranslator');
 
         \App::bind('ni.elegant.search.db.translator', '\Netinteractive\Elegant\Search\Db\Translator');
 
 
-        \App::make('ElegantRelationManager')->registerTranslator('db', \App('ni.elegant.model.relation.translator.db'));
+        \App::make('ni.elegant.model.relation.manager')->registerTranslator('db', \App('ni.elegant.model.relation.translator.db'));
 
 
 	}

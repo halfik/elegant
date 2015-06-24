@@ -394,7 +394,6 @@ class BelongsToMany extends Relation
             if (strpos($key, Pivot::PREFIX.'_') === 0){
                 $values[substr($key, strlen(Pivot::PREFIX)+1)] = $value;
                 unset($record->$key);
-                \debug($record->toArray());
             }
         }
 

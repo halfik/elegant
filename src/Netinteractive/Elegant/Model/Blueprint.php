@@ -48,7 +48,7 @@ abstract class Blueprint
      *
      * @var bool
      */
-    protected $timestamps = true;
+    protected $timestamps = false;
 
 
     /**
@@ -64,7 +64,7 @@ abstract class Blueprint
      */
     protected function __construct()
     {
-        $relationManager = \App('ElegantRelationManager');
+        $relationManager = \App('ni.elegant.model.relation.manager');
         $this->relationManager = $relationManager;
 
         $this->init();

@@ -24,6 +24,15 @@ interface MapperInterface
      */
     function save(Record $record);
 
+
+    /**
+     * Saves collection of records
+     *
+     * @param \Netinteractive\Elegant\Model\Collection $records
+     * @return $this
+     */
+    function saveMany(Collection $records);
+
     /**
      * Find one model
      *
@@ -53,9 +62,19 @@ interface MapperInterface
      * Create new record
      *
      * @param array $data
-     * @return Netinteractive\Elegant\Model\Record;
+     * @return \Netinteractive\Elegant\Model\Record;
      */
     function createRecord(array $data = array());
+
+
+
+    /**
+     * Create Collection of records
+     *
+     * @param array $data
+     * @return \Netinteractive\Elegant\Model\Collection
+     */
+     function createMany(array $data=array());
 
     /**
      * Returns record class name
