@@ -405,6 +405,16 @@ abstract class Blueprint
         return true;
     }
 
+    /**
+     * Returns information if given field is incrementing part of primary key
+     * @param string $fieldKey
+     * @return bool
+     */
+    public function isIncrementingPk($fieldKey)
+    {
+        return $fieldKey == $this->incrementingPk;
+    }
+
 
     /**
      * Returns information if record has timestamps (created_at and updated_at)

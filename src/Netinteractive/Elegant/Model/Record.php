@@ -160,7 +160,10 @@ abstract class Record implements Arrayable, Jsonable
      */
     public function setBlueprint(Blueprint $blueprint)
     {
+        \Event::fire('ni.elegant.record.blueprint.before.set'.get_class($this), $this);
         $this->blueprint = $blueprint;
+        \Event::fire('ni.elegant.record.blueprint.after.set'.get_class($this), $this);
+
         return $this;
     }
 
@@ -263,6 +266,26 @@ abstract class Record implements Arrayable, Jsonable
         }
 
         return $response;
+    }
+
+    /**
+     * Marks record (and related if needed) as new
+     * @param bool $touchRelated
+     * @return $this
+     */
+    public function makeNoneExists($touchRelated=true)
+    {
+        $this->exists = false;
+
+        if ($touchRelated == true){
+            foreach ($this->related AS $relationName=>$related){
+                foreach ($related AS $record){
+                    $record->makeNoneExists($touchRelated);
+                }
+            }
+        }
+
+        return $this;
     }
 
     /**
@@ -416,9 +439,64 @@ abstract class Record implements Arrayable, Jsonable
      * @param array $attributes
      * @return $this
      */
-    public function makeDirty(array $attributes=array())
+    public function makeDirty(array $attributes=array(), $touchRelated=false)
     {
-        $this->dirty  = $attributes;
+        if (empty($attributes)){
+            $attributes = $this->getAttributesKeys();
+        }
+
+        foreach ($attributes AS $field){
+            $this->dirty[$field] = $this->$field;
+        }
+
+        #related
+        if ($touchRelated === true){
+            foreach ($this->getRelated() AS $records){
+                if ($records instanceof Collection){
+                    foreach ($records AS $record){
+                        $record->makeDirty(array(), $touchRelated);
+                    }
+                }else{
+                    $records->makeDirty(array(), $touchRelated);
+                }
+
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * Returns information is record new
+     * @return bool
+     */
+    public function isNew()
+    {
+        return !$this->exists;
+    }
+
+    /**
+     * Marks record (and related  if needed) as new
+     * @param bool $touchRelated
+     * @return $this
+     */
+    public function markAsNew($touchRelated=false)
+    {
+        $this->exists = false;
+
+        if ($touchRelated === true){
+            foreach ($this->getRelated() AS $records){
+                if ($records instanceof Collection){
+                    foreach ($records AS $record){
+                        $record->markAsNew($touchRelated);
+                    }
+                }else{
+                    $records->markAsNew($touchRelated);
+                }
+
+            }
+        }
+
         return $this;
     }
 

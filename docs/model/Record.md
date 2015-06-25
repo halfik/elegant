@@ -8,7 +8,7 @@ Record doesn't know anything about attributes. We use Blueprint object to keep t
 
 There are 2 types of record attributes. Ones that should be saved to data source and ones that belong to record, but shouldn't be saved.
 First one is an attribute, second one is an external attribute. List of both are defined in blueprint. Defined external attributes only when you need validate them when saving the record.
-Every attribute that is not defined in record blueprint by default is treated as external.
+Every attribute that is not defined in records blueprint, by default is treated as external.
 
 
 ## Filters (data manipulators)
@@ -48,7 +48,18 @@ In example 5 and 6 you can see how we can use date filter to modify how date is 
 then you can apply different filters (Example 8).
 
 
+## Events
+Some events names depends on record class mapper is currently working with.
 
+* ni.elegant.record.blueprint.before.set.$recordClass - it is fired before blueprint object is set on record
+* ni.elegant.record.blueprint.before.set.$recordClass - it is fired after blueprint object is set on record
+
+* ni.elegant.record.display     - fired in display method (allows to modify data)
+* ni.elegant.record.before.fill - fired before object is filled with $attributes
+* ni.elegant.record.after.fill  - fired after object is filled with $attributes
+
+
+## Methods
 
 ###Blueprint
 
@@ -119,13 +130,25 @@ then you can apply different filters (Example 8).
 
         Returns list of dirty attributes (attribute is dirty if its value has been modified).
 
-* makeDirty( array $attributes=array() ) : $this
+* makeDirty( array $attributes=array(), bool $touchRelated=false ) : $this
 
-        Method enables to make attributes considered dirty.
+        Method enables to make attributes considered dirty. If empty array is passed all record attributes (Except part of pk that is incrementing) are marked as firty.
 
 * isDirty( mixed $attributes = null ) : bool
 
         Determine if the record or given attribute(s) have been modified.
+
+* isNew() : bool
+
+        Returns information is record new
+
+*  markAsNew(bool $touchRelated=false) : $this
+
+        Marks record (and related if needed) as new
+
+* makeNoneExists( bool $touchRelated = true ): $this
+
+        Marks record (and related if needed) as new
 
 
 ###Relations

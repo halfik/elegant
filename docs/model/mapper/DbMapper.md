@@ -13,9 +13,16 @@ All events names depends on record class mapper is currently working with.
 * ni.elegant.mapper.updated.$recordClass   - event is fired after record update.
 * ni.elegant.mapper.deleting.$recordClass  - event is fired before record is deleted from database.
 * ni.elegant.mapper.deleted.$recordClass   - event is fired after record is deleted from database.
+* ni.elegant.mapper.touching.$recordClass  - event is fired for related record before touch
+* ni.elegant.mapper.touched.$recordClass   - event is fired for related record after touch
+
+Important: $recordClass isn't an alias you bind class to in IoC. It has to be class name like: App\Models\PatientData\Record
 
 
 ## Methods
+
+DbMapper gives you access to all methods od \Netinteractive\Elegant\Model\Query\Builder (it was done by overriding __call)
+
 * createRecord( array $data = array() ) : \Netinteractive\Elegant\Model\Record
 
         Create a new record and fill it with $data (dosn't save it do database).
@@ -47,6 +54,10 @@ All events names depends on record class mapper is currently working with.
 * saveMany(\Netinteractive\Elegant\Model\Collection $records, bool $touchRelated = false) : $this
 
         Saves collection of records and if $touchRelated is true it will also save related records.
+
+* touchRelated(\Netinteractive\Elegant\Model\Record  $record) $this
+
+        Touches related records
 
 * find( int|array $ids, array $columns=array('*')) : \Netinteractive\Elegant\Model\Record
 

@@ -34,7 +34,8 @@ Elegant is a domain model package. He is similar to laravels Eloquent and we use
         ni.elegant.mapper.deleting.$recordClass  - event is fired before record is deleted from database.
         ni.elegant.mapper.deleted.$recordClass   - event is fired after record is deleted from database.
         ni.elegant.mapper.before.save            - event allows to modify data that are send to data source (but not modify record data).
-
+        ni.elegant.mapper.touching.$recordClass  - event is fired for related record before touch
+        ni.elegant.mapper.touched.$recordClass   - event is fired for related record after touch
 
 *  Netinteractive\Elegant\Db\Query\Builder
 
@@ -42,10 +43,11 @@ Elegant is a domain model package. He is similar to laravels Eloquent and we use
 
 * Netinteractive\Elegant\Model\Record
 
-        ni.elegant.record.before.fill           - event allows to modify data before record is filled.
-        ni.elegant.record.after.fill            - event allows to modify record after it is filled.
-        ni.elegant.record.display               - event allows to modify data before they are displayed.
-
+        ni.elegant.record.before.fill                       - event allows to modify data before record is filled.
+        ni.elegant.record.after.fill                        - event allows to modify record after it is filled.
+        ni.elegant.record.display                           - event allows to modify data before they are displayed.
+        ni.elegant.record.blueprint.before.set.$recordClass - it is fired before blueprint object is set on record
+        ni.elegant.record.blueprint.before.set.$recordClass - it is fired after blueprint object is set on record
 
 
 ## Important
@@ -68,12 +70,6 @@ In docs folder you can find more documentation about package.
 
 All examples are based on this 3 classes:
 
-### Binding
-    \App::bind('Patient', 'App\Models\Patient\Record');
-    \App::bind('PatientData', 'App\Models\PatientData\Record');
-    \App::bind('User', 'App\Models\User\Record');
-
-
 ### User
      <?php namespace App\Models\User;
 
@@ -88,7 +84,7 @@ All examples are based on this 3 classes:
              $this->primaryKey = array('id');
              $this->incrementingPk = 'id';
 
-             $this->getRelationManager()->hasOne('patient','Patient', 'user__id','id');
+             $this->getRelationManager()->hasOne('patient','App\Models\Patient\Record', 'user__id','id');
 
              $this->fields = array(
                  'id' => array(
@@ -182,8 +178,8 @@ All examples are based on this 3 classes:
             $this->primaryKey = array('id');
             $this->incrementingPk = 'id';
 
-            $this->getRelationManager()->hasMany('patientData','PatientData', array('patient__id'), array('id') );
-            $this->getRelationManager()->belongsTo('user','User', array('user__id'), array('id') );
+            $this->getRelationManager()->hasMany('patientData','App\Models\PatientData\Record', array('patient__id'), array('id') );
+            $this->getRelationManager()->belongsTo('user','App\Models\User\Record', array('user__id'), array('id') );
 
             $this->fields = array(
                 'id' => array(
@@ -234,7 +230,7 @@ All examples are based on this 3 classes:
             $this->incrementingPk = 'id';
 
             #Seting up relations
-            $this->getRelationManager()->belongsTo('patient','Patient', array('patient__id'), array('id'));
+            $this->getRelationManager()->belongsTo('patient','App\Models\Patient\Record', array('patient__id'), array('id'));
 
 
             #Seting up fields

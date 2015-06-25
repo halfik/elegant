@@ -24,20 +24,9 @@ class DbMapper implements MapperInterface
     protected $connection;
 
     /**
-     * Record class name
-     * @var string
-     */
-    protected $recordName;
-
-    /**
      * @var \Netinteractive\Elegant\Model\Record
      */
     protected $emptyRecord = null;
-
-    /**
-     * @var \Netinteractive\Elegant\Model\Blueprint
-     */
-    protected $blueprint = null;
 
     /**
      * @var \Netinteractive\Elegant\Model\Query\Builder
@@ -61,6 +50,27 @@ class DbMapper implements MapperInterface
         }
 
         $this->setRecordClass($recordClass);
+    }
+
+
+    /**
+     * Informs mapper to work with specified row class
+     * @param string $recordClass
+     * @return $this
+     */
+    public function setRecordClass($recordClass)
+    {
+        $this->emptyRecord = \App::make($recordClass);
+
+        $this->query = \App::make('ni.elegant.model.query.builder', array($this->connection,  $this->connection->getQueryGrammar(), $this->connection->getPostProcessor()));
+        $this->query->from($this->emptyRecord->getBlueprint()->getStorageName());
+
+        #we check if there is registered db relationship translator and we pass QueryBuilder
+        if ($this->emptyRecord ->getBlueprint()->getRelationManager()->hasTranslator('db')){
+            $this->emptyRecord->getBlueprint()->getRelationManager()->getTranslator('db')->setQuery($this->getQuery());
+        }
+
+        return $this;
     }
 
 
@@ -101,47 +111,6 @@ class DbMapper implements MapperInterface
         return $collection;
     }
 
-    /**
-     * Returns name of moles class
-     *
-     * @return string
-     */
-    public function getRecordClass()
-    {
-        return $this->recordName;
-    }
-
-    /**
-     * Sets record class name
-     * @param string $name
-     * @return $this
-     */
-    public function setRecordClass($name)
-    {
-        $this->recordName = $name;
-
-        $this->emptyRecord = \App::make($this->getRecordClass());
-        $this->blueprint = $this->emptyRecord->getBlueprint();
-
-        #we check if there is registered db relationship translator and we pass QueryBuilder
-        if ($this->emptyRecord ->getBlueprint()->getRelationManager()->hasTranslator('db')){
-            $this->emptyRecord->getBlueprint()->getRelationManager()->getTranslator('db')->setQuery($this->getQuery());
-        }
-
-        $this->query = null;
-
-        return $this;
-    }
-
-
-    /**
-     * Returns model Blueprint
-     * @return \Netinteractive\Elegant\Model\Blueprint
-     */
-    public function getBlueprint()
-    {
-        return $this->blueprint;
-    }
 
 
     /**
@@ -152,9 +121,9 @@ class DbMapper implements MapperInterface
      */
     public function delete(Record $record)
     {
-        \Event::fire('ni.elegant.mapper.deleting.'.$this->getRecordClass(), $record);
+        \Event::fire('ni.elegant.mapper.deleting.'.get_class($record), $record);
 
-        $query  = $this->getQuery()->from($this->getBlueprint()->getStorageName());
+        $query  = $this->getQuery()->from($record->getBlueprint()->getStorageName());
 
         $pkList = $record->getBlueprint()->getPrimaryKey();
 
@@ -172,7 +141,7 @@ class DbMapper implements MapperInterface
         #it dosn't we just deleted it
         $record->exists = false;
 
-        \Event::fire('ni.elegant.mapper.deleted.'.$this->getRecordClass(), $record);
+        \Event::fire('ni.elegant.mapper.deleted.'.get_class($record), $record);
 
         return $result;
     }
@@ -192,7 +161,7 @@ class DbMapper implements MapperInterface
 
 
     /**
-     * Save model
+     * Saves record to database
      *
      * @param \Netinteractive\Elegant\Model\Record $record
      * @param bool $touchRelated
@@ -202,16 +171,32 @@ class DbMapper implements MapperInterface
     {
         #we want to check if anything has changed with record only when we are updating
         #if we do this for new record it won't let us to read record from one database and save it to another one
-        if ($record->exists == true){
-            $dirty = $record->getDirty();
-
-            #check if anything has changed and if we dont have to touch related
-            if (count($dirty) == 0 && $touchRelated === false){
-                return $this;
-            }
+        if ($record->isNew()){
+            $this->performInsert($record, $touchRelated);
+        }
+        else{
+            $this->performUpdate($record ,$touchRelated);
         }
 
-        #INSERT
+        return $this;
+    }
+
+    /**
+     * Insert record
+     *
+     * @param \Netinteractive\Elegant\Model\Record $record
+     * @param bool $touchRelated
+     * @return $this
+     */
+    protected function performInsert(Record $record, $touchRelated = false)
+    {
+        $dirty = $record->getDirty();
+
+        #check if anything has changed and if we don't have to touch related
+        if (count($dirty) == 0 && $touchRelated === false){
+            return $this;
+        }
+
         if (count($dirty) > 0){
             #we prepare database query object
             $query = $this->getQuery();
@@ -219,74 +204,106 @@ class DbMapper implements MapperInterface
 
             #here we prepare obj that will be passed to mapper events
             $obj = new \stdClass();
-            $obj->data = array();
+            $obj->data = $record->getAttributes();
             $obj->record = $record;
 
-            \Event::fire('ni.elegant.mapper.saving.'.$this->getRecordClass(), $record);
+            \Event::fire('ni.elegant.mapper.saving.'.get_class($record), $record);
 
             #we check if record has created_at and updated_at fields, if so we allow record to set proper values for this fields
             if ($record->getBlueprint()->hasTimestamps()){
                 $record->updateTimestamps();
             }
 
-            #check if we are editing or creating
-            if (!$record->exists){
-                $obj->data = $record->getAttributes();
+            \Event::fire('ni.elegant.mapper.before.save', $obj);
 
-                \Event::fire('ni.elegant.mapper.before.save', $obj);
+            \Event::fire('ni.elegant.mapper.creating.'.get_class($record), $record);
 
-                \Event::fire('ni.elegant.mapper.creating.'.$this->getRecordClass(), $record);
+            #we override data we are going to insert
+            $attributes = $obj->data;
 
-                $attributes = $obj->data;
+            #we always should validate all data not only that actually was changed
+            $record->validate($attributes);
 
-                #we always should validate all data not only that actually was changed
-                $record->validate($attributes);
+            #check if we have autoincrementing on PK
+            if ($record->getBlueprint()->incrementingPk){
+                $primaryKey = $record->getBlueprint()->incrementingPk;
 
-                #check if we have autoincrementing on PK
-                if ($record->getBlueprint()->incrementingPk){
-                    $primaryKey = $record->getBlueprint()->incrementingPk;
+                $id = $query->insertGetId($attributes, $primaryKey);
 
-                    $id = $query->insertGetId($attributes, $primaryKey);
-
-                    $record->setAttribute($primaryKey, $id);
-                }else{
-                    $query->insert($attributes);
-                }
-
-                \Event::fire('ni.elegant.mapper.created.'.$this->getRecordClass(), $record);
-            }
-            #UPDATE
-            else{
-                $obj->data = $record->getDirty();
-
-                \Event::fire('ni.elegant.mapper.before.save', $obj);
-
-                $dirty =  $obj->data;
-
-                #we always should validate all data not only that actually was changed
-                $record->validate(array_merge($record->getAttributes(), $dirty));
-
-                \Event::fire('ni.elegant.mapper.updating.'.$this->getRecordClass(), $record);
-
-                $this->setKeysForSaveQuery($query, $record)->update( $dirty );
-
-                \Event::fire('ni.elegant.mapper.updated.'.$this->getRecordClass(), $record);
+                $record->setAttribute($primaryKey, $id);
+            }else{
+                $query->insert($attributes);
             }
 
-            $record->syncOriginal();
-
-            \Event::fire('ni.elegant.mapper.saved.'.$this->getRecordClass(), $record);
+            \Event::fire('ni.elegant.mapper.created.'.get_class($record), $record);
         }
 
         #we touch related records
         if ($touchRelated === true && $record->hasRelated()){
-            foreach ($record->getRelated() AS $records){
-                if ($records instanceof Record){
-                    $this->save($records, true);
-                }
-                elseif ($record instanceof Collection){
-                    $this->saveMany($records, true);
-                }
+           $this->touchRelated($record);
+        }
+    }
+
+    /**
+     * Update record
+     *
+     * @param \Netinteractive\Elegant\Model\Record $record
+     * @param bool $touchRelated
+     * @return $this
+     */
+    protected function performUpdate(Record $record, $touchRelated = false)
+    {
+        #we prepare database query object
+        $query = $this->getQuery();
+        $query->from($record->getBlueprint()->getStorageName());
+
+        #here we prepare obj that will be passed to mapper events
+        $obj = new \stdClass();
+        $obj->data = $record->getDirty();
+        $obj->record = $record;
+
+        \Event::fire('ni.elegant.mapper.saving.'.get_class($record), $record);
+
+        #we check if record has created_at and updated_at fields, if so we allow record to set proper values for this fields
+        if ($record->getBlueprint()->hasTimestamps()){
+            $record->updateTimestamps();
+        }
+
+        \Event::fire('ni.elegant.mapper.before.save', $obj);
+
+        #we override data we are going to update
+        $dirty =  $obj->data;
+
+        #we always should validate all data not only that actually was changed
+        $record->validate(array_merge($record->getAttributes(), $dirty));
+
+        \Event::fire('ni.elegant.mapper.updating.'.get_class($record), $record);
+
+        $this->setKeysForSaveQuery($query, $record)->update( $dirty );
+
+        \Event::fire('ni.elegant.mapper.updated.'.get_class($record), $record);
+
+        #we touch related records
+        if ($touchRelated === true && $record->hasRelated()){
+            $this->touchRelated($record);
+        }
+    }
+
+    /**
+     * Touches related records
+     * @param \Netinteractive\Elegant\Model\Record $record
+     * @return $this
+     */
+    public function touchRelated(Record $record)
+    {
+        foreach ($record->getRelated() AS $records){
+            if ($records instanceof Record){
+                \Event::fire('ni.elegant.mapper.touching.'.get_class($record), $record);
+                $this->save($records, true);
+                \Event::fire('ni.elegant.mapper.touched.'.get_class($record), $record);
+            }
+            elseif ($records instanceof Collection){
+                $this->saveMany($records, true);
             }
         }
 
@@ -305,7 +322,14 @@ class DbMapper implements MapperInterface
     public function saveMany(Collection $records, $touchRelated = false)
     {
         foreach ($records AS $record){
+            if ($touchRelated === true){
+                \Event::fire('ni.elegant.mapper.touching.'.get_class($record), $record);
+            }
             $this->save($record, $touchRelated);
+
+            if ($touchRelated === true){
+                \Event::fire('ni.elegant.mapper.touched.'.get_class($record), $record);
+            }
         }
         return $this;
     }
@@ -375,7 +399,7 @@ class DbMapper implements MapperInterface
 
         #if we have empty columns, we take all from table
         if (empty($columns)) {
-            $columns[] = $this->getBlueprint()->getStorageName(). '.*';
+            $columns[] = $this->emptyRecord->getBlueprint()->getStorageName(). '.*';
         }
         $query->select($columns);
 
@@ -406,7 +430,7 @@ class DbMapper implements MapperInterface
         });
 
         #we add to search query default join defined my developer in searchJoins method
-        \Event::fire('ni.elegant.mapper.search.'.$this->getRecordClass(), $query);
+        \Event::fire('ni.elegant.mapper.search.'.get_class($this->emptyRecord), $query);
 
         return $query;
     }
@@ -442,12 +466,6 @@ class DbMapper implements MapperInterface
      */
     public function getQuery()
     {
-        #query builder object init
-        if ($this->query == null){
-            $this->query = \App::make('ni.elegant.model.query.builder', array($this->connection,  $this->connection->getQueryGrammar(), $this->connection->getPostProcessor()));
-            $this->query->from($this->getBlueprint()->getStorageName());
-        }
-
         #we pass record  to query builder
         if ($this->query->getRecord() == null){
             $this->query->setRecord($this->createRecord());
@@ -473,7 +491,7 @@ class DbMapper implements MapperInterface
      */
     protected function checkPrimaryKey($ids)
     {
-        $primaryKey = $this->getBlueprint()->getPrimaryKey();
+        $primaryKey = $this->emptyRecord->getBlueprint()->getPrimaryKey();
         if (count($primaryKey) > 1){
             if ($primaryKey != array_keys($ids)){
                 throw new PrimaryKeyException();
@@ -555,5 +573,18 @@ class DbMapper implements MapperInterface
         }
 
         return $this->getQuery()->with($relations);
+    }
+
+
+    /**
+     * Handle dynamic method calls into the method.
+     *
+     * @param  string  $method
+     * @param  array   $parameters
+     * @return mixed
+     */
+    public function __call($method, $parameters)
+    {
+        return call_user_func_array(array($this->query, $method), $parameters);
     }
 } 

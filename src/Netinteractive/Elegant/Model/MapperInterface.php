@@ -76,11 +76,5 @@ interface MapperInterface
      */
      function createMany(array $data=array());
 
-    /**
-     * Returns record class name
-     *
-     * @return string
-     */
-    function getRecordClass();
 
 } 

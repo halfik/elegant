@@ -16,6 +16,9 @@ Data source should allow read, write and delete data. If something don't allow a
 
 Please notice that in example DbMapper allows you to read data from one database and then save that data to another database (Example 1)
 
+It is possible to read records with all their related data and save them to other database. Database mapper allow this kind of operation, but
+this operation is limited. This kind of migrations will copy all data, including autoincrementing files. So if you will try copy record with id=1
+to the second database where you already have record with id=1 - it will fail. Basic example of this kind of data migrations: Example 2
 
 
 ## Examples
@@ -36,3 +39,24 @@ Please notice that in example DbMapper allows you to read data from one database
         //$mySqlDbMapper = new DbMapper('Patient', $mySqlConnection);
         //$mySqlDbMapper->save($pgSqlPatient);
 
+### Example 2
+
+        $mySqlConnection = \DB::connection('mysql');
+        $pgSqlConnection = \DB::connection('pgsql');
+
+        $dbMapper = new DbMapper('Patient', $pgSqlConnection); #this mappers is connected to postgresql database
+
+        $patientCollection = $dbMapper
+            ->with('patientData')
+            ->limit(10)
+            ->get()
+        ;
+
+        # here we have to set all records we have (main ones and related patientData) to be treated as new
+        # plus we have to mark all record data as dirty (see Record.md what dirty is)
+        $patientCollection->makeNoneExists(true);
+        $patientCollection->makeDirty(array(), true);
+
+        # we switch connection to mysql
+        $dbMapper->setConnection($mySqlConnection);
+        $dbMapper->saveMany($patientCollection, true);
