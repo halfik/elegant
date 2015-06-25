@@ -33,7 +33,7 @@ class DbTranslator implements TranslatorInterface
     }
 
     /**
-     * @param Record $record
+     * @param \Netinteractive\Elegant\Model\Record $record
      * @param array $relationData
      * @return \Netinteractive\Elegant\Relation\Relation|mixed|null
      */
@@ -41,6 +41,7 @@ class DbTranslator implements TranslatorInterface
     {
         $this->record = $record;
         $relation = null;
+
 
         switch ($relationData[0]) {
             case 'belongsTo':
@@ -91,7 +92,7 @@ class DbTranslator implements TranslatorInterface
      */
     public function hasOne($related, $foreignKey, $localKey=null)
     {
-        $instance = \App($related);
+        $instance = \App::make($related);
 
         $localKey = $localKey ? : $instance->getBlueprint()->getPrimaryKey();
 
@@ -109,11 +110,13 @@ class DbTranslator implements TranslatorInterface
      */
     public function hasMany($related, $foreignKey, $localKey = null)
     {
-        $instance = \App($related);
+
+        $instance = \App::make($related);
 
         $localKey = $localKey ? : $instance->getBlueprint()->getPrimaryKey();
+        $query = $this->getQuery();
 
-        return new HasMany($this->getQuery(), $instance, $this->record,  $foreignKey, $localKey);
+        return new HasMany($query, $instance, $this->record,  $foreignKey, $localKey);
     }
 
     /**
@@ -127,12 +130,13 @@ class DbTranslator implements TranslatorInterface
      */
     public function belongsTo($related, $foreignKey, $otherKey, $relation)
     {
-        $instance = \App($related);
+        $instance = \App::make($related);
 
         // Once we have the foreign key names, we'll just create a new Elegant query
         // for the related models and returns the relationship instance which will
         // actually be responsible for retrieving and hydrating every relations.
         $query = $this->getQuery();
+
 
         return new BelongsTo($query, $instance, $this->record, $foreignKey, $otherKey, $relation);
     }
@@ -149,12 +153,12 @@ class DbTranslator implements TranslatorInterface
      */
     public function belongsToMany($related, $table, $foreignKey, $otherKey, $relation)
     {
-        $instance = \App($related);
+        $instance = \App::make($related);
 
         // Now we're ready to create a new query builder for the related model and
         // the relationship instances for the relation. The relations will set
         // appropriate query constraint and entirely manages the hydrations.
-        $dbMapper = \App('ni.elegant.model.mapper.db', array($related));
+        $dbMapper = \App::make('ni.elegant.model.mapper.db', array($related));
 
         return new BelongsToMany($dbMapper->getQuery(), $instance, $this->record, $table, $foreignKey, $otherKey, $relation);
     }

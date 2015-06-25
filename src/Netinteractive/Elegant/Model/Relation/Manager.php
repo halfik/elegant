@@ -3,6 +3,7 @@
 
 use Netinteractive\Elegant\Exception\RelationDoesntExistsException;
 use Netinteractive\Elegant\Exception\TranslatorNotRegisteredException;
+use Netinteractive\Elegant\Model\Record;
 use Netinteractive\Elegant\Model\Relation\Translator\DbTranslator;
 
 
@@ -23,11 +24,38 @@ class Manager
     protected $translators = array();
 
     /**
+     * @var null
+     */
+    protected $currentTranslator = null;
+
+    /**
      * constructor
      */
     public function __construct()
     {
         $this->registerTranslator('db', new DbTranslator());
+        $this->setCurrentTranslator('db');
+    }
+
+
+    /**
+     * Sets current translator name
+     * @param string $name
+     * @return $this
+     */
+    public function setCurrentTranslator($name)
+    {
+        $this->currentTranslator = $name;
+    }
+
+
+    /**
+     * Return current translator name
+     * @return null|string
+     */
+    public function getCurrentTranslator()
+    {
+        return $this->currentTranslator;
     }
 
     /**
@@ -46,8 +74,12 @@ class Manager
      * @return null|TranslatorInterface
      * @throws \Netinteractive\Elegant\Exception\TranslatorNotRegisteredException
      */
-    public function getTranslator($name)
+    public function getTranslator($name=null)
     {
+        if (empty($name)){
+            $name = $this->getCurrentTranslator();
+        }
+
         if (!isSet($this->translators[$name])){
             throw new TranslatorNotRegisteredException($name);
         }
@@ -98,12 +130,12 @@ class Manager
     }
 
     /**
-     * @param string $type
-     * @param $record
+     * @param \Netinteractive\Elegant\Model\Record  $record
      * @param string $relationName
+     * @param string $type
      * @return mixed
      */
-    public function createRelation($type, $record, $relationName)
+    public function createRelation(Record $record, $relationName, $type=null)
     {
         return $this->getTranslator($type)->get($record, $relationName, $this->getRelation($relationName));
     }

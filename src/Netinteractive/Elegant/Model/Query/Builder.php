@@ -223,7 +223,7 @@ class Builder extends QueryBuilder
         // and is error prone while we remove the developer's own where clauses.
         $query = Relation::noConstraints(function() use ($relation)
         {
-            return $this->getRecord()->getRelation('db', $relation);
+            return $this->getRecord()->getRelation($relation, 'db');
         });
 
         $nested = $this->nestedRelations($relation);

@@ -656,13 +656,13 @@ abstract class Record implements Arrayable, Jsonable
 
     /**
      * Creates and returns relation object
-     * @param $type
-     * @param $relation
+     * @param string $relation
+     * @param string $type
      * @return mixed
      */
-    public function getRelation($type, $relation)
+    public function getRelation($relation, $type=null)
     {
-        return $this->getBlueprint()->getRelationManager()->createRelation($type, $this, $relation);
+        return $this->getBlueprint()->getRelationManager()->createRelation($this, $relation, $type);
     }
 
     /**

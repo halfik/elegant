@@ -70,7 +70,14 @@ abstract class HasOneOrMany extends Relation
     public function addConstraints()
     {
         if (static::$constraints) {
-            $this->query->where($this->foreignKey, '=', $this->getParentKey());
+            $keys = $this->getParentKey();
+
+            foreach ($this->foreignKey AS $index=>$key){
+
+                if (isSet($keys[$index])){
+                    $this->query->where($key, '=', $keys[$index]);
+                }
+            }
         }
     }
 
@@ -91,6 +98,8 @@ abstract class HasOneOrMany extends Relation
             $this->query->whereIn($fk, $localKeys);
         }
     }
+
+
 
 
     /**
@@ -227,7 +236,13 @@ abstract class HasOneOrMany extends Relation
      */
     public function getParentKey()
     {
-        return $this->parent->getAttribute($this->localKey);
+        $response = array();
+
+        foreach ($this->localKey AS $key){
+            $response[$key] = $this->parent->getAttribute($key);
+        }
+
+        return $response;
     }
 
     /**

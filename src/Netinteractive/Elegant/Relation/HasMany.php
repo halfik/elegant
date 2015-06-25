@@ -27,6 +27,8 @@ class HasMany extends HasOneOrMany
     public function get()
     {
         $this->query->setRecord($this->related);
+        $this->query->from($this->related->getBlueprint()->getStorageName());
+
         return $this->query->get();
     }
 

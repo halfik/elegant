@@ -113,6 +113,7 @@ abstract class Relation {
 	{
         #we have to set proper record on query so builder can clone and return proper objects
         $this->query->setRecord($this->related);
+
 		return $this->get();
 	}
 
