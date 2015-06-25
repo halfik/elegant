@@ -40,13 +40,13 @@ All events names depends on record class mapper is currently working with.
 
         Delete row from database.
 
-* save( \Netinteractive\Elegant\Model\Record $record ) : $this
+* save( \Netinteractive\Elegant\Model\Record $record, bool $touchRelated = false) : $this
 
-        Saves record to database.
+        Saves record to database and if $touchRelated is true it will also save related records.
 
-* saveMany(\Netinteractive\Elegant\Model\Collection $records) : $this
+* saveMany(\Netinteractive\Elegant\Model\Collection $records, bool $touchRelated = false) : $this
 
-    Saves collection of records
+        Saves collection of records and if $touchRelated is true it will also save related records.
 
 * find( int|array $ids, array $columns=array('*')) : \Netinteractive\Elegant\Model\Record
 

@@ -210,7 +210,8 @@ class DbMapper implements MapperInterface
                 return $this;
             }
         }
-        
+
+        #INSERT
         if (count($dirty) > 0){
             #we prepare database query object
             $query = $this->getQuery();
@@ -254,6 +255,7 @@ class DbMapper implements MapperInterface
 
                 \Event::fire('ni.elegant.mapper.created.'.$this->getRecordClass(), $record);
             }
+            #UPDATE
             else{
                 $obj->data = $record->getDirty();
 
@@ -275,8 +277,6 @@ class DbMapper implements MapperInterface
 
             \Event::fire('ni.elegant.mapper.saved.'.$this->getRecordClass(), $record);
         }
-
-
 
         #we touch related records
         if ($touchRelated === true && $record->hasRelated()){

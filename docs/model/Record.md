@@ -2,6 +2,15 @@
 
 Record represent a single data row. Example 1 show how basic class will looks like. Use getBluePrint() to get to any informations about fields.
 
+## Blueprint and attributes
+
+Record doesn't know anything about attributes. We use Blueprint object to keep this informations.
+
+There are 2 types of record attributes. Ones that should be saved to data source and ones that belong to record, but shouldn't be saved.
+First one is an attribute, second one is an external attribute. List of both are defined in blueprint. Defined external attributes only when you need validate them when saving the record.
+Every attribute that is not defined in record blueprint by default is treated as external.
+
+
 ## Filters (data manipulators)
 
 We created a mechanism that allows programmer to manipulate record data on 3 different levels:
@@ -40,11 +49,6 @@ then you can apply different filters (Example 8).
 
 
 
-## Methods
-
-* fill( $attributes ) : $this
-
-        Fill record with data (Example 2).
 
 ###Blueprint
 
@@ -78,6 +82,10 @@ then you can apply different filters (Example 8).
 
 ###Attributes
 
+* fill( $attributes ) : $this
+
+        Fill record with data (Example 2).
+
 * setAttribute( string $key, string $value )  : $this
 
         Sets attribute value. If attribute is not defined in Blueprint it won't set it. There are 2 types of attributes (
@@ -95,6 +103,10 @@ then you can apply different filters (Example 8).
 
         Returns attributes names and values.
 
+* getAttributesKeys() : array
+
+        Returns list of attributes names
+
 * getExternals() : array
 
         Returns list of external attributes (attributes that don't belong to this record).
@@ -102,6 +114,18 @@ then you can apply different filters (Example 8).
 * getOriginals(): array
 
         Returns list of attributes  in their original state (before any changes were made on record).
+
+* getDirty() : array
+
+        Returns list of dirty attributes (attribute is dirty if its value has been modified).
+
+* makeDirty( array $attributes=array() ) : $this
+
+        Method enables to make attributes considered dirty.
+
+* isDirty( mixed $attributes = null ) : bool
+
+        Determine if the record or given attribute(s) have been modified.
 
 
 ###Relations

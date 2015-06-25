@@ -36,6 +36,13 @@ abstract class Record implements Arrayable, Jsonable
      */
     protected $original = array();
 
+
+    /**
+     * list of dirty attributes (used to make attributes dirty on demand)
+     * @var null|array
+     */
+    protected $dirty = array();
+
     /**
      * Related records
      * @var array
@@ -127,7 +134,7 @@ abstract class Record implements Arrayable, Jsonable
      */
     public function validate(array $data, $rulesGroups = 'all')
     {
-        if ($this->validationEnabled == false) {
+        if ($this->validationEnabled === false) {
             return $this;
         }
 
@@ -296,6 +303,15 @@ abstract class Record implements Arrayable, Jsonable
     }
 
     /**
+     * Returns list of attributes names
+     * @return array
+     */
+    public function getAttributesKeys()
+    {
+        return array_keys($this->attributes);
+    }
+
+    /**
      * Checks if field is as attribute
      *
      * @param $field
@@ -381,7 +397,7 @@ abstract class Record implements Arrayable, Jsonable
      */
     public function getDirty()
     {
-        $dirty = array();
+        $dirty = $this->dirty;
 
         foreach ($this->attributes as $key => $value){
             if ( ! array_key_exists($key, $this->original)){
@@ -393,6 +409,17 @@ abstract class Record implements Arrayable, Jsonable
         }
 
         return $dirty;
+    }
+
+    /**
+     * Method enables to make attributes considered dirty.
+     * @param array $attributes
+     * @return $this
+     */
+    public function makeDirty(array $attributes=array())
+    {
+        $this->dirty  = $attributes;
+        return $this;
     }
 
     /**
