@@ -4,7 +4,7 @@ use Illuminate\Database\ConnectionInterface;
 use Netinteractive\Elegant\Exception\PrimaryKeyException;
 use Netinteractive\Elegant\Exception\RecordNotFoundException;
 use Netinteractive\Elegant\Model\Collection;
-use Netinteractive\Elegant\Model\MapperInterface;
+
 use Netinteractive\Elegant\Model\Record;
 use Netinteractive\Elegant\Model\Query\Builder;
 
