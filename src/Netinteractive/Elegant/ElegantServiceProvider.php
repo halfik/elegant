@@ -67,11 +67,6 @@ class ElegantServiceProvider extends ServiceProvider
 
         \App::make('ni.elegant.model.relation.manager')->registerTranslator('db', \App('ni.elegant.model.relation.translator.db'));
 
-        $this->app->booting(function()
-        {
-            AliasLoader::getInstance()->alias('DbMapper','Netinteractive\Elegant\Facades\MapperFacade');
-        });
-
 
 	}
 

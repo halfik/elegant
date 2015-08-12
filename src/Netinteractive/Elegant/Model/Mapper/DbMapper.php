@@ -7,6 +7,7 @@ use Netinteractive\Elegant\Model\Collection;
 
 use Netinteractive\Elegant\Model\Record;
 use Netinteractive\Elegant\Model\Query\Builder;
+use Netinteractive\Elegant\Model\MapperInterface;
 
 
 
