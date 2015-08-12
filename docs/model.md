@@ -7,7 +7,7 @@ So single model can work with many data sources. It allows in example to read da
 * Record - keeps single data row and business logic
 
 ### Example of user Record
-    <?php namespace App\Models\User;
+    <?php namespace App\Sandbox\Models\User;
 
     use Netinteractive\Elegant\Model\Record AS BaseRecord;
 
@@ -23,7 +23,7 @@ So single model can work with many data sources. It allows in example to read da
 
 
 ### Example of user Blueprint
-    <?php namespace App\Models\User;
+    <?php namespace App\Sandbox\Models\User;
 
     use Netinteractive\Elegant\Model\Blueprint AS BaseBluePrint;
     use Netinteractive\Elegant\Search\Searchable;

@@ -422,14 +422,19 @@ abstract class Record implements Arrayable, Jsonable
     {
         $dirty = $this->dirty;
 
-        foreach ($this->attributes as $key => $value){
-            if ( ! array_key_exists($key, $this->original)){
-                $dirty[$key] = $value;
+        if ($this->exists == true){
+            foreach ($this->attributes as $key => $value){
+                if ( ! array_key_exists($key, $this->original)){
+                    $dirty[$key] = $value;
+                }
+                elseif ($value !== $this->original[$key] && !$this->originalIsNumericallyEquivalent($key)){
+                    $dirty[$key] = $value;
+                }
             }
-            elseif ($value !== $this->original[$key] && !$this->originalIsNumericallyEquivalent($key)){
-                $dirty[$key] = $value;
-            }
+        }else{
+            $dirty = $this->attributes;
         }
+
 
         return $dirty;
     }

@@ -16,7 +16,7 @@ All events names depends on record class mapper is currently working with.
 * ni.elegant.mapper.touching.$recordClass  - event is fired for related record before touch
 * ni.elegant.mapper.touched.$recordClass   - event is fired for related record after touch
 
-Important: $recordClass isn't an alias you bind class to in IoC. It has to be class name like: App\Models\PatientData\Record
+Important: $recordClass isn't an alias you bind class to in IoC. It has to be class name like: App\Sandbox\Models\PatientData\Record
 
 
 ## Methods

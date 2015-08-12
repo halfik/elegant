@@ -131,7 +131,7 @@ Things you should define in init() method:
 
 ### Example 1
 
-    namespace App\Models\Patient;
+    namespace App\Sandbox\Models\Patient;
 
     use Netinteractive\Elegant\Model\Blueprint AS BaseBluePrint;
     use Netinteractive\Elegant\Search\Searchable;

@@ -71,7 +71,7 @@ In docs folder you can find more documentation about package.
 All examples are based on this 3 classes:
 
 ### User
-     <?php namespace App\Models\User;
+     <?php namespace App\Sandbox\Models\User;
 
      use Netinteractive\Elegant\Model\Blueprint AS BaseBluePrint;
      use Netinteractive\Elegant\Search\Searchable;
@@ -84,7 +84,7 @@ All examples are based on this 3 classes:
              $this->primaryKey = array('id');
              $this->incrementingPk = 'id';
 
-             $this->getRelationManager()->hasOne('patient','App\Models\Patient\Record', 'user__id','id');
+             $this->getRelationManager()->hasOne('patient','App\Sandbox\Models\Patient\Record', 'user__id','id');
 
              $this->fields = array(
                  'id' => array(
@@ -165,7 +165,7 @@ All examples are based on this 3 classes:
 
 
 ### Patient
-    <?php namespace App\Models\Patient;
+    <?php namespace App\Sandbox\Models\Patient;
 
     use Netinteractive\Elegant\Model\Blueprint AS BaseBluePrint;
     use Netinteractive\Elegant\Search\Searchable;
@@ -178,8 +178,8 @@ All examples are based on this 3 classes:
             $this->primaryKey = array('id');
             $this->incrementingPk = 'id';
 
-            $this->getRelationManager()->hasMany('patientData','App\Models\PatientData\Record', array('patient__id'), array('id') );
-            $this->getRelationManager()->belongsTo('user','App\Models\User\Record', array('user__id'), array('id') );
+            $this->getRelationManager()->hasMany('patientData','App\Sandbox\Models\PatientData\Record', array('patient__id'), array('id') );
+            $this->getRelationManager()->belongsTo('user','App\Sandbox\Models\User\Record', array('user__id'), array('id') );
 
             $this->fields = array(
                 'id' => array(
@@ -216,7 +216,7 @@ All examples are based on this 3 classes:
 
 ### PatientData
 
-    <?php namespace App\Models\PatientData;
+    <?php namespace App\Sandbox\Models\PatientData;
 
     use Netinteractive\Elegant\Model\Blueprint AS BaseBluePrint;
     use Netinteractive\Elegant\Search\Searchable;
@@ -230,7 +230,7 @@ All examples are based on this 3 classes:
             $this->incrementingPk = 'id';
 
             #Seting up relations
-            $this->getRelationManager()->belongsTo('patient','App\Models\Patient\Record', array('patient__id'), array('id'));
+            $this->getRelationManager()->belongsTo('patient','App\Sandbox\Models\Patient\Record', array('patient__id'), array('id'));
 
 
             #Seting up fields

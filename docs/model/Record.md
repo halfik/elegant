@@ -186,7 +186,7 @@ Some events names depends on record class mapper is currently working with.
 
 ### Example 1
 
-    <?php namespace App\Models\Patient;
+    <?php namespace App\Sandbox\Models\Patient;
 
     use Netinteractive\Elegant\Model\Record AS BaseRecord;
 

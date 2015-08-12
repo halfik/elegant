@@ -11,7 +11,7 @@ Options:
 
 
 ### Example
-        <?php namespace App\Models\Patient;
+        <?php namespace App\Sandbox\Models\Patient;
 
         use Netinteractive\Elegant\Model\Blueprint AS BaseBluePrint;
         use Netinteractive\Elegant\Search\Searchable;
