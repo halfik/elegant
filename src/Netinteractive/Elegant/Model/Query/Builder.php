@@ -38,7 +38,7 @@ class Builder extends QueryBuilder
      *
      * @var array
      */
-    protected $macros = array();
+    protected static $macros = array();
 
     /**
     * Create a new query builder instance.
