@@ -371,7 +371,7 @@ class Builder extends QueryBuilder
      * @param  \Closure  $callback
      * @return void
      */
-    public static function macro($name, Closure $callback)
+    public static function macro($name, callable $callback)
     {
         self::$macros[$name] = $callback;
     }
