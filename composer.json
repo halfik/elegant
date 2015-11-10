@@ -21,7 +21,12 @@
     "require": {
         "php": ">=5.4.0",
         "illuminate/support": "5.1.*",
-        "jeremeamia/superclosure": "2.2.*"
+        "jeremeamia/superclosure": "2.2.*",
+        "netinteractive/seed": "1.0.*@dev"
+    },
+    "require-dev": {
+      "phpunit/phpunit": "~4.0",
+      "phpspec/phpspec": "~2.1"
     },
     "autoload": {
         "classmap": [
