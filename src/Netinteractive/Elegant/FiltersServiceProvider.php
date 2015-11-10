@@ -24,6 +24,7 @@ class FiltersServiceProvider extends ServiceProvider
      */
     public function boot()
     {
+        
         $this->publishes(array(
             __DIR__.'/../../config/filters.php' => config_path('/packages/netinteractive/elegant/filters.php'),
         ), 'config');
@@ -39,7 +40,7 @@ class FiltersServiceProvider extends ServiceProvider
     {
 
         $this->mergeConfigFrom(
-            __DIR__.'/../../config/filters.php', 'netinteractive/elegant/filters'
+            __DIR__.'/../../config/filters.php', '/packages/netinteractive/elegant/filters'
         );
 
         \Event::listen('ni.elegant.record.after.fill', 'Netinteractive\Elegant\Model\Filter\Event\Handler@fillFilters');

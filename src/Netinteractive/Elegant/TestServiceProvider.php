@@ -24,6 +24,7 @@ class TestServiceProvider extends ServiceProvider
      */
     public function boot()
     {
+       
         $this->publishes(array(
             __DIR__.'/../../config/test.php' => config_path('/packages/netinteractive/elegant/test.php'),
         ), 'config');
@@ -37,9 +38,6 @@ class TestServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        config([
-            'config/test.php',
-        ]);
 
         $this->mergeConfigFrom(
             __DIR__.'/../../config/test.php', 'netinteractive/elegant/test'

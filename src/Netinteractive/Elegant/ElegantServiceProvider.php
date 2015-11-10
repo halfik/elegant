@@ -68,6 +68,9 @@ class ElegantServiceProvider extends ServiceProvider
         \App::make('ni.elegant.model.relation.manager')->registerTranslator('db', \App('ni.elegant.model.relation.translator.db'));
 
 
+        if ($this->app->environment('testing')) {
+            $this->app->register('Netinteractive\Elegant\FiltersServiceProvider');
+        }
 	}
 
 	/**
