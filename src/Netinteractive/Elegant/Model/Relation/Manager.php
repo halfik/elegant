@@ -9,7 +9,7 @@ use Netinteractive\Elegant\Model\Relation\Translator\DbTranslator;
 
 /**
  * Class Manager
- * @package Netinteractive\Elegant\Model\Relation
+ * @package Netinteractive\Elegant\Models\Relation
  */
 class Manager
 {

@@ -14,8 +14,8 @@ use Illuminate\Database\Query\Builder AS BaseBuilder;
 
 /**
  * Class Builder
- * Model Query builder. It add relations related interface
- * @package Netinteractive\Elegant\Model\Query
+ * Models Query builder. It add relations related interface
+ * @package Netinteractive\Elegant\Models\Query
  */
 class Builder extends QueryBuilder
 {

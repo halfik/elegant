@@ -3,7 +3,7 @@
 
 /**
  * Interface MapperInterface
- * @package Netinteractive\Elegant\Model
+ * @package Netinteractive\Elegant\Models
  */
 interface MapperInterface
 {

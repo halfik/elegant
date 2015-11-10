@@ -9,7 +9,7 @@ use Netinteractive\Elegant\Model\Record;
 
 /**
  * Class Handler
- * @package Netinteractive\Elegant\Model\Filter
+ * @package Netinteractive\Elegant\Models\Filter
  */
 class Handler
 {

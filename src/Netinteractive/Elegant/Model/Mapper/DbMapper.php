@@ -13,7 +13,7 @@ use Netinteractive\Elegant\Model\MapperInterface;
 
 /**
  * Class DbMapper
- * @package Netinteractive\Elegant\Model\Mapper
+ * @package Netinteractive\Elegant\Models\Mapper
  */
 class DbMapper implements MapperInterface
 {

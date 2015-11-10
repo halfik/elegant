@@ -4,7 +4,7 @@ use Netinteractive\Elegant\Model\Relation\Manager;
 
 /**
  * Class Blueprint
- * @package Netinteractive\Elegant\Model
+ * @package Netinteractive\Elegant\Models
  */
 abstract class Blueprint
 {

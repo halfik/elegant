@@ -4,7 +4,7 @@ use Netinteractive\Elegant\Model\Record;
 
 /**
  * Interface TranslatorInterface
- * @package Netinteractive\Elegant\Model\Relation
+ * @package Netinteractive\Elegant\Models\Relation
  */
 interface TranslatorInterface
 {

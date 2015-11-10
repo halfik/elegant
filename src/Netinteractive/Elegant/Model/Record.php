@@ -9,7 +9,7 @@ use Carbon\Carbon;
 
 /**
  * Class Record
- * @package Netinteractive\Elegant\Model
+ * @package Netinteractive\Elegant\Models
  */
 abstract class Record implements Arrayable, Jsonable
 {

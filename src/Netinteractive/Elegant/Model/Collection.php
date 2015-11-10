@@ -5,7 +5,7 @@ use Illuminate\Support\Collection AS BaseCollection;
 
 /**
  * Class Collection
- * @package Netinteractive\Elegant\Model
+ * @package Netinteractive\Elegant\Models
  */
 class Collection extends BaseCollection
 {

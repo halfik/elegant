@@ -274,7 +274,7 @@ class BelongsToMany extends Relation
     /**
      * Set the join clause for the relation query.
      *
-     * @param  \Netinteractive\Elegant\Model\Query\Builder|null
+     * @param  \Netinteractive\Elegant\Models\Query\Builder|null
      * @return $this
      */
     protected function setJoin($query = null)

@@ -4,7 +4,7 @@
 /**
  * Class Fill
  * This class contains the logic of fill filters
- * @package Netinteractive\Elegant\Model\Filter\
+ * @package Netinteractive\Elegant\Models\Filter\
  */
 class Fill
 {

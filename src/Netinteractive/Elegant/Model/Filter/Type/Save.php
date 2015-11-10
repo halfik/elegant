@@ -4,7 +4,7 @@
 /**
  * Class Save
  * Save filters modify record data before they are save to data storage (it dosn't change record data only create and modify copy of this data)
- * @package Netinteractive\Elegant\Model\Filter
+ * @package Netinteractive\Elegant\Models\Filter
  */
 class Save
 {

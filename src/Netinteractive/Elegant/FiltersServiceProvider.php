@@ -24,10 +24,9 @@ class FiltersServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        $this->publishes([
-            __DIR__.'/../../config/filters.php' => config_path('netinteractive/elegant/filters.php'),
-        ]);
-
+        $this->publishes(array(
+            __DIR__.'/../../config/filters.php' => config_path('/packages/netinteractive/elegant/filters.php'),
+        ), 'config');
 
     }
 

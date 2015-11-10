@@ -3,7 +3,7 @@
 
 /**
  * Class Logic
- * @package Netinteractive\Elegant\Model\Filter
+ * @package Netinteractive\Elegant\Models\Filter
  */
 class Logic
 {

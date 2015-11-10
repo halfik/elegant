@@ -10,7 +10,7 @@ use Netinteractive\Elegant\Relation\HasMany;
 
 /**
  * Class DbTranslator
- * @package Netinteractive\Elegant\Model\Relation\Translator
+ * @package Netinteractive\Elegant\Models\Relation\Translator
  */
 class DbTranslator implements TranslatorInterface
 {
