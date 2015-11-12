@@ -50,6 +50,12 @@ abstract class Record implements Arrayable, Jsonable
     protected $related= array();
 
     /**
+     * Record fill input data
+     * @var array
+     */
+    protected $input = array();
+
+    /**
      * Information if record already exists in database
      * @var bool
      */
@@ -107,6 +113,13 @@ abstract class Record implements Arrayable, Jsonable
      */
     public function fill(array $attributes)
     {
+        /**
+         * storageName.fieldName
+         */
+        if (isSet($attributes[$this->getBlueprint()->getStorageName()])){
+            $attributes = $attributes[$this->getBlueprint()->getStorageName()];
+        }
+
         $obj = new \stdClass();
         $obj->data = $attributes;
         $obj->record = $this;
@@ -263,6 +276,24 @@ abstract class Record implements Arrayable, Jsonable
         }
         elseif (isSet($this->related[$key])){
             $response = $this->related[$key];
+        }
+
+        return $response;
+    }
+
+    /**
+     * Input datta
+     * @param string|null $key
+     * @return array
+     */
+    public function getInput($key=null)
+    {
+        $response = $this->input;
+        if ($key){
+            $response = array();
+            if (isSet($this->input[$key])){
+                $response = $this->input[$key];
+            }
         }
 
         return $response;

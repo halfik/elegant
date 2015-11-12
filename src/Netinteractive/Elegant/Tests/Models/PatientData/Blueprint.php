@@ -1,6 +1,6 @@
 <?php namespace Netinteractive\Elegant\Tests\Models\PatientData;
 
-
+use Netinteractive\Elegant\Search\Searchable;
 
 class Blueprint extends \Netinteractive\Elegant\Model\Blueprint
 {
@@ -35,6 +35,7 @@ class Blueprint extends \Netinteractive\Elegant\Model\Blueprint
             'med__id' => array(
                 'title' => _('med__id'),
                 'type' => 'int',
+                'searchable' => Searchable::$equal,
                 'rules' => array(
                     'any' => 'integer|exists:med,id',
                 )
@@ -42,6 +43,7 @@ class Blueprint extends \Netinteractive\Elegant\Model\Blueprint
             'tu__id' => array(
                 'title' => _('tu__id'),
                 'type' => 'int',
+                'searchable' => Searchable::$equal,
                 'rules' => array(
                     'any' => 'integer|exists:tu,id',
                 )
@@ -81,6 +83,7 @@ class Blueprint extends \Netinteractive\Elegant\Model\Blueprint
                 'title' => _('zip_code'),
                 'type' => 'string',
                 'sortable' => true,
+                'searchable' => Searchable::$contains,
                 'rules' => array(
                     'any' => 'required'
                 )

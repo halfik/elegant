@@ -2,13 +2,12 @@
 
 use Illuminate\Database\ConnectionInterface;
 use Netinteractive\Elegant\Exception\PrimaryKeyException;
-use Netinteractive\Elegant\Exception\RecordNotFoundException;
 use Netinteractive\Elegant\Model\Collection;
 
 use Netinteractive\Elegant\Model\Record;
 use Netinteractive\Elegant\Model\Query\Builder;
-use Netinteractive\Elegant\Mapper\MapperInterface;
 
+use Netinteractive\Elegant\Helper;
 
 
 /**
@@ -122,7 +121,7 @@ class DbMapper implements MapperInterface
      */
     public function delete(Record $record)
     {
-        \Event::fire('ni.elegant.mapper.deleting.'.get_class($record), $record);
+        \Event::fire('ni.elegant.mapper.deleting.'.Helper::classDotNotation($record), $record);
 
         $query  = $this->getQuery()->from($record->getBlueprint()->getStorageName());
 
@@ -142,7 +141,7 @@ class DbMapper implements MapperInterface
         #it dosn't we just deleted it
         $record->exists = false;
 
-        \Event::fire('ni.elegant.mapper.deleted.'.get_class($record), $record);
+        \Event::fire('ni.elegant.mapper.deleted.'.Helper::classDotNotation($record), $record);
 
         return $result;
     }
@@ -213,11 +212,11 @@ class DbMapper implements MapperInterface
             $obj->data = $record->getAttributes();
             $obj->record = $record;
 
-            \Event::fire('ni.elegant.mapper.saving.'.get_class($record), $record);
+            \Event::fire('ni.elegant.mapper.saving.'.Helper::classDotNotation($record), $record);
 
             \Event::fire('ni.elegant.mapper.before.save', $obj);
 
-            \Event::fire('ni.elegant.mapper.creating.'.get_class($record), $record);
+            \Event::fire('ni.elegant.mapper.creating.'.Helper::classDotNotation($record), $record);
 
             #we override data we are going to insert
             $attributes = $obj->data;
@@ -236,7 +235,7 @@ class DbMapper implements MapperInterface
                 $query->insert($attributes);
             }
 
-            \Event::fire('ni.elegant.mapper.created.'.get_class($record), $record);
+            \Event::fire('ni.elegant.mapper.created.'.Helper::classDotNotation($record), $record);
         }
 
         #we touch related records
@@ -268,7 +267,7 @@ class DbMapper implements MapperInterface
         $obj->data = $record->getDirty();
         $obj->record = $record;
 
-        \Event::fire('ni.elegant.mapper.saving.'.get_class($record), $record);
+        \Event::fire('ni.elegant.mapper.saving.'.Helper::classDotNotation($record), $record);
 
         \Event::fire('ni.elegant.mapper.before.save', $obj);
 
@@ -278,11 +277,11 @@ class DbMapper implements MapperInterface
         #we always should validate all data not only that actually was changed
         $record->validate(array_merge($record->getAttributes(), $dirty));
 
-        \Event::fire('ni.elegant.mapper.updating.'.get_class($record), $record);
+        \Event::fire('ni.elegant.mapper.updating.'.Helper::classDotNotation($record), $record);
 
         $this->setKeysForSaveQuery($query, $record)->update( $dirty );
 
-        \Event::fire('ni.elegant.mapper.updated.'.get_class($record), $record);
+        \Event::fire('ni.elegant.mapper.updated.'.Helper::classDotNotation($record), $record);
 
         #we touch related records
         if ($touchRelated === true && $record->hasRelated()){
@@ -299,9 +298,9 @@ class DbMapper implements MapperInterface
     {
         foreach ($record->getRelated() AS $records){
             if ($records instanceof Record){
-                \Event::fire('ni.elegant.mapper.touching.'.get_class($record), $record);
+                \Event::fire('ni.elegant.mapper.touching.'.Helper::classDotNotation($record), $record);
                 $this->save($records, true);
-                \Event::fire('ni.elegant.mapper.touched.'.get_class($record), $record);
+                \Event::fire('ni.elegant.mapper.touched.'.Helper::classDotNotation($record), $record);
             }
             elseif ($records instanceof Collection){
                 $this->saveMany($records, true);
@@ -324,12 +323,12 @@ class DbMapper implements MapperInterface
     {
         foreach ($records AS $record){
             if ($touchRelated === true){
-                \Event::fire('ni.elegant.mapper.touching.'.get_class($record), $record);
+                \Event::fire('ni.elegant.mapper.touching.'.Helper::classDotNotation($record), $record);
             }
             $this->save($record, $touchRelated);
 
             if ($touchRelated === true){
-                \Event::fire('ni.elegant.mapper.touched.'.get_class($record), $record);
+                \Event::fire('ni.elegant.mapper.touched.'.Helper::classDotNotation($record), $record);
             }
         }
         return $this;
@@ -345,6 +344,10 @@ class DbMapper implements MapperInterface
      */
     public function find($ids, array $columns=array('*'))
     {
+        if (!is_array($ids)){
+            $ids = array('id' => $ids);
+        }
+
         $this->checkPrimaryKey($ids);
 
         $data = $this->getQuery()->find($ids, $columns);
@@ -422,6 +425,7 @@ class DbMapper implements MapperInterface
         $query->where(function ($query) use ($input, $operator) {
             foreach ($input AS $recordName => $fields) {
                 if (!empty($fields) && is_array($fields)) {
+
                     $record = \App::make($recordName);
                     foreach ($fields AS $field => $value) {
                         $query = $this->queryFieldSearch($record, $field, $value, $query, $operator);
@@ -431,7 +435,7 @@ class DbMapper implements MapperInterface
         });
 
         #we add to search query default join defined my developer in searchJoins method
-        \Event::fire('ni.elegant.mapper.search.'.get_class($this->emptyRecord), $query);
+        \Event::fire('ni.elegant.mapper.search.'.Helper::classDotNotation($this->emptyRecord), $query);
 
         return $query;
     }

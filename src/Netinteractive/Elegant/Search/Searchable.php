@@ -9,4 +9,5 @@ class Searchable
     public static $contains = 1;
     public static $begins = 2;
     public static $ends = 3;
+    public static $equal  = 4;
 }

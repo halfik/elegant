@@ -113,6 +113,10 @@ Some events names depends on record class mapper is currently working with.
 * getAttributes() : array
 
         Returns attributes names and values.
+        
+*   getInput($key=null) : array
+
+        Return array of all input data that came to fill method
 
 * getAttributesKeys() : array
 

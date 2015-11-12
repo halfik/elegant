@@ -10,8 +10,10 @@ use Netinteractive\Elegant\Search\TranslatorInterface;
 class Translator implements TranslatorInterface
 {
     public static $alias;
+
     public static $like = array(
-        'pgsql' => 'iLIKE'
+        'pgsql' => 'iLIKE',
+        'mysql' => 'LIKE'
     );
 
     /**
@@ -30,6 +32,9 @@ class Translator implements TranslatorInterface
                 break;
             case Searchable::$ends:
                 $search = $this->textRight($field);
+                break;
+            case Searchable::$equal:
+                $search = $this->standard($field);
                 break;
             default:
                 $search = $this->standard($field, $type);

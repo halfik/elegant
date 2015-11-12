@@ -1,6 +1,6 @@
 <?php namespace Netinteractive\Elegant\Tests\Models\Patient;
 
-
+use Netinteractive\Elegant\Search\Searchable;
 
 class Blueprint extends \Netinteractive\Elegant\Model\Blueprint
 {
@@ -35,6 +35,7 @@ class Blueprint extends \Netinteractive\Elegant\Model\Blueprint
                 'title' => _('PESEL'),
                 'type' => 'int',
                 'sortable' => true,
+                'searchable' => Searchable::$contains,
                 'rules' => array(
                     'any' => 'required|unique:patient,pesel',
                 ),
