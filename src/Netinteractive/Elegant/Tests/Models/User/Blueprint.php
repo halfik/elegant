@@ -81,6 +81,28 @@ class Blueprint extends \Netinteractive\Elegant\Model\Blueprint
                 'filters' => array(
                     'display' => array('bool'),
                 )
+            ),
+            'tu__id' => array(
+                'title' => _('Id TU'),
+                'type' => 'int',
+                'rules' => array(
+                    'any' => 'integer|exists:tu,id',
+                ),
+                'filters' => array(
+                    'fill' => array(
+                    ),
+                )
+            ),
+            'med__id' => array(
+                'title' => _('Id Med'),
+                'type' => 'int',
+                'rules' => array(
+                    'any' => 'integer|exists:med,id',
+                ),
+                'filters' => array(
+                    'fill' => array(
+                    )
+                )
             )
         );
 
