@@ -13,7 +13,7 @@ use Netinteractive\Elegant\Mapper\MapperInterface;
 
 /**
  * Class DbMapper
- * @package Netinteractive\Elegant\Models\Mapper
+ * @package Netinteractive\Elegant\Mapper
  */
 class DbMapper implements MapperInterface
 {
@@ -203,17 +203,17 @@ class DbMapper implements MapperInterface
             $query = $this->getQuery();
             $query->from($record->getBlueprint()->getStorageName());
 
+            #we check if record has created_at and updated_at fields, if so we allow record to set proper values for this fields
+            if ($record->getBlueprint()->hasTimestamps()){
+                $record->updateTimestamps();
+            }
+
             #here we prepare obj that will be passed to mapper events
             $obj = new \stdClass();
             $obj->data = $record->getAttributes();
             $obj->record = $record;
 
             \Event::fire('ni.elegant.mapper.saving.'.get_class($record), $record);
-
-            #we check if record has created_at and updated_at fields, if so we allow record to set proper values for this fields
-            if ($record->getBlueprint()->hasTimestamps()){
-                $record->updateTimestamps();
-            }
 
             \Event::fire('ni.elegant.mapper.before.save', $obj);
 
@@ -258,17 +258,17 @@ class DbMapper implements MapperInterface
         $query = $this->getQuery();
         $query->from($record->getBlueprint()->getStorageName());
 
+        #we check if record has created_at and updated_at fields, if so we allow record to set proper values for this fields
+        if ($record->getBlueprint()->hasTimestamps()){
+            $record->updateTimestamps();
+        }
+
         #here we prepare obj that will be passed to mapper events
         $obj = new \stdClass();
         $obj->data = $record->getDirty();
         $obj->record = $record;
 
         \Event::fire('ni.elegant.mapper.saving.'.get_class($record), $record);
-
-        #we check if record has created_at and updated_at fields, if so we allow record to set proper values for this fields
-        if ($record->getBlueprint()->hasTimestamps()){
-            $record->updateTimestamps();
-        }
 
         \Event::fire('ni.elegant.mapper.before.save', $obj);
 

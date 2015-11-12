@@ -68,6 +68,24 @@ abstract class Blueprint
         $this->relationManager = $relationManager;
 
         $this->init();
+
+        if($this->hasTimestamps()){
+
+            if (!$this->isField($this->getCreatedAt())){
+                $this->fields[$this->getCreatedAt()] = array(
+                    'title' => _('Created At'),
+                    'type' => 'dateTime'
+                );
+            }
+
+            if (!$this->isField($this->getUpdatedAt())){
+                $this->fields[$this->getUpdatedAt()] = array(
+                    'title' => _('Updated At'),
+                    'type' => 'dateTime'
+                );
+            }
+        }
+
         static::bootTraits();
     }
 

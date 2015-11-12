@@ -34,6 +34,13 @@ class Blueprint extends \Netinteractive\Elegant\Model\Blueprint
                     'insert'=>'required|email|unique:users'
                 )
             ),
+            'password'=>array(
+                'title'=>_('Password'),
+                'type'=>'string',
+                'rules'=>array(
+                    'insert'=>'required'
+                )
+            ),
             'first_name' => array(
                 'title'=> _('First name'),
                 'type'=>'string',

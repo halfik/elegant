@@ -6,7 +6,7 @@ use \Netinteractive\Elegant\Model\Collection;
 
 /**
  * Interface MapperInterface
- * @package Netinteractive\Elegant\Models
+ * @package Netinteractive\Elegant\Mapper
  */
 interface MapperInterface
 {
