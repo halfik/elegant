@@ -1,5 +1,8 @@
-<?php namespace Netinteractive\Elegant\Model;
+<?php namespace Netinteractive\Elegant\Mapper;
 
+
+use \Netinteractive\Elegant\Model\Record;
+use \Netinteractive\Elegant\Model\Collection;
 
 /**
  * Interface MapperInterface

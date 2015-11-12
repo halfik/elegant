@@ -1,4 +1,4 @@
-# Netinteractive\Elegant\Model\Mapper\DbMapper
+# Netinteractive\Elegant\Mapper\DbMapper
 
 Class allows to read\write\delete data from database. In most cases you will use standard DbMapper to work with all record classes.
 But if there is a need (you need to overwrite some methods) you can make custom DbMapper for concrete record.

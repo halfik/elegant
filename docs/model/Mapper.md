@@ -5,7 +5,7 @@ Mapper is responsible to know how to read|write|delete from data source and how 
 
 So mapper main role is to separate data from data source.
 
-Each mapper should implement Netinteractive\Elegant\Model\MapperInterface.
+Each mapper should implement Netinteractive\Elegant\Mapper\MapperInterface.
 This interface forces on mapper class to provide most basic method to work with data source.
 
 At this point there is only one mapper class implemented - database mapper.

@@ -1,13 +1,13 @@
-<?php namespace Elegant\Test\Models\User;
+<?php namespace Netinteractive\Elegant\Tests\Models\User;
 
-use Netinteractive\Elegant\Model\Blueprint AS BaseBluePrint;
+
 use Netinteractive\Elegant\Search\Searchable;
 
-class Blueprint extends BaseBluePrint
+class Blueprint extends \Netinteractive\Elegant\Model\Blueprint
 {
    protected function init()
     {
-        $this->setStorageName('users');
+        $this->setStorageName('user');
         $this->primaryKey = array('id');
         $this->incrementingPk = 'id';
 

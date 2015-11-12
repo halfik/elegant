@@ -1,4 +1,4 @@
-<?php namespace Netinteractive\Elegant\Model\Mapper;
+<?php namespace Netinteractive\Elegant\Mapper;
 
 use Illuminate\Database\ConnectionInterface;
 use Netinteractive\Elegant\Exception\PrimaryKeyException;
@@ -7,7 +7,7 @@ use Netinteractive\Elegant\Model\Collection;
 
 use Netinteractive\Elegant\Model\Record;
 use Netinteractive\Elegant\Model\Query\Builder;
-use Netinteractive\Elegant\Model\MapperInterface;
+use Netinteractive\Elegant\Mapper\MapperInterface;
 
 
 
