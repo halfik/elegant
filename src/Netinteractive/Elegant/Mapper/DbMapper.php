@@ -61,14 +61,11 @@ class DbMapper implements MapperInterface
     public function setRecordClass($recordClass)
     {
         $this->emptyRecord = \App::make($recordClass);
-
-        if (!$this->query){
-            $this->query = $this->getNewQuery();
-        }
+        $this->query = $this->getNewQuery();
 
         #we check if there is registered db relationship translator and we pass QueryBuilder
         if ($this->emptyRecord ->getBlueprint()->getRelationManager()->hasTranslator('db')){
-            $this->emptyRecord->getBlueprint()->getRelationManager()->getTranslator('db')->setQuery($this->query);
+            $this->emptyRecord->getBlueprint()->getRelationManager()->getTranslator('db')->setQuery($this->getNewQuery());
         }
 
         return $this;
