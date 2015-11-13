@@ -41,9 +41,7 @@ class DbMapperTest extends ElegantTest
         $dbMapper = new \Netinteractive\Elegant\Mapper\DbMapper('PatientData');
         $searchResult = $dbMapper->findMany($searchParams);
 
-        if (count($searchResult) != 2){
-            $this->assertEquals(2, count($searchResult));
-        }
+        $this->assertEquals(2, count($searchResult));
     }
 
     /**
