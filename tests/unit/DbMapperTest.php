@@ -30,6 +30,17 @@ class DbMapperTest extends ElegantTest
     }
 
     /**
+     * Find exists test
+     */
+    public function testFindExists()
+    {
+        $dbMapper = new \Netinteractive\Elegant\Mapper\DbMapper('Patient');
+        $record = $dbMapper->find(1);
+
+        $this->assertTrue($record->exists);
+    }
+
+    /**
      * FindMany test 1
      **/
     public function testFindManySimple()
@@ -83,6 +94,23 @@ class DbMapperTest extends ElegantTest
         $this->assertEquals(1, count($results));
 
         DB::rollback();
+    }
+
+    /**
+     * FindMany exists test
+     */
+    public function findManyExistTest()
+    {
+        $searchParams = array(
+            'PatientData' => array('zip_code'=>'00-002')
+        );
+
+        $dbMapper = new \Netinteractive\Elegant\Mapper\DbMapper('PatientData');
+        $searchResult = $dbMapper->findMany($searchParams);
+
+        foreach ($searchResult AS $record){
+            $this->assertTrue($record->exists);
+        }
     }
 
     /**
