@@ -182,6 +182,7 @@ class Builder extends QueryBuilder
 
         $parsed = $this->parseRelations($relations);
 
+
         $this->setRelationsToLoad(array_merge($this->getRelationsToLoad(), $parsed));
 
         return $this;
@@ -248,14 +249,14 @@ class Builder extends QueryBuilder
     {
         $results = array();
 
-        foreach ($relations as $name => $constraints)
-        {
-            // If the "relation" value is actually a numeric key, we can assume that no
+        foreach ($relations as $name => $constraints) {
+
+            // If the "name" value is actually a numeric key, we can assume that no
             // constraints have been specified for the eager load and we'll just put
             // an empty Closure with the loader so that we can treat all the same.
             if (is_numeric($name))
             {
-                $f = function() {};
+                $f = function() { };
 
                 list($name, $constraints) = array($constraints, $f);
             }
@@ -307,7 +308,7 @@ class Builder extends QueryBuilder
      * @return array
      */
     protected function loadRelated(Collection $records, $name, Closure $constraints)
-    {
+{
         // First we will "back up" the existing where conditions on the query so we can
         // add our eager constraints. Then we will merge the wheres that were on the
         // query back to it in order that any where conditions might be specified.
