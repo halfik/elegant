@@ -354,6 +354,7 @@ class DbMapper implements MapperInterface
 
 
         $bluePrint =  $this->emptyRecord->getBlueprint();
+
         if ($bluePrint->softDelete()){
             $q->whereNull($bluePrint->getStorageName().'.'.$bluePrint->getDeletedAt());
         }
@@ -495,7 +496,7 @@ class DbMapper implements MapperInterface
 
         $this->query->setConnection($this->connection);
 
-        return clone $this->query;
+        return $this->query;
     }
 
     /**
@@ -508,6 +509,12 @@ class DbMapper implements MapperInterface
 
         $q->from($this->emptyRecord->getBlueprint()->getStorageName());
         $q->setRecord($this->emptyRecord);
+
+        # if record is softDelete type we ensure that query builder will take only none deleted records
+        if ($q->getRecord()->getBlueprint()->softDelete() === true){
+            $deletedAtColumns =  $q->getFrom().'.'. $q->getRecord()->getBlueprint()->getDeletedAt();
+            $q->whereNull($deletedAtColumns);
+        }
 
         return $q;
     }

@@ -65,6 +65,27 @@ class DbMapperTest extends ElegantTest
     }
 
     /**
+     * FindMany test 3
+     */
+    public function testFindManySoftDelete()
+    {
+        DB::beginTransaction();
+
+        $dbMapper = new \Netinteractive\Elegant\Mapper\DbMapper('Med');
+        $record = $dbMapper->find(1);
+
+        $dbMapper->delete( $record );
+
+        $results = $dbMapper->findMany(array(
+            'city' => 'Warsaw'
+        ));
+
+        $this->assertEquals(1, count($results));
+
+        DB::rollback();
+    }
+
+    /**
      * With test 1
      */
     public function testWith()
@@ -128,10 +149,28 @@ class DbMapperTest extends ElegantTest
         DB::rollback();
     }
 
+    /**
+     * Soft delete test 1
+     */
     public function testSoftDelete()
     {
+        DB::beginTransaction();
 
+        $dbMapper = new \Netinteractive\Elegant\Mapper\DbMapper('Med');
+        $record = $dbMapper->find(1);
+
+        $dbMapper->delete( $record );
+
+        $record2 = $dbMapper->find(1);
+
+        $deletedAt = $record->getBlueprint()->getDeletedAt();
+        $this->assertNotNull($record->$deletedAt);
+        $this->assertNull($record2);
+
+        DB::rollback();
     }
+
+
 
 
     /**
@@ -144,7 +183,7 @@ class DbMapperTest extends ElegantTest
         $dbMapper = new \Netinteractive\Elegant\Mapper\DbMapper('Med');
 
 
-        $dbMapper->getQuery()->delete( 1 );
+        $dbMapper->getNewQuery()->delete( 1 );
 
         $record2 = $dbMapper->find(1);
 
@@ -163,14 +202,14 @@ class DbMapperTest extends ElegantTest
         $dbMapper = new \Netinteractive\Elegant\Mapper\DbMapper('PatientData');
 
 
-        $result = $dbMapper->getQuery()->delete( array('tu__id'=>1, 'med__id'=>1) );
+        $result = $dbMapper->getNewQuery()->delete( array('tu__id'=>1, 'med__id'=>1) );
         $this->assertEquals(1, $result);
 
         DB::rollback();
 
         DB::beginTransaction();
 
-        $result = $dbMapper->getQuery()->delete( array('med__id'=>1) );
+        $result = $dbMapper->getNewQuery()->delete( array('med__id'=>1) );
         $this->assertEquals(2, $result);
 
 
