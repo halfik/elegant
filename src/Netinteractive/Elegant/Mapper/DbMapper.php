@@ -62,8 +62,10 @@ class DbMapper implements MapperInterface
     {
         $this->emptyRecord = \App::make($recordClass);
 
-        $this->query = \App::make('ni.elegant.model.query.builder', array($this->connection,  $this->connection->getQueryGrammar(), $this->connection->getPostProcessor()));
-        $this->query->from($this->emptyRecord->getBlueprint()->getStorageName());
+
+        if (!$this->query){
+            $this->query = $this->getNewQuery();
+        }
 
         #we check if there is registered db relationship translator and we pass QueryBuilder
         if ($this->emptyRecord ->getBlueprint()->getRelationManager()->hasTranslator('db')){
@@ -123,7 +125,7 @@ class DbMapper implements MapperInterface
     {
         \Event::fire('ni.elegant.mapper.deleting.'.\classDotNotation($record), $record);
 
-        $query  = $this->getQuery()->from($record->getBlueprint()->getStorageName());
+        $query  = $this->getNewQuery();
 
         $pkList = $record->getBlueprint()->getPrimaryKey();
 
@@ -199,7 +201,7 @@ class DbMapper implements MapperInterface
 
         if (count($dirty) > 0){
             #we prepare database query object
-            $query = $this->getQuery();
+            $query = $this->getNewQuery();
             $query->from($record->getBlueprint()->getStorageName());
 
             #we check if record has created_at and updated_at fields, if so we allow record to set proper values for this fields
@@ -254,7 +256,7 @@ class DbMapper implements MapperInterface
     protected function performUpdate(Record $record, $touchRelated = false)
     {
         #we prepare database query object
-        $query = $this->getQuery();
+        $query = $this->getNewQuery();
         $query->from($record->getBlueprint()->getStorageName());
 
         #we check if record has created_at and updated_at fields, if so we allow record to set proper values for this fields
@@ -352,7 +354,7 @@ class DbMapper implements MapperInterface
 
         $this->checkPrimaryKey($ids);
 
-        $data = $this->getQuery()->find($ids, $columns);
+        $data = $this->getNewQuery()->find($ids, $columns);
 
         if (!is_array($data) && $data instanceof \Illuminate\Contracts\Support\Arrayable){
             $data = $data->toArray();
@@ -404,7 +406,7 @@ class DbMapper implements MapperInterface
      */
     public function search($input, $columns = array(), $operator = 'and')
     {
-        $query = $this->getQuery();
+        $query = $this->getNewQuery();
 
         #if we have empty columns, we take all from table
         if (empty($columns)) {
@@ -492,6 +494,20 @@ class DbMapper implements MapperInterface
         return clone $this->query;
     }
 
+
+    /**
+     * creates new query builder object
+     * @return mixed
+     */
+    public function getNewQuery()
+    {
+        $q = \App::make('ni.elegant.model.query.builder', array($this->connection,  $this->connection->getQueryGrammar(), $this->connection->getPostProcessor()));
+
+        $q->from($this->emptyRecord->getBlueprint()->getStorageName());
+        $q->setRecord($this->emptyRecord);
+
+        return $q;
+    }
 
     /**
      * Method checks if blueprint primary keys are same with input array keys
