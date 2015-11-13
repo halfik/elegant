@@ -18,7 +18,7 @@ class RelationDoesntExistsException extends \Exception
         parent::__construct($message, $code, $previous);
 
         if (empty($message)){
-            $message = _("Relation $name dosn't exists!");
+            $message = _("Relation \"$name\" dosn't exists!");
         }
         $this->message = $message;
     }

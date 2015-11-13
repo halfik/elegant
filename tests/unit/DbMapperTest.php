@@ -66,6 +66,17 @@ class DbMapperTest extends ElegantTest
         }
     }
 
+    /**
+     * With test 1
+     */
+    public function testWith()
+    {
+        $dbMapper = new \Netinteractive\Elegant\Mapper\DbMapper('PatientData');
+        $results = $dbMapper->with('patient.user')->get();
+
+        var_dump($results);
+    }
+
 
 
 }

@@ -7,7 +7,7 @@ class ElegantTest  extends \PHPUnit_Framework_TestCase
     {
         App::bind('PatientData', '\Netinteractive\Elegant\Tests\Models\PatientData\Record');
         App::bind('Patient', '\Netinteractive\Elegant\Tests\Models\Patient\Record');
-
+        App::bind('User', '\Netinteractive\Elegant\Tests\Models\User\Record');
 
         Artisan::call('db:ni-seed:test-data',
             array(

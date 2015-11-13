@@ -11,9 +11,7 @@ class Blueprint extends \Netinteractive\Elegant\Model\Blueprint
         $this->incrementingPk = 'id';
         $this->timestamps = true;
 
-        $this->getRelationManager()->belongsTo('Tu', 'tu__id', 'id');
-        $this->getRelationManager()->belongsTo('Med', 'med__id', 'id');
-        $this->getRelationManager()-> belongsTo('Patient', 'patient__id', 'id');
+        $this->getRelationManager()->belongsTo('patient','Patient', array('patient__id'), array('id'));
 
         $this->fields = array(
             'id' => array(

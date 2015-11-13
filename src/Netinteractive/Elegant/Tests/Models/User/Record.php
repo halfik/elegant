@@ -8,4 +8,6 @@ class Record extends \Netinteractive\Elegant\Model\Record
         $this->setBlueprint( Blueprint::getInstance() );
         return $this;
     }
+
+
 } 

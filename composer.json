@@ -31,6 +31,9 @@
         "classmap": [
             "src/migrations"
         ],
+      "files": [
+        "src/Netinteractive/Elegant/helpers.php"
+      ],
         "psr-0": {
             "Netinteractive\\Elegant\\": "src/"
         }

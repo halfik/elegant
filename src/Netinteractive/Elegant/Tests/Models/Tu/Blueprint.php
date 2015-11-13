@@ -11,9 +11,10 @@ class Blueprint extends \Netinteractive\Elegant\Model\Blueprint
         $this->primaryKey = array('id');
         $this->incrementingPk = 'id';
 
-        $this->getRelationManager()->hasMany('PatientData', 'tu__id', 'id');
-        $this->getRelationManager()->belongsToMany('Patient', 'patient_data', 'tu__id', 'patient__id');
-        $this->getRelationManager()->hasMany('User', 'tu__id', 'id');
+
+        $this->getRelationManager()->hasMany('patientData','PatientData','med__id', 'id');
+        $this->getRelationManager()->hasMany('user','User', 'med_id', 'id');
+        $this->getRelationManager()->belongsToMany('patients','Patient', array('patient_data', 'med__id', array('patient__id', 'patient__pesel') ) );
 
         $this->timestamps = true;
 
