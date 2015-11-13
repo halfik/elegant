@@ -340,10 +340,12 @@ class DbMapper implements MapperInterface
      *
      * @param $ids
      * @param array $columns
-     * @return \Netinteractive\Elegant\Model\Record
+     * @return \Netinteractive\Elegant\Model\Record|null
      */
     public function find($ids, array $columns=array('*'))
     {
+        $record = null;
+
         if (!is_array($ids)){
             $ids = array('id' => $ids);
         }
@@ -356,8 +358,11 @@ class DbMapper implements MapperInterface
             $data = $data->toArray();
         }
 
-        $record = $this->createRecord((array) $data);
-        $record->exists = true;
+        if (!empty($data)){
+            $record = $this->createRecord((array) $data);
+            $record->exists = true;
+        }
+
 
         return $record;
     }

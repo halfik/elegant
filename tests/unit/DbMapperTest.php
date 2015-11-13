@@ -70,11 +70,88 @@ class DbMapperTest extends ElegantTest
     public function testWith()
     {
         $dbMapper = new \Netinteractive\Elegant\Mapper\DbMapper('PatientData');
-        $results = $dbMapper->with('patient.user')->get();
+        $results = $dbMapper->where('patient_data.id', '=', 1)
+            ->with('patient.user')
+            ->get()
+        ;
 
-        var_dump($results);
+        $this->assertTrue(isSet($results[0]));
+        $this->assertEquals(1, $results[0]->id);
+
+        $this->assertTrue(isSet($results[0]->patient));
+        $this->assertTrue(isSet($results[0]->patient->user));
+
+        $this->assertEquals(1, count($results[0]->patient));
+        $this->assertEquals(1, count($results[0]->patient->user));
+
+
+        $this->assertEquals(1, $results[0]->patient->id);
+        $this->assertEquals(1, $results[0]->patient->user->id);
     }
 
+    /**
+     * Delete test 1
+     */
+    public function testRecordDelete()
+    {
+        DB::beginTransaction();
+
+        $dbMapper = new \Netinteractive\Elegant\Mapper\DbMapper('Med');
+        $record = $dbMapper->find(1);
+
+        $dbMapper->delete( $record );
+
+        $record2 = $dbMapper->find(1);
+
+        $this->assertNull($record2);
+
+        DB::rollback();
+    }
+
+    /**
+     * Delete test 2
+     */
+    public function testSimpleQueryBuilderDelete()
+    {
+        DB::beginTransaction();
+
+        $dbMapper = new \Netinteractive\Elegant\Mapper\DbMapper('Med');
+
+
+        $dbMapper->getQuery()->delete( 1 );
+
+        $record2 = $dbMapper->find(1);
+
+        $this->assertNull($record2);
+
+        DB::rollback();
+    }
+
+    /**
+     * Delete test 2
+     */
+    public function testComplexQueryBuilderDelete()
+    {
+        DB::beginTransaction();
+
+        $dbMapper = new \Netinteractive\Elegant\Mapper\DbMapper('PatientData');
+
+
+        $result = $dbMapper->getQuery()->delete( array('tu__id'=>1, 'med__id'=>1) );
+        $this->assertEquals(1, $result);
+
+        DB::rollback();
+
+
+
+        DB::beginTransaction();
+
+        $result = $dbMapper->getQuery()->delete( array('med__id'=>1) );
+        $this->assertEquals(2, $result);
+
+
+        DB::rollback();
+    }
 
 
 }
