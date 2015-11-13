@@ -69,7 +69,7 @@ class DbMapper implements MapperInterface
 
         #we check if there is registered db relationship translator and we pass QueryBuilder
         if ($this->emptyRecord ->getBlueprint()->getRelationManager()->hasTranslator('db')){
-            $this->emptyRecord->getBlueprint()->getRelationManager()->getTranslator('db')->setQuery($this->getQuery());
+            $this->emptyRecord->getBlueprint()->getRelationManager()->getTranslator('db')->setQuery($this->getNewQuery());
         }
 
         return $this;
