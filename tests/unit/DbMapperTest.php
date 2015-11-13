@@ -254,7 +254,7 @@ class DbMapperTest extends ElegantTest
 
         $record = $dbMapper->find(1);
 
-         $this->assertNull($record);
+        $this->assertNull($record);
 
         DB::rollback();
     }
@@ -283,6 +283,7 @@ class DbMapperTest extends ElegantTest
         $this->assertEquals('Netinteractive\Elegant\Tests\Models\Patient\Record', get_class($record));
         $this->assertEquals(1, $record->user__id);
         $this->assertEquals('54062609749', $record->pesel);
+        $this->assertFalse($record->exists);
     }
 
 
@@ -305,6 +306,77 @@ class DbMapperTest extends ElegantTest
         $this->assertEquals(3, count($result));
     }
 
+    /**
+     * Fist test 1
+     */
+    public function testFirst()
+    {
+        $dbMapper = new \Netinteractive\Elegant\Mapper\DbMapper('Patient');
+        $record = $dbMapper->first();
+
+        $this->assertEquals('Netinteractive\Elegant\Tests\Models\Patient\Record', get_class($record));
+        $this->assertEquals(1, $record->id);
+    }
+
+
+    /**
+     * Fist test 2
+     */
+    public function testFirstOrderBy()
+    {
+        $dbMapper = new \Netinteractive\Elegant\Mapper\DbMapper('Patient');
+        $record = $dbMapper->orderBy('pesel')->first();
+
+        $this->assertEquals('Netinteractive\Elegant\Tests\Models\Patient\Record', get_class($record));
+        $this->assertEquals(2, $record->id);
+    }
+
+    /**
+     * Fist test 3
+     */
+    public function testFirstWhere()
+    {
+        $dbMapper = new \Netinteractive\Elegant\Mapper\DbMapper('PatientData');
+        $record = $dbMapper->where('patient__id', '>', 0)->first();
+
+        $this->assertEquals('Netinteractive\Elegant\Tests\Models\PatientData\Record', get_class($record));
+        $this->assertEquals(1, $record->id);
+    }
+
+    /**
+     * Save test 1
+     */
+    public function testSave()
+    {
+        $dbMapper = new \Netinteractive\Elegant\Mapper\DbMapper('PatientData');
+
+        ;
+
+        $record = $dbMapper->createRecord(
+            array(
+                'id' => 999,
+                'patient__id'=>1,
+                'first_name'=>'a',
+                'last_name'=>'b',
+                'birth_date'=>'1999-01-01',
+                'zip_code'=>'00-000',
+                'city'=>'c',
+                'street'=>'d',
+                'email'=>'d@hotmail.com',
+                'phone'=>'1234567',
+            )
+        );
+
+        $dbMapper->save($record);
+
+        $dbMapper->where('phone', '=', '1234567');
+        $result = $dbMapper->get();
+
+        $this->assertEquals(1, count($result));
+        $this->assertEquals('1234567', $result[0]->phone);
+
+        $dbMapper->delete($record);
+    }
 
 
 }
