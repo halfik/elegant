@@ -111,6 +111,32 @@ class DbMapperTest extends ElegantTest
     /**
      * Delete test 2
      */
+    public function testRecordDeleteModifiedQuery()
+    {
+        DB::beginTransaction();
+
+        $dbMapper = new \Netinteractive\Elegant\Mapper\DbMapper('Med');
+        $dbMapper->where('med.id', '=', 2);
+        $record = $dbMapper->find(1);
+
+        $dbMapper->delete( $record );
+
+        $record2 = $dbMapper->find(1);
+
+        $this->assertNull($record2);
+
+        DB::rollback();
+    }
+
+    public function testSoftDelete()
+    {
+
+    }
+
+
+    /**
+     * Delete test 2
+     */
     public function testSimpleQueryBuilderDelete()
     {
         DB::beginTransaction();
@@ -142,8 +168,6 @@ class DbMapperTest extends ElegantTest
 
         DB::rollback();
 
-
-
         DB::beginTransaction();
 
         $result = $dbMapper->getQuery()->delete( array('med__id'=>1) );
@@ -152,6 +176,52 @@ class DbMapperTest extends ElegantTest
 
         DB::rollback();
     }
+
+    /**
+     * set record class test 1
+     */
+    public function testSetRecordClass()
+    {
+        $dbMapper = new \Netinteractive\Elegant\Mapper\DbMapper('Med');
+        $dbMapper->setRecordClass('Tu');
+        $record = $dbMapper->find(1);
+
+        $this->assertEquals('Netinteractive\Elegant\Tests\Models\Tu\Record', get_class($record));
+    }
+
+    /**
+     *  create record test 1
+     */
+    public function testCreateRecord()
+    {
+        $dbMapper = new \Netinteractive\Elegant\Mapper\DbMapper('Patient');
+        $record = $dbMapper->createRecord(array('user__id'=>1, 'pesel'=>'54062609749'));
+
+        $this->assertEquals('Netinteractive\Elegant\Tests\Models\Patient\Record', get_class($record));
+        $this->assertEquals(1, $record->user__id);
+        $this->assertEquals('54062609749', $record->pesel);
+    }
+
+
+    /**
+     * create collection of records test 1
+     */
+    public function testCreateMany()
+    {
+        $dbMapper = new \Netinteractive\Elegant\Mapper\DbMapper('Patient');
+        $result = $dbMapper->createMany(
+            array(
+                array('user__id'=>1, 'pesel'=>'54062609749'),
+                array('user__id'=>2, 'pesel'=>'00293016049'),
+                array('user__id'=>3, 'pesel'=>'03310505094')
+            )
+
+        );
+
+        $this->assertEquals('Netinteractive\Elegant\Model\Collection', get_class($result));
+        $this->assertEquals(3, count($result));
+    }
+
 
 
 }

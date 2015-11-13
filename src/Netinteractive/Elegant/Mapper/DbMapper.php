@@ -61,11 +61,7 @@ class DbMapper implements MapperInterface
     public function setRecordClass($recordClass)
     {
         $this->emptyRecord = \App::make($recordClass);
-
-
-        if (!$this->query){
-            $this->query = $this->getNewQuery();
-        }
+        $this->query = $this->getNewQuery();
 
         #we check if there is registered db relationship translator and we pass QueryBuilder
         if ($this->emptyRecord ->getBlueprint()->getRelationManager()->hasTranslator('db')){
@@ -354,7 +350,15 @@ class DbMapper implements MapperInterface
 
         $this->checkPrimaryKey($ids);
 
-        $data = $this->getNewQuery()->find($ids, $columns);
+        $q = $this->getNewQuery();
+
+
+        $bluePrint =  $this->emptyRecord->getBlueprint();
+        if ($bluePrint->softDelete()){
+            $q->whereNull($bluePrint->getStorageName().'.'.$bluePrint->getDeletedAt());
+        }
+
+        $data = $q->find($ids, $columns);
 
         if (!is_array($data) && $data instanceof \Illuminate\Contracts\Support\Arrayable){
             $data = $data->toArray();
@@ -494,7 +498,6 @@ class DbMapper implements MapperInterface
         return clone $this->query;
     }
 
-
     /**
      * creates new query builder object
      * @return mixed
@@ -508,6 +511,7 @@ class DbMapper implements MapperInterface
 
         return $q;
     }
+
 
     /**
      * Method checks if blueprint primary keys are same with input array keys
