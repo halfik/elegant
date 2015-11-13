@@ -150,30 +150,6 @@ class DbMapperTest extends ElegantTest
     }
 
     /**
-     * Soft delete test 1
-     */
-    public function testSoftDelete()
-    {
-        DB::beginTransaction();
-
-        $dbMapper = new \Netinteractive\Elegant\Mapper\DbMapper('Med');
-        $record = $dbMapper->find(1);
-
-        $dbMapper->delete( $record );
-
-        $record2 = $dbMapper->find(1);
-
-        $deletedAt = $record->getBlueprint()->getDeletedAt();
-        $this->assertNotNull($record->$deletedAt);
-        $this->assertNull($record2);
-
-        DB::rollback();
-    }
-
-
-
-
-    /**
      * Delete test 2
      */
     public function testSimpleQueryBuilderDelete()
@@ -193,7 +169,7 @@ class DbMapperTest extends ElegantTest
     }
 
     /**
-     * Delete test 2
+     * Delete test 3
      */
     public function testComplexQueryBuilderDelete()
     {
@@ -215,6 +191,46 @@ class DbMapperTest extends ElegantTest
 
         DB::rollback();
     }
+
+    /**
+     * Soft delete test 1
+     */
+    public function testSoftDelete()
+    {
+        DB::beginTransaction();
+
+        $dbMapper = new \Netinteractive\Elegant\Mapper\DbMapper('Med');
+        $record = $dbMapper->find(1);
+
+        $dbMapper->delete( $record );
+
+        $record2 = $dbMapper->find(1);
+
+        $deletedAt = $record->getBlueprint()->getDeletedAt();
+        $this->assertNotNull($record->$deletedAt);
+        $this->assertNull($record2);
+
+        DB::rollback();
+    }
+
+
+    /**
+     * Soft delete test 2
+     */
+    public function testBuilderSoftDelete()
+    {
+        DB::beginTransaction();
+
+        $dbMapper = new \Netinteractive\Elegant\Mapper\DbMapper('Med');
+        $dbMapper->getNewQuery()->delete( 1 );
+
+        $record = $dbMapper->find(1);
+
+         $this->assertNull($record);
+
+        DB::rollback();
+    }
+
 
     /**
      * set record class test 1
