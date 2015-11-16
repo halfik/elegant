@@ -1,11 +1,8 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: halfik
- * Date: 13.11.15
- * Time: 11:00
- */
 
+/**
+ * Class HelpersTest
+ */
 class HelpersTest extends  ElegantTest
 {
     /**

@@ -9,11 +9,14 @@ use Netinteractive\Elegant\Search\TranslatorInterface;
  */
 class Translator implements TranslatorInterface
 {
-    public static $alias;
+    /**
+     *
+     * @var null
+     */
+    public static $alias = null;
 
     public static $like = array(
-        'pgsql' => 'iLIKE',
-        'mysql' => 'LIKE'
+        'pgsql' => 'iLIKE'
     );
 
     /**
@@ -63,7 +66,7 @@ class Translator implements TranslatorInterface
      * @param $keyword
      * @return string
      */
-    protected static function clearKeyword($keyword)
+    public static function clearKeyword($keyword)
     {
         if (is_scalar($keyword)) {
             return trim($keyword);
@@ -75,7 +78,7 @@ class Translator implements TranslatorInterface
      * @param $field
      * @return string
      */
-    protected static function prepareField($field)
+    public static function prepareField($field)
     {
         if (empty(static::$alias )){
            return $field;
@@ -145,17 +148,19 @@ class Translator implements TranslatorInterface
     {
         return function (&$q, $keyword, $logic = 'or') use ($field, $operator) {
             $keyword = static::clearKeyword($keyword);
-            if (is_numeric($keyword)) {
-                if (strtolower($logic) == 'or') {
-                    $q->orWhere(static::prepareField($field), $operator, $keyword);
-                } else {
-                    $q->where(static::prepareField($field), $operator, $keyword);
-                }
-            } elseif (is_array($keyword)) {
+
+            if (is_array($keyword)) {
                 if (strtolower($logic) == 'or') {
                     $q->orWhereIn(static::prepareField($field), array_values($keyword));
                 } else {
                     $q->whereIn(static::prepareField($field), array_values($keyword));
+                }
+            }
+            else {
+                if (strtolower($logic) == 'or') {
+                    $q->orWhere(static::prepareField($field), $operator, $keyword);
+                } else {
+                    $q->where(static::prepareField($field), $operator, $keyword);
                 }
             }
         };
