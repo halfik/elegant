@@ -240,6 +240,8 @@ class DbMapper implements MapperInterface
         if ($touchRelated === true && $record->hasRelated()){
            $this->touchRelated($record);
         }
+
+        $record->exists = true;
     }
 
     /**

@@ -153,8 +153,44 @@ class DbMapperTest extends ElegantTest
         $record2 = $dbMapper->find(1);
 
         $this->assertNull($record2);
+        $this->assertFalse($record->exists);
 
         DB::rollback();
+    }
+
+    /**
+     * delete test 2
+     */
+    public function testNewRecordDelete()
+    {
+        $dbMapper = new \Netinteractive\Elegant\Mapper\DbMapper('PatientData');
+
+        $record = $dbMapper->createRecord(
+            array(
+                'id' => 999,
+                'patient__id'=>1,
+                'first_name'=>'a',
+                'last_name'=>'b',
+                'birth_date'=>'1999-01-01',
+                'zip_code'=>'00-000',
+                'city'=>'c',
+                'street'=>'d',
+                'email'=>'d@hotmail.com',
+                'phone'=>'1234567',
+            )
+        );
+
+
+        $dbMapper->save($record);
+
+
+        $dbMapper->where('phone', '=', '1234567');
+        $result = $dbMapper->get();
+
+        $dbMapper->delete($record);
+        DB::beginTransaction();
+
+        $this->assertFalse($record->exists);
     }
 
     /**
@@ -343,14 +379,14 @@ class DbMapperTest extends ElegantTest
         $this->assertEquals(1, $record->id);
     }
 
+
+
     /**
      * Save test 1
      */
-    public function testSave()
+    public function testNewRecordSave()
     {
         $dbMapper = new \Netinteractive\Elegant\Mapper\DbMapper('PatientData');
-
-        ;
 
         $record = $dbMapper->createRecord(
             array(
@@ -369,13 +405,68 @@ class DbMapperTest extends ElegantTest
 
         $dbMapper->save($record);
 
+
         $dbMapper->where('phone', '=', '1234567');
         $result = $dbMapper->get();
 
         $this->assertEquals(1, count($result));
+        $this->assertTrue($record->exists);
         $this->assertEquals('1234567', $result[0]->phone);
 
         $dbMapper->delete($record);
+    }
+
+
+    /**
+     * Save test 2
+     */
+    public function testExistsRecordSave()
+    {
+        DB::beginTransaction();
+
+        $dbMapper = new \Netinteractive\Elegant\Mapper\DbMapper('Med');
+
+        $record = $dbMapper->find(1);
+        $record->name = "xxx";
+
+        $dbMapper->save($record);
+
+        $record2 = $dbMapper->find(1);
+
+        $this->assertEquals('xxx', $record->name);
+        $this->assertEquals('xxx', $record2->name);
+
+
+        DB::rollback();
+    }
+
+    /**
+     * Save test 3
+     */
+    public function testNewRecordSaveTimestamps()
+    {
+        DB::beginTransaction();
+
+        $dbMapper = new \Netinteractive\Elegant\Mapper\DbMapper('Patient');
+
+        $record = $dbMapper->createRecord(array(
+            'id' => 3,
+            'user__id' => 3,
+            'pesel' => '61010511575'
+        ));
+
+        $dbMapper->save($record);
+
+        $record2 = $dbMapper->find(1);
+
+        $this->assertNotNull( $record->created_at);
+        $this->assertNotNull( $record->updated_at);
+
+        $this->assertNotNull( $record2->created_at);
+        $this->assertNotNull( $record2->updated_at);
+
+
+        DB::rollback();
     }
 
 

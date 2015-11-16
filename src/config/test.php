@@ -6,7 +6,10 @@ $serializer = new SuperClosure\Serializer(null, null);
 return array(
     'tables' => array(
         'user' => $serializer->serialize(function(){
-            DB::statement(DB::raw('DROP TABLE "user" CASCADE;'));
+            if(Schema::hasTable('user')){
+                DB::statement(DB::raw('DROP TABLE "user" CASCADE;'));
+            }
+
 
             Schema::create('user', function(Blueprint $table)
             {
@@ -126,6 +129,16 @@ return array(
                     'password' => 'user2@hot.com',
                     'first_name' =>  'User',
                     'last_name' => 'Two',
+                )
+            ),
+            array(
+                'data' => array(
+                    'id'=>3,
+                    'login' => 'User 3',
+                    'email' => 'user3@hot.com',
+                    'password' => 'user3@hot.com',
+                    'first_name' =>  'User',
+                    'last_name' => 'Tree',
                 )
             )
         ),

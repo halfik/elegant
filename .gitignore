@@ -5,3 +5,4 @@ composer.lock
 .idea/
 tests/_output/*
 tests/_output/*
+codecept.phar
