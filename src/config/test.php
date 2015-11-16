@@ -140,6 +140,26 @@ return array(
                     'first_name' =>  'User',
                     'last_name' => 'Tree',
                 )
+            ),
+            array(
+                'data' => array(
+                    'id'=>4,
+                    'login' => 'User 4',
+                    'email' => 'user4@hot.com',
+                    'password' => 'user4@hot.com',
+                    'first_name' =>  'User',
+                    'last_name' => 'Four',
+                )
+            ),
+            array(
+                'data' => array(
+                    'id'=>5,
+                    'login' => 'User 5',
+                    'email' => 'user5@hot.com',
+                    'password' => 'user5@hot.com',
+                    'first_name' =>  'User',
+                    'last_name' => 'Five',
+                )
             )
         ),
         #Med

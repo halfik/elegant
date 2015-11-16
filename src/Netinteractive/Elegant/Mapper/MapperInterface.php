@@ -31,10 +31,10 @@ interface MapperInterface
     /**
      * Saves collection of records
      *
-     * @param \Netinteractive\Elegant\Model\Collection $records
+     * @param \Netinteractive\Elegant\Model\Collection|array $records
      * @return $this
      */
-    function saveMany(Collection $records);
+    function saveMany($records);
 
     /**
      * Find one model

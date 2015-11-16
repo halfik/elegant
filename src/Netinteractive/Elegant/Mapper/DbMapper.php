@@ -315,13 +315,17 @@ class DbMapper implements MapperInterface
     /**
      * Saves collection of records
      *
-     * @param \Netinteractive\Elegant\Model\Collection $records
+     * @param \Netinteractive\Elegant\Model\Collection|array $records
      * @param bool $touchRelated
      * @return $this
      */
-    public function saveMany(Collection $records, $touchRelated = false)
+    public function saveMany($records, $touchRelated = false)
     {
         foreach ($records AS $record){
+            if (is_array($record)){
+                $record = $this->createRecord($record);
+            }
+
             if ($touchRelated === true){
                 \Event::fire('ni.elegant.mapper.touching.'.\classDotNotation($record), $record);
             }

@@ -459,17 +459,116 @@ class DbMapperTest extends ElegantTest
 
         $record2 = $dbMapper->find(1);
 
-        $carbon = new DateTime();
-        $this->assertEquals($carbon->format('Y-m-d H:i'), $record->created_at->format('Y-m-d H:i'));
-        $this->assertEquals($carbon->format('Y-m-d H:i'), $record->updated_at->format('Y-m-d H:i'));
+        $dateTime = new DateTime();
+        $this->assertEquals($dateTime->format('Y-m-d H:i'), $record->created_at->format('Y-m-d H:i'));
+        $this->assertEquals($dateTime->format('Y-m-d H:i'), $record->updated_at->format('Y-m-d H:i'));
 
-        $this->assertEquals($carbon->format('Y-m-d H:i'), $record2->created_at->format('Y-m-d H:i'));
-        $this->assertEquals($carbon->format('Y-m-d H:i'), $record2->updated_at->format('Y-m-d H:i'));
+        $this->assertEquals($dateTime->format('Y-m-d H:i'), $record2->created_at->format('Y-m-d H:i'));
+        $this->assertEquals($dateTime->format('Y-m-d H:i'), $record2->updated_at->format('Y-m-d H:i'));
 
 
 
         \DB::rollback();
     }
 
+    /**
+     * Save test 4
+     */
+    public function testExistsRecordSaveTimestamps()
+    {
+        \DB::beginTransaction();
 
+        $dbMapper = new \Netinteractive\Elegant\Mapper\DbMapper('Med');
+
+        $record = $dbMapper->find(1);
+        $record->name = "My Med 1";
+
+        sleep(1); #sleep so we can see that created_at has changed and update_at not
+        $dbMapper->save($record);
+
+        $record2 = $dbMapper->find(1);
+
+        $dateTime = new DateTime();
+
+        $this->assertNotEquals($dateTime->format('Y-m-d H:i:s'), $record->created_at->format('Y-m-d H:i:s'));
+        $this->assertEquals($dateTime->format('Y-m-d H:i'), $record->updated_at->format('Y-m-d H:i'));
+
+        $this->assertNotEquals($dateTime->format('Y-m-d H:i:s'), $record2->created_at->format('Y-m-d H:i:s'));
+        $this->assertEquals($dateTime->format('Y-m-d H:i'), $record2->updated_at->format('Y-m-d H:i'));
+
+
+
+        \DB::rollback();
+    }
+
+    /**
+     * save many test 1
+     */
+    public function testArraySaveManyRecords()
+    {
+        \DB::beginTransaction();
+
+        $dbMapper = new \Netinteractive\Elegant\Mapper\DbMapper('Patient');
+        $dbMapper->saveMany(
+            array(
+                array(
+                    'id' => 4,
+                    'user__id' => 4,
+                    'pesel' => '96062201507'
+                ),
+                array(
+                    'id' => 5,
+                    'user__id' => 5,
+                    'pesel' => '17032101458'
+                ),
+            )
+        );
+
+        $record1 = $dbMapper->find(4);
+        $record2 = $dbMapper->find(5);
+
+        $this->assertEquals('96062201507', $record1->pesel);
+        $this->assertEquals('17032101458', $record2->pesel);
+
+        \DB::rollback();
+    }
+
+
+    /**
+     * save many test 2
+     */
+    public function testCollectionSaveManyRecords()
+    {
+        \DB::beginTransaction();
+
+        $dbMapper = new \Netinteractive\Elegant\Mapper\DbMapper('Patient');
+        $collection = new \Netinteractive\Elegant\Model\Collection();
+
+        $record1 = $dbMapper->createRecord(array(
+            'id' => 4,
+            'user__id' => 4,
+            'pesel' => '96062201507'
+        ));
+
+        $record2 = $dbMapper->createRecord(array(
+            'id' => 5,
+            'user__id' => 5,
+            'pesel' => '17032101458'
+        ));
+
+        $collection->add($record1);
+        $collection->add($record2);
+
+        $dbMapper->saveMany(
+            $collection
+        );
+
+        $record1 = $dbMapper->find(4);
+        $record2 = $dbMapper->find(5);
+
+        $this->assertEquals('96062201507', $record1->pesel);
+        $this->assertEquals('17032101458', $record2->pesel);
+
+        \DB::rollback();
+    }
 }
