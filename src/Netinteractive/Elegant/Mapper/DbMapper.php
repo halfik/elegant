@@ -152,7 +152,7 @@ class DbMapper implements MapperInterface
      */
     protected function softDelete(Record $record, Builder $query)
     {
-        $record->setDeletedAt( $time = $record->freshTimestamp() );
+        $record->setDeletedAt( $time = $record->createTimestamp() );
 
         return $query->update(array($record->getBlueprint()->getDeletedAt() => $record->fromDateTime($time, $this->getDateFormat())));
     }

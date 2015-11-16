@@ -80,7 +80,7 @@ class DbMapperTest extends ElegantTest
      */
     public function testFindManySoftDelete()
     {
-        DB::beginTransaction();
+        \DB::beginTransaction();
 
         $dbMapper = new \Netinteractive\Elegant\Mapper\DbMapper('Med');
         $record = $dbMapper->find(1);
@@ -93,7 +93,7 @@ class DbMapperTest extends ElegantTest
 
         $this->assertEquals(1, count($results));
 
-        DB::rollback();
+        \DB::rollback();
     }
 
     /**
@@ -143,7 +143,7 @@ class DbMapperTest extends ElegantTest
      */
     public function testRecordDelete()
     {
-        DB::beginTransaction();
+        \DB::beginTransaction();
 
         $dbMapper = new \Netinteractive\Elegant\Mapper\DbMapper('Med');
         $record = $dbMapper->find(1);
@@ -155,7 +155,7 @@ class DbMapperTest extends ElegantTest
         $this->assertNull($record2);
         $this->assertFalse($record->exists);
 
-        DB::rollback();
+        \DB::rollback();
     }
 
     /**
@@ -188,7 +188,7 @@ class DbMapperTest extends ElegantTest
         $result = $dbMapper->get();
 
         $dbMapper->delete($record);
-        DB::beginTransaction();
+        \DB::beginTransaction();
 
         $this->assertFalse($record->exists);
     }
@@ -198,7 +198,7 @@ class DbMapperTest extends ElegantTest
      */
     public function testRecordDeleteModifiedQuery()
     {
-        DB::beginTransaction();
+        \DB::beginTransaction();
 
         $dbMapper = new \Netinteractive\Elegant\Mapper\DbMapper('Med');
         $dbMapper->where('med.id', '=', 2);
@@ -210,7 +210,7 @@ class DbMapperTest extends ElegantTest
 
         $this->assertNull($record2);
 
-        DB::rollback();
+        \DB::rollback();
     }
 
     /**
@@ -218,7 +218,7 @@ class DbMapperTest extends ElegantTest
      */
     public function testSimpleQueryBuilderDelete()
     {
-        DB::beginTransaction();
+        \DB::beginTransaction();
 
         $dbMapper = new \Netinteractive\Elegant\Mapper\DbMapper('Med');
 
@@ -229,7 +229,7 @@ class DbMapperTest extends ElegantTest
 
         $this->assertNull($record2);
 
-        DB::rollback();
+        \DB::rollback();
     }
 
     /**
@@ -237,7 +237,7 @@ class DbMapperTest extends ElegantTest
      */
     public function testComplexQueryBuilderDelete()
     {
-        DB::beginTransaction();
+        \DB::beginTransaction();
 
         $dbMapper = new \Netinteractive\Elegant\Mapper\DbMapper('PatientData');
 
@@ -245,15 +245,15 @@ class DbMapperTest extends ElegantTest
         $result = $dbMapper->getNewQuery()->delete( array('tu__id'=>1, 'med__id'=>1) );
         $this->assertEquals(1, $result);
 
-        DB::rollback();
+        \DB::rollback();
 
-        DB::beginTransaction();
+        \DB::beginTransaction();
 
         $result = $dbMapper->getNewQuery()->delete( array('med__id'=>1) );
         $this->assertEquals(2, $result);
 
 
-        DB::rollback();
+        \DB::rollback();
     }
 
     /**
@@ -261,7 +261,7 @@ class DbMapperTest extends ElegantTest
      */
     public function testSoftDelete()
     {
-        DB::beginTransaction();
+        \DB::beginTransaction();
 
         $dbMapper = new \Netinteractive\Elegant\Mapper\DbMapper('Med');
         $record = $dbMapper->find(1);
@@ -274,7 +274,7 @@ class DbMapperTest extends ElegantTest
         $this->assertNotNull($record->$deletedAt);
         $this->assertNull($record2);
 
-        DB::rollback();
+        \DB::rollback();
     }
 
 
@@ -283,7 +283,7 @@ class DbMapperTest extends ElegantTest
      */
     public function testBuilderSoftDelete()
     {
-        DB::beginTransaction();
+        \DB::beginTransaction();
 
         $dbMapper = new \Netinteractive\Elegant\Mapper\DbMapper('Med');
         $dbMapper->getNewQuery()->delete( 1 );
@@ -292,7 +292,7 @@ class DbMapperTest extends ElegantTest
 
         $this->assertNull($record);
 
-        DB::rollback();
+        \DB::rollback();
     }
 
 
@@ -422,7 +422,7 @@ class DbMapperTest extends ElegantTest
      */
     public function testExistsRecordSave()
     {
-        DB::beginTransaction();
+        \DB::beginTransaction();
 
         $dbMapper = new \Netinteractive\Elegant\Mapper\DbMapper('Med');
 
@@ -437,7 +437,7 @@ class DbMapperTest extends ElegantTest
         $this->assertEquals('xxx', $record2->name);
 
 
-        DB::rollback();
+        \DB::rollback();
     }
 
     /**
@@ -445,7 +445,7 @@ class DbMapperTest extends ElegantTest
      */
     public function testNewRecordSaveTimestamps()
     {
-        DB::beginTransaction();
+        \DB::beginTransaction();
 
         $dbMapper = new \Netinteractive\Elegant\Mapper\DbMapper('Patient');
 
@@ -459,14 +459,16 @@ class DbMapperTest extends ElegantTest
 
         $record2 = $dbMapper->find(1);
 
-        $this->assertNotNull( $record->created_at);
-        $this->assertNotNull( $record->updated_at);
+        $carbon = new DateTime();
+        $this->assertEquals($carbon->format('Y-m-d H:i'), $record->created_at->format('Y-m-d H:i'));
+        $this->assertEquals($carbon->format('Y-m-d H:i'), $record->updated_at->format('Y-m-d H:i'));
 
-        $this->assertNotNull( $record2->created_at);
-        $this->assertNotNull( $record2->updated_at);
+        $this->assertEquals($carbon->format('Y-m-d H:i'), $record2->created_at->format('Y-m-d H:i'));
+        $this->assertEquals($carbon->format('Y-m-d H:i'), $record2->updated_at->format('Y-m-d H:i'));
 
 
-        DB::rollback();
+
+        \DB::rollback();
     }
 
 

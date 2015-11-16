@@ -242,7 +242,12 @@ abstract class Record implements Arrayable, Jsonable
             if ($blueprint->isField($key)){
                 #we check if field should be stored in data storage or it's external data
                 if (!$blueprint->isExternal($key)){
-                    $this->attributes[$key] = $value;
+                    if ($this->getBlueprint()->isTimeStamp($key)){
+                        $this->attributes[$key] = $this->createTimestamp($value);
+                    }else{
+                        $this->attributes[$key] = $value;
+                    }
+
                 }else{
                     $this->external[$key] = $value;
                 }
@@ -252,7 +257,11 @@ abstract class Record implements Arrayable, Jsonable
             }
 
         }else{
-            $this->attributes[$key] = $value;
+            if ($this->getBlueprint()->isTimeStamp($key)){
+                $this->attributes[$key] = $this->createTimestamp($value);
+            }else{
+                $this->attributes[$key] = $value;
+            }
         }
 
         return $this;
@@ -627,12 +636,12 @@ abstract class Record implements Arrayable, Jsonable
 
     /**
      * Get a fresh timestamp for the model.
-     *
+     * @param string|null $time
      * @return \Carbon\Carbon
      */
-    public function freshTimestamp()
+    public function createTimestamp($time=null)
     {
-        return new Carbon();
+        return new Carbon($time);
     }
 
     /**
@@ -642,7 +651,7 @@ abstract class Record implements Arrayable, Jsonable
      */
     public function updateTimestamps()
     {
-        $time = $this->freshTimestamp();
+        $time = $this->createTimestamp();
 
         if ( !$this->isDirty($this->getBlueprint()->getUpdatedAt())){
             $this->setUpdatedAt($time);
@@ -661,6 +670,9 @@ abstract class Record implements Arrayable, Jsonable
      */
     public function setCreatedAt($value)
     {
+        if (!$value instanceof Carbon){
+            $value = $this->createTimestamp($value);
+        }
         $this->attributes[$this->getBlueprint()->getCreatedAt()] = $value;
     }
 
@@ -672,6 +684,9 @@ abstract class Record implements Arrayable, Jsonable
      */
     public function setUpdatedAt($value)
     {
+        if (!$value instanceof Carbon){
+            $value = $this->createTimestamp($value);
+        }
         $this->attributes[$this->getBlueprint()->getUpdatedAt()] = $value;
     }
 
@@ -683,6 +698,9 @@ abstract class Record implements Arrayable, Jsonable
      */
     public function setDeletedAt($value)
     {
+        if (!$value instanceof Carbon){
+            $value = $this->createTimestamp($value);
+        }
         $this->attributes[$this->getBlueprint()->getDeletedAt()] = $value;
     }
 

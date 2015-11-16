@@ -433,6 +433,19 @@ abstract class Blueprint
         return $fieldKey == $this->incrementingPk;
     }
 
+    /**
+     * Checks if field is timestamp type
+     * @param string $field
+     * @return bool
+     */
+    public function isTimeStamp($field)
+    {
+        if ($this->getCreatedAt() == $field || $this->getUpdatedAt() == $field || $this->getDeletedAt() == $field){
+            return true;
+        }
+        return false;
+    }
+
 
     /**
      * Returns information if record has timestamps (created_at and updated_at)
