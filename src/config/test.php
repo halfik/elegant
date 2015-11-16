@@ -149,6 +149,7 @@ return array(
                     'password' => 'user4@hot.com',
                     'first_name' =>  'User',
                     'last_name' => 'Four',
+                    'tu__id' => 1
                 )
             ),
             array(
@@ -159,6 +160,7 @@ return array(
                     'password' => 'user5@hot.com',
                     'first_name' =>  'User',
                     'last_name' => 'Five',
+                    'med__id' => 1
                 )
             )
         ),

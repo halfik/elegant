@@ -71,22 +71,12 @@ class Blueprint extends \Netinteractive\Elegant\Model\Blueprint
                     )
                 )
             ),
-            'activated' => array(
-                'title' => _('Is Active'),
-                'type' => 'bool',
-                'sortable' => true,
-                'rules' => array(
-                    'any' => 'in:0,1'
-                ),
-                'filters' => array(
-                    'display' => array('bool'),
-                )
-            ),
+
             'tu__id' => array(
                 'title' => _('Id TU'),
                 'type' => 'int',
                 'rules' => array(
-                    'any' => 'integer|exists:tu,id',
+                    'any' => 'integer',
                 ),
                 'filters' => array(
                     'fill' => array(
@@ -97,7 +87,7 @@ class Blueprint extends \Netinteractive\Elegant\Model\Blueprint
                 'title' => _('Id Med'),
                 'type' => 'int',
                 'rules' => array(
-                    'any' => 'integer|exists:med,id',
+                    'any' => 'integer',
                 ),
                 'filters' => array(
                     'fill' => array(

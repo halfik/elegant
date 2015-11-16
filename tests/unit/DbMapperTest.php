@@ -571,4 +571,97 @@ class DbMapperTest extends ElegantTest
 
         \DB::rollback();
     }
+
+    /**
+     * Search test 1
+     */
+    public function testSimpleSearch()
+    {
+        \DB::beginTransaction();
+
+        $dbMapper = new \Netinteractive\Elegant\Mapper\DbMapper('User');
+        $result = $dbMapper->search(
+            array(
+                'User' => array(
+                    'first_name' => 'User'
+                )
+            )
+        )->get();
+
+        $this->assertEquals(5, count($result));
+
+        \DB::rollback();
+    }
+
+    /**
+     * Search test 2
+     */
+    public function testMultiFieldSearch()
+    {
+        \DB::beginTransaction();
+
+        $dbMapper = new \Netinteractive\Elegant\Mapper\DbMapper('User');
+        $result = $dbMapper->search(
+            array(
+                'User' => array(
+                    'first_name' => 'User',
+                    'last_name'  => 'Two'
+                )
+            )
+        )->get();
+
+        $this->assertEquals(1, count($result));
+        $this->assertEquals('User', $result[0]->first_name);
+        $this->assertEquals('Two', $result[0]->last_name);
+
+        \DB::rollback();
+    }
+
+    /**
+     * Search test 3
+     */
+    public function testSearchNotSearchable()
+    {
+        \DB::beginTransaction();
+
+        $dbMapper = new \Netinteractive\Elegant\Mapper\DbMapper('User');
+        $result = $dbMapper->search(
+            array(
+                'User' => array(
+                    'first_name' => 'User',
+                    'tu__id'  => '1'
+                )
+            )
+        )->get();
+
+        $this->assertEquals(5, count($result));
+
+
+        \DB::rollback();
+    }
+
+    /**
+     * Search test 3
+     */
+    public function testSearchOrOperator()
+    {
+        \DB::beginTransaction();
+
+        $dbMapper = new \Netinteractive\Elegant\Mapper\DbMapper('User');
+        $result = $dbMapper->search(
+            array(
+                'User' => array(
+                    'email' => 'user1@hot.com',
+                    'last_name' => 'Five'
+                )
+            ), array(), 'OR'
+        )->get();
+
+        $this->assertEquals(2, count($result));
+
+
+        \DB::rollback();
+    }
+
+
 }
