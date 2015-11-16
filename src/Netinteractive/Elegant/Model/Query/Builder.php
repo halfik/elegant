@@ -61,6 +61,7 @@ class Builder extends QueryBuilder
      */
     public function get($columns = array('*'))
     {
+        $this->whereSoftDeleted();
         $records = $this->createRecords($columns);
 
         // If we actually found models we will also eager load any relationships that
@@ -73,6 +74,19 @@ class Builder extends QueryBuilder
         return \App::make('ni.elegant.model.collection', array($records));
     }
 
+    /**
+     * Method checks if record is soft deleted type and adds propere where statment to the query
+     */
+    protected function whereSoftDeleted()
+    {
+        if ($this->getRecord()->getBlueprint()->softDelete() === true){
+            $deletedAtColumn =  $this->getFrom().'.'. $this->getRecord()->getBlueprint()->getDeletedAt();
+            $this->whereNull($deletedAtColumn);
+        }
+
+        return $this;
+    }
+
     ##RECORD
     /**
      * @param Record $record
@@ -81,6 +95,8 @@ class Builder extends QueryBuilder
     public function setRecord(Record $record)
     {
         $this->record = $record;
+        $this->from($this->record->getBlueprint()->getStorageName());
+
         return $this;
     }
 

@@ -10,6 +10,7 @@ class Blueprint extends \Netinteractive\Elegant\Model\Blueprint
         $this->primaryKey = array('id');
         $this->incrementingPk = 'id';
         $this->timestamps = true;
+        $this->softDelete = true;
 
 
         $this->getRelationManager()->hasMany('patientData','PatientData', array('patient__id'), array('id') );

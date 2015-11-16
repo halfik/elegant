@@ -359,11 +359,6 @@ class DbMapper implements MapperInterface
         $q = $this->getNewQuery();
 
 
-        $bluePrint =  $this->emptyRecord->getBlueprint();
-
-        if ($bluePrint->softDelete()){
-            $q->whereNull($bluePrint->getStorageName().'.'.$bluePrint->getDeletedAt());
-        }
 
         $data = $q->find($ids, $columns);
 
@@ -491,13 +486,7 @@ class DbMapper implements MapperInterface
     {
         #we pass record  to query builder
         if ($this->query->getRecord() == null){
-            $this->query->setRecord($this->createRecord());
-
-            # if record is softDelete type we ensure that query builder will take only none deleted records
-            if ($this->query->getRecord()->getBlueprint()->softDelete() === true){
-                $deletedAtColumns =  $this->query->getFrom().'.'. $this->query->getRecord()->getBlueprint()->getDeletedAt();
-                $this->query->whereNull($deletedAtColumns);
-            }
+            $this->query->setRecord($this->emptyRecord);
         }
 
         $this->query->setConnection($this->connection);
@@ -513,14 +502,8 @@ class DbMapper implements MapperInterface
     {
         $q = \App::make('ni.elegant.model.query.builder', array($this->connection,  $this->connection->getQueryGrammar(), $this->connection->getPostProcessor()));
 
-        $q->from($this->emptyRecord->getBlueprint()->getStorageName());
-        $q->setRecord($this->emptyRecord);
+       $q->setRecord($this->emptyRecord);
 
-        # if record is softDelete type we ensure that query builder will take only none deleted records
-        if ($q->getRecord()->getBlueprint()->softDelete() === true){
-            $deletedAtColumns =  $q->getFrom().'.'. $q->getRecord()->getBlueprint()->getDeletedAt();
-            $q->whereNull($deletedAtColumns);
-        }
 
         return $q;
     }

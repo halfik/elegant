@@ -670,7 +670,7 @@ class DbMapperTest extends ElegantTest
     {
         \DB::beginTransaction();
 
-        $dbMapper = new \Netinteractive\Elegant\Mapper\DbMapper('User');
+        $dbMapper = new \Netinteractive\Elegant\Mapper\DbMapper('Patient');
         $dbMapper->where('id', '=', 1);
         $q = $dbMapper->getQuery();
 
@@ -683,20 +683,64 @@ class DbMapperTest extends ElegantTest
     }
 
     /**
-     * get query test 1
+     * get query test 2
+     */
+    public function testGetQueryDeletedAt()
+    {
+        \DB::beginTransaction();
+
+        $dbMapper = new \Netinteractive\Elegant\Mapper\DbMapper('Patient');
+
+        $record = $dbMapper->find(1);
+        $dbMapper->delete($record);
+
+        $dbMapper->where('id', '=', 1);
+        $q = $dbMapper->getQuery();
+
+        $result = $q->get();
+
+        $this->assertEquals(0, count($result));
+
+        \DB::rollback();
+    }
+
+    /**
+     * get new query test 1
      */
     public function testGetNewQuery()
     {
         \DB::beginTransaction();
 
-        $dbMapper = new \Netinteractive\Elegant\Mapper\DbMapper('User');
+        $dbMapper = new \Netinteractive\Elegant\Mapper\DbMapper('Patient');
         $dbMapper->where('id', '=', 1);
         $q = $dbMapper->getNewQuery();
 
         $result = $q->get();
 
         $this->assertEquals('Netinteractive\Elegant\Model\Query\Builder', get_class($q));
-        $this->assertEquals(5, count($result));
+        $this->assertEquals(2, count($result));
+
+        \DB::rollback();
+    }
+
+    /**
+     * get new query test 2
+     */
+    public function testGetNewQueryDeletedAt()
+    {
+        \DB::beginTransaction();
+
+        $dbMapper = new \Netinteractive\Elegant\Mapper\DbMapper('Patient');
+
+        $record = $dbMapper->find(1);
+        $dbMapper->delete($record);
+
+        $dbMapper->where('id', '=', 1);
+        $q = $dbMapper->getNewQuery();
+
+        $result = $q->get();
+
+        $this->assertEquals(1, count($result));
 
         \DB::rollback();
     }
