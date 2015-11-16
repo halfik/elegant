@@ -663,5 +663,42 @@ class DbMapperTest extends ElegantTest
         \DB::rollback();
     }
 
+    /**
+     * get query test 1
+     */
+    public function testGetQuery()
+    {
+        \DB::beginTransaction();
+
+        $dbMapper = new \Netinteractive\Elegant\Mapper\DbMapper('User');
+        $dbMapper->where('id', '=', 1);
+        $q = $dbMapper->getQuery();
+
+        $result = $q->get();
+
+        $this->assertEquals('Netinteractive\Elegant\Model\Query\Builder', get_class($q));
+        $this->assertEquals(1, count($result));
+
+        \DB::rollback();
+    }
+
+    /**
+     * get query test 1
+     */
+    public function testGetNewQuery()
+    {
+        \DB::beginTransaction();
+
+        $dbMapper = new \Netinteractive\Elegant\Mapper\DbMapper('User');
+        $dbMapper->where('id', '=', 1);
+        $q = $dbMapper->getNewQuery();
+
+        $result = $q->get();
+
+        $this->assertEquals('Netinteractive\Elegant\Model\Query\Builder', get_class($q));
+        $this->assertEquals(5, count($result));
+
+        \DB::rollback();
+    }
 
 }
