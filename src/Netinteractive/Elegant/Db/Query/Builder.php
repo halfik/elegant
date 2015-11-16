@@ -66,6 +66,7 @@ class Builder extends BaseBuilder
             }
 
             $this->from = $this->getConnection()->raw(sprintf('(%s) as %s', $from->prepareQuery(), $alias));
+
             $this->mergeBindings($from);
         } else {
             $this->from = $from;
@@ -89,11 +90,24 @@ class Builder extends BaseBuilder
     }
 
     /**
+     * Retrun list of with query statments
+     * @param null|string $alias
+     * @return array
+     */
+    public function getWith($alias = null)
+    {
+        if (!empty($alias) && isSet($this->with[$alias])){
+            return $this->with[$alias];
+        }
+        return $this->with;
+    }
+
+    /**
      * Execute a query for a single record by ID.
      *
      * @param  array $ids
      * @param  array $columns
-     * @return mixed|static
+     * @return \stdClass
      */
     public function find($ids, $columns = array('*'))
     {
@@ -167,6 +181,15 @@ class Builder extends BaseBuilder
     {
         $this->comments[] = $comment;
         return $this;
+    }
+
+    /**
+     * Return list of comments
+     * @return array
+     */
+    public function getComments()
+    {
+        return $this->comments;
     }
 
     /**
