@@ -22,4 +22,23 @@ class ElegantTest  extends \PHPUnit_Framework_TestCase
     protected function tearDown()
     {
     }
+
+
+    /**
+     * Allows to test private and protected methods
+     * @param string|object $class
+     * @param $method
+     * @return ReflectionMethod
+     */
+    protected static function getPrivateMethod($class, $method)
+    {
+        if (is_object($class)){
+            $class = get_class($class);
+        }
+
+        $class = new ReflectionClass($class);
+        $method = $class->getMethod($method);
+        $method->setAccessible(true);
+        return $method;
+    }
 }

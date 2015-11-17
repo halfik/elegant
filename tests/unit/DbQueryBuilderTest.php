@@ -308,12 +308,147 @@ class DbQueryBuilderTest extends ElegantTest
         $q->from('patient_data');
         $q->where('patient_data.first_name', '=', 'Adam', 'and', 'my_alias');
 
-        $q->setBinding('where','my_alias', 'John');
+        $bidingResponse = $q->setBinding('where','my_alias', 'John');
+        $result = $q->get();
+
+        $this->assertTrue($bidingResponse);
+        $this->assertEquals(1 , count($result));
+        $this->assertEquals('John' , $result[0]->first_name);
+    }
+
+    /**
+     * set bidings test 9.1
+     */
+    public function testSetBindings_False()
+    {
+        $q = $this->builder->newQuery();
+        $q->from('patient_data');
+        $q->where('patient_data.first_name', '=', 'Adam', 'and', 'my_alias');
+
+        $bidingResponse = $q->setBinding('where','my_alias2', 'xxx');
+
+        $this->assertFalse($bidingResponse);
+    }
+
+    /**
+     * set wheres test 10.0
+     */
+    public function testSetWheres()
+    {
+        $method = $this->getPrivateMethod('\Netinteractive\Elegant\Db\Query\Builder', 'setWheres');
+
+        $q = $this->builder->newQuery();
+        $q->from('patient_data');
+        $q->where('id', '=', 1);
+
+        $method->invokeArgs($q, array( array( array(
+            "type" => "Basic",
+            "column" => "first_name",
+            "operator" => "=",
+            "value" => 'John',
+            "boolean" => "and"
+        )) ));
+
         $result = $q->get();
 
         $this->assertEquals(1 , count($result));
         $this->assertEquals('John' , $result[0]->first_name);
     }
+
+    /**
+     * get wheres test 10.0
+     */
+    public function testGetWheres()
+    {
+        $method = $this->getPrivateMethod('\Netinteractive\Elegant\Db\Query\Builder', 'getWheres');
+
+        $q = $this->builder->newQuery();
+        $q->from('patient_data');
+        $q->where('id', '=', 1);
+
+        $result = $method->invokeArgs($q, array());
+
+        $this->assertEquals(1 , count($result));
+        $this->assertEquals('id' , $result[0]['column']);
+        $this->assertEquals('=' , $result[0]['operator']);
+        $this->assertEquals(1 , $result[0]['value']);
+    }
+
+    /**
+     * clear wheres test 11.0
+     */
+    public function testClearWheres()
+    {
+        $method = $this->getPrivateMethod('\Netinteractive\Elegant\Db\Query\Builder', 'clearWheres');
+
+        $q = $this->builder->newQuery();
+        $q->from('patient_data');
+        $q->where('id', '=', 1);
+
+        $method->invokeArgs($q, array());
+
+        $method = $this->getPrivateMethod('\Netinteractive\Elegant\Db\Query\Builder', 'getWheres');
+        $result = $method->invokeArgs($q, array());
+
+        $this->assertTrue(empty($result));
+    }
+
+    /**
+     * where test 12.0
+     */
+    public function testWhere_ColumnArray()
+    {
+        $q = $this->builder->newQuery();
+        $q->from('patient_data');
+        $q->where(array(
+            'patient_data.first_name' => 'Adam',
+            'med__id' => 1
+        ));
+
+        $result = $q->get();
+        $this->assertEquals(1 , count($result));
+        $this->assertEquals('Adam' , $result[0]->first_name);
+        $this->assertEquals(1 , $result[0]->med__id);
+
+    }
+
+    /**
+     * where test 12.1
+     */
+    public function testWhere_TwoArgs()
+    {
+        $q = $this->builder->newQuery();
+        $q->from('patient_data');
+        $q->where('patient_data.med__id', 1);
+
+        $result = $q->get();
+        $this->assertEquals(2 , count($result));
+        $this->assertEquals('John' , $result[0]->first_name);
+        $this->assertEquals('Adam' , $result[1]->first_name);
+        $this->assertEquals(1 , $result[0]->med__id);
+
+    }
+
+
+    /**
+     * where test 12.2
+     */
+    public function testWhere_ClosureColumn()
+    {
+        $q = $this->builder->newQuery();
+        $q->from('patient_data');
+        $q->where(function($q){
+            $q->where('patient_data.med__id', 1);
+        });
+
+        $result = $q->get();
+        $this->assertEquals(2 , count($result));
+        $this->assertEquals('John' , $result[0]->first_name);
+        $this->assertEquals('Adam' , $result[1]->first_name);
+        $this->assertEquals(1 , $result[0]->med__id);
+
+    }
+
 
 
 

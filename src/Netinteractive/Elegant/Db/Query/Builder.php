@@ -222,7 +222,14 @@ class Builder extends BaseBuilder
      */
     protected function setWheres(array $wheres)
     {
-        $this->wheres = $wheres;
+        $this->clearWheres();
+        $this->bindings['where'] = array();
+
+        foreach ($wheres AS $where){
+            $alias = isSet($where['alias']) ? $where['alias'] : null;
+            $this->where($where['column'], $where['operator'], $where['value'], $where['boolean'], $alias);
+        }
+
         return $this;
     }
 
@@ -276,8 +283,6 @@ class Builder extends BaseBuilder
         // and keep going. Otherwise, we'll require the operator to be passed in.
         if (func_num_args() == 2) {
             list($value, $operator) = array($operator, '=');
-        } elseif ($this->invalidOperatorAndValue($operator, $value)) {
-            throw new \InvalidArgumentException(_("Value must be provided."));
         }
 
         // If the columns is actually a Closure instance, we will assume the developer
@@ -868,7 +873,7 @@ class Builder extends BaseBuilder
     {
 
         #We have to wrap wheres with other where statement, so query filter mechanism won't broke our original query
-        $wheres = $this->getWheres();
+        /*$wheres = $this->getWheres();
         $this->clearWheres();
 
 
@@ -879,7 +884,7 @@ class Builder extends BaseBuilder
             }
 
             return $query;
-        });
+        });*/
 
         #Here we fire event that will allow to modify query
         \Event::fire('ni.elegant.db.builder.modify', array($this), false);
