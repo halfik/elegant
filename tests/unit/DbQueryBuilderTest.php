@@ -50,7 +50,7 @@ class DbQueryBuilderTest extends ElegantTest
     /**
      * from test 2.1
      */
-    public function testFromQuery()
+    public function testFrom_Query()
     {
         $dbMapper = new \Netinteractive\Elegant\Mapper\DbMapper('PatientData');
         $patientQuery = $dbMapper->getNewQuery()->orderBy('id');
@@ -68,7 +68,7 @@ class DbQueryBuilderTest extends ElegantTest
     /**
      * from test 2.2
      */
-    public function testFromQueryAlias()
+    public function testFrom_QueryAlias()
     {
         $dbMapper = new \Netinteractive\Elegant\Mapper\DbMapper('PatientData');
         $patientQuery = $dbMapper->getNewQuery()->orderBy('id');
@@ -87,7 +87,7 @@ class DbQueryBuilderTest extends ElegantTest
     /**
      * from test 2.3
      */
-    public function testFromQueryAliasBindings()
+    public function testFrom_QueryAliasBindings()
     {
         $dbMapper = new \Netinteractive\Elegant\Mapper\DbMapper('PatientData');
         $patientQuery = $dbMapper->getNewQuery()->where('tu_id', '=', 2)->orWhere('med__id', '=', 1);
@@ -479,6 +479,20 @@ class DbQueryBuilderTest extends ElegantTest
 
     }
 
+    /**
+     * where raw test 13.1
+     */
+    public function testWhereRaw_Bindings()
+    {
+        $q = $this->builder->newQuery();
+        $q->from('patient_data');
+        $q->whereRaw('med__id = ?', array(2));
+
+        $result = $q->get();
+
+        $this->assertEquals(1 , count($result));
+    }
+
 
     /**
      * where raw test 15.0
@@ -493,7 +507,126 @@ class DbQueryBuilderTest extends ElegantTest
         $result = $q->get();
 
         $this->assertEquals(2 , count($result));
+    }
 
+
+
+    /**
+     * where between test 16.0
+     */
+    public function testWhereBetween()
+    {
+        $q = $this->builder->newQuery();
+        $q->from('patient_data');
+        $q->whereBetween('med__id', array(1,2));
+
+        $result = $q->get();
+
+        $this->assertEquals(3 , count($result));
+    }
+
+    /**
+     * or where between test 17.0
+     */
+    public function testOrWhereBetween()
+    {
+        $q = $this->builder->newQuery();
+        $q->from('user');
+        $q->whereRaw('id = 1');
+        $q->orWhereBetween('id', array(2,4));
+
+        $result = $q->get();
+
+        $this->assertEquals(4 , count($result));
+    }
+
+    /**
+     * where not between test 18.0
+     */
+    public function testWhereNotBetween()
+    {
+        $q = $this->builder->newQuery();
+        $q->from('user');
+        $q->whereNotBetween('id', array(1,4));
+
+        $result = $q->get();
+
+        $this->assertEquals(1 , count($result));
+    }
+
+    /**
+     *  where nor ot between test 19.0
+     */
+    public function testOrWhereNotBetween()
+    {
+        $q = $this->builder->newQuery();
+        $q->from('user');
+        $q->whereRaw('id = 1');
+        $q->orWhereNotBetween('id', array(2,4));
+
+        $result = $q->get();
+
+        $this->assertEquals(2 , count($result));
+    }
+
+    /**
+     * add binding test 20.0
+     */
+    public function testAddBinding()
+    {
+        $q = $this->builder->newQuery();
+        $q->from('user');
+        $q->whereRaw('id = ?');
+        $q->addBinding(1);
+
+        $result = $q->get();
+
+        $this->assertEquals(1 , count($result));
+    }
+
+    /**
+     * add binding test 20.1
+     */
+    public function testAddBinding_Alias()
+    {
+        $q = $this->builder->newQuery();
+        $q->from('user');
+        $q->whereRaw('id = ?', array(), 'and', 'my_alias');
+        $q->addBinding(1, 'where', 'my_alias');
+
+        $result = $q->get();
+
+        $this->assertEquals(1 , count($result));
+    }
+
+    /**
+     * add binding test 20.2
+     */
+    public function testAddBinding_Array()
+    {
+        $q = $this->builder->newQuery();
+        $q->from('user');
+        $q->whereRaw('id = ? OR id = ?');
+        $q->addBinding(array(1,2));
+
+        $result = $q->get();
+
+        $this->assertEquals(2 , count($result));
+    }
+
+    /**
+     * add binding test 20.3
+     */
+    public function testAddBinding_ArrayAlias()
+    {
+        $q = $this->builder->newQuery();
+        $q->from('user');
+        $q->whereRaw('id = ? or id = ?', array(), 'and', 'my_alias');
+        $q->addBinding(array(1,2), 'where', 'my_alias');
+
+        $result = $q->get();
+
+        $this->assertEquals(2 , count($result));
     }
 
 }

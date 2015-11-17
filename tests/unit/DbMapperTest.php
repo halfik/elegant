@@ -8,7 +8,7 @@ class DbMapperTest extends ElegantTest
     /**
      * Single field PK find test
      */
-    public function testFindSimplePk()
+    public function testFind_SimplePk()
     {
         $dbMapper = new \Netinteractive\Elegant\Mapper\DbMapper('Patient');
         $record = $dbMapper->find(1);
@@ -20,7 +20,7 @@ class DbMapperTest extends ElegantTest
     /**
      * Multiple field PK find test
      */
-    public function testFindMultiPk()
+    public function testFind_MultiPk()
     {
         $dbMapper = new \Netinteractive\Elegant\Mapper\DbMapper('PatientData');
         $record = $dbMapper->find(array('id'=>1, 'patient__id'=>1));
@@ -32,7 +32,7 @@ class DbMapperTest extends ElegantTest
     /**
      * Find exists test
      */
-    public function testFindExists()
+    public function testFind_Exists()
     {
         $dbMapper = new \Netinteractive\Elegant\Mapper\DbMapper('Patient');
         $record = $dbMapper->find(1);
@@ -43,7 +43,7 @@ class DbMapperTest extends ElegantTest
     /**
      * FindMany test 1
      **/
-    public function testFindManySimple()
+    public function testFindMany_Simple()
     {
         $searchParams = array(
             'PatientData' => array('zip_code'=>'00-002')
@@ -58,7 +58,7 @@ class DbMapperTest extends ElegantTest
     /**
      * FindMany test 2
      **/
-    public function testFindManyComplex()
+    public function testFindMany_Complex()
     {
         $searchParams = array(
             'PatientData' => array(
@@ -78,7 +78,7 @@ class DbMapperTest extends ElegantTest
     /**
      * FindMany test 3
      */
-    public function testFindManySoftDelete()
+    public function testFindMany_SoftDelete()
     {
         \DB::beginTransaction();
 
@@ -99,7 +99,7 @@ class DbMapperTest extends ElegantTest
     /**
      * FindMany exists test
      */
-    public function findManyExistTest()
+    public function testFindMany_Exist()
     {
         $searchParams = array(
             'PatientData' => array('zip_code'=>'00-002')
@@ -141,7 +141,7 @@ class DbMapperTest extends ElegantTest
     /**
      * Delete test 1
      */
-    public function testRecordDelete()
+    public function testDelete()
     {
         \DB::beginTransaction();
 
@@ -161,7 +161,7 @@ class DbMapperTest extends ElegantTest
     /**
      * delete test 2
      */
-    public function testNewRecordDelete()
+    public function testDelete_NewRecord()
     {
         $dbMapper = new \Netinteractive\Elegant\Mapper\DbMapper('PatientData');
 
@@ -196,7 +196,7 @@ class DbMapperTest extends ElegantTest
     /**
      * Delete test 2
      */
-    public function testRecordDeleteModifiedQuery()
+    public function testDelete_ModifiedQuery()
     {
         \DB::beginTransaction();
 
@@ -216,7 +216,7 @@ class DbMapperTest extends ElegantTest
     /**
      * Delete test 2
      */
-    public function testSimpleQueryBuilderDelete()
+    public function testDelete_SimpleQueryBuilder()
     {
         \DB::beginTransaction();
 
@@ -235,7 +235,7 @@ class DbMapperTest extends ElegantTest
     /**
      * Delete test 3
      */
-    public function testComplexQueryBuilderDelete()
+    public function testDelete_ComplexQueryBuilder()
     {
         \DB::beginTransaction();
 
@@ -259,7 +259,7 @@ class DbMapperTest extends ElegantTest
     /**
      * Soft delete test 1
      */
-    public function testSoftDelete()
+    public function testDelete_SoftDelete()
     {
         \DB::beginTransaction();
 
@@ -281,7 +281,7 @@ class DbMapperTest extends ElegantTest
     /**
      * Soft delete test 2
      */
-    public function testBuilderSoftDelete()
+    public function testDelete_BuilderSoftDelete()
     {
         \DB::beginTransaction();
 
@@ -358,7 +358,7 @@ class DbMapperTest extends ElegantTest
     /**
      * Fist test 2
      */
-    public function testFirstOrderBy()
+    public function testFirst_OrderBy()
     {
         $dbMapper = new \Netinteractive\Elegant\Mapper\DbMapper('Patient');
         $record = $dbMapper->orderBy('pesel')->first();
@@ -370,7 +370,7 @@ class DbMapperTest extends ElegantTest
     /**
      * Fist test 3
      */
-    public function testFirstWhere()
+    public function testFirst_Where()
     {
         $dbMapper = new \Netinteractive\Elegant\Mapper\DbMapper('PatientData');
         $record = $dbMapper->where('patient__id', '>', 0)->first();
@@ -384,7 +384,7 @@ class DbMapperTest extends ElegantTest
     /**
      * Save test 1
      */
-    public function testNewRecordSave()
+    public function testSave_NewRecord()
     {
         $dbMapper = new \Netinteractive\Elegant\Mapper\DbMapper('PatientData');
 
@@ -420,7 +420,7 @@ class DbMapperTest extends ElegantTest
     /**
      * Save test 2
      */
-    public function testExistsRecordSave()
+    public function testSave_ExistsRecord()
     {
         \DB::beginTransaction();
 
@@ -443,7 +443,7 @@ class DbMapperTest extends ElegantTest
     /**
      * Save test 3
      */
-    public function testNewRecordSaveTimestamps()
+    public function testSave_NewRecordTimestamps()
     {
         \DB::beginTransaction();
 
@@ -474,7 +474,7 @@ class DbMapperTest extends ElegantTest
     /**
      * Save test 4
      */
-    public function testExistsRecordSaveTimestamps()
+    public function testSave_ExistsRecordTimestamps()
     {
         \DB::beginTransaction();
 
@@ -504,7 +504,7 @@ class DbMapperTest extends ElegantTest
     /**
      * save many test 1
      */
-    public function testArraySaveManyRecords()
+    public function testSaveMany_Array()
     {
         \DB::beginTransaction();
 
@@ -537,7 +537,7 @@ class DbMapperTest extends ElegantTest
     /**
      * save many test 2
      */
-    public function testCollectionSaveManyRecords()
+    public function testSaveMany_Collection()
     {
         \DB::beginTransaction();
 
@@ -575,7 +575,7 @@ class DbMapperTest extends ElegantTest
     /**
      * Search test 1
      */
-    public function testSimpleSearch()
+    public function testSearch()
     {
         \DB::beginTransaction();
 
@@ -596,7 +596,7 @@ class DbMapperTest extends ElegantTest
     /**
      * Search test 2
      */
-    public function testMultiFieldSearch()
+    public function testSearch_MultiField()
     {
         \DB::beginTransaction();
 
@@ -620,7 +620,7 @@ class DbMapperTest extends ElegantTest
     /**
      * Search test 3
      */
-    public function testSearchNotSearchable()
+    public function testSearch_NotSearchable()
     {
         \DB::beginTransaction();
 
@@ -643,7 +643,7 @@ class DbMapperTest extends ElegantTest
     /**
      * Search test 3
      */
-    public function testSearchOrOperator()
+    public function testSearch_OrOperator()
     {
         \DB::beginTransaction();
 
@@ -685,7 +685,7 @@ class DbMapperTest extends ElegantTest
     /**
      * get query test 2
      */
-    public function testGetQueryDeletedAt()
+    public function testGetQuery_DeletedAt()
     {
         \DB::beginTransaction();
 
@@ -726,7 +726,7 @@ class DbMapperTest extends ElegantTest
     /**
      * get new query test 2
      */
-    public function testGetNewQueryDeletedAt()
+    public function testGetNewQuery_DeletedAt()
     {
         \DB::beginTransaction();
 

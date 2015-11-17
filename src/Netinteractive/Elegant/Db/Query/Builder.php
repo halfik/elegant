@@ -341,6 +341,10 @@ class Builder extends BaseBuilder
             throw new \InvalidArgumentException("Invalid binding type: {$type}.");
         }
 
+        if(!empty($alias) && !isSet($this->bindings[$type][$alias])){
+            $this->bindings[$type][$alias] = array();
+        }
+
         if (is_array($value)) {
             if ($alias) {
                 $this->bindings[$type][$alias] = array_values(array_merge($this->bindings[$type][$alias], $value));
