@@ -437,16 +437,16 @@ class DbQueryBuilderTest extends ElegantTest
     {
         $q = $this->builder->newQuery();
         $q->from('patient_data');
-        $q->where(function($q){
-            $q->where('patient_data.med__id', 1);
+        $q->where('med__id','IN',function($q){
+            $q->from('med');
+            $q->select('id');
+
         });
+        $q->get();
 
         $result = $q->get();
-        $this->assertEquals(2 , count($result));
-        $this->assertEquals('John' , $result[0]->first_name);
-        $this->assertEquals('Adam' , $result[1]->first_name);
-        $this->assertEquals(1 , $result[0]->med__id);
 
+        $this->assertEquals(3 , count($result));
     }
 
 
