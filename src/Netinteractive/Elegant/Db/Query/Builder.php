@@ -370,7 +370,7 @@ class Builder extends BaseBuilder
      * @param  string $alias
      * @return $this
      */
-    protected function whereSub($column, $operator, Closure $callback, $boolean, $alias = null)
+    protected function whereSub($column, $operator, \Closure $callback, $boolean, $alias = null)
     {
         $type = 'Sub';
 
