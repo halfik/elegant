@@ -122,7 +122,7 @@ class DbQueryBuilderTest extends ElegantTest
     /**
      * find test 4.0
      */
-    public function testFindSimpleId()
+    public function testFind_SimpleId()
     {
         $q = $this->builder->newQuery();
         $q->from('patient');
@@ -136,7 +136,7 @@ class DbQueryBuilderTest extends ElegantTest
     /**
      * find test 4.1
      */
-    public function testFindByField()
+    public function testFind_ByField()
     {
         $q = $this->builder->newQuery();
         $q->from('patient_data');
@@ -152,7 +152,7 @@ class DbQueryBuilderTest extends ElegantTest
     /**
      * find test 4.2
      */
-    public function testFindMultiKeyId()
+    public function testFind_MultiKeyId()
     {
         $q = $this->builder->newQuery();
         $q->from('patient_data');
@@ -170,7 +170,7 @@ class DbQueryBuilderTest extends ElegantTest
     /**
      * find test 4.3
      */
-    public function testFindColums()
+    public function testFind_Colums()
     {
         $q = $this->builder->newQuery();
         $q->from('patient_data');
@@ -206,7 +206,7 @@ class DbQueryBuilderTest extends ElegantTest
     /**
      * delete test 5.1
      */
-    public function testDeleteMultiKey()
+    public function testDelete_MultiKey()
     {
         \DB::beginTransaction();
 
@@ -232,7 +232,7 @@ class DbQueryBuilderTest extends ElegantTest
     /**
      * delete test 5.2
      */
-    public function testDeleteNoId()
+    public function testDelete_NoId()
     {
         \DB::beginTransaction();
 
@@ -244,6 +244,75 @@ class DbQueryBuilderTest extends ElegantTest
         $this->assertEquals(0 , $q->count());
 
         \DB::rollback();
+    }
+
+
+    /**
+     * first test 6.0
+     */
+    public function testFirst()
+    {
+        $q = $this->builder->newQuery();
+        $q->from('patient_data');
+
+        $result = $q->first();
+        $this->assertEquals(1 , $result->id);
+    }
+
+    /**
+     * first test 6.1
+     */
+    public function testFirst_Columns()
+    {
+        $q = $this->builder->newQuery();
+        $q->from('patient_data');
+
+        $result = $q->first(array('id', 'first_name'));
+
+        $this->assertEquals('John' , $result->first_name);
+        $this->assertEquals(1 , $result->id);
+        $this->assertFalse(isSet($result->last_nane));
+        $this->assertEquals(2 ,count((array)$result));
+    }
+
+    /**
+     * test get from 7.0
+     */
+    public function testGetFrom()
+    {
+        $q = $this->builder->newQuery();
+        $q->from('test');
+
+        $this->assertEquals('test' , $q->getFrom());
+    }
+
+    /**
+     * add comment test 8.0
+     */
+    public function testAddComment()
+    {
+        $q = $this->builder->newQuery();
+        $q->addComment('my comment');
+
+        $comments = $q->getComments();
+        $this->assertEquals(1 , count($comments));
+        $this->assertEquals('my comment' , $comments[0]);
+    }
+
+    /**
+     * set bidings test 9.0
+     */
+    public function testSetBindings()
+    {
+        $q = $this->builder->newQuery();
+        $q->from('patient_data');
+        $q->where('patient_data.first_name', '=', 'Adam', 'and', 'my_alias');
+
+        $q->setBinding('where','my_alias', 'John');
+        $result = $q->get();
+
+        $this->assertEquals(1 , count($result));
+        $this->assertEquals('John' , $result[0]->first_name);
     }
 
 
