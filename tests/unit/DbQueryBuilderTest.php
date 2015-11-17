@@ -449,7 +449,51 @@ class DbQueryBuilderTest extends ElegantTest
         $this->assertEquals(3 , count($result));
     }
 
+    /**
+     * where test 13.0
+     */
+    public function testOrWhere()
+    {
+        $q = $this->builder->newQuery();
+        $q->from('patient_data');
+        $q->where('med__id','=',1);
+        $q->orWhere('med__id', '=', 2);
+
+        $result = $q->get();
+
+        $this->assertEquals(3 , count($result));
+    }
+
+    /**
+     * where raw test 14.0
+     */
+    public function testWhereRaw()
+    {
+        $q = $this->builder->newQuery();
+        $q->from('patient_data');
+        $q->whereRaw('med__id = 2');
+
+        $result = $q->get();
+
+        $this->assertEquals(1 , count($result));
+
+    }
 
 
+    /**
+     * where raw test 15.0
+     */
+    public function testOrWhereRaw()
+    {
+        $q = $this->builder->newQuery();
+        $q->from('patient_data');
+        $q->whereRaw('med__id = 2');
+        $q->orWhereRaw('first_name = \'John\'');
+
+        $result = $q->get();
+
+        $this->assertEquals(2 , count($result));
+
+    }
 
 }
