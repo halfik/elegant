@@ -224,6 +224,7 @@ class DbSearchTranslatorTest extends  ElegantTest
     {
         Translator::$alias = 'user';
         $this->assertEquals('user.id', Translator::prepareField('id'));
+        Translator::$alias = null;
     }
 
 

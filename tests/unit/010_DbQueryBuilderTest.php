@@ -790,7 +790,7 @@ class DbQueryBuilderTest extends ElegantTest
     {
         $q = $this->builder->newQuery();
         $q->from('user');
-        
+
         $q->whereExists(function($q2){
             $q2->from('patient');
             $q2->where('id', '=', 1);
