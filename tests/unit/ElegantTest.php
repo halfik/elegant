@@ -27,10 +27,10 @@ class ElegantTest  extends \PHPUnit_Framework_TestCase
     /**
      * Allows to test private and protected methods
      * @param string|object $class
-     * @param $method
+     * @param string $method
      * @return ReflectionMethod
      */
-    protected static function getPrivateMethod($class, $method)
+    protected function getPrivateMethod($class, $method)
     {
         if (is_object($class)){
             $class = get_class($class);
@@ -40,5 +40,19 @@ class ElegantTest  extends \PHPUnit_Framework_TestCase
         $method = $class->getMethod($method);
         $method->setAccessible(true);
         return $method;
+    }
+
+    /**
+     * Call pirvate/protected method of object
+     * @param object $class
+     * @param string $method
+     * @param array $args
+     * @return mixed
+     */
+    protected function  callPrivateMethod($object, $method, array $args=array())
+    {
+
+        $method = $this->getPrivateMethod($object, $method);
+        return $method->invokeArgs($object, $args);
     }
 }

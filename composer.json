@@ -25,7 +25,8 @@
         "netinteractive/seed": "1.0.*@dev"
     },
     "require-dev": {
-      "codeception/codeception": "*"
+      "codeception/codeception": "*",
+      "ext-runkit" : "*"
     },
     "autoload": {
         "classmap": [

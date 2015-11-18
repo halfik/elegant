@@ -395,6 +395,7 @@ class DbQueryBuilderTest extends ElegantTest
 
     /**
      * where test 12.0
+     * @covers \Netinteractive\Elegant\Db\Query\Builder::where
      */
     public function testWhere_ColumnArray()
     {
@@ -414,6 +415,7 @@ class DbQueryBuilderTest extends ElegantTest
 
     /**
      * where test 12.1
+     * @covers \Netinteractive\Elegant\Db\Query\Builder::where
      */
     public function testWhere_TwoArgs()
     {
@@ -426,12 +428,12 @@ class DbQueryBuilderTest extends ElegantTest
         $this->assertEquals('John' , $result[0]->first_name);
         $this->assertEquals('Adam' , $result[1]->first_name);
         $this->assertEquals(1 , $result[0]->med__id);
-
     }
 
 
     /**
      * where test 12.2
+     * @covers \Netinteractive\Elegant\Db\Query\Builder::where
      */
     public function testWhere_ClosureColumn()
     {
@@ -660,8 +662,8 @@ class DbQueryBuilderTest extends ElegantTest
         $method = $this->getPrivateMethod($q, 'whereSub');
         $method->invokeArgs($q, $args);
 
-        $getWheres = $this->getPrivateMethod($q, 'getWheres');
-        $result = $getWheres->invokeArgs($q, array());
+
+        $result= $this->callPrivateMethod($q, 'getWheres');
 
         $this->assertTrue(isSet( $result[0]));
         $this->assertEquals('Sub' , $result[0]['type']);
@@ -686,8 +688,7 @@ class DbQueryBuilderTest extends ElegantTest
         $method = $this->getPrivateMethod($q, 'whereSub');
         $method->invokeArgs($q, $args);
 
-        $getWheres = $this->getPrivateMethod($q, 'getWheres');
-        $result = $getWheres->invokeArgs($q, array());
+        $result= $this->callPrivateMethod($q, 'getWheres');
 
         $this->assertTrue(isSet( $result['test']));
         $this->assertEquals('Sub' , $result['test']['type']);
