@@ -793,13 +793,125 @@ class DbQueryBuilderTest extends ElegantTest
 
         $q->whereExists(function($q2){
             $q2->from('patient');
-            $q2->where('id', '=', 1);
+            $q2->whereRaw('patient.user__id = "user".id');
         });
 
 
         $result = $q->get();
+        $this->assertEquals(2, count($result));
+    }
+
+    /**
+     * @covers \Netinteractive\Elegant\Db\Query\Builder::orWhereExists
+     * @group where
+     */
+    public function testOrWhereExists()
+    {
+        $q = $this->builder->newQuery();
+        $q->from('user');
+
+        $q->whereExists(function($q2){
+            $q2->from('patient');
+            $q2->whereRaw('patient.user__id = "user".id');
+        });
+        $q->orWhereExists(function($q2){
+            $q2->from('med');
+            $q2->whereRaw('med.id = "user".med__id');
+        });
+
+
+        $result = $q->get();
+        $this->assertEquals(3, count($result));
+    }
+
+    /**
+     * @covers \Netinteractive\Elegant\Db\Query\Builder::whereNotExists
+     * @group where
+     */
+    public function testWhereNotExists()
+    {
+        $q = $this->builder->newQuery();
+        $q->from('user');
+
+        $q->whereNotExists(function($q2){
+            $q2->from('patient');
+            $q2->whereRaw('patient.user__id = "user".id');
+        });
+
+        $result = $q->get();
+        $this->assertEquals(3, count($result));
+    }
+
+    /**
+     * @covers \Netinteractive\Elegant\Db\Query\Builder::orWhereNotExists
+     * @group where
+     */
+    public function testOrWhereNotExists()
+    {
+        $q = $this->builder->newQuery();
+        $q->from('user');
+
+        $q->whereNotExists(function($q2){
+            $q2->from('patient');
+            $q2->whereRaw('patient.user__id = "user".id');
+        });
+
+        $q->orWhereNotExists(function($q2){
+            $q2->from('med');
+            $q2->whereRaw('med.id = "user".med__id');
+        });
+
+        $result = $q->get();
         $this->assertEquals(5, count($result));
     }
+
+    /**
+     * @covers \Netinteractive\Elegant\Db\Query\Builder::whereIn
+     * @group where
+     */
+    public function testWhereIn()
+    {
+        $q = $this->builder->newQuery();
+        $q->from('user');
+        $q->whereIn('id', 1);
+
+        $result = $q->get();
+        $this->assertEquals(1, count($result));
+        $this->assertEquals(1, $result[0]->id);
+    }
+
+    /**
+     * @covers \Netinteractive\Elegant\Db\Query\Builder::whereIn
+     * @group where
+     */
+    public function testWhereIn_Closure()
+    {
+        $q = $this->builder->newQuery();
+        $q->from('user');
+        $q->whereIn('id', function($q2){
+            $q2->from('patient');
+            $q2->select('user__id');
+        });
+
+        $result = $q->get();
+        $this->assertEquals(2, count($result));
+    }
+
+    /**
+     * @covers \Netinteractive\Elegant\Db\Query\Builder::whereIn
+     * @group where
+     */
+    public function testWhereIn_Arrayble()
+    {
+        $q = $this->builder->newQuery();
+        $q->from('user');
+        $q->whereIn('id', array(1,2,3));
+
+        $result = $q->get();
+        $this->assertEquals(3, count($result));
+    }
+
+
 
     /**
      * @covers \Netinteractive\Elegant\Db\Query\Builder::where
