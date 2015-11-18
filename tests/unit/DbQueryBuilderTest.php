@@ -629,4 +629,68 @@ class DbQueryBuilderTest extends ElegantTest
         $this->assertEquals(2 , count($result));
     }
 
+    /**
+     * add binding test 20.4
+     * @expectedException InvalidArgumentException
+     */
+    public function testAddBinding_InvalidType()
+    {
+        $q = $this->builder->newQuery();
+        $q->from('user');
+        $q->whereRaw('id = ? or id = ?', array(), 'and', 'my_alias');
+        $q->addBinding(array(1,2), 'where2', 'my_alias');
+    }
+
+    /**
+     * where sub test 21.1
+     */
+    public function testWhereSub()
+    {
+        $q = $this->builder->newQuery();
+        $q->from('user');
+        $q->select('*');
+
+        $args = array(
+            'med__id', 'IN', function($q){
+                $q->from('med');
+                $q->select('id');
+            }, 'and'
+        );
+
+        $method = $this->getPrivateMethod($q, 'whereSub');
+        $method->invokeArgs($q, $args);
+
+        $getWheres = $this->getPrivateMethod($q, 'getWheres');
+        $result = $getWheres->invokeArgs($q, array());
+
+        $this->assertTrue(isSet( $result[0]));
+        $this->assertEquals('Sub' , $result[0]['type']);
+    }
+
+    /**
+     * where sub test 21.1
+     */
+    public function testWhereSub_Alias()
+    {
+        $q = $this->builder->newQuery();
+        $q->from('user');
+        $q->select('*');
+
+        $args = array(
+            'med__id', 'IN', function($q){
+                $q->from('med');
+                $q->select('id');
+            }, 'and', 'test'
+        );
+
+        $method = $this->getPrivateMethod($q, 'whereSub');
+        $method->invokeArgs($q, $args);
+
+        $getWheres = $this->getPrivateMethod($q, 'getWheres');
+        $result = $getWheres->invokeArgs($q, array());
+
+        $this->assertTrue(isSet( $result['test']));
+        $this->assertEquals('Sub' , $result['test']['type']);
+    }
+
 }

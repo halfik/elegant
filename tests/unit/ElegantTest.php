@@ -36,7 +36,7 @@ class ElegantTest  extends \PHPUnit_Framework_TestCase
             $class = get_class($class);
         }
 
-        $class = new ReflectionClass($class);
+        $class = new \ReflectionClass($class);
         $method = $class->getMethod($method);
         $method->setAccessible(true);
         return $method;
