@@ -868,6 +868,7 @@ class DbQueryBuilderTest extends ElegantTest
     /**
      * @covers \Netinteractive\Elegant\Db\Query\Builder::whereIn
      * @group where
+     * @group whereIn
      */
     public function testWhereIn()
     {
@@ -883,6 +884,7 @@ class DbQueryBuilderTest extends ElegantTest
     /**
      * @covers \Netinteractive\Elegant\Db\Query\Builder::whereIn
      * @group where
+     * @group whereIn
      */
     public function testWhereIn_Closure()
     {
@@ -895,6 +897,38 @@ class DbQueryBuilderTest extends ElegantTest
 
         $result = $q->get();
         $this->assertEquals(2, count($result));
+    }
+
+    /**
+     * @covers \Netinteractive\Elegant\Db\Query\Builder::orWhereIn
+     * @group where
+     * @group whereIn
+     */
+    public function testOrWhereIn()
+    {
+        $q = $this->builder->newQuery();
+        $q->from('user');
+        $q->whereIn('id', 1);
+        $q->orWhereIn('med__id', 1);
+        $q->orWhereIn('tu__id', 1);
+
+        $result = $q->get();
+        $this->assertEquals(3, count($result));
+    }
+
+    /**
+     * @covers \Netinteractive\Elegant\Db\Query\Builder::whereNotIn
+     * @group where
+     * @group whereIn
+     */
+    public function testWhereNotIn()
+    {
+        $q = $this->builder->newQuery();
+        $q->from('user');
+        $q->whereNotIn('id', 1);
+
+        $result = $q->get();
+        $this->assertEquals(4, count($result));
     }
 
     /**
@@ -911,6 +945,159 @@ class DbQueryBuilderTest extends ElegantTest
         $this->assertEquals(3, count($result));
     }
 
+    /**
+     * @covers \Netinteractive\Elegant\Db\Query\Builder::orWhereNotIn
+     * @group where
+     * @group whereIn
+     */
+    public function testOrWhereNotIn()
+    {
+        $q = $this->builder->newQuery();
+        $q->from('user');
+        $q->whereNotIn('id', 5);
+        $q->orWhereNotIn('id', array(1));
+
+        $result = $q->get();
+        $this->assertEquals(5, count($result));
+    }
+
+    /**
+     * @covers \Netinteractive\Elegant\Db\Query\Builder::whereInSub
+     * @group where
+     * @group whereIn
+     */
+    public function testWhereInSub()
+    {
+        $q = $this->builder->newQuery();
+        $q->from('user');
+        $this->callPrivateMethod($q, 'whereInSub', array('id', function($q2){
+            $q2->from('patient');
+            $q2->select('user__id');
+        }, 'AND', false));
+
+
+        $result = $q->get();
+        $this->assertEquals(2, count($result));
+    }
+
+    /**
+     * @covers \Netinteractive\Elegant\Db\Query\Builder::whereNull
+     * @group where
+     * @group whereNull
+     */
+    public function testWhereNull()
+    {
+        $q = $this->builder->newQuery();
+        $q->from('user');
+        $q->whereNull('med__id');
+
+        $result = $q->get();
+        $this->assertEquals(4, count($result));
+    }
+
+    /**
+     * @covers \Netinteractive\Elegant\Db\Query\Builder::orWhereNull
+     * @group where
+     * @group whereNull
+     */
+    public function testOrWhereNull()
+    {
+        $q = $this->builder->newQuery();
+        $q->from('user');
+        $q->whereRaw('id = ?', array(1));
+        $q->orWhereNull('med__id');
+
+        $result = $q->get();
+        $this->assertEquals(4, count($result));
+    }
+
+    /**
+     * @covers \Netinteractive\Elegant\Db\Query\Builder::whereNotNull
+     * @group where
+     * @group whereNull
+     */
+    public function testWhereNotNull()
+    {
+        $q = $this->builder->newQuery();
+        $q->from('user');
+        $q->whereNotNull('med__id');
+
+        $result = $q->get();
+        $this->assertEquals(1, count($result));
+    }
+
+
+
+    /**
+     * @covers \Netinteractive\Elegant\Db\Query\Builder::orWhereNotNull
+     * @group where
+     * @group whereNull
+     */
+    public function testOrWhereNotNull()
+    {
+        $q = $this->builder->newQuery();
+        $q->from('user');
+        $q->whereRaw('id = ?', array(1));
+        $q->orWhereNotNull('med__id');
+
+        $result = $q->get();
+        $this->assertEquals(2, count($result));
+    }
+
+
+    /**
+     * @covers \Netinteractive\Elegant\Db\Query\Builder::addDynamic
+     * @group where
+     * @group dynamicWhere
+     */
+    public function testAddDynamic()
+    {
+        $q = $this->builder->newQuery();
+        $q->from('user');
+        $this->callPrivateMethod($q, 'addDynamic', array(
+            'id',
+            'and',
+            array(1,2,3),
+            1
+        ));
+        
+        $result = $q->get();
+        $this->assertEquals(1, count($result));
+        $this->assertTrue(isSet($result[0]->id));
+        $this->assertEquals(2, $result[0]->id);
+    }
+
+
+    /**
+     * @covers \Netinteractive\Elegant\Db\Query\Builder::dynamicWhere
+     * @group where
+     * @group dynamicWhere
+     */
+    public function testDynamicWhere()
+    {
+        $q = $this->builder->newQuery();
+        $q->from('user');
+        $q->dynamicWhere('whereIdAndMed_Id', array(5,1));
+
+        $result = $q->get();
+        $this->assertEquals(1, count($result));
+    }
+
+
+    /**
+     * @covers \Netinteractive\Elegant\Db\Query\Builder::dynamicWhere
+     * @group where
+     * @group dynamicWhere
+     */
+    public function testDynamicWhere_Or()
+    {
+        $q = $this->builder->newQuery();
+        $q->from('user');
+        $q->dynamicWhere('whereIdOrMed_Id', array(1,1));
+
+        $result = $q->get();
+        $this->assertEquals(2, count($result));
+    }
 
 
     /**
