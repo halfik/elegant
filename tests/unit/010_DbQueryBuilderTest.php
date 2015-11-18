@@ -1,4 +1,4 @@
-
+`
 <?php
 
 use \Netinteractive\Elegant\Db\Query\Builder AS Builder;
@@ -26,7 +26,8 @@ class DbQueryBuilderTest extends ElegantTest
     }
 
     /**
-     * new query test 1.0
+     * @covers \Netinteractive\Elegant\Db\Query\Builder::mergeBindings
+     * @group binding
      */
     public function testNewQuery()
     {
@@ -36,7 +37,117 @@ class DbQueryBuilderTest extends ElegantTest
     }
 
     /**
-     * from test 2.0
+     * @covers \Netinteractive\Elegant\Db\Query\Builder::whereRaw
+     * @group where
+     */
+    public function testWhereRaw()
+    {
+        $q = $this->builder->newQuery();
+        $q->from('patient_data');
+        $q->whereRaw('med__id = 2');
+
+        $result = $q->get();
+
+        $this->assertEquals(1 , count($result));
+
+    }
+
+    /**
+     * @covers \Netinteractive\Elegant\Db\Query\Builder::whereRaw
+     * @group where
+     */
+    public function testWhereRaw_Bindings()
+    {
+        $q = $this->builder->newQuery();
+        $q->from('patient_data');
+        $q->whereRaw('med__id = ?', array(2));
+
+        $result = $q->get();
+
+        $this->assertEquals(1 , count($result));
+    }
+
+    /**
+     * @covers \Netinteractive\Elegant\Db\Query\Builder::addBiding
+     * @group binding
+     */
+    public function testAddBinding()
+    {
+        $q = $this->builder->newQuery();
+        $q->from('user');
+        $q->whereRaw('id = ?');
+        $q->addBinding(1);
+
+        $result = $q->get();
+
+        $this->assertEquals(1 , count($result));
+    }
+
+    /**
+     * @covers \Netinteractive\Elegant\Db\Query\Builder::addBiding
+     * @group binding
+     */
+    public function testAddBinding_Alias()
+    {
+        $q = $this->builder->newQuery();
+        $q->from('user');
+        $q->whereRaw('id = ?', array(), 'and', 'my_alias');
+        $q->addBinding(1, 'where', 'my_alias');
+
+        $result = $q->get();
+
+        $this->assertEquals(1 , count($result));
+    }
+
+    /**
+     * @covers \Netinteractive\Elegant\Db\Query\Builder::addBiding
+     * @group binding
+     */
+    public function testAddBinding_Array()
+    {
+        $q = $this->builder->newQuery();
+        $q->from('user');
+        $q->whereRaw('id = ? OR id = ?');
+        $q->addBinding(array(1,2));
+
+        $result = $q->get();
+
+        $this->assertEquals(2 , count($result));
+    }
+
+    /**
+     * @covers \Netinteractive\Elegant\Db\Query\Builder::addBiding
+     * @group binding
+     */
+    public function testAddBinding_ArrayAlias()
+    {
+        $q = $this->builder->newQuery();
+        $q->from('user');
+        $q->whereRaw('id = ? or id = ?', array(), 'and', 'my_alias');
+        $q->addBinding(array(1,2), 'where', 'my_alias');
+
+        $result = $q->get();
+
+        $this->assertEquals(2 , count($result));
+    }
+
+    /**
+     * @covers \Netinteractive\Elegant\Db\Query\Builder::addBiding
+     * @group binding
+     * @expectedException InvalidArgumentException
+     */
+    public function testAddBinding_InvalidType()
+    {
+        $q = $this->builder->newQuery();
+        $q->from('user');
+        $q->whereRaw('id = ? or id = ?', array(), 'and', 'my_alias');
+        $q->addBinding(array(1,2), 'where2', 'my_alias');
+    }
+
+
+    /**
+     * @covers \Netinteractive\Elegant\Db\Query\Builder::from
+     * @group from
      */
     public function testFrom()
     {
@@ -48,7 +159,8 @@ class DbQueryBuilderTest extends ElegantTest
     }
 
     /**
-     * from test 2.1
+     * @covers \Netinteractive\Elegant\Db\Query\Builder::from
+     * @group from
      */
     public function testFrom_Query()
     {
@@ -66,7 +178,8 @@ class DbQueryBuilderTest extends ElegantTest
     }
 
     /**
-     * from test 2.2
+     * @covers \Netinteractive\Elegant\Db\Query\Builder::from
+     * @group from
      */
     public function testFrom_QueryAlias()
     {
@@ -85,7 +198,8 @@ class DbQueryBuilderTest extends ElegantTest
     }
 
     /**
-     * from test 2.3
+     * @covers \Netinteractive\Elegant\Db\Query\Builder::from
+     * @group from
      */
     public function testFrom_QueryAliasBindings()
     {
@@ -101,9 +215,29 @@ class DbQueryBuilderTest extends ElegantTest
         $this->assertEquals(1, $result[1]);
     }
 
+    /**
+     * @covers \Netinteractive\Elegant\Db\Query\Builder::mergeBindings
+     * @group from
+     */
+    public function testMergeBindins()
+    {
+        $q = $this->builder->newQuery();
+        $q->addBinding(9);
+
+        $q2 = $this->builder->newQuery();
+        $q2->addBinding(5);
+
+        $q->mergeBindings($q2);
+        $bindings = $q->getBindings();
+
+        $this->assertContains(9, $bindings);
+        $this->assertContains(5, $bindings);
+    }
+
 
     /**
-     * add/get with test 3.0
+     * @covers \Netinteractive\Elegant\Db\Query\Builder::addWith
+     * @group with
      */
     public function testWith()
     {
@@ -120,7 +254,8 @@ class DbQueryBuilderTest extends ElegantTest
     }
 
     /**
-     * find test 4.0
+     * @covers \Netinteractive\Elegant\Db\Query\Builder::find
+     * @group get
      */
     public function testFind_SimpleId()
     {
@@ -135,7 +270,8 @@ class DbQueryBuilderTest extends ElegantTest
     }
 
     /**
-     * find test 4.1
+     * @covers \Netinteractive\Elegant\Db\Query\Builder::find
+     * @group get
      */
     public function testFind_ByField()
     {
@@ -151,7 +287,8 @@ class DbQueryBuilderTest extends ElegantTest
     }
 
     /**
-     * find test 4.2
+     * @covers \Netinteractive\Elegant\Db\Query\Builder::find
+     * @group get
      */
     public function testFind_MultiKeyId()
     {
@@ -169,7 +306,8 @@ class DbQueryBuilderTest extends ElegantTest
 
 
     /**
-     * find test 4.3
+     * @covers \Netinteractive\Elegant\Db\Query\Builder::find
+     * @group get
      */
     public function testFind_Colums()
     {
@@ -186,7 +324,8 @@ class DbQueryBuilderTest extends ElegantTest
     }
 
     /**
-     * delete test 5.0
+     * @covers \Netinteractive\Elegant\Db\Query\Builder::delete
+     * @group delete
      */
     public function testDelete()
     {
@@ -205,7 +344,8 @@ class DbQueryBuilderTest extends ElegantTest
     }
 
     /**
-     * delete test 5.1
+     * @covers \Netinteractive\Elegant\Db\Query\Builder::delete
+     * @group delete
      */
     public function testDelete_MultiKey()
     {
@@ -231,7 +371,8 @@ class DbQueryBuilderTest extends ElegantTest
     }
 
     /**
-     * delete test 5.2
+     * @covers \Netinteractive\Elegant\Db\Query\Builder::delete
+     * @group delete
      */
     public function testDelete_NoId()
     {
@@ -249,7 +390,8 @@ class DbQueryBuilderTest extends ElegantTest
 
 
     /**
-     * first test 6.0
+     * @covers \Netinteractive\Elegant\Db\Query\Builder::first
+     * @group get
      */
     public function testFirst()
     {
@@ -261,7 +403,8 @@ class DbQueryBuilderTest extends ElegantTest
     }
 
     /**
-     * first test 6.1
+     * @covers \Netinteractive\Elegant\Db\Query\Builder::first
+     * @group get
      */
     public function testFirst_Columns()
     {
@@ -276,8 +419,10 @@ class DbQueryBuilderTest extends ElegantTest
         $this->assertEquals(2 ,count((array)$result));
     }
 
+
     /**
-     * test get from 7.0
+     * @covers \Netinteractive\Elegant\Db\Query\Builder::getFrom
+     * @group from
      */
     public function testGetFrom()
     {
@@ -288,7 +433,8 @@ class DbQueryBuilderTest extends ElegantTest
     }
 
     /**
-     * add comment test 8.0
+     * @covers \Netinteractive\Elegant\Db\Query\Builder::getComments
+     * @group comment
      */
     public function testAddComment()
     {
@@ -301,7 +447,8 @@ class DbQueryBuilderTest extends ElegantTest
     }
 
     /**
-     * set bidings test 9.0
+     * @covers \Netinteractive\Elegant\Db\Query\Builder::setBinding
+     * @group biding
      */
     public function testSetBindings()
     {
@@ -318,7 +465,8 @@ class DbQueryBuilderTest extends ElegantTest
     }
 
     /**
-     * set bidings test 9.1
+     * @covers \Netinteractive\Elegant\Db\Query\Builder::setBinding
+     * @group biding
      */
     public function testSetBindings_False()
     {
@@ -332,7 +480,8 @@ class DbQueryBuilderTest extends ElegantTest
     }
 
     /**
-     * set wheres test 10.0
+     * @covers \Netinteractive\Elegant\Db\Query\Builder::setWheres
+     * @group where
      */
     public function testSetWheres()
     {
@@ -356,8 +505,10 @@ class DbQueryBuilderTest extends ElegantTest
         $this->assertEquals('John' , $result[0]->first_name);
     }
 
+
     /**
-     * get wheres test 10.0
+     * @covers \Netinteractive\Elegant\Db\Query\Builder::getWheres
+     * @group where
      */
     public function testGetWheres()
     {
@@ -376,7 +527,8 @@ class DbQueryBuilderTest extends ElegantTest
     }
 
     /**
-     * clear wheres test 11.0
+     * @covers \Netinteractive\Elegant\Db\Query\Builder::clearWheres
+     * @group where
      */
     public function testClearWheres()
     {
@@ -394,111 +546,14 @@ class DbQueryBuilderTest extends ElegantTest
         $this->assertTrue(empty($result));
     }
 
-    /**
-     * where test 12.0
-     * @covers \Netinteractive\Elegant\Db\Query\Builder::where
-     */
-    public function testWhere_ColumnArray()
-    {
-        $q = $this->builder->newQuery();
-        $q->from('patient_data');
-        $q->where(array(
-            'patient_data.first_name' => 'Adam',
-            'med__id' => 1
-        ));
 
-        $result = $q->get();
-        $this->assertEquals(1 , count($result));
-        $this->assertEquals('Adam' , $result[0]->first_name);
-        $this->assertEquals(1 , $result[0]->med__id);
 
-    }
 
-    /**
-     * where test 12.1
-     * @covers \Netinteractive\Elegant\Db\Query\Builder::where
-     */
-    public function testWhere_TwoArgs()
-    {
-        $q = $this->builder->newQuery();
-        $q->from('patient_data');
-        $q->where('patient_data.med__id', 1);
-
-        $result = $q->get();
-        $this->assertEquals(2 , count($result));
-        $this->assertEquals('John' , $result[0]->first_name);
-        $this->assertEquals('Adam' , $result[1]->first_name);
-        $this->assertEquals(1 , $result[0]->med__id);
-    }
 
 
     /**
-     * where test 12.2
-     * @covers \Netinteractive\Elegant\Db\Query\Builder::where
-     */
-    public function testWhere_ClosureColumn()
-    {
-        $q = $this->builder->newQuery();
-        $q->from('patient_data');
-        $q->where('med__id','IN',function($q){
-            $q->from('med');
-            $q->select('id');
-
-        });
-        $q->get();
-
-        $result = $q->get();
-
-        $this->assertEquals(3 , count($result));
-    }
-
-    /**
-     * where test 13.0
-     */
-    public function testOrWhere()
-    {
-        $q = $this->builder->newQuery();
-        $q->from('patient_data');
-        $q->where('med__id','=',1);
-        $q->orWhere('med__id', '=', 2);
-
-        $result = $q->get();
-
-        $this->assertEquals(3 , count($result));
-    }
-
-    /**
-     * where raw test 14.0
-     */
-    public function testWhereRaw()
-    {
-        $q = $this->builder->newQuery();
-        $q->from('patient_data');
-        $q->whereRaw('med__id = 2');
-
-        $result = $q->get();
-
-        $this->assertEquals(1 , count($result));
-
-    }
-
-    /**
-     * where raw test 13.1
-     */
-    public function testWhereRaw_Bindings()
-    {
-        $q = $this->builder->newQuery();
-        $q->from('patient_data');
-        $q->whereRaw('med__id = ?', array(2));
-
-        $result = $q->get();
-
-        $this->assertEquals(1 , count($result));
-    }
-
-
-    /**
-     * where raw test 15.0
+     * @covers \Netinteractive\Elegant\Db\Query\Builder::orWhereRaw
+     * @group where
      */
     public function testOrWhereRaw()
     {
@@ -515,7 +570,8 @@ class DbQueryBuilderTest extends ElegantTest
 
 
     /**
-     * where between test 16.0
+     * @covers \Netinteractive\Elegant\Db\Query\Builder::whereNotBetween
+     * @group where
      */
     public function testWhereBetween()
     {
@@ -529,7 +585,8 @@ class DbQueryBuilderTest extends ElegantTest
     }
 
     /**
-     * or where between test 17.0
+     * @covers \Netinteractive\Elegant\Db\Query\Builder::orWhereNotBetween
+     * @group where
      */
     public function testOrWhereBetween()
     {
@@ -544,7 +601,8 @@ class DbQueryBuilderTest extends ElegantTest
     }
 
     /**
-     * where not between test 18.0
+     * @covers \Netinteractive\Elegant\Db\Query\Builder::orWhereNotBetween
+     * @group where
      */
     public function testWhereNotBetween()
     {
@@ -558,7 +616,8 @@ class DbQueryBuilderTest extends ElegantTest
     }
 
     /**
-     *  where nor ot between test 19.0
+     * @covers \Netinteractive\Elegant\Db\Query\Builder::orWhereNotBetween
+     * @group where
      */
     public function testOrWhereNotBetween()
     {
@@ -572,80 +631,11 @@ class DbQueryBuilderTest extends ElegantTest
         $this->assertEquals(2 , count($result));
     }
 
-    /**
-     * add binding test 20.0
-     */
-    public function testAddBinding()
-    {
-        $q = $this->builder->newQuery();
-        $q->from('user');
-        $q->whereRaw('id = ?');
-        $q->addBinding(1);
 
-        $result = $q->get();
-
-        $this->assertEquals(1 , count($result));
-    }
 
     /**
-     * add binding test 20.1
-     */
-    public function testAddBinding_Alias()
-    {
-        $q = $this->builder->newQuery();
-        $q->from('user');
-        $q->whereRaw('id = ?', array(), 'and', 'my_alias');
-        $q->addBinding(1, 'where', 'my_alias');
-
-        $result = $q->get();
-
-        $this->assertEquals(1 , count($result));
-    }
-
-    /**
-     * add binding test 20.2
-     */
-    public function testAddBinding_Array()
-    {
-        $q = $this->builder->newQuery();
-        $q->from('user');
-        $q->whereRaw('id = ? OR id = ?');
-        $q->addBinding(array(1,2));
-
-        $result = $q->get();
-
-        $this->assertEquals(2 , count($result));
-    }
-
-    /**
-     * add binding test 20.3
-     */
-    public function testAddBinding_ArrayAlias()
-    {
-        $q = $this->builder->newQuery();
-        $q->from('user');
-        $q->whereRaw('id = ? or id = ?', array(), 'and', 'my_alias');
-        $q->addBinding(array(1,2), 'where', 'my_alias');
-
-        $result = $q->get();
-
-        $this->assertEquals(2 , count($result));
-    }
-
-    /**
-     * add binding test 20.4
-     * @expectedException InvalidArgumentException
-     */
-    public function testAddBinding_InvalidType()
-    {
-        $q = $this->builder->newQuery();
-        $q->from('user');
-        $q->whereRaw('id = ? or id = ?', array(), 'and', 'my_alias');
-        $q->addBinding(array(1,2), 'where2', 'my_alias');
-    }
-
-    /**
-     * where sub test 21.1
+     * @covers \Netinteractive\Elegant\Db\Query\Builder::whereSub
+     * @group where
      */
     public function testWhereSub()
     {
@@ -671,7 +661,8 @@ class DbQueryBuilderTest extends ElegantTest
     }
 
     /**
-     * where sub test 21.1
+     * @covers \Netinteractive\Elegant\Db\Query\Builder::whereSub
+     * @group where
      */
     public function testWhereSub_Alias()
     {
@@ -695,4 +686,122 @@ class DbQueryBuilderTest extends ElegantTest
         $this->assertEquals('Sub' , $result['test']['type']);
     }
 
+
+
+    /**
+     * @covers \Netinteractive\Elegant\Db\Query\Builder::addNestedWhereQuery
+     * @group where
+     */
+    public function testAddNestedWhereQuery()
+    {
+
+        $q = $this->builder->newQuery();
+        $q->from('user');
+
+
+        $q2 = $this->builder->newQuery();
+        $q2->from('med');
+        $q2->where('id', '=', 1);
+
+        $q->addNestedWhereQuery($q2);
+
+
+        $result = $q->first();
+
+        $this->assertTrue(isSet($result->id));
+        $this->assertEquals(1, $result->id);
+    }
+
+
+    /**
+     * @covers \Netinteractive\Elegant\Db\Query\Builder::whereNested
+     * @group where
+     */
+    public function testWhereNested()
+    {
+        $q = $this->builder->newQuery();
+        $q->from('user');
+        $q->whereNested(function($q){
+            $q->where('id', '=', 1);
+            $q->orWhere('id', '=', 2);
+        });
+
+
+        $result = $q->get();
+        $this->assertEquals(2, count($result));
+    }
+
+    /**
+     * @covers \Netinteractive\Elegant\Db\Query\Builder::where
+     * @group where
+     */
+    public function testWhere_ColumnArray()
+    {
+        $q = $this->builder->newQuery();
+        $q->from('patient_data');
+        $q->where(array(
+            'patient_data.first_name' => 'Adam',
+            'med__id' => 1
+        ));
+
+        $result = $q->get();
+        $this->assertEquals(1 , count($result));
+        $this->assertEquals('Adam' , $result[0]->first_name);
+        $this->assertEquals(1 , $result[0]->med__id);
+
+    }
+
+    /**
+     * @covers \Netinteractive\Elegant\Db\Query\Builder::where
+     * @group where
+     */
+    public function testWhere_TwoArgs()
+    {
+        $q = $this->builder->newQuery();
+        $q->from('patient_data');
+        $q->where('patient_data.med__id', 1);
+
+        $result = $q->get();
+        $this->assertEquals(2 , count($result));
+        $this->assertEquals('John' , $result[0]->first_name);
+        $this->assertEquals('Adam' , $result[1]->first_name);
+        $this->assertEquals(1 , $result[0]->med__id);
+    }
+
+
+    /**
+     * @covers \Netinteractive\Elegant\Db\Query\Builder::where
+     * @group where
+     */
+    public function testWhere_ClosureColumn()
+    {
+        $q = $this->builder->newQuery();
+        $q->from('patient_data');
+        $q->where('med__id','IN',function($q){
+            $q->from('med');
+            $q->select('id');
+
+        });
+        $q->get();
+
+        $result = $q->get();
+
+        $this->assertEquals(3 , count($result));
+    }
+
+    /**
+     * @covers \Netinteractive\Elegant\Db\Query\Builder::orWhere
+     * @group where
+     */
+    public function testOrWhere()
+    {
+        $q = $this->builder->newQuery();
+        $q->from('patient_data');
+        $q->where('med__id','=',1);
+        $q->orWhere('med__id', '=', 2);
+
+        $result = $q->get();
+
+        $this->assertEquals(3 , count($result));
+    }
 }
