@@ -783,6 +783,25 @@ class DbQueryBuilderTest extends ElegantTest
     }
 
     /**
+     * @covers \Netinteractive\Elegant\Db\Query\Builder::whereExists
+     * @group where
+     */
+    public function testWhereExists()
+    {
+        $q = $this->builder->newQuery();
+        $q->from('user');
+        
+        $q->whereExists(function($q2){
+            $q2->from('patient');
+            $q2->where('id', '=', 1);
+        });
+
+
+        $result = $q->get();
+        $this->assertEquals(5, count($result));
+    }
+
+    /**
      * @covers \Netinteractive\Elegant\Db\Query\Builder::where
      * @group where
      */
