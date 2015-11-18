@@ -55,8 +55,11 @@ There is the requirement for naming foreign keys. If you wont meet this requirem
 In example if you have patient_data table where you have foreign key from patient table it has to be named: patient__id (related: table_name + __ + field_name)
 Also we recommend pivot table names to looke like this: table_one__table_two
 
-## Developing
-To run tests you have to install runkit: https://github.com/zenovich/runkit/
+## Testing
+We used codeception here. To run tests: 
+ codecept run 
+
+To run tests you have to install runkit: http://duntuk.com/how-install-pecl-runkit
 
 ## Package versioning
 
