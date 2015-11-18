@@ -21,6 +21,28 @@ class ElegantTest  extends \PHPUnit_Framework_TestCase
 
     protected function tearDown()
     {
+
+    }
+
+    /**
+     * @param string|object $class
+     * @param string $method
+     * @param array $args
+     * @param string $code
+     * @param array $flags
+     */
+    protected function redefineMethod($class, $method, array $args, $code)
+    {
+        if (is_object($class)){
+            $class = get_class($class);
+        }
+
+        return runkit_method_redefine(
+            $class,
+            $method,
+            implode(',', $args),
+            $code
+        );
     }
 
 

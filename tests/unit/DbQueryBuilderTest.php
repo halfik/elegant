@@ -126,6 +126,7 @@ class DbQueryBuilderTest extends ElegantTest
     {
         $q = $this->builder->newQuery();
         $q->from('patient');
+
         $result = $q->find(1);
 
 

@@ -56,7 +56,7 @@ In example if you have patient_data table where you have foreign key from patien
 Also we recommend pivot table names to looke like this: table_one__table_two
 
 ## Developing
-To run tests you have to install runkit: http://duntuk.com/how-install-pecl-runkit
+To run tests you have to install runkit: https://github.com/zenovich/runkit/
 
 ## Package versioning
 

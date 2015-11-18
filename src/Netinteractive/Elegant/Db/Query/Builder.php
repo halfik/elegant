@@ -103,7 +103,7 @@ class Builder extends BaseBuilder
     }
 
     /**
-     * Execute a query for a single record by ID.
+     * Execute a query for a single record by id (by default).
      *
      * @param  array $ids
      * @param  array $columns
