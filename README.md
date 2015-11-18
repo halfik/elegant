@@ -57,9 +57,7 @@ Also we recommend pivot table names to looke like this: table_one__table_two
 
 ## Testing
 We used codeception here. To run tests: 
- codecept run 
-
-To run tests you have to install runkit: http://duntuk.com/how-install-pecl-runkit
+ codecept run
 
 ## Package versioning
 

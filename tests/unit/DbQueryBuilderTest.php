@@ -124,9 +124,9 @@ class DbQueryBuilderTest extends ElegantTest
      */
     public function testFind_SimpleId()
     {
+
         $q = $this->builder->newQuery();
         $q->from('patient');
-
         $result = $q->find(1);
 
 
