@@ -68,7 +68,7 @@ class DbQueryBuilderTest extends ElegantTest
     }
 
     /**
-     * @covers \Netinteractive\Elegant\Db\Query\Builder::addBiding
+     * @covers \Netinteractive\Elegant\Db\Query\Builder::addBinding
      * @group binding
      */
     public function testAddBinding()
@@ -84,7 +84,7 @@ class DbQueryBuilderTest extends ElegantTest
     }
 
     /**
-     * @covers \Netinteractive\Elegant\Db\Query\Builder::addBiding
+     * @covers \Netinteractive\Elegant\Db\Query\Builder::addBinding
      * @group binding
      */
     public function testAddBinding_Alias()
@@ -100,7 +100,7 @@ class DbQueryBuilderTest extends ElegantTest
     }
 
     /**
-     * @covers \Netinteractive\Elegant\Db\Query\Builder::addBiding
+     * @covers \Netinteractive\Elegant\Db\Query\Builder::addBinding
      * @group binding
      */
     public function testAddBinding_Array()
@@ -116,7 +116,7 @@ class DbQueryBuilderTest extends ElegantTest
     }
 
     /**
-     * @covers \Netinteractive\Elegant\Db\Query\Builder::addBiding
+     * @covers \Netinteractive\Elegant\Db\Query\Builder::addBinding
      * @group binding
      */
     public function testAddBinding_ArrayAlias()
@@ -132,7 +132,7 @@ class DbQueryBuilderTest extends ElegantTest
     }
 
     /**
-     * @covers \Netinteractive\Elegant\Db\Query\Builder::addBiding
+     * @covers \Netinteractive\Elegant\Db\Query\Builder::addBinding
      * @group binding
      * @expectedException InvalidArgumentException
      */
@@ -143,6 +143,57 @@ class DbQueryBuilderTest extends ElegantTest
         $q->whereRaw('id = ? or id = ?', array(), 'and', 'my_alias');
         $q->addBinding(array(1,2), 'where2', 'my_alias');
     }
+
+    /**
+     * @covers \Netinteractive\Elegant\Db\Query\Builder::getBinding
+     * @group binding
+     */
+    public function testGetBindings()
+    {
+        $q = $this->builder->newQuery();
+        $q->from('user');
+        $q->whereRaw('id = ? or id = ?', array(), 'and', 'my_alias');
+        $q->addBinding(array(1,2), 'where', 'my_alias');
+
+        $bindings = $q->getBindings();
+        $this->assertContains(1, $bindings);
+        $this->assertContains(2, $bindings);
+    }
+
+    /**
+     * @covers \Netinteractive\Elegant\Db\Query\Builder::getRawBindings
+     * @group binding
+     */
+    public function testGetRawBindings()
+    {
+        $q = $this->builder->newQuery();
+        $q->from('user');
+        $q->whereRaw('id = ? or id = ?', array(1,2), 'and');
+
+        $bindings = $q->getRawBindings();
+        ;
+        $this->assertArrayHasKey('where', $bindings);
+        $this->assertEquals(2, count($bindings['where']));
+    }
+
+    /**
+     * @covers \Netinteractive\Elegant\Db\Query\Builder::getRawBindings
+     * @group binding
+     */
+    public function testGetRawBindings_WithAlias()
+    {
+        $q = $this->builder->newQuery();
+        $q->from('user');
+        $q->whereRaw('id = ? or id = ?', array(), 'and', 'my_alias');
+        $q->addBinding(array(1,2), 'where', 'my_alias');
+
+        $bindings = $q->getRawBindings();
+        ;
+        $this->assertArrayHasKey('where', $bindings);
+        $this->assertArrayHasKey('my_alias', $bindings['where']);
+        $this->assertEquals(2, count($bindings['where']['my_alias']));
+    }
+
 
 
     /**
@@ -219,7 +270,7 @@ class DbQueryBuilderTest extends ElegantTest
      * @covers \Netinteractive\Elegant\Db\Query\Builder::mergeBindings
      * @group from
      */
-    public function testMergeBindins()
+    public function testMergeBindings()
     {
         $q = $this->builder->newQuery();
         $q->addBinding(9);
