@@ -14,7 +14,7 @@ class Builder extends BaseBuilder
 {
 
     /**
-     * List of QueryBuilder objects to build WITH statment
+     * List of QueryBuilder objects to build WITH statement
      * @var array
      */
     protected $with = array();
@@ -223,11 +223,22 @@ class Builder extends BaseBuilder
     protected function setWheres(array $wheres)
     {
         $this->clearWheres();
+       
         $this->bindings['where'] = array();
 
         foreach ($wheres AS $where){
             $alias = isSet($where['alias']) ? $where['alias'] : null;
-            $this->where($where['column'], $where['operator'], $where['value'], $where['boolean'], $alias);
+
+            if (isSet($where['type'])){
+                switch (strtolower($where['type'])) {
+                    case 'basic':
+                        $this->where($where['column'], $where['operator'], $where['value'], $where['boolean'], $alias);
+                        break;
+                    case 'raw':
+                        $this->whereRaw($where['sql'], array(), $where['boolean'], $alias);
+                        break;
+                }
+            }
         }
 
         return $this;
@@ -429,7 +440,7 @@ class Builder extends BaseBuilder
      */
     public function addNestedWhereQuery($query, $boolean = 'and', $alias = null)
     {
-        if (count($query->wheres)) {
+        if (count($query->wheres)){
             $type = 'Nested';
 
             if ($alias) {
@@ -476,7 +487,6 @@ class Builder extends BaseBuilder
         } else {
             $this->wheres[] = compact('type', 'sql', 'boolean');
         }
-
 
         $this->addBinding($bindings, 'where', $alias);
 
@@ -791,84 +801,6 @@ class Builder extends BaseBuilder
         return $this->whereNotNull($column, 'or', $alias);
     }
 
-    /**
-     * Add a "where date" statement to the query.
-     *
-     * @param  string $column
-     * @param  string $operator
-     * @param  int $value
-     * @param  string $boolean
-     * @return \Netinteractive\Elegant\Db\Query\Builder|static
-     */
-    public function whereDate($column, $operator, $value, $boolean = 'and', $alias = null)
-    {
-        return $this->addDateBasedWhere('Date', $column, $operator, $value, $boolean, $alias);
-    }
-
-    /**
-     * Add a "where day" statement to the query.
-     *
-     * @param  string $column
-     * @param  string $operator
-     * @param  int $value
-     * @param  string $boolean
-     * @return \Netinteractive\Elegant\Db\Query\Builder|static
-     */
-    public function whereDay($column, $operator, $value, $boolean = 'and', $alias = null)
-    {
-        return $this->addDateBasedWhere('Day', $column, $operator, $value, $boolean, $alias);
-    }
-
-    /**
-     * Add a "where month" statement to the query.
-     *
-     * @param  string $column
-     * @param  string $operator
-     * @param  int $value
-     * @param  string $boolean
-     * @return \Netinteractive\Elegant\Db\Query\Builder|static
-     */
-    public function whereMonth($column, $operator, $value, $boolean = 'and', $alias = null)
-    {
-        return $this->addDateBasedWhere('Month', $column, $operator, $value, $boolean, $alias);
-    }
-
-    /**
-     * Add a "where year" statement to the query.
-     *
-     * @param  string $column
-     * @param  string $operator
-     * @param  int $value
-     * @param  string $boolean
-     * @return \Netinteractive\Elegant\Db\Query\Builder|static
-     */
-    public function whereYear($column, $operator, $value, $boolean = 'and', $alias = null)
-    {
-        return $this->addDateBasedWhere('Year', $column, $operator, $value, $boolean, $alias);
-    }
-
-    /**
-     * Add a date based (year, month, day) statement to the query.
-     *
-     * @param  string $type
-     * @param  string $column
-     * @param  string $operator
-     * @param  int $value
-     * @param  string $boolean
-     * @return $this
-     */
-    protected function addDateBasedWhere($type, $column, $operator, $value, $boolean = 'and', $alias = null)
-    {
-        if ($alias) {
-            $this->wheres[$alias] = compact('column', 'type', 'boolean', 'operator', 'value');
-        } else {
-            $this->wheres[] = compact('column', 'type', 'boolean', 'operator', 'value');
-        }
-
-        $this->addBinding($value, 'where', $alias);
-
-        return $this;
-    }
 
     /**
      * @return string
@@ -876,11 +808,11 @@ class Builder extends BaseBuilder
     protected function prepareQuery()
     {
 
-        #We have to wrap wheres with other where statement, so query filter mechanism won't broke our original query
+        #We have to wrap where statements, so query filter mechanism won't broke our original query
         /*$wheres = $this->getWheres();
-        $this->clearWheres();
 
 
+        \debug($this->getBindings());
         $this->where(function ($query) use ($wheres) {
             if (!empty($wheres)) {
 
@@ -888,7 +820,9 @@ class Builder extends BaseBuilder
             }
 
             return $query;
-        });*/
+        });
+
+        \debug($this->getBindings());*/
 
         #Here we fire event that will allow to modify query
         \Event::fire('ni.elegant.db.builder.modify', array($this), false);

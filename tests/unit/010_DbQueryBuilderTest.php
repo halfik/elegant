@@ -25,6 +25,7 @@ class DbQueryBuilderTest extends ElegantTest
         $this->builder = new Builder($connection, $grammar, $processor);
     }
 
+
     /**
      * @covers \Netinteractive\Elegant\Db\Query\Builder::mergeBindings
      * @group binding
@@ -66,6 +67,7 @@ class DbQueryBuilderTest extends ElegantTest
 
         $this->assertEquals(1 , count($result));
     }
+
 
     /**
      * @covers \Netinteractive\Elegant\Db\Query\Builder::addBinding
@@ -288,9 +290,10 @@ class DbQueryBuilderTest extends ElegantTest
 
     /**
      * @covers \Netinteractive\Elegant\Db\Query\Builder::addWith
+     * @covers \Netinteractive\Elegant\Db\Query\Builder::getWith
      * @group with
      */
-    public function testWith()
+    public function testAddWith()
     {
         $dbMapper = new \Netinteractive\Elegant\Mapper\DbMapper('PatientData');
         $patientQuery = $dbMapper->getNewQuery()->where('tu_id', '=', 2)->orWhere('med__id', '=', 1);
@@ -303,6 +306,7 @@ class DbQueryBuilderTest extends ElegantTest
         $this->assertTrue($q->getWith('patient_data_filter') instanceof \Netinteractive\Elegant\Db\Query\Builder);
         $this->assertEquals(1 , count($q->getWith()));
     }
+
 
     /**
      * @covers \Netinteractive\Elegant\Db\Query\Builder::find
@@ -531,6 +535,25 @@ class DbQueryBuilderTest extends ElegantTest
     }
 
     /**
+     * @covers \Netinteractive\Elegant\Db\Query\Builder::removeOrder
+     * @group orderBy
+     */
+    public function testRemoveOrder()
+    {
+        $q = $this->builder->newQuery();
+        $q->from('user');
+        $q->orderByRaw('id DE');
+        $q->removeOrder();
+
+        $row = $q->first();
+
+        $this->assertTrue(isSet($row->id));
+        $this->assertEquals(1, $row->id);
+    }
+
+
+
+    /**
      * @covers \Netinteractive\Elegant\Db\Query\Builder::setWheres
      * @group where
      */
@@ -554,6 +577,39 @@ class DbQueryBuilderTest extends ElegantTest
 
         $this->assertEquals(1 , count($result));
         $this->assertEquals('John' , $result[0]->first_name);
+    }
+
+    /**
+     * @covers \Netinteractive\Elegant\Db\Query\Builder::setWheres
+     * @group where
+     * @group sql
+     * @group raw
+     */
+    public function testSetWheres_RawSql()
+    {
+        $connection = $this->builder->getConnection();
+
+        $processor = $connection->getPostProcessor();
+        $grammar = $connection->getQueryGrammar();
+
+
+        $mock = $this->getMockBuilder(get_class($this->builder))
+            ->setConstructorArgs(array($connection, $grammar, $processor))
+            ->setMethods( array('whereRaw'))
+            ->getMock()
+        ;
+
+        $q = $this->builder->newQuery();
+        $q->from('user');
+        $q->whereRaw('id = ?', array(1));
+
+
+        $mock->expects($this->once())
+            ->method('whereRaw')
+            ->withAnyParameters()
+        ;
+
+        $this->callPrivateMethod($mock, 'setWheres', array($q->wheres));
     }
 
 
@@ -1099,6 +1155,35 @@ class DbQueryBuilderTest extends ElegantTest
         $this->assertEquals(2, count($result));
     }
 
+    /**
+     * @covers \Netinteractive\Elegant\Db\Query\Builder::where
+     * @group where
+     * @group biding
+     */
+    public function testWhere_addBinding()
+    {
+        $connection = $this->builder->getConnection();
+
+        $processor = $connection->getPostProcessor();
+        $grammar = $connection->getQueryGrammar();
+
+
+        $mock = $this->getMockBuilder(get_class($this->builder))
+            ->setConstructorArgs(array($connection, $grammar, $processor))
+            ->setMethods( array('addBinding'))
+            ->getMock()
+        ;
+
+        $mock->from('user');
+
+
+
+        $mock->expects($this->once())
+            ->method('addBinding')
+        ;
+
+        $mock->where('id', '=', 1);
+    }
 
     /**
      * @covers \Netinteractive\Elegant\Db\Query\Builder::where
@@ -1117,8 +1202,9 @@ class DbQueryBuilderTest extends ElegantTest
         $this->assertEquals(1 , count($result));
         $this->assertEquals('Adam' , $result[0]->first_name);
         $this->assertEquals(1 , $result[0]->med__id);
-
     }
+
+
 
     /**
      * @covers \Netinteractive\Elegant\Db\Query\Builder::where
@@ -1189,5 +1275,98 @@ class DbQueryBuilderTest extends ElegantTest
 
         $this->assertEquals(2 , count($result));
     }
+
+    /**
+     * @covers \Netinteractive\Elegant\Db\Query\Builder::removeDoubleJoins
+     * @group join
+     */
+    public function testRemoveDoubleJoins()
+    {
+        $q = $this->builder->newQuery();
+        $q->from('user');
+        $q->join('patient', 'patient.user__id', '=', 'user.id');
+        $q->join('patient', 'patient.user__id', '=', 'user.id');
+        $q->join('patient', 'patient.user__id', '=', 'user.id');
+
+        $this->callPrivateMethod($q, 'removeDoubleJoins');
+
+        $this->assertEquals(1, count($q->joins));
+    }
+
+    /**
+     * @covers \Netinteractive\Elegant\Db\Query\Builder::prepareQuery
+     * @group sql
+     * @group comment
+     */
+    public function testPrepareQuery_Comments()
+    {
+        $q = $this->builder->newQuery();
+        $q->from('user');
+        $q->addComment('comment test');
+
+        $this->assertTrue( is_numeric(strpos($q->toSql(), 'comment test')) );
+    }
+
+    /**
+     * @covers \Netinteractive\Elegant\Db\Query\Builder::prepareQuery
+     * @group sql
+     * @group comment
+     */
+    public function testPrepareQuery_With()
+    {
+        $dbMapper = new \Netinteractive\Elegant\Mapper\DbMapper('PatientData');
+        $patientQuery = $dbMapper->getNewQuery()->where('tu_id', '=', 2)->orWhere('med__id', '=', 1);
+
+        $q = $this->builder->newQuery();
+        $q->from('patient');
+        $q->addWith($patientQuery, 'patient_data_filter');
+
+        $sql = $q->toSql();
+        $this->assertTrue( is_numeric(strpos($sql, 'patient_data_filter')) );
+        $this->assertTrue( is_numeric(strpos($sql, 'WITH')) );
+    }
+
+    /**
+     * @covers \Netinteractive\Elegant\Db\Query\Builder::prepareQuery
+     * @group sql
+     */
+    public function testPrepareQuery_RemoveDoubleJoinsCalled()
+    {
+        $connection = $this->builder->getConnection();
+
+        $processor = $connection->getPostProcessor();
+        $grammar = $connection->getQueryGrammar();
+
+
+        $mock = $this->getMockBuilder(get_class($this->builder))
+            ->setConstructorArgs(array($connection, $grammar, $processor))
+            ->setMethods( array('removeDoubleJoins'))
+            ->getMock()
+        ;
+
+        $mock->from('user');
+
+
+        $mock->expects($this->once())
+            ->method('removeDoubleJoins')
+        ;
+
+        $this->callPrivateMethod($mock, 'prepareQuery');
+    }
+
+
+    /**
+     * @covers \Netinteractive\Elegant\Db\Query\Builder::toSql
+     * @group sql
+     */
+    public function testToSql()
+    {
+        $q = $this->builder->newQuery();
+        $q->from('user');
+
+        $this->assertTrue(is_string($q->toSql()));
+    }
+
+
 
 }
