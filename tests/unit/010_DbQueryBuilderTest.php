@@ -1060,7 +1060,7 @@ class DbQueryBuilderTest extends ElegantTest
             array(1,2,3),
             1
         ));
-        
+
         $result = $q->get();
         $this->assertEquals(1, count($result));
         $this->assertTrue(isSet($result[0]->id));
@@ -1173,4 +1173,21 @@ class DbQueryBuilderTest extends ElegantTest
 
         $this->assertEquals(3 , count($result));
     }
+
+    /**
+     * @covers \Netinteractive\Elegant\Db\Query\Builder::groupBy
+     * @group groupBy
+     */
+    public function testGroupBy()
+    {
+        $q = $this->builder->newQuery();
+        $q->from('patient_data');
+        $q->selectRaw('patient__id, count(*) AS num');
+        $q->groupBy('patient__id');
+
+        $result = $q->get();
+
+        $this->assertEquals(2 , count($result));
+    }
+
 }
