@@ -46,6 +46,30 @@ class ElegantTest  extends \PHPUnit_Framework_TestCase
     }
 
 
+
+
+
+    /**
+     * @param string $class
+     * @param string $property
+     * @return ReflectionProperty
+     */
+    protected function getPrivateProperty($class, $property)
+    {
+        if (is_object($class)){
+            $class = get_class($class);
+        }
+
+        $reflectionClass = new \ReflectionClass($class);
+
+        $reflectionProperty = $reflectionClass->getProperty($property);
+        $reflectionProperty->setAccessible(true);
+
+        return $reflectionProperty;
+    }
+
+
+
     /**
      * Allows to test private and protected methods
      * @param string|object $class
@@ -58,9 +82,10 @@ class ElegantTest  extends \PHPUnit_Framework_TestCase
             $class = get_class($class);
         }
 
-        $class = new \ReflectionClass($class);
-        $method = $class->getMethod($method);
+        $reflectionClass = new \ReflectionClass($class);
+        $method = $reflectionClass->getMethod($method);
         $method->setAccessible(true);
+
         return $method;
     }
 

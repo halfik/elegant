@@ -1,7 +1,6 @@
 <?php
 
 
-
 class RecordTest extends ElegantTest
 {
     /**
@@ -71,5 +70,63 @@ class RecordTest extends ElegantTest
             )
 
         );
+    }
+
+
+    /**
+     * @covers \Netinteractive\Elegant\Model\Record::disableValidation
+     * @group validation
+     */
+    public function testDisableValidation()
+    {
+        $record = App::make('Patient');
+        $record->disableValidation();
+
+        $this->assertFalse($this->getPrivateProperty($record, 'validationEnabled')->getValue($record));
+    }
+
+    /**
+     * @covers \Netinteractive\Elegant\Model\Record::enableValidation
+     * @group validation
+     */
+    public function testEnableValidation()
+    {
+        $record = App::make('Patient');
+        $record->disableValidation();
+        $record->enableValidation();
+
+        $this->assertTrue($this->getPrivateProperty($record, 'validationEnabled')->getValue($record));
+    }
+
+    /**
+     * @covers \Netinteractive\Elegant\Model\Record::validate
+     * @expectedException \Netinteractive\Elegant\Exception\ValidationException
+     * @group validation
+     */
+    public function testValidate_ValidationException()
+    {
+        $record = App::make('Patient');
+        $record->validate(
+            array(
+                'user__id' => 123
+            )
+        );
+    }
+
+    /**
+     * @covers \Netinteractive\Elegant\Model\Record::validate
+     * @group validation
+     */
+    public function testValidate_ValidationDisabled()
+    {
+        $record = App::make('Patient');
+        $record->disableValidation();
+        $response = $record->validate(
+            array(
+                'user__id' => 123
+            )
+        );
+
+        $this->assertEquals(get_class($record), get_class($response));
     }
 }
