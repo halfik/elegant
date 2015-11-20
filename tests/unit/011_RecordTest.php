@@ -129,4 +129,22 @@ class RecordTest extends ElegantTest
 
         $this->assertEquals(get_class($record), get_class($response));
     }
+
+    /**
+     * @covers \Netinteractive\Elegant\Model\Record::validate
+     * @group validation
+     */
+    public function testValidate_ValidationGroup()
+    {
+        $record = App::make('User');
+        $response = $record->validate(
+            array(
+                'login' => 'User 11',
+                'email' => 'user11@hot.com',
+            ),
+            'update'
+        );
+
+        $this->assertEquals(get_class($record), get_class($response));
+    }
 }
