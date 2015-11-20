@@ -40,6 +40,7 @@ class DbQueryBuilderTest extends ElegantTest
     /**
      * @covers \Netinteractive\Elegant\Db\Query\Builder::whereRaw
      * @group where
+     * @group raw
      */
     public function testWhereRaw()
     {
@@ -556,8 +557,9 @@ class DbQueryBuilderTest extends ElegantTest
     /**
      * @covers \Netinteractive\Elegant\Db\Query\Builder::setWheres
      * @group where
+     * @group set
      */
-    public function testSetWheres()
+    public function atestSetWheres()
     {
         $method = $this->getPrivateMethod('\Netinteractive\Elegant\Db\Query\Builder', 'setWheres');
 
@@ -565,13 +567,13 @@ class DbQueryBuilderTest extends ElegantTest
         $q->from('patient_data');
         $q->where('id', '=', 1);
 
-        $method->invokeArgs($q, array( array( array(
+        $method->invokeArgs($q, array( array(
             "type" => "Basic",
             "column" => "first_name",
             "operator" => "=",
             "value" => 'John',
             "boolean" => "and"
-        )) ));
+        ) ));
 
         $result = $q->get();
 
@@ -579,38 +581,6 @@ class DbQueryBuilderTest extends ElegantTest
         $this->assertEquals('John' , $result[0]->first_name);
     }
 
-    /**
-     * @covers \Netinteractive\Elegant\Db\Query\Builder::setWheres
-     * @group where
-     * @group sql
-     * @group raw
-     */
-    public function testSetWheres_RawSql()
-    {
-        $connection = $this->builder->getConnection();
-
-        $processor = $connection->getPostProcessor();
-        $grammar = $connection->getQueryGrammar();
-
-
-        $mock = $this->getMockBuilder(get_class($this->builder))
-            ->setConstructorArgs(array($connection, $grammar, $processor))
-            ->setMethods( array('whereRaw'))
-            ->getMock()
-        ;
-
-        $q = $this->builder->newQuery();
-        $q->from('user');
-        $q->whereRaw('id = ?', array(1));
-
-
-        $mock->expects($this->once())
-            ->method('whereRaw')
-            ->withAnyParameters()
-        ;
-
-        $this->callPrivateMethod($mock, 'setWheres', array($q->wheres));
-    }
 
 
     /**
@@ -801,7 +771,6 @@ class DbQueryBuilderTest extends ElegantTest
      */
     public function testAddNestedWhereQuery()
     {
-
         $q = $this->builder->newQuery();
         $q->from('user');
 
@@ -1292,6 +1261,36 @@ class DbQueryBuilderTest extends ElegantTest
 
         $this->assertEquals(1, count($q->joins));
     }
+
+    /**
+     * @covers \Netinteractive\Elegant\Db\Query\Builder::prepareQuery
+     * @group sql
+     * @group where
+     */
+    public function testPrepareQuery_WrapWheres()
+    {
+        $connection = $this->builder->getConnection();
+
+        $processor = $connection->getPostProcessor();
+        $grammar = $connection->getQueryGrammar();
+
+
+        $mock = $this->getMockBuilder(get_class($this->builder))
+            ->setConstructorArgs(array($connection, $grammar, $processor))
+            ->setMethods( array('wrapWheres'))
+            ->getMock()
+        ;
+
+        $mock->from('user');
+
+
+        $mock->expects($this->once())
+            ->method('wrapWheres')
+        ;
+
+        $this->callPrivateMethod($mock, 'prepareQuery');
+    }
+
 
     /**
      * @covers \Netinteractive\Elegant\Db\Query\Builder::prepareQuery

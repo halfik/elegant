@@ -222,25 +222,7 @@ class Builder extends BaseBuilder
      */
     protected function setWheres(array $wheres)
     {
-        $this->clearWheres();
-       
-        $this->bindings['where'] = array();
-
-        foreach ($wheres AS $where){
-            $alias = isSet($where['alias']) ? $where['alias'] : null;
-
-            if (isSet($where['type'])){
-                switch (strtolower($where['type'])) {
-                    case 'basic':
-                        $this->where($where['column'], $where['operator'], $where['value'], $where['boolean'], $alias);
-                        break;
-                    case 'raw':
-                        $this->whereRaw($where['sql'], array(), $where['boolean'], $alias);
-                        break;
-                }
-            }
-        }
-
+        $this->wheres = $wheres;
         return $this;
     }
 
@@ -803,26 +785,34 @@ class Builder extends BaseBuilder
 
 
     /**
-     * @return string
+     * Method wrap all current wheres with "()"
+     * @return $this
      */
-    protected function prepareQuery()
+    public function wrapWheres()
     {
+        $wheres = $this->getWheres();
+        $this->clearWheres();
 
-        #We have to wrap where statements, so query filter mechanism won't broke our original query
-        /*$wheres = $this->getWheres();
-
-
-        \debug($this->getBindings());
         $this->where(function ($query) use ($wheres) {
             if (!empty($wheres)) {
-
                 $query->setWheres($wheres);
             }
 
             return $query;
         });
 
-        \debug($this->getBindings());*/
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    protected function prepareQuery()
+    {
+
+        #We have to wrap where statements, so query filter mechanism won't broke our original query
+        $this->wrapWheres();
+
 
         #Here we fire event that will allow to modify query
         \Event::fire('ni.elegant.db.builder.modify', array($this), false);
