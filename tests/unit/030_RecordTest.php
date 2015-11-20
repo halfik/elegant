@@ -507,6 +507,81 @@ class RecordTest extends ElegantTest
     }
 
     /**
+     * @covers \Netinteractive\Elegant\Model\Record::getExternals
+     * @group attribute
+     * @group external
+     * @group get
+     */
+    public function testGetExternals()
+    {
+        $record = App::make('User');
+        $record->fill(
+            array(
+                'first_name' => 'John',
+                'login' => 'User 11',
+                'email' => 'user11@hot.com',
+                'age' => 23
+            )
+        );
+
+        $this->assertEquals(1, count($record->getExternals()));
+    }
+
+
+    /**
+     * @covers \Netinteractive\Elegant\Model\Record::syncOriginal
+     * @group attribute
+     * @group original
+     * @group get
+     */
+    public function testSyncOriginal()
+    {
+        $record = App::make('User');
+        $record->fill(
+            array(
+                'first_name' => 'John',
+                'login' => 'User 11',
+                'email' => 'user11@hot.com',
+                'age' => 23
+            )
+        );
+
+        $original = $record->getOriginals();
+
+        $this->assertTrue(isSet($original['first_name']));
+        $this->assertEquals('John', $original['first_name']);
+    }
+
+
+    /**
+     * @covers \Netinteractive\Elegant\Model\Record::getOriginals
+     * @group attribute
+     * @group original
+     * @group get
+     */
+    public function testGetOriginals()
+    {
+        $record = App::make('User');
+        $record->fill(
+            array(
+                'first_name' => 'John',
+                'login' => 'User 11',
+                'email' => 'user11@hot.com',
+                'age' => 23
+            )
+        );
+
+        $record->getOriginals();
+
+        $record->first_name = 'Adam';
+        $original = $record->getOriginals();
+
+        $this->assertTrue(isSet($original['first_name']));
+        $this->assertEquals('John', $original['first_name']);
+    }
+
+
+    /**
      * @covers \Netinteractive\Elegant\Model\Record::isAttribute
      * @group attribute
      * @group is
@@ -543,6 +618,194 @@ class RecordTest extends ElegantTest
         $record->setBlueprint(null);
 
         $this->assertTrue($record->isAttribute('login2'));
+    }
+
+    /**
+     * @covers \Netinteractive\Elegant\Model\Record::getKey
+     * @group key
+     * @group get
+     */
+    public function testGetKey()
+    {
+        $record = App::make('User');
+        $key = $record->getKey();
+
+        $this->assertTrue(is_array($key));
+        $this->assertTrue(array_has($key, 'id'));
+    }
+
+    /**
+     * @covers \Netinteractive\Elegant\Model\Record::getKey
+     * @group key
+     * @group get
+     */
+    public function testGetKey_Value()
+    {
+        $record = App::make('User');
+        $record->fill(
+            array(
+                'id' => 999
+            )
+        );
+
+        $key = $record->getKey();
+
+        $this->assertEquals(999, $key['id']);
+    }
+
+
+    /**
+     * @covers \Netinteractive\Elegant\Model\Record::getDirty
+     * @group dirty
+     * @group get
+     */
+    public function testGetDirty_Empty()
+    {
+        $record = App::make('User');
+
+
+        $this->assertEmpty(count($record->getDirty()));
+    }
+
+    /**
+     * @covers \Netinteractive\Elegant\Model\Record::getDirty
+     * @group dirty
+     * @group get
+     */
+    public function testGetDirty_NewRecord()
+    {
+        $record = App::make('User');
+
+        $record->fill(
+            array(
+                'id' => 999,
+                'my_filed' => 123,
+                'first_name' => 'John'
+            )
+        );
+
+
+        $this->assertEquals(1, count($record->getDirty()));
+    }
+
+    /**
+     * @covers \Netinteractive\Elegant\Model\Record::getDirty
+     * @group dirty
+     * @group get
+     */
+    public function testGetDirty_Exists()
+    {
+        $record = \App::make('User',  array(array(
+            'id' => 999,
+            'my_filed' => 123,
+            'first_name' => 'John',
+            'last_name' => 'London',
+        )));
+
+        $record->exists = true;
+        $record->first_name = 'Adam';
+
+        $this->assertEquals(1, count($record->getDirty()));
+    }
+
+    /**
+     * @covers \Netinteractive\Elegant\Model\Record::getDirty
+     * @group dirty
+     * @group get
+     */
+    public function testGetDirty_Exists_Numerical()
+    {
+        $record = \App::make('User',  array(array(
+            'tu__id' => 999,
+            'my_filed' => 123,
+            'first_name' => 'John',
+            'last_name' => 'London',
+        )));
+
+        $record->exists = true;
+        $record->tu__id = '999';
+
+        $this->assertEquals(0, count($record->getDirty()));
+    }
+
+
+    /**
+     * @covers \Netinteractive\Elegant\Model\Record::isDirty
+     * @group dirty
+     * @group is
+     */
+    public function testIsDirty_Record_True()
+    {
+        $record = \App::make('User',  array(array(
+            'tu__id' => 999,
+            'my_filed' => 123,
+            'first_name' => 'John',
+            'last_name' => 'London',
+        )));
+
+        $this->assertTrue($record->isDirty());
+    }
+
+    /**
+     * @covers \Netinteractive\Elegant\Model\Record::isDirty
+     * @group dirty
+     * @group is
+     */
+    public function testIsDirty_Record_False()
+    {
+        $record = \App::make('User');
+
+        $this->assertFalse($record->isDirty());
+    }
+
+    /**
+     * @covers \Netinteractive\Elegant\Model\Record::isDirty
+     * @group dirty
+     * @group is
+     */
+    public function testIsDirty_Field_True()
+    {
+        $record = \App::make('User',  array(array(
+            'tu__id' => 999,
+            'my_filed' => 123,
+            'first_name' => 'John',
+            'last_name' => 'London',
+        )));
+
+        $this->assertTrue($record->isDirty('tu__id'));
+    }
+
+    /**
+     * @covers \Netinteractive\Elegant\Model\Record::isDirty
+     * @group dirty
+     * @group is
+     */
+    public function testIsDirty_Field_False()
+    {
+        $record = \App::make('User',  array(array(
+            'my_filed' => 123,
+            'first_name' => 'John',
+            'last_name' => 'London',
+        )));
+
+        $this->assertFalse($record->isDirty('tu__id'));
+    }
+
+
+    /**
+     * @covers \Netinteractive\Elegant\Model\Record::isDirty
+     * @group dirty
+     * @group is
+     */
+    public function testIsDirty_ArrayOfFields_True()
+    {
+        $record = \App::make('User',  array(array(
+            'tu__id' => 999,
+            'my_filed' => 123,
+            'last_name' => 'London',
+        )));
+
+        $this->assertTrue($record->isDirty( array('tu__id', 'first_name')));
     }
 
 }

@@ -473,23 +473,22 @@ abstract class Record implements Arrayable, Jsonable
      */
     public function getDirty()
     {
-        $dirty = $this->dirty;
-
-        if ($this->exists == true){
+         if ($this->exists == true){
             foreach ($this->attributes as $key => $value){
-                if ( ! array_key_exists($key, $this->original)){
-                    $dirty[$key] = $value;
+                if ( !array_key_exists($key, $this->original)){
+                    $this->dirty[$key] = $value;
                 }
                 elseif ($value !== $this->original[$key] && !$this->originalIsNumericallyEquivalent($key)){
-                    $dirty[$key] = $value;
+                    $this->dirty[$key] = $value;
                 }
             }
-        }else{
-            $dirty = $this->attributes;
+        }
+        else{
+            $this->dirty = $this->attributes;
         }
 
 
-        return $dirty;
+        return $this->dirty;
     }
 
     /**
