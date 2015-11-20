@@ -3,6 +3,67 @@
 
 class RecordTest extends ElegantTest
 {
+
+    /**
+     * @covers \Netinteractive\Elegant\Model\Record::getBlueprint
+     * @group blueprint
+     */
+    public function testGetBlueprint()
+    {
+        $record = App::make('User');
+
+        $this->assertTrue($record->getBluePrint() instanceof \Netinteractive\Elegant\Model\Blueprint);
+    }
+
+    /**
+     * @covers \Netinteractive\Elegant\Model\Record::setBlueprint
+     * @group blueprint
+     */
+    public function testSetBlueprint()
+    {
+        $record = App::make('User');
+        $record2 = App::make('Patient');
+
+        $record->setBlueprint($record2->getBlueprint());
+        $this->assertTrue($record->getBluePrint() instanceof \Netinteractive\Elegant\Tests\Models\Patient\Blueprint);
+    }
+
+    /**
+     * @covers \Netinteractive\Elegant\Model\Record::hasBlueprint
+     * @group blueprint
+     */
+    public function testHasBlueprint_True()
+    {
+        $record = App::make('User');
+
+        $this->assertTrue($record->hasBlueprint());
+    }
+
+    /**
+     * @covers \Netinteractive\Elegant\Model\Record::hasBlueprint
+     * @group blueprint
+     */
+    public function testHasBlueprint_False()
+    {
+        $record = App::make('User');
+        $record->setBluePrint(null);
+
+        $this->assertFalse($record->hasBlueprint());
+    }
+
+    /**
+     * @covers \Netinteractive\Elegant\Model\Record::setAttribute
+     * @group blueprint
+     */
+    public function testSetAttribute()
+    {
+        $record = App::make('User');
+        $record->setAttribute('id', 2);
+
+        $this->assertEquals(2, $record->id);
+    }
+
+
     /**
      * @covers \Netinteractive\Elegant\Model\Record::fill
      * @group fill
@@ -149,14 +210,5 @@ class RecordTest extends ElegantTest
         $this->assertEquals(get_class($record), get_class($response));
     }
 
-    /**
-     * @covers \Netinteractive\Elegant\Model\Record::getBlueprint
-     * @group blueprint
-     */
-    public function testGetBlueprint()
-    {
-        $record = App::make('User');
 
-        $this->assertTrue($record->getBluePrint() instanceof \Netinteractive\Elegant\Model\Blueprint);
-    }
 }

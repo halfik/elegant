@@ -172,7 +172,7 @@ abstract class Record implements Arrayable, Jsonable
      * @param \Netinteractive\Elegant\Model\Blueprint $blueprint
      * @return $this
      */
-    public function setBlueprint(Blueprint $blueprint)
+    public function setBlueprint(Blueprint $blueprint=null)
     {
         \Event::fire('ni.elegant.record.blueprint.before.set'.get_class($this), $this);
         $this->blueprint = $blueprint;
