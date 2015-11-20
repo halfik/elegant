@@ -6,6 +6,8 @@ use Netinteractive\Elegant\Exception\ValidationException;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Contracts\Support\Jsonable;
 use Carbon\Carbon;
+use Netinteractive\Elegant\Model\Filter\Loader;
+use Netinteractive\Elegant\Model\Filter\Type\Display;
 
 /**
  * Class Record
@@ -113,6 +115,8 @@ abstract class Record implements Arrayable, Jsonable
      */
     public function fill(array $attributes)
     {
+        $this->input = $attributes;
+
         /**
          * storageName.fieldName
          */
@@ -292,7 +296,7 @@ abstract class Record implements Arrayable, Jsonable
     }
 
     /**
-     * Input datta
+     * Input data
      * @param string|null $key
      * @return array
      */
@@ -314,15 +318,20 @@ abstract class Record implements Arrayable, Jsonable
      * @param bool $touchRelated
      * @return $this
      */
-    public function makeNoneExists($touchRelated=true)
+    public function makeNoneExists($touchRelated=false)
     {
         $this->exists = false;
 
         if ($touchRelated == true){
             foreach ($this->related AS $relationName=>$related){
-                foreach ($related AS $record){
-                    $record->makeNoneExists($touchRelated);
+                if ($related instanceof Record){
+                    $related->makeNoneExists($touchRelated);
+                }else{
+                    foreach ($related AS $record){
+                        $record->makeNoneExists($touchRelated);
+                    }
                 }
+
             }
         }
 
@@ -349,7 +358,7 @@ abstract class Record implements Arrayable, Jsonable
         }
 
         if (!empty($filters)) {
-            DisplayLogic::apply($obj, $filters);
+            Display::apply($obj, $filters);
         }
 
 

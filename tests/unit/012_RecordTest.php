@@ -81,7 +81,7 @@ class RecordTest extends ElegantTest
      * @covers \Netinteractive\Elegant\Model\Record::getAttribute
      * @group attribute
      * @group get
-     * @group relation
+     * @group related
      */
     public function testGetAttribute_Related()
     {
@@ -101,9 +101,23 @@ class RecordTest extends ElegantTest
      * @group attribute
      * @group set
      */
-    public function testSetAttribute()
+    public function testSetAttribute_Field()
     {
         $record = App::make('User');
+        $record->setAttribute('id', 2);
+
+        $this->assertEquals(2, $record->id);
+    }
+
+    /**
+     * @covers \Netinteractive\Elegant\Model\Record::setAttribute
+     * @group attribute
+     * @group set
+     */
+    public function testSetAttribute_NoBlueprint()
+    {
+        $record = App::make('User');
+        $record->setBlueprint(null);
         $record->setAttribute('id', 2);
 
         $this->assertEquals(2, $record->id);
@@ -153,7 +167,7 @@ class RecordTest extends ElegantTest
      * @group attribute
      * @group set
      */
-    public function testSetAttribute_Timestamp()
+    public function testSetAttribute_FieldTimestamp()
     {
         $record = App::make('PatientData');
         $record->setAttribute('created_at', '2015-01-01 11:11:11');
@@ -233,6 +247,56 @@ class RecordTest extends ElegantTest
 
 
     /**
+     * @covers \Netinteractive\Elegant\Model\Record::getInput
+     * @covers \Netinteractive\Elegant\Model\Record::fill
+     * @group fill
+     * @group get
+     * @group input
+     */
+    public function testGetInput()
+    {
+        $record = App::make('User');
+        $record->fill(array(
+            'id' => 999,
+            'pesel' => '123456'
+        ));
+
+        $input = $record->getInput();
+
+        $this->assertEquals(2, count($input));
+    }
+
+    /**
+     * @covers \Netinteractive\Elegant\Model\Record::getInput
+     * @covers \Netinteractive\Elegant\Model\Record::fill
+     * @group fill
+     * @group get
+     * @group input
+     */
+    public function testGetInput_ByKey()
+    {
+        $record = App::make('User');
+        $record->fill(array(
+            'some_data' => array(
+                'id' => 999,
+                'pesel' => '123456'
+            ),
+            'more_data' => array(
+                'id' => 123
+            ),
+            'little_more_data' => array(
+                'id' => 321
+            )
+
+        ));
+
+        $input = $record->getInput('some_data');
+
+        $this->assertEquals(2, count($input));
+    }
+
+
+    /**
      * @covers \Netinteractive\Elegant\Model\Record::disableValidation
      * @group validation
      */
@@ -306,6 +370,79 @@ class RecordTest extends ElegantTest
         );
 
         $this->assertEquals(get_class($record), get_class($response));
+    }
+
+
+    /**
+     * @covers \Netinteractive\Elegant\Model\Record::isNew
+     * @group exists
+     */
+    public function testIsNew()
+    {
+        $record = App::make('User');
+        $this->assertTrue($record->isNew());
+    }
+
+    /**
+     * @covers \Netinteractive\Elegant\Model\Record::makeNoneExists
+     * @group exists
+     */
+    public function testMakeNoneExists()
+    {
+        $record = App::make('User');
+        $record->exists = true;
+
+        $record->makeNoneExists();
+        $this->assertTrue($record->isNew());
+    }
+
+    /**
+     * @covers \Netinteractive\Elegant\Model\Record::makeNoneExists
+     * @group exists
+     * @group related
+     */
+    public function testMakeNoneExists_TouchRelatedRecord()
+    {
+        $record = App::make('User');
+        $record->exists = true;
+
+        $patient = App::make('Patient');
+        $patient->exists = true;
+
+        $this->getPrivateProperty($record, 'related')->setValue($record, array('patient' => $patient));
+
+        $record->makeNoneExists(true);
+
+        $this->assertTrue($record->isNew());
+        $this->assertTrue($record->patient->isNew());
+    }
+
+    /**
+     * @covers \Netinteractive\Elegant\Model\Record::makeNoneExists
+     * @group exists
+     * @group related
+     * @group collection
+     */
+    public function testMakeNoneExists_TouchRelatedCollection()
+    {
+        $record = App::make('User');
+        $record->exists = true;
+
+        $patient1 = App::make('Patient');
+        $patient1->exists = true;
+
+        $patient2 = App::make('Patient');
+        $patient2->exists = true;
+
+        $this->getPrivateProperty($record, 'related')->setValue($record, array('patients' => new \Netinteractive\Elegant\Model\Collection(array($patient1, $patient2))));
+
+        $record->makeNoneExists(true);
+
+        $this->assertTrue($record->isNew());
+        foreach ($record->patients AS $patient){
+            $this->assertTrue($patient->isNew());
+        }
+
     }
 
 
