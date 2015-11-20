@@ -284,7 +284,7 @@ abstract class Record implements Arrayable, Jsonable
         elseif (isSet($this->external[$key])){
             $response = $this->external[$key];
         }
-        elseif (isSet($this->related[$key])){
+        elseif ( isSet($this->related[$key])){
             $response = $this->related[$key];
         }
 

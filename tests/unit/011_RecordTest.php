@@ -52,8 +52,54 @@ class RecordTest extends ElegantTest
     }
 
     /**
+     * @covers \Netinteractive\Elegant\Model\Record::getAttribute
+     * @group attribute
+     * @group get
+     */
+    public function testGetAttribute()
+    {
+        $record = App::make('User');
+        $record->id = 1;
+
+        $this->assertEquals(1, $record->getAttribute('id'));
+    }
+
+    /**
+     * @covers \Netinteractive\Elegant\Model\Record::getAttribute
+     * @group attribute
+     * @group get
+     */
+    public function testGetAttribute_External()
+    {
+        $record = App::make('User');
+        $record->external_id = 1;
+
+        $this->assertEquals(1, $record->getAttribute('external_id'));
+    }
+
+    /**
+     * @covers \Netinteractive\Elegant\Model\Record::getAttribute
+     * @group attribute
+     * @group get
+     * @group relation
+     */
+    public function testGetAttribute_Related()
+    {
+        $record = App::make('User');
+        $patient = App::make('Patient');
+        $patient->pesel = '123456';
+
+        $this->getPrivateProperty($record, 'related')->setValue($record, array('patient' => $patient));
+
+        $class = get_class($patient);
+        $this->assertTrue($record->getAttribute('patient') instanceof $class);
+    }
+
+
+    /**
      * @covers \Netinteractive\Elegant\Model\Record::setAttribute
-     * @group blueprint
+     * @group attribute
+     * @group set
      */
     public function testSetAttribute()
     {
@@ -62,6 +108,20 @@ class RecordTest extends ElegantTest
 
         $this->assertEquals(2, $record->id);
     }
+
+    /**
+     * @covers \Netinteractive\Elegant\Model\Record::setAttribute
+     * @group attribute
+     * @group set
+     */
+    public function testSetAttribute_External()
+    {
+        $record = App::make('User');
+        $record->setAttribute('my_field', 2);
+
+        $this->assertEquals(2, $record->my_field);
+    }
+
 
 
     /**
