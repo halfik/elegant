@@ -243,14 +243,18 @@ abstract class Record implements Arrayable, Jsonable
             if ($blueprint->isField($key)){
                 #we check if field should be stored in data storage or it's external data
                 if (!$blueprint->isExternal($key)){
-                    if ($this->getBlueprint()->isTimeStamp($key)){
+                    if ($this->getBlueprint()->isTimestamp($key)){
                         $this->attributes[$key] = $this->createTimestamp($value);
                     }else{
                         $this->attributes[$key] = $value;
                     }
 
                 }else{
-                    $this->external[$key] = $value;
+                    if ($this->getBlueprint()->isTimestamp($key)){
+                        $this->external[$key] = $this->createTimestamp($value);
+                    }else{
+                        $this->external[$key] = $value;
+                    }
                 }
             }
             else{
@@ -258,11 +262,7 @@ abstract class Record implements Arrayable, Jsonable
             }
 
         }else{
-            if ($this->getBlueprint()->isTimeStamp($key)){
-                $this->attributes[$key] = $this->createTimestamp($value);
-            }else{
-                $this->attributes[$key] = $value;
-            }
+            $this->attributes[$key] = $value;
         }
 
         return $this;

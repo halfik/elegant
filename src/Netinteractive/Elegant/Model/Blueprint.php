@@ -438,7 +438,7 @@ abstract class Blueprint
      * @param string $field
      * @return bool
      */
-    public function isTimeStamp($field)
+    public function isTimestamp($field)
     {
         if ($this->getCreatedAt() == $field || $this->getUpdatedAt() == $field || $this->getDeletedAt() == $field){
             return true;

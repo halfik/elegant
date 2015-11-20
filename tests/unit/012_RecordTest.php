@@ -122,6 +122,44 @@ class RecordTest extends ElegantTest
         $this->assertEquals(2, $record->my_field);
     }
 
+    /**
+     * @covers \Netinteractive\Elegant\Model\Record::setAttribute
+     * @group attribute
+     * @group set
+     */
+    public function testSetAttribute_ExternalField()
+    {
+        $record = App::make('User');
+        $record->setAttribute('ip', '127.0.0.1');
+
+        $this->assertEquals('127.0.0.1', $record->ip);
+    }
+
+    /**
+     * @covers \Netinteractive\Elegant\Model\Record::setAttribute
+     * @group attribute
+     * @group set
+     */
+    public function testSetAttribute_ExternalTimestamp()
+    {
+        $record = App::make('User');
+        $record->setAttribute('created_at', '2015-01-01 11:11:11');
+
+        $this->assertTrue( $record->created_at instanceof \Carbon\Carbon);
+    }
+
+    /**
+     * @covers \Netinteractive\Elegant\Model\Record::setAttribute
+     * @group attribute
+     * @group set
+     */
+    public function testSetAttribute_Timestamp()
+    {
+        $record = App::make('PatientData');
+        $record->setAttribute('created_at', '2015-01-01 11:11:11');
+
+        $this->assertTrue( $record->created_at instanceof \Carbon\Carbon);
+    }
 
 
     /**

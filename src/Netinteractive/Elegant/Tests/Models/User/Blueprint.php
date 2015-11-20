@@ -14,6 +14,12 @@ class Blueprint extends \Netinteractive\Elegant\Model\Blueprint
         $this->getRelationManager()->hasOne('patient','Patient', 'user__id','id');
 
         $this->fields = array(
+            'created_at' => array(
+                'title'=> _('created_at'),
+                'type'=>'dateTime',
+                'sortable' => true,
+                'external'=>true
+            ),
             'login'=>array(
                 'title'=>_('Login'),
                 'type'=>'string',
@@ -40,6 +46,11 @@ class Blueprint extends \Netinteractive\Elegant\Model\Blueprint
                 'rules'=>array(
                     'insert'=>'required'
                 )
+            ),
+            'ip'=>array(
+                'title'=>_('ip'),
+                'type'=>'string',
+                'external'=>true
             ),
             'first_name' => array(
                 'title'=> _('First name'),
