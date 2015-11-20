@@ -98,6 +98,7 @@ class RecordTest extends ElegantTest
         $this->assertTrue($this->getPrivateProperty($record, 'validationEnabled')->getValue($record));
     }
 
+
     /**
      * @covers \Netinteractive\Elegant\Model\Record::validate
      * @expectedException \Netinteractive\Elegant\Exception\ValidationException
@@ -146,5 +147,16 @@ class RecordTest extends ElegantTest
         );
 
         $this->assertEquals(get_class($record), get_class($response));
+    }
+
+    /**
+     * @covers \Netinteractive\Elegant\Model\Record::getBlueprint
+     * @group blueprint
+     */
+    public function testGetBlueprint()
+    {
+        $record = App::make('User');
+
+        $this->assertTrue($record->getBluePrint() instanceof \Netinteractive\Elegant\Model\Blueprint);
     }
 }

@@ -154,6 +154,7 @@ abstract class Record implements Arrayable, Jsonable
         $messageBag = new MessageBag();
         $validator = \Validator::make($data, $this->getBlueprint()->getFieldsRules($rulesGroups, array_keys($data)));
 
+
         if ($validator->fails()) {
             $messages = $validator->messages()->toArray();
             foreach ($messages as $key => $message) {
@@ -168,7 +169,7 @@ abstract class Record implements Arrayable, Jsonable
     /**
      * Sets record blueprint
      *
-     * @param \Netinteractive\Elegant\Model $blueprint
+     * @param \Netinteractive\Elegant\Model\Blueprint $blueprint
      * @return $this
      */
     public function setBlueprint(Blueprint $blueprint)
@@ -183,7 +184,7 @@ abstract class Record implements Arrayable, Jsonable
     /**
      * Returns record blueprint
      *
-     * @return Blueprint|null
+     * @return \Netinteractive\Elegant\Model\Blueprint|null
      */
     public function getBlueprint()
     {
