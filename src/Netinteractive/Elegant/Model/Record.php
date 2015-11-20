@@ -385,14 +385,17 @@ abstract class Record implements Arrayable, Jsonable
     }
 
     /**
-     * Checks if field is as attribute
+     * Checks if field is an attribute
      *
      * @param $field
      * @return bool
      */
     public function isAttribute($field)
     {
-        return array_key_exists($field,$this->attributes);
+        if ($this->hasBlueprint()){
+            return $this->getBlueprint()->isField($field);
+        }
+        return true;
     }
 
     /**

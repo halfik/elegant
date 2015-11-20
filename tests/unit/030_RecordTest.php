@@ -179,6 +179,7 @@ class RecordTest extends ElegantTest
     /**
      * @covers \Netinteractive\Elegant\Model\Record::fill
      * @group fill
+     * @group attribute
      */
     public function testFill()
     {
@@ -198,6 +199,7 @@ class RecordTest extends ElegantTest
     /**
      * @covers \Netinteractive\Elegant\Model\Record::fill
      * @group fill
+     * @group attribute
      */
     public function testFill_ByStorageName()
     {
@@ -222,6 +224,7 @@ class RecordTest extends ElegantTest
     /**
      * @covers \Netinteractive\Elegant\Model\Record::fill
      * @group fill
+     * @group attribute
      */
     public function testFill_SetAttribute()
     {
@@ -445,5 +448,101 @@ class RecordTest extends ElegantTest
 
     }
 
+    /**
+     * @covers \Netinteractive\Elegant\Model\Record::makeNoneExists
+     * @group display
+     * @group filter
+     */
+    public function testDisplay()
+    {
+        $record = App::make('User');
+        $record->fill(
+            array(
+                'login' => 'User 11',
+                'email' => 'user11@hot.com',
+            )
+        );
+
+        $this->assertEquals('USER 11',$record->display('login', array('upper'), false));
+    }
+
+    /**
+     * @covers \Netinteractive\Elegant\Model\Record::getAttributes
+     * @group attribute
+     * @group get
+     */
+    public function testGetAttributes()
+    {
+        $record = App::make('User');
+        $record->fill(
+            array(
+                'first_name' => 'John',
+                'login' => 'User 11',
+                'email' => 'user11@hot.com',
+            )
+        );
+
+        $this->assertEquals(3, count($record->getAttributes()));
+    }
+
+
+
+    /**
+     * @covers \Netinteractive\Elegant\Model\Record::getAttributesKeys
+     * @group attribute
+     * @group get
+     */
+    public function testGetAttributesKeys()
+    {
+        $record = App::make('User');
+        $record->fill(
+            array(
+                'first_name' => 'John',
+                'login' => 'User 11',
+                'email' => 'user11@hot.com',
+            )
+        );
+
+        $this->assertEquals(array('first_name', 'login', 'email'), $record->getAttributesKeys());
+    }
+
+    /**
+     * @covers \Netinteractive\Elegant\Model\Record::isAttribute
+     * @group attribute
+     * @group is
+     */
+    public function testIsAttribute_WithBluePrint_True()
+    {
+        $record = App::make('User');
+
+
+        $this->assertTrue($record->isAttribute('login'));
+    }
+
+    /**
+     * @covers \Netinteractive\Elegant\Model\Record::isAttribute
+     * @group attribute
+     * @group is
+     */
+    public function testIsAttribute_WithBluePrint_False()
+    {
+        $record = App::make('User');
+
+
+        $this->assertFalse($record->isAttribute('login2'));
+    }
+
+    /**
+     * @covers \Netinteractive\Elegant\Model\Record::isAttribute
+     * @group attribute
+     * @group is
+     */
+    public function testIsAttribute_NoBluePrint_True()
+    {
+        $record = App::make('User');
+        $record->setBlueprint(null);
+
+        $this->assertTrue($record->isAttribute('login2'));
+    }
 
 }
