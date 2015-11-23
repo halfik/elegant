@@ -424,7 +424,7 @@ abstract class Blueprint
      *
      * @return $this
      */
-    public function setFieldRules($fieldKey, array $rules, $group='all')
+    public function setFieldRules($fieldKey, array $rules, $group=null)
     {
         if ($group === null) {
             $this->fields[$fieldKey]['rules'] = $rules;
@@ -454,7 +454,7 @@ abstract class Blueprint
      */
     public function isFieldRequired($key, $action=null)
     {
-        foreach (self::$fields[get_class($this)][$key]['rules'] AS $group=>$rules){
+        foreach ($this->fields[$key]['rules'] AS $group=>$rules){
             if ($action == null || $action == $group){
                 $rules_array = explode('|', $rules);
 

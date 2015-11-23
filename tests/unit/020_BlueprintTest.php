@@ -29,6 +29,168 @@ class BlueprintTest extends ElegantTest
     }*/
 
     /**
+     * @covers \Netinteractive\Elegant\Model\Blueprint::isField
+     * @group fields
+     * @group is
+     * @group validation
+     */
+    public function testIsField_False()
+    {
+        $blueprint = \App::make('Patient')->getBlueprint();
+        $this->assertFalse($blueprint->isField('no_field'));
+    }
+
+    /**
+     * @covers \Netinteractive\Elegant\Model\Blueprint::isField
+     * @group fields
+     * @group is
+     * @group validation
+     */
+    public function testIsField_True()
+    {
+        $blueprint = \App::make('Patient')->getBlueprint();
+        $this->assertTrue($blueprint->isField('id'));
+    }
+
+    /**
+     * @covers \Netinteractive\Elegant\Model\Blueprint::isFieldRequired
+     * @group fields
+     * @group is
+     * @group required
+     */
+    public function testIsFieldRequired_True()
+    {
+        $blueprint = \App::make('Patient')->getBlueprint();
+        $this->assertTrue($blueprint->isFieldRequired('id'));
+    }
+
+
+    /**
+     * @covers \Netinteractive\Elegant\Model\Blueprint::isFieldRequired
+     * @group fields
+     * @group is
+     * @group required
+     */
+    public function testIsFieldRequired_False()
+    {
+        $blueprint = \App::make('Patient')->getBlueprint();
+        $this->assertFalse($blueprint->isFieldRequired('user__id'));
+    }
+
+    /**
+     * @covers \Netinteractive\Elegant\Model\Blueprint::isExternal
+     * @group fields
+     * @group is
+     * @group external
+     */
+    public function testIsExternal_NotField_False()
+    {
+        $blueprint = \App::make('User')->getBlueprint();
+        $this->assertFalse($blueprint->isExternal('not_a_field'));
+
+    }
+
+    /**
+     * @covers \Netinteractive\Elegant\Model\Blueprint::isExternal
+     * @group fields
+     * @group is
+     * @group external
+     */
+    public function testIsExternal_True()
+    {
+        $blueprint = \App::make('User')->getBlueprint();
+        $this->assertTrue($blueprint->isExternal('created_at'));
+    }
+
+    /**
+     * @covers \Netinteractive\Elegant\Model\Blueprint::isExternal
+     * @group fields
+     * @group is
+     * @group external
+     */
+    public function testIsExternal_False()
+    {
+        $blueprint = \App::make('User')->getBlueprint();
+        $this->assertFalse($blueprint->isExternal('email'));
+    }
+
+    /**
+     * @covers \Netinteractive\Elegant\Model\Blueprint::isIncrementingPk
+     * @group fields
+     * @group is
+     * @group pk
+     */
+    public function testIsIncrementingPk_False()
+    {
+        $blueprint = \App::make('User')->getBlueprint();
+        $this->assertFalse($blueprint->isIncrementingPk('email'));
+    }
+
+    /**
+     * @covers \Netinteractive\Elegant\Model\Blueprint::isTimestamp
+     * @group fields
+     * @group is
+     * @group timestamp
+     */
+    public function testIsIncrementingPk_True()
+    {
+        $blueprint = \App::make('User')->getBlueprint();
+        $this->assertTrue($blueprint->isIncrementingPk('id'));
+    }
+
+    /**
+     * @covers \Netinteractive\Elegant\Model\Blueprint::isTimestamp
+     * @group fields
+     * @group is
+     * @group pk
+     */
+    public function testIsTimestamp_False()
+    {
+        $blueprint = \App::make('Patient')->getBlueprint();
+        $this->assertFalse($blueprint->isTimestamp('id'));
+    }
+
+    /**
+     * @covers \Netinteractive\Elegant\Model\Blueprint::isTimestamp
+     * @group fields
+     * @group is
+     * @group timestamp
+     */
+    public function testIsTimestamp_True()
+    {
+        $blueprint = \App::make('User')->getBlueprint();
+        $this->assertTrue($blueprint->isTimestamp('created_at'));
+        $this->assertTrue($blueprint->isTimestamp('updated_at'));
+        $this->assertTrue($blueprint->isTimestamp('deleted_at'));
+    }
+
+    /**
+     * @covers \Netinteractive\Elegant\Model\Blueprint::hasTimestamps
+     * @group fields
+     * @group has
+     * @group timestamp
+     */
+    public function testHasTimestamps_True()
+    {
+        $blueprint = \App::make('Patient')->getBlueprint();
+        $this->assertTrue($blueprint->hasTimestamps());
+    }
+
+
+    /**
+     * @covers \Netinteractive\Elegant\Model\Blueprint::hasTimestamps
+     * @group fields
+     * @group has
+     * @group timestamp
+     */
+    public function testHasTimestamps_False()
+    {
+        $blueprint = \App::make('User')->getBlueprint();
+        $this->assertFalse($blueprint->hasTimestamps());
+    }
+
+
+    /**
      * @covers \Netinteractive\Elegant\Model\Blueprint::getStorageName
      * @group storage
      * @group get
@@ -39,6 +201,7 @@ class BlueprintTest extends ElegantTest
 
         $this->assertEquals('patient', $blueprint->getStorageName());
     }
+
 
     /**
      * @covers \Netinteractive\Elegant\Model\Blueprint::setStorageName
@@ -333,5 +496,70 @@ class BlueprintTest extends ElegantTest
         $this->assertTrue(array_key_exists('fill', $filters));
         $this->assertEquals('stripTags', $filters['fill'][0]);
     }
+
+    /**
+     * @covers \Netinteractive\Elegant\Model\Blueprint::getFieldFilters
+     * @group fields
+     * @group get
+     * @group filters
+     */
+    public function testGetFieldFilters_Type()
+    {
+        $blueprint = \App::make('Patient')->getBlueprint();
+        $filters = $blueprint->getFieldFilters('pesel', 'save');
+        $filters2 = $blueprint->getFieldFilters('pesel', 'fill');
+
+        $this->assertEquals(0, count($filters));
+        $this->assertEquals(1, count($filters2));
+    }
+
+    /**
+     * @covers \Netinteractive\Elegant\Model\Blueprint::setFieldRules
+     * @group fields
+     * @group set
+     * @group validation
+     */
+    public function testSetFieldRules_RewriteAll()
+    {
+        $blueprint = \App::make('Patient')->getBlueprint();
+        $originalRules = $blueprint->getFieldRules('id');
+
+        $blueprint->setFieldRules('id', array( 'any' => 'string' ), null);
+
+        $rules = $blueprint->getFieldRules('id');
+
+        $this->assertEquals(1, count($rules));
+        $this->assertTrue(array_key_exists('any', $rules));
+        $this->assertNotFalse(strpos($rules['any'], 'string'));
+
+        $blueprint->setFieldRules('id', $originalRules);
+    }
+
+    /**
+    * @covers \Netinteractive\Elegant\Model\Blueprint::setFieldRules
+    * @group fields
+    * @group set
+    * @group validation
+    */
+    public function testSetFieldRules_RewriteGroup()
+    {
+        $blueprint = \App::make('Patient')->getBlueprint();
+        $originalRules = $blueprint->getFieldRules('id');
+
+        $blueprint->setFieldRules('id', array( 'string', 'url' ), 'update');
+
+        $rules = $blueprint->getFieldRules('id');
+
+        $this->assertEquals(2, count($rules));
+        $this->assertTrue(array_key_exists('any', $rules));
+        $this->assertTrue(array_key_exists('update', $rules));
+        $this->assertEquals(2, count($rules['update']));
+
+        $this->assertEquals('string', $rules['update'][0]);
+
+        $blueprint->setFieldRules('id', $originalRules);
+    }
+
+
 
 }
