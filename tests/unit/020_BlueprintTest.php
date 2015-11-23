@@ -264,6 +264,21 @@ class BlueprintTest extends ElegantTest
     public function testGetFieldsTypes()
     {
         $blueprint = \App::make('Patient')->getBlueprint();
+        $types = $blueprint->getFieldsTypes(array('id'));
+
+        $this->assertEquals(1, count($types));
+        $this->assertTrue(array_key_exists('id', $types));
+    }
+
+    /**
+     * @covers \Netinteractive\Elegant\Model\Blueprint::getFieldsTypes
+     * @group fields
+     * @group get
+     * @group types
+     */
+    public function testGetFieldsTypes_All()
+    {
+        $blueprint = \App::make('Patient')->getBlueprint();
         $types = $blueprint->getFieldsTypes();
 
         $this->assertEquals(5, count($types));
@@ -272,6 +287,20 @@ class BlueprintTest extends ElegantTest
         $this->assertTrue(array_key_exists('pesel', $types));
         $this->assertTrue(array_key_exists('created_at', $types));
         $this->assertTrue(array_key_exists('updated_at', $types));
+    }
+
+    /**
+     * @covers \Netinteractive\Elegant\Model\Blueprint::getFieldType
+     * @group fields
+     * @group get
+     * @group types
+     */
+    public function testGetFieldType()
+    {
+        $blueprint = \App::make('Patient')->getBlueprint();
+        $type = $blueprint->getFieldType('id');
+
+        $this->assertEquals($blueprint::TYPE_INT, $type);
     }
 
 }

@@ -58,6 +58,72 @@ abstract class Blueprint
      */
     protected $softDelete = false;
 
+    /**
+     * field type for ints
+     */
+    const TYPE_INT = 'int';
+
+    /**
+     * field type for decimal
+     */
+    const TYPE_DECIMAL = 'decimal';
+
+    /**
+     * field type for date
+     */
+    const TYPE_DATE = 'date';
+
+    /**
+     * field type for datetime
+     */
+    const TYPE_DATETIME = 'dateTime';
+
+    /**
+     * field type for time
+     */
+    const TYPE_TIME = 'time';
+
+    /**
+     * field type for string
+     */
+    const TYPE_STRING = 'string';
+
+    /**
+     * field type for password
+     */
+    const TYPE_PASSWORD = 'password';
+
+    /**
+     * field type for html
+     */
+    const TYPE_HTML = 'html';
+
+    /**
+     * field type for ip
+     */
+    const TYPE_IP = 'ip';
+
+
+    /**
+     * field type for email
+     */
+    const TYPE_EMAIL = 'email';
+
+    /**
+     * field type for URL
+     */
+    const TYPE_URL = 'url';
+
+    /**
+     * field type for file
+     */
+    const TYPE_FILE = 'file';
+
+    /**
+     * field type for image
+     */
+    const TYPE_IMAGE= 'image';
+
 
     /**
      * Constructor
@@ -245,10 +311,6 @@ abstract class Blueprint
             $fieldsKeys = array_keys($this->getFields());
         }
 
-        if (!is_array($fieldsKeys)){
-            $fieldsKeys = array_map('trim', explode(',', $fieldsKeys));
-        }
-
         if (!in_array('any', $rulesGroups)) {
             array_push($rulesGroups, 'any');
         }
@@ -306,9 +368,7 @@ abstract class Blueprint
         if (empty($fieldsKeys)) {
             $fieldsKeys = array_keys($this->getFields());
         }
-        if (!is_array($fieldsKeys)) {
-            $fieldsKeys = array($fieldsKeys);
-        }
+
         $result = array();
         $fields = $this->getFields();
         foreach ($fields as $key => $field) {

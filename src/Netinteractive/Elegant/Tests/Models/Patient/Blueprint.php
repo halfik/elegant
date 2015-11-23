@@ -21,7 +21,7 @@ class Blueprint extends \Netinteractive\Elegant\Model\Blueprint
         $this->fields = array(
             'id' => array(
                 'title' => 'Id',
-                'type' => 'int',
+                'type' => static::TYPE_INT,
                 'sortable' => true,
                 'rules' => array(
                     'any' => 'integer',
@@ -30,14 +30,14 @@ class Blueprint extends \Netinteractive\Elegant\Model\Blueprint
             ),
             'user__id' => array(
                 'title' => _('user__id'),
-                'type' => 'int',
+                'type' => static::TYPE_INT,
                 'rules' => array(
                     'any' => 'integer|exists:user,id',
                 )
             ),
             'pesel' => array(
                 'title' => _('PESEL'),
-                'type' => 'int',
+                'type' => static::TYPE_STRING,
                 'sortable' => true,
                 'searchable' => Searchable::$contains,
                 'rules' => array(
