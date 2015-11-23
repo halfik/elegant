@@ -274,10 +274,7 @@ abstract class Blueprint
                 }
             }
         }
-       /* if ( get_class($this) == "Netinteractive\Elegant\Tests\Models\Patient\Blueprint"){
-            var_dump($result); exit;
 
-        }*/
         return $result;
     }
 
@@ -304,9 +301,9 @@ abstract class Blueprint
      * @param array $fieldsKeys
      * @return array
      */
-    public function getFieldsTypes($fieldsKeys = array())
+    public function getFieldsTypes(array $fieldsKeys = array())
     {
-        if (is_null($fieldsKeys)) {
+        if (empty($fieldsKeys)) {
             $fieldsKeys = array_keys($this->getFields());
         }
         if (!is_array($fieldsKeys)) {

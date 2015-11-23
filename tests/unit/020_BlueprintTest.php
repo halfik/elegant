@@ -176,15 +176,102 @@ class BlueprintTest extends ElegantTest
      * @group get
      * @group validation
      */
-    public function testGetFieldsRules_StringRulesGroups()
+    public function testGetFieldsRules()
     {
         $blueprint = \App::make('Patient')->getBlueprint();
 
-        $rules = $blueprint->getFieldsRules('all');
-        
+        $rules = $blueprint->getFieldsRules();
+
         $this->assertEquals(3, count($rules));
         $this->assertTrue(array_key_exists('id', $rules));
         $this->assertTrue(array_key_exists('user__id', $rules));
         $this->assertTrue(array_key_exists('pesel', $rules));
+        $this->assertFalse(strpos($rules['id'], 'required'));
     }
+
+    /**
+     * @covers \Netinteractive\Elegant\Model\Blueprint::getFieldsRules
+     * @group fields
+     * @group get
+     * @group validation
+     */
+    public function testGetFieldsRules_StringRulesGroups()
+    {
+        $blueprint = \App::make('Patient')->getBlueprint();
+
+        $rules = $blueprint->getFieldsRules('update');
+
+        $this->assertEquals(3, count($rules));
+        $this->assertTrue(array_key_exists('id', $rules));
+        $this->assertNotFalse(strpos($rules['id'], 'required'));
+    }
+
+    /**
+     * @covers \Netinteractive\Elegant\Model\Blueprint::getFieldsRules
+     * @group fields
+     * @group get
+     * @group validation
+     */
+    public function testGetFieldsRules_FieldKeys()
+    {
+        $blueprint = \App::make('Patient')->getBlueprint();
+
+        $rules = $blueprint->getFieldsRules('update', array('id'));
+
+        $this->assertEquals(1, count($rules));
+        $this->assertTrue(array_key_exists('id', $rules));
+        $this->assertNotFalse(strpos($rules['id'], 'required'));
+    }
+
+    /**
+     * @covers \Netinteractive\Elegant\Model\Blueprint::getFieldRules
+     * @group fields
+     * @group get
+     * @group validation
+     */
+    public function testGetFieldRules()
+    {
+        $blueprint = \App::make('Patient')->getBlueprint();
+
+        $rules = $blueprint->getFieldRules('id');
+
+        $this->assertEquals(2, count($rules));
+        $this->assertTrue(array_key_exists('any', $rules));
+        $this->assertTrue(array_key_exists('update', $rules));
+    }
+
+    /**
+     * @covers \Netinteractive\Elegant\Model\Blueprint::getFieldRules
+     * @group fields
+     * @group get
+     * @group validation
+     */
+    public function testGetFieldRules_EmptyArray()
+    {
+        $blueprint = \App::make('Patient')->getBlueprint();
+
+        $rules = $blueprint->getFieldRules('id2');
+
+        $this->assertEquals(0, count($rules));
+    }
+
+    /**
+     * @covers \Netinteractive\Elegant\Model\Blueprint::getFieldsTypes
+     * @group fields
+     * @group get
+     * @group types
+     */
+    public function testGetFieldsTypes()
+    {
+        $blueprint = \App::make('Patient')->getBlueprint();
+        $types = $blueprint->getFieldsTypes();
+
+        $this->assertEquals(5, count($types));
+        $this->assertTrue(array_key_exists('id', $types));
+        $this->assertTrue(array_key_exists('user__id', $types));
+        $this->assertTrue(array_key_exists('pesel', $types));
+        $this->assertTrue(array_key_exists('created_at', $types));
+        $this->assertTrue(array_key_exists('updated_at', $types));
+    }
+
 }
