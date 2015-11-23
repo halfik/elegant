@@ -193,7 +193,7 @@ abstract class Blueprint
      * @param array $fieldKeys
      * @return
      */
-    public function getFieldsTitles(array $fieldsKeys = array())
+    public function getFieldsTitles($fieldsKeys = array())
     {
         if (empty($fieldsKeys)) {
             $fieldsKeys = array_keys($this->getFields());
