@@ -69,18 +69,7 @@ class BlueprintTest extends ElegantTest
         $blueprint->setStorageName('patient');
     }
 
-    /**
-     * @covers \Netinteractive\Elegant\Model\Blueprint::init
-     * @group init
-     */
-    public function testInit__This()
-    {
-        $blueprint = \App::make('Patient')->getBlueprint();
 
-        $response = $this->callPrivateMethod($blueprint, 'init');
-        $class = get_class($blueprint);
-        $this->assertTrue($response instanceof $class);
-    }
 
     /**
      * @covers \Netinteractive\Elegant\Model\Blueprint::getFields
@@ -132,7 +121,7 @@ class BlueprintTest extends ElegantTest
         $blueprint = \App::make('Patient')->getBlueprint();
         $titles = $blueprint->getFieldsTitles();
 
-        $this->assertEquals(3, count($titles));
+        $this->assertEquals(5, count($titles));
         $this->assertTrue(array_key_exists('pesel', $titles));
         $this->assertEquals('PESEL', $titles['pesel']);
     }

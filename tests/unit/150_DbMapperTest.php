@@ -382,7 +382,10 @@ class DbMapperTest extends ElegantTest
 
 
     /**
-     * Save test 1
+     * @covers \Netinteractive\Elegant\Mapper\DbMapper::save
+     * @group db
+     * @group mapper
+     * @group save
      */
     public function testSave_NewRecord()
     {
@@ -417,8 +420,13 @@ class DbMapperTest extends ElegantTest
     }
 
 
+
     /**
-     * Save test 2
+     * @covers \Netinteractive\Elegant\Mapper\DbMapper::save
+     * @group db
+     * @group mapper
+     * @group save
+     * @group exists
      */
     public function testSave_ExistsRecord()
     {
@@ -440,8 +448,13 @@ class DbMapperTest extends ElegantTest
         \DB::rollback();
     }
 
+
     /**
-     * Save test 3
+     * @covers \Netinteractive\Elegant\Mapper\DbMapper::save
+     * @group db
+     * @group mapper
+     * @group save
+     * @group timestamps
      */
     public function testSave_NewRecordTimestamps()
     {
@@ -462,17 +475,20 @@ class DbMapperTest extends ElegantTest
         $dateTime = new DateTime();
         $this->assertEquals($dateTime->format('Y-m-d H:i'), $record->created_at->format('Y-m-d H:i'));
         $this->assertEquals($dateTime->format('Y-m-d H:i'), $record->updated_at->format('Y-m-d H:i'));
-
+        ;
         $this->assertEquals($dateTime->format('Y-m-d H:i'), $record2->created_at->format('Y-m-d H:i'));
         $this->assertEquals($dateTime->format('Y-m-d H:i'), $record2->updated_at->format('Y-m-d H:i'));
-
-
 
         \DB::rollback();
     }
 
     /**
-     * Save test 4
+     * @covers \Netinteractive\Elegant\Mapper\DbMapper::save
+     * @group db
+     * @group mapper
+     * @group save
+     * @group timestamps
+     * @group exists
      */
     public function testSave_ExistsRecordTimestamps()
     {
