@@ -51,6 +51,10 @@ class RecordTest extends ElegantTest
         $this->assertFalse($record->hasBlueprint());
     }
 
+
+
+
+
     /**
      * @covers \Netinteractive\Elegant\Model\Record::getAttribute
      * @group attribute
@@ -385,6 +389,80 @@ class RecordTest extends ElegantTest
         $record = App::make('User');
         $this->assertTrue($record->isNew());
     }
+
+    /**
+     * @covers \Netinteractive\Elegant\Model\Record::isNew
+     * @group exists
+     */
+    public function testIsNew_UsesExists()
+    {
+        $record = App::make('User');
+
+        $mock = $this->getMockBuilder(get_class($record))
+            ->setMethods( array('exists'))
+            ->getMock()
+        ;
+
+        $mock->expects($this->exactly(1))
+            ->method('exists')
+            ->withAnyParameters()
+        ;
+
+        $mock->isNew();
+    }
+
+
+    /**
+     * @covers \Netinteractive\Elegant\Model\Record::exists
+     * @group exists
+     * @group get
+     */
+    public function testExists_False()
+    {
+        $record = App::make('User');
+
+        $this->assertFalse($record->exists());
+    }
+
+
+    /**
+     * @covers \Netinteractive\Elegant\Model\Record::exists
+     * @covers \Netinteractive\Elegant\Model\Record::setExists
+     * @group exists
+     * @group get
+     * @group set
+     */
+    public function testExists_True()
+    {
+        $record = App::make('User');
+        $record->setExists(true);
+
+        $this->assertTrue($record->exists());
+    }
+
+    /**
+     * @covers \Netinteractive\Elegant\Model\Record::setExists
+     * @group exists
+     * @group set
+     * @group timestamps
+     */
+    public function testSetExists_SynchronizeTimestamps()
+    {
+        $record = App::make('User');
+
+        $mock = $this->getMockBuilder(get_class($record))
+            ->setMethods( array('synchronizeTimestamps'))
+            ->getMock()
+        ;
+
+        $mock->expects($this->exactly(1))
+            ->method('synchronizeTimestamps')
+            ->withAnyParameters()
+        ;
+
+        $mock->syncOriginal();
+    }
+
 
     /**
      * @covers \Netinteractive\Elegant\Model\Record::makeNoneExists

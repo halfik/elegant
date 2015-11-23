@@ -135,7 +135,6 @@ class DbMapper implements MapperInterface
             $result =  $query->delete();
         }
 
-
         #it dosn't we just deleted it
         $record->setExists(false);
 
@@ -175,6 +174,9 @@ class DbMapper implements MapperInterface
         else{
             $this->performUpdate($record ,$touchRelated);
         }
+
+        $record->syncOriginal();
+
 
         return $this;
     }

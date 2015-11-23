@@ -409,6 +409,7 @@ class DbMapperTest extends ElegantTest
         );
 
         $dbMapper->save($record);
+        
         $this->assertEquals(0, count($record->getDirty()));
 
         $dbMapper->delete($record);

@@ -123,10 +123,6 @@ abstract class Record implements Arrayable, Jsonable
     public function setExists($exists=true)
     {
         $this->exists = (boolean) $exists;
-        if ($this->exists()){
-            $this->dirty = array();
-            $this->synchronizeTimestamps();
-        }
 
         return $this;
     }
@@ -142,13 +138,13 @@ abstract class Record implements Arrayable, Jsonable
     }
 
 
+
     /**
-     * re
-     * @return array
+     * synchronize timestamp data between attributes and originals lists
+     * @return $this
      */
     protected function synchronizeTimestamps()
     {
-        $response = array();
         $createdAt = $this->getBlueprint()->getCreatedAt();
         $updatedAt = $this->getBlueprint()->getUpdatedAt();
         $deletedAt = $this->getBlueprint()->getDeletedAt();
@@ -165,7 +161,7 @@ abstract class Record implements Arrayable, Jsonable
             $this->original[$deletedAt] = $this->attributes[$deletedAt];
         }
 
-        return $response;
+        return $this;
     }
 
     /**
@@ -640,8 +636,10 @@ abstract class Record implements Arrayable, Jsonable
      * @return $this
      */
     public function syncOriginal()
-{
+    {
         $this->original = $this->attributes;
+        $this->synchronizeTimestamps();
+        $this->dirty = array();
 
         return $this;
     }
