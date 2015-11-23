@@ -303,4 +303,35 @@ class BlueprintTest extends ElegantTest
         $this->assertEquals($blueprint::TYPE_INT, $type);
     }
 
+
+    /**
+     * @covers \Netinteractive\Elegant\Model\Blueprint::getFieldType
+     * @group fields
+     * @group get
+     * @group types
+     */
+    public function testGetFieldType_Null()
+    {
+        $blueprint = \App::make('Patient')->getBlueprint();
+        $type = $blueprint->getFieldType('no_id');
+
+        $this->assertNull( $type);
+    }
+
+    /**
+     * @covers \Netinteractive\Elegant\Model\Blueprint::getFieldFilters
+     * @group fields
+     * @group get
+     * @group filters
+     */
+    public function testGetFieldFilters()
+    {
+        $blueprint = \App::make('Patient')->getBlueprint();
+        $filters = $blueprint->getFieldFilters('pesel');
+
+        $this->assertEquals(1, count($filters));
+        $this->assertTrue(array_key_exists('fill', $filters));
+        $this->assertEquals('stripTags', $filters['fill'][0]);
+    }
+
 }

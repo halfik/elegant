@@ -44,6 +44,9 @@ class Blueprint extends \Netinteractive\Elegant\Model\Blueprint
                     'any' => 'required|unique:patient,pesel',
                 ),
                 'filters' => array(
+                    'fill' => array(
+                        'stripTags'
+                    )
                 )
             ),
         );

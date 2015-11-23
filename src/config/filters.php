@@ -115,6 +115,10 @@ return array(
             return str_replace(array(')', '(', ' ', '-'), '', $value);
         }),
         'stripTags' => $serializer->serialize(function ($value, $params = array()) {
+            if (is_object($value)){
+                return $value;
+            }
+
             $allowed = isSet($params['allowed']) ? $params['allowed'] : implode('', $params);
             return strip_tags($value, $allowed);
         }),
