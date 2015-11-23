@@ -30,7 +30,7 @@ to the second database where you already have record with id=1 - it will fail. B
 
         $mySqlConnection = \DB::connection('mysql');
 
-        $pgSqlPatient->exists = false;
+        $pgSqlPatient->setExists(false);
 
         $dbMapper->setConnection($mySqlConnection);
         $dbMapper->save($pgSqlPatient);

@@ -37,7 +37,7 @@ class DbMapperTest extends ElegantTest
         $dbMapper = new \Netinteractive\Elegant\Mapper\DbMapper('Patient');
         $record = $dbMapper->find(1);
 
-        $this->assertTrue($record->exists);
+        $this->assertTrue($record->exists());
     }
 
     /**
@@ -109,7 +109,7 @@ class DbMapperTest extends ElegantTest
         $searchResult = $dbMapper->findMany($searchParams);
 
         foreach ($searchResult AS $record){
-            $this->assertTrue($record->exists);
+            $this->assertTrue($record->exists());
         }
     }
 
@@ -153,7 +153,7 @@ class DbMapperTest extends ElegantTest
         $record2 = $dbMapper->find(1);
 
         $this->assertNull($record2);
-        $this->assertFalse($record->exists);
+        $this->assertFalse($record->exists());
 
         \DB::rollback();
     }
@@ -190,7 +190,7 @@ class DbMapperTest extends ElegantTest
         $dbMapper->delete($record);
         \DB::beginTransaction();
 
-        $this->assertFalse($record->exists);
+        $this->assertFalse($record->exists());
     }
 
     /**
@@ -319,7 +319,7 @@ class DbMapperTest extends ElegantTest
         $this->assertEquals('Netinteractive\Elegant\Tests\Models\Patient\Record', get_class($record));
         $this->assertEquals(1, $record->user__id);
         $this->assertEquals('54062609749', $record->pesel);
-        $this->assertFalse($record->exists);
+        $this->assertFalse($record->exists());
     }
 
 
@@ -386,8 +386,10 @@ class DbMapperTest extends ElegantTest
      * @group db
      * @group mapper
      * @group save
+     * @group is
+     * @group dirty
      */
-    public function testSave_NewRecord()
+    public function testSave_NewRecord_IsDirty()
     {
         $dbMapper = new \Netinteractive\Elegant\Mapper\DbMapper('PatientData');
 
@@ -407,19 +409,10 @@ class DbMapperTest extends ElegantTest
         );
 
         $dbMapper->save($record);
-
-
-        $dbMapper->where('phone', '=', '1234567');
-        $result = $dbMapper->get();
-
-        $this->assertEquals(1, count($result));
-        $this->assertTrue($record->exists);
-        $this->assertEquals('1234567', $result[0]->phone);
+        $this->assertEquals(0, count($record->getDirty()));
 
         $dbMapper->delete($record);
     }
-
-
 
     /**
      * @covers \Netinteractive\Elegant\Mapper\DbMapper::save

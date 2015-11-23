@@ -135,7 +135,7 @@ class Builder extends QueryBuilder
             $loadedRecord->fill((array) $result);
 
             $loadedRecord->syncOriginal();
-            $loadedRecord->exists = true;
+            $loadedRecord->setExists(true);
 
             $records[] = $loadedRecord;
         }

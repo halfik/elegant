@@ -393,7 +393,7 @@ class RecordTest extends ElegantTest
     public function testMakeNoneExists()
     {
         $record = App::make('User');
-        $record->exists = true;
+        $record->setExists(true);
 
         $record->makeNoneExists();
         $this->assertTrue($record->isNew());
@@ -407,10 +407,10 @@ class RecordTest extends ElegantTest
     public function testMakeNoneExists_TouchRelatedRecord()
     {
         $record = App::make('User');
-        $record->exists = true;
+        $record->setExists(true);
 
         $patient = App::make('Patient');
-        $patient->exists = true;
+        $patient->setExists(true);
 
         $this->getPrivateProperty($record, 'related')->setValue($record, array('patient' => $patient));
 
@@ -428,14 +428,14 @@ class RecordTest extends ElegantTest
      */
     public function testMakeNoneExists_TouchRelatedCollection()
     {
-        $record = App::make('User');
-        $record->exists = true;
+        $record = \App::make('User');
+        $record->setExists(true);
 
-        $patient1 = App::make('Patient');
-        $patient1->exists = true;
+        $patient1 = \App::make('Patient');
+        $patient1->setExists(true);
 
-        $patient2 = App::make('Patient');
-        $patient2->exists = true;
+        $patient2 = \App::make('Patient');
+        $patient2->setExists(true);
 
         $this->getPrivateProperty($record, 'related')->setValue($record, array('patients' => new \Netinteractive\Elegant\Model\Collection(array($patient1, $patient2))));
 
@@ -702,7 +702,7 @@ class RecordTest extends ElegantTest
             'last_name' => 'London',
         )));
 
-        $record->exists = true;
+        $record->setExists(true);
         $record->first_name = 'Adam';
 
         $this->assertEquals(1, count($record->getDirty()));
@@ -722,11 +722,12 @@ class RecordTest extends ElegantTest
             'last_name' => 'London',
         )));
 
-        $record->exists = true;
+        $record->setExists(true);
         $record->tu__id = '999';
 
         $this->assertEquals(0, count($record->getDirty()));
     }
+
 
 
     /**
@@ -807,5 +808,6 @@ class RecordTest extends ElegantTest
 
         $this->assertTrue($record->isDirty( array('tu__id', 'first_name')));
     }
+
 
 }

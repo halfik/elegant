@@ -58,10 +58,10 @@ abstract class Record implements Arrayable, Jsonable
     protected $input = array();
 
     /**
-     * Information if record already exists in database
+     * Information if record already exists in data storage
      * @var bool
      */
-    public $exists = false;
+    protected $exists = false;
 
     /**
      * @var bool
@@ -107,6 +107,66 @@ abstract class Record implements Arrayable, Jsonable
 
     }
 
+    /**
+     * Checks if record exists (in data storage)
+     * @return bool
+     */
+    public function exists()
+    {
+        return $this->exists;
+    }
+
+    /**
+     * @param bool $exists
+     * @return $this
+     */
+    public function setExists($exists=true)
+    {
+        $this->exists = (boolean) $exists;
+        if ($this->exists()){
+            $this->dirty = array();
+            $this->synchronizeTimestamps();
+        }
+
+        return $this;
+    }
+
+    /**
+     * Checks if record has specified timestamp filed
+     * @param $field
+     * @return bool
+     */
+    public function hasTimeStamp($field)
+    {
+        return isSet( $this->attributes[$field]);
+    }
+
+
+    /**
+     * re
+     * @return array
+     */
+    protected function synchronizeTimestamps()
+    {
+        $response = array();
+        $createdAt = $this->getBlueprint()->getCreatedAt();
+        $updatedAt = $this->getBlueprint()->getUpdatedAt();
+        $deletedAt = $this->getBlueprint()->getDeletedAt();
+
+        if ( isSet( $this->attributes[$createdAt]) ){
+            $this->original[$createdAt] = $this->attributes[$createdAt];
+        }
+
+        if ( isSet( $this->attributes[$updatedAt]) ){
+            $this->original[$updatedAt] = $this->attributes[$updatedAt];
+        }
+
+        if ( isSet( $this->attributes[$deletedAt]) ){
+            $this->original[$deletedAt] = $this->attributes[$deletedAt];
+        }
+
+        return $response;
+    }
 
     /**
      * Fills record with data
@@ -320,7 +380,7 @@ abstract class Record implements Arrayable, Jsonable
      */
     public function makeNoneExists($touchRelated=false)
     {
-        $this->exists = false;
+        $this->setExists(false);
 
         if ($touchRelated == true){
             foreach ($this->related AS $relationName=>$related){
@@ -468,13 +528,14 @@ abstract class Record implements Arrayable, Jsonable
 
     /**
      * Get the attributes that have been changed since last sync.
-     *
+     * @TODO add an event placeholder that will allow to catch and modify dirty before return
      * @return array
      */
     public function getDirty()
     {
-         if ($this->exists == true){
+        if ($this->exists()){
             foreach ($this->attributes as $key => $value){
+
                 if ( !array_key_exists($key, $this->original)){
                     $this->dirty[$key] = $value;
                 }
@@ -492,8 +553,9 @@ abstract class Record implements Arrayable, Jsonable
     }
 
     /**
-     * Method enables to make attributes considered dirty.
+     * Method enables to make attributes considered dirty or undirty.
      * @param array $attributes
+     * @param bool $touchRelated
      * @return $this
      */
     public function makeDirty(array $attributes=array(), $touchRelated=false)
@@ -516,7 +578,6 @@ abstract class Record implements Arrayable, Jsonable
                 }else{
                     $records->makeDirty(array(), $touchRelated);
                 }
-
             }
         }
 
@@ -529,7 +590,7 @@ abstract class Record implements Arrayable, Jsonable
      */
     public function isNew()
     {
-        return !$this->exists;
+        return !$this->exists();
     }
 
     /**
@@ -539,7 +600,7 @@ abstract class Record implements Arrayable, Jsonable
      */
     public function markAsNew($touchRelated=false)
     {
-        $this->exists = false;
+        $this->setExists(false);
 
         if ($touchRelated === true){
             foreach ($this->getRelated() AS $records){
@@ -669,7 +730,7 @@ abstract class Record implements Arrayable, Jsonable
             $this->setUpdatedAt($time);
         }
 
-        if ( !$this->exists && !$this->isDirty($this->getBlueprint()->getCreatedAt())){
+        if ( !$this->exists() && !$this->isDirty($this->getBlueprint()->getCreatedAt())){
             $this->setCreatedAt($time);
         }
     }

@@ -44,7 +44,7 @@ class Pivot extends Record
 		// from the developer's point of view. We can use the parents to get these.
 		$this->parent = $parent;
 
-		$this->exists = $exists;
+		$this->setExists($exists);
 	}
 
 	/**

@@ -86,7 +86,7 @@ class DbMapper implements MapperInterface
 
         $record->fill($data);
         $record->syncOriginal();
-        $record->exists = $exists;
+        $record->setExists($exists);
 
         return $record;
     }
@@ -137,7 +137,7 @@ class DbMapper implements MapperInterface
 
 
         #it dosn't we just deleted it
-        $record->exists = false;
+        $record->setExists(false);
 
         \Event::fire('ni.elegant.mapper.deleted.'.\classDotNotation($record), $record);
 
@@ -241,7 +241,7 @@ class DbMapper implements MapperInterface
            $this->touchRelated($record);
         }
 
-        $record->exists = true;
+        $record->setExists(true);
     }
 
     /**
@@ -368,7 +368,7 @@ class DbMapper implements MapperInterface
 
         if (!empty($data)){
             $record = $this->createRecord((array) $data);
-            $record->exists = true;
+            $record->setExists(true);
         }
 
 
