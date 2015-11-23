@@ -235,13 +235,13 @@ abstract class Blueprint
      * @param array $fieldsKeys
      * @return array
      */
-    public function getFieldsRules($rulesGroups='all', $fieldsKeys=array())
+    public function getFieldsRules($rulesGroups='all', array $fieldsKeys=array())
     {
         if (!is_array($rulesGroups)){
             $rulesGroups = array_map('trim', explode(',', $rulesGroups));
         }
 
-        if (is_null($fieldsKeys)) {
+        if (empty($fieldsKeys)) {
             $fieldsKeys = array_keys($this->getFields());
         }
 
@@ -253,8 +253,10 @@ abstract class Blueprint
             array_push($rulesGroups, 'any');
         }
 
+
         $result = array();
         $fields = $this->getFields();
+
         foreach ($fields as $key => $field) {
             if (!in_array($key, $fieldsKeys) || !isSet($field['rules'])) {
                 continue;
@@ -262,13 +264,20 @@ abstract class Blueprint
 
             $rules = $field['rules'];
             $result[$key] = '';
+
             foreach ($rulesGroups as $ruleGroup) {
                 if (in_array($ruleGroup, $rulesGroups)) {
-                    $result[$key] .= '|' . array_get($rules, $ruleGroup);
+                    $fieldRules = array_get($rules, $ruleGroup);
+                    if ($fieldRules){
+                        $result[$key] .= $fieldRules.'|';
+                    }
                 }
             }
         }
+       /* if ( get_class($this) == "Netinteractive\Elegant\Tests\Models\Patient\Blueprint"){
+            var_dump($result); exit;
 
+        }*/
         return $result;
     }
 

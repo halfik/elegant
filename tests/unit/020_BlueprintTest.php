@@ -169,4 +169,22 @@ class BlueprintTest extends ElegantTest
 
         $this->assertTrue(is_null($title));
     }
+
+    /**
+     * @covers \Netinteractive\Elegant\Model\Blueprint::getFieldsRules
+     * @group fields
+     * @group get
+     * @group validation
+     */
+    public function testGetFieldsRules_StringRulesGroups()
+    {
+        $blueprint = \App::make('Patient')->getBlueprint();
+
+        $rules = $blueprint->getFieldsRules('all');
+        
+        $this->assertEquals(3, count($rules));
+        $this->assertTrue(array_key_exists('id', $rules));
+        $this->assertTrue(array_key_exists('user__id', $rules));
+        $this->assertTrue(array_key_exists('pesel', $rules));
+    }
 }
