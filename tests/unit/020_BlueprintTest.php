@@ -191,6 +191,31 @@ class BlueprintTest extends ElegantTest
 
 
     /**
+     * @covers \Netinteractive\Elegant\Model\Blueprint::softDelete
+     * @group fields
+     * @group is
+     * @group delete
+     */
+    public function testSoftDelete_False()
+    {
+        $blueprint = \App::make('User')->getBlueprint();
+        $this->assertFalse($blueprint->softDelete());
+    }
+
+    /**
+     * @covers \Netinteractive\Elegant\Model\Blueprint::softDelete
+     * @group fields
+     * @group is
+     * @group delete
+     */
+    public function testSoftDelete_True()
+    {
+        $blueprint = \App::make('Patient')->getBlueprint();
+        $this->assertTrue($blueprint->softDelete());
+    }
+
+
+    /**
      * @covers \Netinteractive\Elegant\Model\Blueprint::getStorageName
      * @group storage
      * @group get
@@ -216,6 +241,186 @@ class BlueprintTest extends ElegantTest
         $this->assertEquals('patient2', $blueprint->getStorageName());
         $blueprint->setStorageName('patient');
     }
+
+    /**
+     * @covers \Netinteractive\Elegant\Model\Blueprint::getPrimaryKey
+     * @group primary
+     * @group fields
+     * @group get
+     */
+    public function testGetPrimaryKey()
+    {
+        $blueprint = \App::make('Patient')->getBlueprint();
+        $pk = $blueprint->getPrimaryKey();
+
+        $this->assertEquals(1, count($pk));
+        $this->assertEquals('id', $pk[0]);
+    }
+
+    /**
+     * @covers \Netinteractive\Elegant\Model\Blueprint::setPrimaryKey
+     * @group primary
+     * @group fields
+     * @group get
+     */
+    public function testSetPrimaryKey()
+    {
+        $blueprint = \App::make('Patient')->getBlueprint();
+        $originalPk = $blueprint->getPrimaryKey();
+
+        $blueprint->setPrimaryKey( array('id', 'pesel') );
+        $pk = $blueprint->getPrimaryKey();
+
+        $this->assertEquals(2, count($pk));
+        $this->assertEquals('id', $pk[0]);
+        $this->assertEquals('pesel', $pk[1]);
+
+        $blueprint->setPrimaryKey( $originalPk );
+    }
+
+    /**
+     * @covers \Netinteractive\Elegant\Model\Blueprint::setPrimaryKey
+     * @group primary
+     * @group fields
+     * @group get
+     */
+    public function testSetPrimaryKey_Response()
+    {
+        $blueprint = \App::make('Patient')->getBlueprint();
+        $originalPk = $blueprint->getPrimaryKey();
+
+        $response = $blueprint->setPrimaryKey( array('id', 'pesel') );
+
+        $class = get_class($blueprint);
+        $this->assertTrue($response instanceof $class);
+
+        $blueprint->setPrimaryKey( $originalPk );
+    }
+
+    /**
+     * @covers \Netinteractive\Elegant\Model\Blueprint::setPrimaryKey
+     * @group primary
+     * @group fields
+     * @group get
+     */
+    public function testSetPrimaryKey_FromString()
+    {
+        $blueprint = \App::make('Patient')->getBlueprint();
+        $originalPk = $blueprint->getPrimaryKey();
+
+        $blueprint->setPrimaryKey( 'pesel' );
+        $pk = $blueprint->getPrimaryKey();
+
+        $this->assertEquals(1, count($pk));
+        $this->assertEquals('pesel', $pk[0]);
+
+        $blueprint->setPrimaryKey( $originalPk );
+    }
+
+    /**
+     * @covers \Netinteractive\Elegant\Model\Blueprint::getRelationManager
+     * @group manager
+     * @group relation
+     * @group get
+     */
+    public function testGetRelationManager()
+    {
+        $blueprint = \App::make('Patient')->getBlueprint();
+        $rm = $blueprint->getRelationManager();
+
+        $class = get_class(\App::make('ni.elegant.model.relation.manager'));
+        $this->assertTrue($rm instanceof $class);
+    }
+
+    /**
+     * @covers \Netinteractive\Elegant\Model\Blueprint::setRelationManager
+     * @group manager
+     * @group relation
+     * @group set
+     * @expectedException \Netinteractive\Elegant\Exception\ClassTypeException
+     */
+    public function testSetRelationManager_Exception()
+    {
+        $blueprint = \App::make('Patient')->getBlueprint();
+        $blueprint->getRelationManager();
+
+        $blueprint->setRelationManager($blueprint);
+    }
+
+    /**
+     * @covers \Netinteractive\Elegant\Model\Blueprint::setRelationManager
+     * @group manager
+     * @group relation
+     * @group set
+     */
+    public function testSetRelationManager_Null()
+    {
+        $blueprint = \App::make('Patient')->getBlueprint();
+        $rm = $blueprint->getRelationManager();
+
+        $blueprint->setRelationManager(null);
+
+        $this->assertNull($blueprint->getRelationManager());
+
+        $blueprint->setRelationManager($rm);
+    }
+
+    /**
+     * @covers \Netinteractive\Elegant\Model\Blueprint::setRelationManager
+     * @group manager
+     * @group relation
+     * @group set
+     */
+    public function testSetRelationManager_Response()
+    {
+        $blueprint = \App::make('Patient')->getBlueprint();
+        $originalRm = $blueprint->getRelationManager();
+
+        $blueprint->setRelationManager(null);
+        $response = $blueprint->setRelationManager($originalRm);
+        $rm = $blueprint->getRelationManager();
+
+        $class = get_class(\App::make('ni.elegant.model.relation.manager'));
+        $class2 = get_class($blueprint);
+
+        $this->assertTrue($rm instanceof $class);
+        $this->assertTrue($response instanceof $class2);
+    }
+
+
+    /**
+     * @covers \Netinteractive\Elegant\Model\Blueprint::getCreatedAt
+     * @group timestamp
+     * @group get
+     */
+    public function testGetCreatedAt()
+    {
+        $blueprint = \App::make('Patient')->getBlueprint();
+        $this->assertEquals($blueprint::$createdAt, $blueprint->getCreatedAt());
+    }
+
+    /**
+     * @covers \Netinteractive\Elegant\Model\Blueprint::getUpdatedAt
+     * @group timestamp
+     * @group get
+     */
+    public function testGetUpdatedAt()
+    {
+        $blueprint = \App::make('Patient')->getBlueprint();
+        $this->assertEquals($blueprint::$updatedAt, $blueprint->getUpdatedAt());
+    }
+
+    /**
+     * @covers \Netinteractive\Elegant\Model\Blueprint::getDeletedAt
+     * @group timestamp
+     * @group get
+     */
+    public function testGetDeletedAt()
+    {
+        $blueprint = \App::make('Patient')->getBlueprint();
+        $this->assertEquals($blueprint::$deletedAt, $blueprint->getDeletedAt());
+    }
+
 
     /**
      * @covers \Netinteractive\Elegant\Model\Blueprint::getInstance

@@ -1,5 +1,6 @@
 <?php namespace Netinteractive\Elegant\Model;
 
+use Netinteractive\Elegant\Exception\ClassTypeException;
 use Netinteractive\Elegant\Model\Relation\Manager;
 
 /**
@@ -57,6 +58,15 @@ abstract class Blueprint
      * @var bool
      */
     protected $softDelete = false;
+
+
+    #TIMESTAMP FIELDS
+    public static $createdAt = 'created_at';
+    public static $updatedAt = 'updated_at';
+    public static $deletedAt = 'deleted_at';
+
+
+    #FIELD TYPES
 
     /**
      * field type for ints
@@ -584,13 +594,22 @@ abstract class Blueprint
         return $this->relationManager;
     }
 
+
     /**
      * Sets relationship manager
-     * @param \Netinteractive\Elegant\Model\Relation\Manager $manager
+     * @param \Netinteractive\Elegant\Model\Relation\Manager|null $manager
      * @return $this
      */
-    public function setRelationManager(Manager $manager)
+    public function setRelationManager($manager=null)
     {
+        if (!is_null($manager) && !$manager instanceof Manager){
+            $msg = _(' Invliad class type of object.').' ';
+            $msg .= _('Expected: \Netinteractive\Elegant\Model\Relation\Manager').' ';
+            $msg .= _('Recived:').' '.get_class($manager);
+
+            throw new ClassTypeException($msg);
+        }
+
         $this->relationManager = $manager;
         return $this;
     }
@@ -606,7 +625,7 @@ abstract class Blueprint
      */
     public function getCreatedAt()
     {
-        return 'created_at';
+        return self::$createdAt;
     }
 
 
@@ -616,7 +635,7 @@ abstract class Blueprint
      */
     public function getUpdatedAt()
     {
-        return 'updated_at';
+        return self::$updatedAt;
     }
 
 
@@ -626,6 +645,6 @@ abstract class Blueprint
      */
     public function getDeletedAt()
     {
-        return 'deleted_at';
+        return self::$deletedAt;
     }
 } 
