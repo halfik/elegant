@@ -415,6 +415,7 @@ class DbMapperTest extends ElegantTest
         $dbMapper->delete($record);
     }
 
+
     /**
      * @covers \Netinteractive\Elegant\Mapper\DbMapper::save
      * @group db

@@ -1208,20 +1208,73 @@ class RecordTest extends ElegantTest
 
     /**
      * @covers \Netinteractive\Elegant\Model\Record::updateTimestamps
-     * @group datetime
+     * @group update
      * @group timestamp
      */
-    public function testUpdateTimestamps_Force()
+    public function testUpdateTimestamps_NotDirty()
     {
-        $this->markTestIncomplete();
+        $record = App::make('User');
+
+        $this->assertNull($record->created_at);
+        $this->assertNull($record->updated_at);
+
+        $record->updateTimestamps();
+
+        $this->assertNotNull($record->created_at);
+        $this->assertNotNull($record->updated_at);
+    }
+
+    /**
+     * @covers \Netinteractive\Elegant\Model\Record::updateTimestamps
+     * @group update
+     * @group timestamp
+     */
+    public function testUpdateTimestamps_ForceCreated()
+    {
+        $data =  array(
+            'created_at' => '2015-01-01 12:12:12',
+            'updated_at' => '2015-01-01 12:22:22',
+        );
+
+        $record = App::make('Patient');
+        $record->fill($data);
+
+        $record->updateTimestamps(true);
+
+        $this->assertNotEquals($data['created_at'], $record->created_at->format('Y-m-d H:i:s'));
+        $this->assertEquals($data['updated_at'], $record->updated_at->format('Y-m-d H:i:s'));
+    }
+
+    /**
+     * @covers \Netinteractive\Elegant\Model\Record::updateTimestamps
+     * @group update
+     * @group timestamp
+     */
+    public function testUpdateTimestamps_ForceUpdated()
+    {
+        $data =  array(
+            'created_at' => '2015-01-01 12:12:12',
+            'updated_at' => '2015-01-01 12:22:22',
+        );
+
+        $record = App::make('Patient');
+        $record->fill($data);
+
+        $record->updateTimestamps(false, true);
+
+        $this->assertEquals($data['created_at'], $record->created_at->format('Y-m-d H:i:s'));
+        $this->assertNotEquals($data['updated_at'], $record->updated_at->format('Y-m-d H:i:s'));
     }
 
     /**
      * @covers \Netinteractive\Elegant\Model\Record::toArray
+     * @group attribute
+     * @group external
+     * @group related
      * @group array
      * @group to
      */
-    public function testToArray()
+    public function testToArray_WithExternal()
     {
         $record = \App::make('User',  array(array(
             'tu__id' => 999,
@@ -1232,18 +1285,32 @@ class RecordTest extends ElegantTest
 
         $result = $record->toArray();
 
-       // $this->assertEquals()
-        $this->markTestIncomplete();
+        $this->assertTrue(is_array($result));
+        $this->assertEquals(11, count($result));
+        $this->assertArrayHasKey('id', $result);
+        $this->assertArrayHasKey('ext', $result);
+        $this->assertArrayHasKey('med__id', $result);
+
     }
 
     /**
      * @covers \Netinteractive\Elegant\Model\Record::toJson
+     * @group attribute
+     * @group external
+     * @group related
      * @group json
      * @group to
      */
     public function testToJson()
     {
-        $this->markTestIncomplete();
+        $record = \App::make('User',  array(array(
+            'tu__id' => 999,
+            'first_name' => 123,
+            'last_name' => 'London',
+            'ext' => 888
+        )));
+
+        $this->assertTrue(isJson($record->toJson()));
     }
 
     /**
@@ -1253,7 +1320,24 @@ class RecordTest extends ElegantTest
      */
     public function testJsonSerialize()
     {
-        $this->markTestIncomplete();
+        $record = \App::make('User',  array(array(
+            'tu__id' => 999,
+            'first_name' => 123,
+            'last_name' => 'London',
+            'ext' => 888
+        )));
+
+        $mock = $this->getMockBuilder(get_class($record))
+            ->setMethods( array('toArray'))
+            ->getMock()
+        ;
+
+        $mock->expects($this->exactly(1))
+            ->method('toArray')
+            ->withAnyParameters()
+        ;
+
+        $mock->jsonSerialize();
     }
 
 
@@ -1264,7 +1348,24 @@ class RecordTest extends ElegantTest
      */
     public function testToString()
     {
-        $this->markTestIncomplete();
+        $record = \App::make('User',  array(array(
+            'tu__id' => 999,
+            'first_name' => 123,
+            'last_name' => 'London',
+            'ext' => 888
+        )));
+
+        $mock = $this->getMockBuilder(get_class($record))
+            ->setMethods( array('toJson'))
+            ->getMock()
+        ;
+
+        $mock->expects($this->exactly(1))
+            ->method('toJson')
+            ->withAnyParameters()
+        ;
+
+        $mock->__toString();
     }
 
 
@@ -1274,9 +1375,21 @@ class RecordTest extends ElegantTest
      * @group attribute
      * @group set
      */
-    public function testSet()
+    public function testSet_SetAttribute()
     {
-        $this->markTestIncomplete();
+        $record = \App::make('User');
+
+        $mock = $this->getMockBuilder(get_class($record))
+            ->setMethods( array('setAttribute'))
+            ->getMock()
+        ;
+
+        $mock->expects($this->exactly(1))
+            ->method('setAttribute')
+            ->withAnyParameters()
+        ;
+
+        $mock->id = 912;
     }
 
     /**
@@ -1286,7 +1399,19 @@ class RecordTest extends ElegantTest
      */
     public function testGet()
     {
-        $this->markTestIncomplete();
+        $record = \App::make('User');
+
+        $mock = $this->getMockBuilder(get_class($record))
+            ->setMethods( array('getAttribute'))
+            ->getMock()
+        ;
+
+        $mock->expects($this->exactly(1))
+            ->method('getAttribute')
+            ->withAnyParameters()
+        ;
+
+        $a = (string) $mock->id;
     }
 
     /**
@@ -1294,20 +1419,91 @@ class RecordTest extends ElegantTest
      * @group attribute
      * @group isset
      */
-    public function testIsset()
+    public function testIsset_AttributeFalse()
     {
-        $this->markTestIncomplete();
+        $record = \App::make('User');
+
+        $this->assertFalse(isSet($record->id));
     }
 
+    /**
+     * @covers \Netinteractive\Elegant\Model\Record::__isset
+     * @group attribute
+     * @group isset
+     */
+    public function testIsset_AttributeTrue()
+    {
+        $record = \App::make('User', array(array(
+            'id' => 515
+            )
+        ));
+
+        $this->assertTrue(isSet($record->id));
+    }
+
+    /**
+     * @covers \Netinteractive\Elegant\Model\Record::__isset
+     * @group external
+     * @group isset
+     */
+    public function testIsset_External_False()
+    {
+        $record = \App::make('User');
+
+        $this->assertFalse(isSet($record->ip));
+    }
+
+
+    /**
+     * @covers \Netinteractive\Elegant\Model\Record::__isset
+     * @group external
+     * @group isset
+     */
+    public function testIsset_External_True()
+    {
+        $record = \App::make('User', array(
+            array(
+                'ip' => '127.0.0.1'
+            )
+        ));
+
+        $this->assertTrue(isSet($record->ip));
+    }
 
     /**
      * @covers \Netinteractive\Elegant\Model\Record::__unset
      * @group attribute
      * @group unset
      */
-    public function testUnset()
+    public function testUnset_Attribute()
     {
-        $this->markTestIncomplete();
+        $record = \App::make('User', array(
+            array(
+                'id' => 123
+            )
+        ));
+
+        unset($record->id);
+
+        $this->assertNull($record->id);
+    }
+
+    /**
+     * @covers \Netinteractive\Elegant\Model\Record::__unset
+     * @group external
+     * @group unset
+     */
+    public function testUnset_External()
+    {
+        $record = \App::make('User', array(
+            array(
+                'ip' => '127.0.0.1'
+            )
+        ));
+
+        unset($record->ip);
+
+        $this->assertNull($record->ip);
     }
 
 
