@@ -31,4 +31,90 @@ class RecordTestDbMapper  extends ElegantTest
 
         \DB::rollback();
     }
+
+    /**
+     * @covers \Netinteractive\Elegant\Model\Record::markAsNew
+     * @group dirty
+     * @group make
+     */
+    public function testMarkAsNew()
+    {
+        $this->markTestIncomplete();
+    }
+
+    /**
+     * @covers \Netinteractive\Elegant\Model\Record::getRelated
+     * @group related
+     * @group get
+     */
+    public function testGetRelated()
+    {
+        $this->markTestIncomplete();
+    }
+
+    /**
+     * @covers \Netinteractive\Elegant\Model\Record::hasRelated
+     * @group related
+     * @group has
+     */
+    public function testHasRelated()
+    {
+        $this->markTestIncomplete();
+    }
+
+    /**
+     * @covers \Netinteractive\Elegant\Model\Record::setRelated
+     * @group related
+     * @group set
+     */
+    public function testSetRelated()
+    {
+        $this->markTestIncomplete();
+    }
+
+    /**
+     * @covers \Netinteractive\Elegant\Model\Record::setRawRelated
+     * @group related
+     * @group set
+     */
+    public function testSetRawRelated()
+    {
+        $this->markTestIncomplete();
+    }
+
+
+    /**
+     * @covers \Netinteractive\Elegant\Model\Record::toArray
+     * @group array
+     * @group to
+     */
+    public function testToArray_Related()
+    {
+        $this->markTestIncomplete();
+    }
+
+
+
+    /**
+     * @covers \Netinteractive\Elegant\Model\Record::__isset
+     * @group attribute
+     * @group isset
+     */
+    public function testIsset_Related()
+    {
+        $this->markTestIncomplete();
+    }
+
+
+    /**
+     * @covers \Netinteractive\Elegant\Model\Record::__unset
+     * @group attribute
+     * @group unset
+     */
+    public function testUnset_Related()
+    {
+        $this->markTestIncomplete();
+    }
+
+
 }

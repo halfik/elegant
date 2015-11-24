@@ -409,7 +409,7 @@ class DbMapperTest extends ElegantTest
         );
 
         $dbMapper->save($record);
-        
+
         $this->assertEquals(0, count($record->getDirty()));
 
         $dbMapper->delete($record);
@@ -500,13 +500,12 @@ class DbMapperTest extends ElegantTest
 
         $dateTime = new DateTime();
 
+
         $this->assertNotEquals($dateTime->format('Y-m-d H:i:s'), $record->created_at->format('Y-m-d H:i:s'));
         $this->assertEquals($dateTime->format('Y-m-d H:i'), $record->updated_at->format('Y-m-d H:i'));
 
         $this->assertNotEquals($dateTime->format('Y-m-d H:i:s'), $record2->created_at->format('Y-m-d H:i:s'));
         $this->assertEquals($dateTime->format('Y-m-d H:i'), $record2->updated_at->format('Y-m-d H:i'));
-
-
 
         \DB::rollback();
     }

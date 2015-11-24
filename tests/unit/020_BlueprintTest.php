@@ -489,8 +489,9 @@ class BlueprintTest extends ElegantTest
         $blueprint = \App::make('Patient')->getBlueprint();
         $titles = $blueprint->getFieldsTitles();
 
-        $this->assertEquals(5, count($titles));
+        $this->assertEquals(6, count($titles));
         $this->assertTrue(array_key_exists('pesel', $titles));
+
         $this->assertEquals('PESEL', $titles['pesel']);
     }
 
@@ -649,12 +650,13 @@ class BlueprintTest extends ElegantTest
         $blueprint = \App::make('Patient')->getBlueprint();
         $types = $blueprint->getFieldsTypes();
 
-        $this->assertEquals(5, count($types));
+        $this->assertEquals(6, count($types));
         $this->assertTrue(array_key_exists('id', $types));
         $this->assertTrue(array_key_exists('user__id', $types));
         $this->assertTrue(array_key_exists('pesel', $types));
         $this->assertTrue(array_key_exists('created_at', $types));
         $this->assertTrue(array_key_exists('updated_at', $types));
+        $this->assertTrue(array_key_exists('deleted_at', $types));
     }
 
     /**

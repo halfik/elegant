@@ -28,6 +28,8 @@ class RecordTest extends ElegantTest
         $this->assertTrue($record->getBluePrint() instanceof \Netinteractive\Elegant\Tests\Models\Patient\Blueprint);
     }
 
+
+
     /**
      * @covers \Netinteractive\Elegant\Model\Record::hasBlueprint
      * @group blueprint
@@ -51,7 +53,23 @@ class RecordTest extends ElegantTest
         $this->assertFalse($record->hasBlueprint());
     }
 
+    /**
+     * @covers \Netinteractive\Elegant\Model\Record::originalIsNumericallyEquivalent
+     * @group orignal
+     * @group attribute
+     */
+    public function testOriginalIsNumericallyEquivalent()
+    {
+        $record = \App::make('User',  array(array(
+            'tu__id' => 123,
+            'first_name' => 'John',
+            'last_name' => 'London',
+        )));
 
+        $record->fill(array('tu__id'=>'123'));
+
+        $this->assertTrue($this->callPrivateMethod($record, 'originalIsNumericallyEquivalent', array('tu__id')));
+    }
 
 
 
@@ -67,6 +85,8 @@ class RecordTest extends ElegantTest
 
         $this->assertEquals(1, $record->getAttribute('id'));
     }
+
+
 
     /**
      * @covers \Netinteractive\Elegant\Model\Record::getAttribute
@@ -302,6 +322,103 @@ class RecordTest extends ElegantTest
         $this->assertEquals(2, count($input));
     }
 
+    /**
+     * @covers \Netinteractive\Elegant\Model\Record::setCreatedAt
+     * @group timestamp
+     * @group set
+     * @group create
+     */
+    public function testSetCreatedAt()
+    {
+        $record = App::make('Patient');
+        $record->setCreatedAt('2015-01-01 12:20:30');
+
+        $createdAt = $record->getBlueprint()->getCreatedAt();
+
+        $this->assertEquals('2015-01-01 12:20:30', $record->$createdAt);
+    }
+
+    /**
+     * @covers \Netinteractive\Elegant\Model\Record::setCreatedAt
+     * @group timestamp
+     * @group set
+     * @group create
+     */
+    public function testSetCreatedAt_FromCarbon()
+    {
+        $record = App::make('Patient');
+        $record->setCreatedAt(new \Carbon\Carbon('2015-01-01 12:20:30'));
+
+        $createdAt = $record->getBlueprint()->getCreatedAt();
+
+        $this->assertEquals('2015-01-01 12:20:30', $record->$createdAt);
+    }
+
+    /**
+     * @covers \Netinteractive\Elegant\Model\Record::setUpdatedAt
+     * @group timestamp
+     * @group set
+     * @group create
+     */
+    public function testSetUpdatedAt()
+    {
+        $record = App::make('Patient');
+        $record->setUpdatedAt('2015-01-01 12:20:30');
+
+        $updatedAt = $record->getBlueprint()->getUpdatedAt();
+
+        $this->assertEquals('2015-01-01 12:20:30', $record->$updatedAt);
+    }
+
+    /**
+     * @covers \Netinteractive\Elegant\Model\Record::setUpdatedAt
+     * @group timestamp
+     * @group set
+     * @group update
+     */
+    public function testSetUpdatedAt_FromCarbon()
+    {
+        $record = App::make('Patient');
+        $record->setUpdatedAt(new \Carbon\Carbon('2015-01-01 12:20:30'));
+
+        $updatedAt = $record->getBlueprint()->getUpdatedAt();
+
+        $this->assertEquals('2015-01-01 12:20:30', $record->$updatedAt);
+    }
+
+    /**
+     * @covers \Netinteractive\Elegant\Model\Record::setDeletedAt
+     * @group timestamp
+     * @group set
+     * @group delete
+     */
+    public function testSetDeletedAt()
+    {
+        $record = App::make('Patient');
+        $record->setDeletedAt('2015-01-01 12:20:30');
+
+        $deletedAt = $record->getBlueprint()->getDeletedAt();
+
+        $this->assertEquals('2015-01-01 12:20:30', $record->$deletedAt);
+    }
+
+    /**
+     * @covers \Netinteractive\Elegant\Model\Record::setDeletedAt
+     * @group timestamp
+     * @group set
+     * @group delete
+     */
+    public function testSetDeletedAt_FromCarbon()
+    {
+        $record = App::make('Patient');
+        $record->setDeletedAt(new \Carbon\Carbon('2015-01-01 12:20:30'));
+
+        $deletedAt = $record->getBlueprint()->getDeletedAt();
+
+        $this->assertEquals('2015-01-01 12:20:30', $record->$deletedAt);
+    }
+
+
 
     /**
      * @covers \Netinteractive\Elegant\Model\Record::disableValidation
@@ -440,28 +557,6 @@ class RecordTest extends ElegantTest
         $this->assertTrue($record->exists());
     }
 
-    /**
-     * @covers \Netinteractive\Elegant\Model\Record::setExists
-     * @group exists
-     * @group set
-     * @group timestamps
-     */
-    public function testSetExists_SynchronizeTimestamps()
-    {
-        $record = App::make('User');
-
-        $mock = $this->getMockBuilder(get_class($record))
-            ->setMethods( array('synchronizeTimestamps'))
-            ->getMock()
-        ;
-
-        $mock->expects($this->exactly(1))
-            ->method('synchronizeTimestamps')
-            ->withAnyParameters()
-        ;
-
-        $mock->syncOriginal();
-    }
 
 
     /**
@@ -544,6 +639,31 @@ class RecordTest extends ElegantTest
         $this->assertEquals('USER 11',$record->display('login', array('upper'), false));
     }
 
+
+    /**
+     * @covers \Netinteractive\Elegant\Model\Record::initAttributes
+     * @group attribute
+     * @group init
+     */
+    public function testInitAttributes()
+    {
+        $record = App::make('Patient');
+        $record->fill(
+            array(
+                'user__id' => '5',
+                'pesel' => '47020915916',
+            )
+        );
+
+        $attr = $record->getAttributes();
+
+        $this->assertEquals(6, count($attr));
+        $this->assertTrue(array_key_exists(\Netinteractive\Elegant\Tests\Models\Tu\Blueprint::$createdAt, $attr));
+        $this->assertTrue(array_key_exists(\Netinteractive\Elegant\Tests\Models\Tu\Blueprint::$updatedAt, $attr));
+        $this->assertTrue(array_key_exists(\Netinteractive\Elegant\Tests\Models\Tu\Blueprint::$deletedAt, $attr));
+    }
+
+
     /**
      * @covers \Netinteractive\Elegant\Model\Record::getAttributes
      * @group attribute
@@ -560,7 +680,7 @@ class RecordTest extends ElegantTest
             )
         );
 
-        $this->assertEquals(3, count($record->getAttributes()));
+        $this->assertEquals(8, count($record->getAttributes()));
     }
 
 
@@ -581,7 +701,16 @@ class RecordTest extends ElegantTest
             )
         );
 
-        $this->assertEquals(array('first_name', 'login', 'email'), $record->getAttributesKeys());
+        $fields = array_keys($record->getBlueprint()->getFields());
+        $expected = array();
+        foreach ($fields AS $field){
+            if (!$record->getBlueprint()->isExternal($field)){
+                $expected[] = $field;
+            }
+        }
+
+
+        $this->assertEquals($expected, $record->getAttributesKeys());
     }
 
     /**
@@ -602,7 +731,7 @@ class RecordTest extends ElegantTest
             )
         );
 
-        $this->assertEquals(1, count($record->getExternals()));
+        $this->assertEquals(3, count($record->getExternals()));
     }
 
 
@@ -611,10 +740,57 @@ class RecordTest extends ElegantTest
      * @group attribute
      * @group original
      * @group get
+     * @group sync
      */
     public function testSyncOriginal()
     {
+        $record = App::make('User', array(array(
+            'first_name' => 'John',
+            'login' => 'User 11',
+            'email' => 'user11@hot.com',
+            'age' => 23
+        )));
+
+
+        $originals = $record->getOriginals();
+
+        $this->assertTrue(isSet($originals['first_name']));
+        $this->assertEquals('John', $originals['first_name']);
+    }
+
+    /**
+     * @covers \Netinteractive\Elegant\Model\Record::syncOriginal
+     * @group attribute
+     * @group original
+     * @group sync
+     */
+    public function testSyncOriginal_synchronizeTimestamps()
+    {
+        $record = App::make('Patient');
+        $mock = $this->getMockBuilder(get_class($record))
+            ->setMethods( array('synchronizeTimestamps'))
+            ->getMock()
+        ;
+
+        $mock->expects($this->exactly(1))
+            ->method('synchronizeTimestamps')
+            ->withAnyParameters()
+        ;
+
+        $mock->syncOriginal();
+    }
+
+    /**
+     * @covers \Netinteractive\Elegant\Model\Record::syncOriginal
+     * @group attribute
+     * @group original
+     * @group dirty
+     * @group sync
+     */
+    public function testSyncOriginal_CleanDirty()
+    {
         $record = App::make('User');
+
         $record->fill(
             array(
                 'first_name' => 'John',
@@ -624,10 +800,15 @@ class RecordTest extends ElegantTest
             )
         );
 
-        $original = $record->getOriginals();
+        $originalDirty = $record->getDirty();
 
-        $this->assertTrue(isSet($original['first_name']));
-        $this->assertEquals('John', $original['first_name']);
+        $record->syncOriginal();
+
+        $reflectedProperty = $this->getPrivateProperty($record, 'dirty');
+        $dirty = $reflectedProperty->getValue($record);
+
+        $this->assertNotEmpty($originalDirty);
+        $this->assertEmpty($dirty);
     }
 
 
@@ -639,15 +820,15 @@ class RecordTest extends ElegantTest
      */
     public function testGetOriginals()
     {
-        $record = App::make('User');
-        $record->fill(
+        $record = App::make('User', array(
             array(
                 'first_name' => 'John',
                 'login' => 'User 11',
                 'email' => 'user11@hot.com',
                 'age' => 23
             )
-        );
+        ));
+
 
         $record->getOriginals();
 
@@ -719,16 +900,101 @@ class RecordTest extends ElegantTest
      */
     public function testGetKey_Value()
     {
-        $record = App::make('User');
-        $record->fill(
+        $record = App::make('User', array(
             array(
                 'id' => 999
             )
-        );
+        ));
+
 
         $key = $record->getKey();
 
         $this->assertEquals(999, $key['id']);
+    }
+
+
+    /**
+     * @covers \Netinteractive\Elegant\Model\Record::fromDateTime
+     * @group timestamp
+     * @group datetime
+     * @group format
+     */
+    public function testFromDateTime()
+    {
+        $record = App::make('User');
+        $dateTime = '2015-01-01 11:12:00';
+
+        $this->assertEquals($dateTime, $record->fromDateTime($dateTime));
+    }
+
+    /**
+     * @covers \Netinteractive\Elegant\Model\Record::fromDateTime
+     * @group timestamp
+     * @group datetime
+     * @group format
+     */
+    public function testFromDateTime_Format()
+    {
+        $record = App::make('User');
+        $dateTime = '2015-01-01';
+
+        $this->assertEquals('2015/01/01', $record->fromDateTime($dateTime, 'Y/m/d'));
+    }
+
+    /**
+     * @covers \Netinteractive\Elegant\Model\Record::fromDateTime
+     * @group timestamp
+     * @group datetime
+     * @group format
+     */
+    public function testFromDateTime_FromTimestamp()
+    {
+        $record = App::make('User');
+        $timestamp = strtotime('2015-01-01');
+
+        $this->assertEquals('2015-01-01', $record->fromDateTime($timestamp, 'Y-m-d'));
+    }
+
+    /**
+     * @covers \Netinteractive\Elegant\Model\Record::fromDateTime
+     * @group timestamp
+     * @group datetime
+     * @group format
+     */
+    public function testFromDateTime_FromSimpleDate()
+    {
+        $record = App::make('User');
+
+        $this->assertEquals('2015-01-01 00:00:00', $record->fromDateTime('2015-01-01'));
+    }
+
+    /**
+     * @covers \Netinteractive\Elegant\Model\Record::fromDateTime
+     * @group timestamp
+     * @group datetime
+     * @group format
+     */
+    public function testFromDateTime_DateTime()
+    {
+        $record = App::make('User');
+
+        $dateTime = new DateTime('2015-01-01 11:12:00');
+
+        $this->assertEquals($dateTime->format('Y-m-d H:i:s'), $record->fromDateTime($dateTime));
+    }
+
+    /**
+     * @covers \Netinteractive\Elegant\Model\Record::createTimestamp
+     * @group datetime
+     * @group timestamp
+     */
+    public function testCreateTimestamp()
+    {
+        $record = App::make('User');
+        $dateTime = $record->createTimestamp('2015-01-01 00:10:20');
+
+        $this->assertTrue($dateTime instanceof \Carbon\Carbon);
+        $this->assertEquals('2015-01-01 00:10:20', $dateTime->format('Y-m-d H:i:s'));
     }
 
 
@@ -742,7 +1008,7 @@ class RecordTest extends ElegantTest
         $record = App::make('User');
 
 
-        $this->assertEmpty(count($record->getDirty()));
+        $this->assertEmpty($record->getDirty());
     }
 
     /**
@@ -752,19 +1018,26 @@ class RecordTest extends ElegantTest
      */
     public function testGetDirty_NewRecord()
     {
-        $record = App::make('User');
+        $record = App::make('User', array(
+           ['first_name' => 'Ken',
+            'last_name' => 'Adams',
+            'med__id' => 1,
+            'tu__id' => 2
+           ]
+        ));
 
         $record->fill(
             array(
                 'id' => 999,
                 'my_filed' => 123,
+                'last_name' => 'New',
                 'first_name' => 'John'
             )
         );
 
-
-        $this->assertEquals(1, count($record->getDirty()));
+        $this->assertEquals(3, count($record->getDirty()));
     }
+
 
     /**
      * @covers \Netinteractive\Elegant\Model\Record::getDirty
@@ -822,6 +1095,8 @@ class RecordTest extends ElegantTest
             'last_name' => 'London',
         )));
 
+        $record->first_name = 'Adam';
+
         $this->assertTrue($record->isDirty());
     }
 
@@ -850,6 +1125,8 @@ class RecordTest extends ElegantTest
             'first_name' => 'John',
             'last_name' => 'London',
         )));
+
+        $record->tu__id = 1;
 
         $this->assertTrue($record->isDirty('tu__id'));
     }
@@ -884,7 +1161,153 @@ class RecordTest extends ElegantTest
             'last_name' => 'London',
         )));
 
-        $this->assertTrue($record->isDirty( array('tu__id', 'first_name')));
+        $record->fill(
+            array(
+                'tu__id' => 998,
+            )
+        );
+
+        $this->assertTrue($record->isDirty( array('tu__id') ));
+    }
+
+    /**
+     * @covers \Netinteractive\Elegant\Model\Record::getRelation
+     * @group related
+     * @group relation
+     * @group get
+     */
+    public function testGetRelation()
+    {
+        $record = \App::make('User');
+
+        $this->assertTrue($record->getRelation('patient') instanceof Netinteractive\Elegant\Relation\Relation);
+    }
+
+    /**
+     * @covers \Netinteractive\Elegant\Model\Record::updateTimestamps
+     * @group datetime
+     * @group timestamp
+     */
+    public function testUpdateTimestamps_CreateTimestamp()
+    {
+        $record = App::make('User');
+
+        $mock = $this->getMockBuilder(get_class($record))
+            ->setMethods( array('createTimestamp'))
+            ->getMock()
+        ;
+
+        $mock->expects($this->atLeast(1))
+            ->method('createTimestamp')
+            ->withAnyParameters()
+        ;
+
+        $mock->updateTimestamps();
+    }
+
+
+    /**
+     * @covers \Netinteractive\Elegant\Model\Record::updateTimestamps
+     * @group datetime
+     * @group timestamp
+     */
+    public function testUpdateTimestamps_Force()
+    {
+        $this->markTestIncomplete();
+    }
+
+    /**
+     * @covers \Netinteractive\Elegant\Model\Record::toArray
+     * @group array
+     * @group to
+     */
+    public function testToArray()
+    {
+        $record = \App::make('User',  array(array(
+            'tu__id' => 999,
+            'first_name' => 123,
+            'last_name' => 'London',
+            'ext' => 888
+        )));
+
+        $result = $record->toArray();
+
+       // $this->assertEquals()
+        $this->markTestIncomplete();
+    }
+
+    /**
+     * @covers \Netinteractive\Elegant\Model\Record::toJson
+     * @group json
+     * @group to
+     */
+    public function testToJson()
+    {
+        $this->markTestIncomplete();
+    }
+
+    /**
+     * @covers \Netinteractive\Elegant\Model\Record::jsonSerialize
+     * @group json
+     * @group serialize
+     */
+    public function testJsonSerialize()
+    {
+        $this->markTestIncomplete();
+    }
+
+
+    /**
+     * @covers \Netinteractive\Elegant\Model\Record::__toString
+     * @group string
+     * @group to
+     */
+    public function testToString()
+    {
+        $this->markTestIncomplete();
+    }
+
+
+
+    /**
+     * @covers \Netinteractive\Elegant\Model\Record::__set
+     * @group attribute
+     * @group set
+     */
+    public function testSet()
+    {
+        $this->markTestIncomplete();
+    }
+
+    /**
+     * @covers \Netinteractive\Elegant\Model\Record::__get
+     * @group attribute
+     * @group get
+     */
+    public function testGet()
+    {
+        $this->markTestIncomplete();
+    }
+
+    /**
+     * @covers \Netinteractive\Elegant\Model\Record::__isset
+     * @group attribute
+     * @group isset
+     */
+    public function testIsset()
+    {
+        $this->markTestIncomplete();
+    }
+
+
+    /**
+     * @covers \Netinteractive\Elegant\Model\Record::__unset
+     * @group attribute
+     * @group unset
+     */
+    public function testUnset()
+    {
+        $this->markTestIncomplete();
     }
 
 

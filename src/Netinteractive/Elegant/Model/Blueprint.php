@@ -145,8 +145,8 @@ abstract class Blueprint
 
         $this->init();
 
+        #adding timestamps to field list
         if($this->hasTimestamps()){
-
             if (!$this->isField($this->getCreatedAt())){
                 $this->fields[$this->getCreatedAt()] = array(
                     'title' => _('Created At'),
@@ -161,6 +161,16 @@ abstract class Blueprint
                 );
             }
         }
+
+        if ($this->softDelete()){
+            if (!$this->isField($this->getDeletedAt())){
+                $this->fields[$this->getDeletedAt()] = array(
+                    'title' => _('Deleted At'),
+                    'type' => 'dateTime'
+                );
+            }
+        }
+
 
         static::bootTraits();
     }

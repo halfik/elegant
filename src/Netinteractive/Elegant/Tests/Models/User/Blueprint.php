@@ -20,6 +20,15 @@ class Blueprint extends \Netinteractive\Elegant\Model\Blueprint
                 'sortable' => true,
                 'external'=>true
             ),
+            'id' => array(
+                'title' => 'Id',
+                'type' => static::TYPE_INT,
+                'sortable' => true,
+                'rules' => array(
+                    'any' => 'integer',
+                    'update' => 'required'
+                )
+            ),
             'login'=>array(
                 'title'=>_('Login'),
                 'type'=>'string',

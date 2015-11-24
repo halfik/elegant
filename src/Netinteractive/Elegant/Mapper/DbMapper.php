@@ -190,7 +190,7 @@ class DbMapper implements MapperInterface
      */
     protected function performInsert(Record $record, $touchRelated = false)
     {
-        $dirty = $record->getDirty();
+        $dirty = $record->getAttributes();
 
         #check if anything has changed and if we don't have to touch related
         if (count($dirty) == 0 && $touchRelated === false){
@@ -204,7 +204,7 @@ class DbMapper implements MapperInterface
 
             #we check if record has created_at and updated_at fields, if so we allow record to set proper values for this fields
             if ($record->getBlueprint()->hasTimestamps()){
-                $record->updateTimestamps();
+                $record->updateTimestamps(true, true);
             }
 
             #here we prepare obj that will be passed to mapper events
@@ -261,7 +261,7 @@ class DbMapper implements MapperInterface
 
         #we check if record has created_at and updated_at fields, if so we allow record to set proper values for this fields
         if ($record->getBlueprint()->hasTimestamps()){
-            $record->updateTimestamps();
+            $record->updateTimestamps(false, true);
         }
 
         #here we prepare obj that will be passed to mapper events

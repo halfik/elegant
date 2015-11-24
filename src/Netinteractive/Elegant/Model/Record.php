@@ -79,7 +79,9 @@ abstract class Record implements Arrayable, Jsonable
     {
         $this->init();
 
+        $this->initAttributes();
         $this->fill($attributes);
+
         $this->syncOriginal();
 
         static::bootTraits();
@@ -105,6 +107,26 @@ abstract class Record implements Arrayable, Jsonable
     public function init()
     {
 
+    }
+
+    /**
+     * builds attributes based on blueprint
+     * @return $this
+     */
+    protected function initAttributes()
+    {
+        if ($this->hasBlueprint()) {
+            $fields = array_keys($this->getBlueprint()->getFields());
+            foreach ($fields AS $field) {
+                if ($this->getBlueprint()->isExternal($field) && !isSet($this->external[$field])) {
+                    $this->external[$field] = null;
+                } elseif (!isSet($this->attributes[$field])) {
+                    $this->attributes[$field] = null;
+                }
+            }
+        }
+
+        return $this;
     }
 
     /**
@@ -284,6 +306,7 @@ abstract class Record implements Arrayable, Jsonable
         $this->validationEnabled = false;
         return $this;
     }
+
 
 
     /**
@@ -529,7 +552,16 @@ abstract class Record implements Arrayable, Jsonable
      */
     public function getDirty()
     {
-        if ($this->exists()){
+        foreach ($this->attributes as $key => $value){
+            if ( !array_key_exists($key, $this->original)){
+                $this->dirty[$key] = $value;
+            }
+            elseif ($value !== $this->original[$key] && !$this->originalIsNumericallyEquivalent($key)){
+                $this->dirty[$key] = $value;
+            }
+        }
+
+        /*if ($this->exists()){
             foreach ($this->attributes as $key => $value){
 
                 if ( !array_key_exists($key, $this->original)){
@@ -542,7 +574,7 @@ abstract class Record implements Arrayable, Jsonable
         }
         else{
             $this->dirty = $this->attributes;
-        }
+        }*/
 
 
         return $this->dirty;
@@ -622,7 +654,7 @@ abstract class Record implements Arrayable, Jsonable
      */
     protected function originalIsNumericallyEquivalent($key)
     {
-        $current = $this->attributes[$key];
+        $current = $this->getAttribute($key);
 
         $original = $this->original[$key];
 
@@ -637,7 +669,7 @@ abstract class Record implements Arrayable, Jsonable
      */
     public function syncOriginal()
     {
-        $this->original = $this->attributes;
+        $this->original = $this->getAttributes();
         $this->synchronizeTimestamps();
         $this->dirty = array();
 
@@ -653,7 +685,7 @@ abstract class Record implements Arrayable, Jsonable
      */
     public function syncOriginalAttribute($attribute)
     {
-        $this->original[$attribute] = $this->attributes[$attribute];
+        $this->original[$attribute] = $this->getAttribute($attribute);
 
         return $this;
     }
@@ -675,24 +707,22 @@ abstract class Record implements Arrayable, Jsonable
             // If the value is totally numeric, we will assume it is a UNIX timestamp and
             // format the date as such. Once we have the date in DateTime form we will
             // format it according to the proper format for the database connection.
-            if (is_numeric($value))
-            {
+            if (is_numeric($value)) {
                 $value = Carbon::createFromTimestamp($value);
             }
 
             // If the value is in simple year, month, day format, we will format it using
             // that setup. This is for simple "date" fields which do not have hours on
             // the field. This conveniently picks up those dates and format correct.
-            elseif (preg_match('/^(\d{4})-(\d{2})-(\d{2})$/', $value))
-            {
+            elseif (preg_match('/^(\d{4})-(\d{2})-(\d{2})$/', $value)) {
                 $value = Carbon::createFromFormat('Y-m-d', $value)->startOfDay();
             }
 
             // If this value is some other type of string, we'll create the DateTime with
             // the format used by the database connection. Once we get the instance we
             // can return back the finally formatted DateTime instances to the devs.
-            else
-            {
+            else{
+
                 $value = Carbon::createFromFormat($format, $value);
             }
         }
@@ -717,18 +747,19 @@ abstract class Record implements Arrayable, Jsonable
 
     /**
      * Update the creation and update timestamps.
-     *
+     * @param bool $forceCreated
+     * @param bool $forceUpdated
      * @return void
      */
-    public function updateTimestamps()
+    public function updateTimestamps($forceCreated=false, $forceUpdated=false)
     {
         $time = $this->createTimestamp();
 
-        if ( !$this->isDirty($this->getBlueprint()->getUpdatedAt())){
+        if ( !$this->isDirty($this->getBlueprint()->getUpdatedAt()) || $forceUpdated == true){
             $this->setUpdatedAt($time);
         }
 
-        if ( !$this->exists() && !$this->isDirty($this->getBlueprint()->getCreatedAt())){
+        if ( !$this->exists() && !$this->isDirty($this->getBlueprint()->getCreatedAt()) || $forceCreated == true){
             $this->setCreatedAt($time);
         }
     }

@@ -178,6 +178,7 @@ class Blueprint extends \Netinteractive\Elegant\Model\Blueprint
                 'title' => _('Bank'),
                 'type' => 'string',
                 'sortable' => true,
+                'external' => true,
                 'rules' => array(
                     'any' => 'max:150'
                 ),
@@ -191,6 +192,7 @@ class Blueprint extends \Netinteractive\Elegant\Model\Blueprint
                 'title' => _('bank_account'),
                 'type' => 'string',
                 'sortable' => true,
+                'external' => true,
                 'rules' => array(
                     'any' => 'max:50'
                 ),
