@@ -32,14 +32,62 @@ class RecordTestDbMapper  extends ElegantTest
         \DB::rollback();
     }
 
+
     /**
      * @covers \Netinteractive\Elegant\Model\Record::markAsNew
-     * @group dirty
+     * @group new
+     * @group exists
      * @group make
      */
     public function testMarkAsNew()
     {
+        $record = \App::make('Patient',  array(array(
+            'id' => 99,
+            'user__id' => 5,
+            'pesel' => '13292213737',
+        )));
+
+        $record->setExists(true);
+        $this->assertTrue($record->exists());
+
+        $record->setExists(false);
+        $this->assertFalse($record->exists());
+    }
+
+    /**
+     * @covers \Netinteractive\Elegant\Model\Record::markAsNew
+     * @group new
+     * @group exists
+     * @group related
+     * @group make
+     */
+    public function testMarkAsNew_TouchRelated()
+    {
         $this->markTestIncomplete();
+    }
+
+
+
+    /**
+     * @covers \Netinteractive\Elegant\Model\Record::markAsNew
+     * @group new
+     * @group exists
+     * @group make
+     */
+    public function testMarkAsNew_SetExists()
+    {
+        $record = App::make('Patient');
+        $mock = $this->getMockBuilder(get_class($record))
+            ->setMethods( array('setExists'))
+            ->getMock()
+        ;
+
+        $mock->expects($this->exactly(1))
+            ->method('setExists')
+            ->withAnyParameters()
+        ;
+
+        $mock->markAsNew();
     }
 
     /**

@@ -62,6 +62,15 @@ abstract class Relation {
         return $this;
     }
 
+    /**
+     * Returns related record
+     * @return Record
+     */
+    public function getRelated()
+    {
+        return $this->related;
+    }
+
 	/**
 	 * Set the base constraints on the relation query.
 	 *
@@ -112,7 +121,7 @@ abstract class Relation {
 	public function getEager()
 	{
         #we have to set proper record on query so builder can clone and return proper objects
-        $this->query->setRecord($this->related);
+        $this->getQuery()->setRecord($this->related);
 
 		return $this->get();
 	}
@@ -127,7 +136,7 @@ abstract class Relation {
 	 */
 	public function rawUpdate(array $attributes = array())
 	{
-		return $this->query->update($attributes);
+		return $this->getQuery()->update($attributes);
 	}
 
 	/**
