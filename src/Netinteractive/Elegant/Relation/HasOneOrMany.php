@@ -63,6 +63,24 @@ abstract class HasOneOrMany extends Relation
     }
 
     /**
+     * Get the local key
+     * @return array|string
+     */
+    public function getLocalKey()
+    {
+        return $this->localKey;
+    }
+
+    /**
+     * Get the foreign key for the relationship.
+     * @return array|string
+     */
+    public function getForeignKey()
+    {
+        return $this->foreignKey;
+    }
+
+    /**
      * Set the base constraints on the relation query.
      *
      * @return void
@@ -72,10 +90,10 @@ abstract class HasOneOrMany extends Relation
         if (static::$constraints) {
             $keys = $this->getParentKey();
 
-            foreach ($this->foreignKey AS $index=>$key){
+            foreach ($this->getForeignKey() AS $index=>$key){
 
                 if (isSet($keys[$index])){
-                    $this->query->where($key, '=', $keys[$index]);
+                    $this->getQuery()->where($key, '=', $keys[$index]);
                 }
             }
         }
@@ -89,17 +107,15 @@ abstract class HasOneOrMany extends Relation
      */
     public function addEagerConstraints(Collection $records)
     {
-        $this->query->from($this->related->getBlueprint()->getStorageName());
+        $this->getQuery()->from($this->getRelated()->getBlueprint()->getStorageName());
 
-        $keys = $this->getKeys($records, $this->localKey);
+        $keys = $this->getKeys($records, $this->getLocalKey());
 
-        foreach ($this->foreignKey AS $fk) {
+        foreach ($this->getForeignKey() AS $fk) {
             $localKeys = array_shift($keys);
-            $this->query->whereIn($fk, $localKeys);
+            $this->getQuery()->whereIn($fk, $localKeys);
         }
     }
-
-
 
 
     /**
@@ -145,7 +161,7 @@ abstract class HasOneOrMany extends Relation
         // link them up with their children using the keyed dictionary to make the
         // matching very convenient and easy work. Then we'll just return them.
         foreach ($records as $record) {
-            foreach ($this->localKey AS $lk) {
+            foreach ($this->getLocalKey() AS $lk) {
                 $key = $record->getAttribute($lk);
 
                 if (isset($dictionary[$key])) {
@@ -184,7 +200,7 @@ abstract class HasOneOrMany extends Relation
     {
         $dictionary = array();
 
-        foreach ($this->foreignKey AS $fk) {
+        foreach ($this->getForeignKey() AS $fk) {
             $foreign = $this->getPlainForeignKey($fk);
 
             // First we will create a dictionary of models keyed by the foreign key of the
@@ -195,20 +211,10 @@ abstract class HasOneOrMany extends Relation
             }
         }
 
-
         return $dictionary;
     }
 
 
-    /**
-     * Get the foreign key for the relationship.
-     *
-     * @return string
-     */
-    public function getForeignKey(Record $record = null)
-    {
-        return $this->foreignKey;
-    }
 
     /**
      * Get the plain foreign key.
@@ -219,7 +225,7 @@ abstract class HasOneOrMany extends Relation
     {
         $segments = array();
 
-        foreach ($this->foreignKey AS $key => $val) {
+        foreach ($this->getForeignKey() AS $key => $val) {
             if ($val == $key) {
                 $segments = explode('.', $val);
             }
@@ -238,8 +244,8 @@ abstract class HasOneOrMany extends Relation
     {
         $response = array();
 
-        foreach ($this->localKey AS $key){
-            $response[$key] = $this->parent->getAttribute($key);
+        foreach ($this->getLocalKey() AS $key){
+            $response[$key] = $this->getParent()->getAttribute($key);
         }
 
         return $response;
@@ -252,7 +258,7 @@ abstract class HasOneOrMany extends Relation
      */
     public function getQualifiedParentKeyName()
     {
-        return $this->parent->getBlueprint()->getStorageName() . '.' . $this->localKey;
+        return $this->getParent()->getBlueprint()->getStorageName() . '.' . $this->getLocalKey();
     }
 
 }

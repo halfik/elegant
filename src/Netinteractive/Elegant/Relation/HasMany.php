@@ -16,7 +16,7 @@ class HasMany extends HasOneOrMany
      */
     public function getResults()
     {
-        return $this->query->get();
+        return $this->getQuery()->get();
     }
 
     /**
@@ -26,10 +26,10 @@ class HasMany extends HasOneOrMany
      */
     public function get()
     {
-        $this->query->setRecord($this->related);
-        $this->query->from($this->related->getBlueprint()->getStorageName());
+        $this->getQuery()->setRecord($this->getRelated());
+        $this->getQuery()->from($this->getRelated()->getBlueprint()->getStorageName());
 
-        return $this->query->get();
+        return $this->getQuery()->get();
     }
 
     /**
@@ -42,7 +42,7 @@ class HasMany extends HasOneOrMany
     public function initRelation(Collection $records, $relation)
     {
         foreach ($records as $record) {
-            $record->setRelated($relation, \App('ni.elegant.model.collection', array($this->related)) );
+            $record->setRelated($relation, \App('ni.elegant.model.collection', array($this->getRelated())) );
         }
 
         return $records;

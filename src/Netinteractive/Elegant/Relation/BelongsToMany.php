@@ -111,7 +111,7 @@ class BelongsToMany extends Relation
 
         foreach ($keys AS $index=>$fk){
             if (isSet($parentPk[$index])){
-                $this->query->whereIn($fk, $fkValueList[$parentPk[$index]]);
+                $this->getQuery()->whereIn($fk, $fkValueList[$parentPk[$index]]);
             }
         }
     }
@@ -155,11 +155,11 @@ class BelongsToMany extends Relation
         // First we'll add the proper select columns onto the query so it is run with
         // the proper columns. Then, we will get the results and hydrate out pivot
         // models with the result of those columns as a separate model relation.
-        $columns = $this->query->columns ? array() : $columns;
+        $columns = $this->getQuery()->columns ? array() : $columns;
 
         $select = $this->getSelectColumns($columns);
 
-        $records = $this->query->addSelect($select)->get();
+        $records = $this->getQuery()->addSelect($select)->get();
 
         $this->hydratePivotRelation($records);
 
@@ -167,7 +167,7 @@ class BelongsToMany extends Relation
         // have been specified as needing to be eager loaded. This will solve the
         // n + 1 query problem for the developer and also increase performance.
         if (count($records) > 0) {
-            $records = $this->query->eagerLoadRelations($records);
+            $records = $this->getQuery()->eagerLoadRelations($records);
         }
 
         return \App::make('ni.elegant.model.collection', array($records));
@@ -214,7 +214,7 @@ class BelongsToMany extends Relation
         $response = array();
 
         foreach ($this->foreignKey AS $fk){
-            $response[] = $this->table.'.'.$fk;
+            $response[] = $this->getTable().'.'.$fk;
         }
 
         return $response;
@@ -230,7 +230,7 @@ class BelongsToMany extends Relation
         $response = array();
 
         foreach ($this->otherKey AS $fk){
-            $response[] = $this->table.'.'.$fk;
+            $response[] = $this->getTable().'.'.$fk;
         }
 
         return $response;
@@ -266,7 +266,7 @@ class BelongsToMany extends Relation
      */
     public function createNewPivot(array $attributes = array(), $exists = false)
     {
-        $pivot = $this->newPivot($this->parent, $attributes, $this->table, $exists);
+        $pivot = $this->newPivot($this->parent, $attributes, $this->getTable(), $exists);
 
         return $pivot->setPivotKeys($this->foreignKey, $this->otherKey);
     }
@@ -279,7 +279,7 @@ class BelongsToMany extends Relation
      */
     protected function setJoin($query = null)
     {
-        $query = $query ?: $this->query;
+        $query = $query ?: $this->getQuery();
 
         // We need to join to the intermediate table on the related model's primary
         // key column with the intermediate table's foreign key for the related
@@ -290,7 +290,7 @@ class BelongsToMany extends Relation
         $otherKeys = $this->getOtherKey();
 
 
-        $query->join($this->table, function($join) use($keys, $baseTable, $otherKeys){
+        $query->join($this->getTable(), function($join) use($keys, $baseTable, $otherKeys){
             foreach ($keys AS $index=>$key){
                 if (isSet($otherKeys[$index])){
                     $key = $baseTable.'.'.$key;
@@ -314,7 +314,7 @@ class BelongsToMany extends Relation
         $pkList = $this->parent->getKey();
 
         foreach ($fkList AS $index=>$fk){
-            $this->query->where($fk, '=', $pkList[$index]);
+            $this->getQuery()->where($fk, '=', $pkList[$index]);
         }
 
         return $this;
@@ -329,8 +329,7 @@ class BelongsToMany extends Relation
      */
     protected function getSelectColumns(array $columns = array('*'))
     {
-        if ($columns == array('*'))
-        {
+        if ($columns == array('*')) {
             $columns = array($this->related->getBlueprint()->getStorageName().'.*');
         }
 
@@ -352,7 +351,7 @@ class BelongsToMany extends Relation
         $columns = array();
 
         foreach (array_merge($defaults, $this->pivotColumns) as $column){
-            $columns[] = $this->table.'.'.$column.' as pivot_'.$column;
+            $columns[] = $this->getTable().'.'.$column.' as pivot_'.$column;
         }
 
         return array_unique($columns);

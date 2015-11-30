@@ -2,6 +2,7 @@
 
 class PivotTest extends ElegantTest
 {
+
     /**
      * @covers \Netinteractive\Elegant\Relation\Pivot::__construct
      * @group pivot

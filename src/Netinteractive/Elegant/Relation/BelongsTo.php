@@ -76,7 +76,7 @@ class BelongsTo extends Relation
      */
     public function getResults()
     {
-        return $this->query->first();
+        return $this->getQuery()->first();
     }
 
     /**
@@ -86,8 +86,8 @@ class BelongsTo extends Relation
      */
     public function get()
     {
-        $this->query->setRecord($this->related);
-        return $this->query->get();
+        $this->getQuery()->setRecord($this->related);
+        return $this->getQuery()->get();
     }
 
     /**
@@ -106,9 +106,8 @@ class BelongsTo extends Relation
 
             foreach ($this->otherKey AS $otherKey) {
                 $fk = array_shift($fkList);
-                $this->query->where($table . '.' . $otherKey, '=', $this->parent->{$fk});
+                $this->getQuery()->where($table . '.' . $otherKey, '=', $this->parent->{$fk});
             }
-
         }
     }
 
@@ -122,14 +121,14 @@ class BelongsTo extends Relation
     public function addEagerConstraints(Collection $records)
     {
         $keys = $this->getEagerRecordKeys($records);
-        $this->query->from($this->related->getBlueprint()->getStorageName());
+        $this->getQuery()->from($this->related->getBlueprint()->getStorageName());
 
         // We'll grab the primary key name of the related models since it could be set to
         // a non-standard name and not "id". We will then construct the constraint for
         // our eagerly loading query so it returns the proper models from execution.
         foreach ($this->otherKey AS $otherKey) {
             $key = $this->related->getBlueprint()->getStorageName() . '.' . $otherKey;
-            $this->query->whereIn($key, array_shift($keys));
+            $this->getQuery()->whereIn($key, array_shift($keys));
         }
     }
 

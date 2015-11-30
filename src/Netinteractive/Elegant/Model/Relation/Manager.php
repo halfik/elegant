@@ -80,7 +80,7 @@ class Manager
             $name = $this->getCurrentTranslator();
         }
 
-        if (!isSet($this->translators[$name])){
+        if (!$this->hasTranslator($name)){
             throw new TranslatorNotRegisteredException($name);
         }
 
@@ -109,7 +109,7 @@ class Manager
      */
     public function getRelation($relationName)
     {
-        if (!isSet($this->relations[$relationName])){
+        if (!$this->hasRelation($relationName)){
             throw new RelationDoesntExistsException($relationName);
         }
 

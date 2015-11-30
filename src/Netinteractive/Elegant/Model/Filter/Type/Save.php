@@ -10,7 +10,7 @@ class Save
 {
     /**
      * Save filters logic
-     * @param stdClass $obj
+     * @param \stdClass $obj
      * @param string $key
      * @param array $filters
      */
