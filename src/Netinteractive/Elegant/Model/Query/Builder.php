@@ -75,7 +75,7 @@ class Builder extends QueryBuilder
     }
 
     /**
-     * Method checks if record is soft deleted type and adds propere where statment to the query
+     * Method checks if record is soft deleted type and adds proper where statement to the query
      */
     protected function whereSoftDeleted()
     {
@@ -95,7 +95,7 @@ class Builder extends QueryBuilder
     public function setRecord(Record $record)
     {
         $this->record = $record;
-        $this->from($this->record->getBlueprint()->getStorageName());
+        $this->from($this->getRecord()->getBlueprint()->getStorageName());
 
         return $this;
     }
@@ -143,23 +143,6 @@ class Builder extends QueryBuilder
         return $records;
     }
 
-    /**
-     * Get the hydrated records without eager loading.
-     *
-     * @param  array  $columns
-     * @return \Netinteractive\Elegant\Model\Record[]
-     */
-    public function getRecords($columns = array('*'))
-    {
-        $results = $this->get($columns);
-        $recordList = array();
-
-        foreach ($results AS $data){
-            $recordList[] = \App::make($this->record)->fill($data);
-        }
-
-        return $recordList;
-    }
 
 
     ##RELATIONS
@@ -198,7 +181,6 @@ class Builder extends QueryBuilder
 
         $parsed = $this->parseRelations($relations);
 
-
         $this->setRelationsToLoad(array_merge($this->getRelationsToLoad(), $parsed));
 
         return $this;
@@ -207,7 +189,7 @@ class Builder extends QueryBuilder
     /**
      * Eager load the relationships for the records.
      *
-     * @param  Collections  $records
+     * @param  Collection  $records
      * @return array
      */
     public function eagerLoadRelations(Collection $records)
@@ -215,7 +197,6 @@ class Builder extends QueryBuilder
         $relations = $this->getRelationsToLoad();
 
         foreach ($relations as $name => $constraints){
-
             // For nested eager loads we'll skip loading them here and they will be set as an
             // eager load on the query to retrieve the relation so that they will be eager
             // loaded on that query, because that is where they get hydrated as models.
@@ -270,10 +251,8 @@ class Builder extends QueryBuilder
             // If the "name" value is actually a numeric key, we can assume that no
             // constraints have been specified for the eager load and we'll just put
             // an empty Closure with the loader so that we can treat all the same.
-            if (is_numeric($name))
-            {
+            if (is_numeric($name)) {
                 $f = function() { };
-
                 list($name, $constraints) = array($constraints, $f);
             }
 
@@ -302,12 +281,10 @@ class Builder extends QueryBuilder
         // If the relation has already been set on the result array, we will not set it
         // again, since that would override any constraints that were already placed
         // on the relationships. We will only set the ones that are not specified.
-        foreach (explode('.', $name) as $segment)
-        {
+        foreach (explode('.', $name) as $segment) {
             $progress[] = $segment;
 
-            if ( ! isset($results[$last = implode('.', $progress)]))
-            {
+            if ( ! isset($results[$last = implode('.', $progress)])) {
                 $results[$last] = function() {};
             }
         }
@@ -324,7 +301,7 @@ class Builder extends QueryBuilder
      * @return array
      */
     protected function loadRelated(Collection $records, $name, Closure $constraints)
-{
+    {
         // First we will "back up" the existing where conditions on the query so we can
         // add our eager constraints. Then we will merge the wheres that were on the
         // query back to it in order that any where conditions might be specified.
@@ -401,7 +378,7 @@ class Builder extends QueryBuilder
      */
     public function getMacro($name)
     {
-        return array_get($this->macros, $name);
+        return array_get(self::$macros, $name);
     }
 
     /**
@@ -413,10 +390,10 @@ class Builder extends QueryBuilder
      */
     public function __call($method, $parameters)
     {
-        if (isset($this->macros[$method])){
+        if (isset(self::$macros[$method])){
             array_unshift($parameters, $this);
 
-            return call_user_func_array($this->macros[$method], $parameters);
+            return call_user_func_array(self::$macros[$method], $parameters);
         }
 
         return call_user_func_array(array($this, $method), $parameters);

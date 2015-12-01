@@ -94,7 +94,7 @@ class Manager
      */
     public function hasTranslator($name)
     {
-        if (!isSet($this->translators[$name])){
+        if (!array_key_exists($name, $this->translators)){
             return false;
         }
 
