@@ -1,7 +1,6 @@
 <?php namespace Netinteractive\Elegant\Relation;
 
 use Closure;
-use Netinteractive\Elegant\Relation\Pivot;
 use Netinteractive\Elegant\Model\Query\Builder;
 use Netinteractive\Elegant\Model\Record;
 use Netinteractive\Elegant\Model\Collection;
@@ -29,6 +28,11 @@ abstract class Relation {
      */
     protected $related;
 
+    /**
+     * @var string
+     */
+    public static $postFk = '__id';
+
 
 	/**
 	 * Indicates if the relation is adding constraints.
@@ -40,7 +44,7 @@ abstract class Relation {
 	/**
 	 * Create a new relation instance.
 	 *
-	 * @param  \Netinteractive\Elegant\Db\Query\Builder  $query
+	 * @param  \Netinteractive\Elegant\Model\Query\Builder  $query
 	 * @param  \Netinteractive\Elegant\Model\Record  $parent
 	 * @return void
 	 */
@@ -121,7 +125,7 @@ abstract class Relation {
 	public function getEager()
 	{
         #we have to set proper record on query so builder can clone and return proper objects
-        $this->getQuery()->setRecord($this->related);
+        $this->getQuery()->setRecord($this->getRelated());
 
 		return $this->get();
 	}
@@ -162,12 +166,24 @@ abstract class Relation {
 	/**
 	 * Get the underlying query for the relation.
 	 *
-	 * @return \Netinteractive\Elegant\Model\Record
+	 * @return \Netinteractive\Elegant\Model\Query\Builder
 	 */
 	public function getQuery()
 	{
 		return $this->query;
 	}
+
+    /**
+     * Get the underlying query for the relation.
+     *
+     * @param \Netinteractive\Elegant\Model\Query\Builder $query
+     * @return $this
+     */
+    public function setQuery(Builder $query)
+    {
+        $this->query = $query;
+        return $this;
+    }
 
 	/**
 	 * Get the parent model of the relation.
@@ -187,7 +203,7 @@ abstract class Relation {
      */
     public function getForeignKey(Record $record)
     {
-        return snake_case($record->getBlueprint()->getStorageName().'__id');
+        return snake_case($record->getBlueprint()->getStorageName().self::$postFk);
     }
 
     /**
@@ -213,9 +229,9 @@ abstract class Relation {
 	 */
 	public function __call($method, $parameters)
 	{
-		$result = call_user_func_array(array($this->query, $method), $parameters);
+		$result = call_user_func_array(array($this->getQuery(), $method), $parameters);
 
-		if ($result === $this->query) return $this;
+		if ($result === $this->getQuery()) return $this;
 
 		return $result;
 	}

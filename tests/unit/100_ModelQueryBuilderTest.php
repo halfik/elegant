@@ -641,12 +641,12 @@ class ModelQueryBuilderTest extends ElegantTest
     {
         $builder = $this->newBuilder();
         $mock = $this->getMockBuilder(get_class($builder))
-            ->setMethods( array('setRelationsToLoad'))
+            ->setMethods( array('setRelationsToLoad', 'addConstraints'))
             ->disableOriginalConstructor()
             ->getMock()
         ;
 
-        $mock->method('setRelationsToLoad')
+        $mock->method('addConstraints')
             ->willReturn(array())
         ;
 

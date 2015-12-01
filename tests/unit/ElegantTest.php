@@ -126,4 +126,5 @@ class ElegantTest  extends \PHPUnit_Framework_TestCase
         $method = $this->getPrivateMethod($object, $method);
         return $method->invokeArgs($object, $args);
     }
+
 }

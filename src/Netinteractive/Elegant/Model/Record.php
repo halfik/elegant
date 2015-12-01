@@ -167,21 +167,24 @@ abstract class Record implements Arrayable, Jsonable
      */
     protected function synchronizeTimestamps()
     {
-        $createdAt = $this->getBlueprint()->getCreatedAt();
-        $updatedAt = $this->getBlueprint()->getUpdatedAt();
-        $deletedAt = $this->getBlueprint()->getDeletedAt();
+        if ($this->hasBlueprint()){
+            $createdAt = $this->getBlueprint()->getCreatedAt();
+            $updatedAt = $this->getBlueprint()->getUpdatedAt();
+            $deletedAt = $this->getBlueprint()->getDeletedAt();
 
-        if ( isSet( $this->attributes[$createdAt]) ){
-            $this->original[$createdAt] = $this->attributes[$createdAt];
+            if ( isSet( $this->attributes[$createdAt]) ){
+                $this->original[$createdAt] = $this->attributes[$createdAt];
+            }
+
+            if ( isSet( $this->attributes[$updatedAt]) ){
+                $this->original[$updatedAt] = $this->attributes[$updatedAt];
+            }
+
+            if ( isSet( $this->attributes[$deletedAt]) ){
+                $this->original[$deletedAt] = $this->attributes[$deletedAt];
+            }
         }
 
-        if ( isSet( $this->attributes[$updatedAt]) ){
-            $this->original[$updatedAt] = $this->attributes[$updatedAt];
-        }
-
-        if ( isSet( $this->attributes[$deletedAt]) ){
-            $this->original[$deletedAt] = $this->attributes[$deletedAt];
-        }
 
         return $this;
     }
@@ -198,7 +201,7 @@ abstract class Record implements Arrayable, Jsonable
         /**
          * storageName.fieldName
          */
-        if (isSet($attributes[$this->getBlueprint()->getStorageName()])){
+        if ($this->hasBlueprint() && isSet($attributes[$this->getBlueprint()->getStorageName()])){
             $attributes = $attributes[$this->getBlueprint()->getStorageName()];
         }
 
