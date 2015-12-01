@@ -17,6 +17,20 @@ class Pivot extends Record
 	 */
 	protected $parent;
 
+    /**
+     * The name of the foreign key column.
+     *
+     * @var string
+     */
+    protected $foreignKey;
+
+    /**
+     * The name of the "other key" column.
+     *
+     * @var string
+     */
+    protected $otherKey;
+
     const PREFIX = 'pivot';
 
 
@@ -78,16 +92,6 @@ class Pivot extends Record
 	 */
 	public function setPivotKeys($foreignKey, $otherKey)
 	{
-        /*foreach ($foreignKey AS $key){
-            $this->foreignKey[$key] = array();
-        }
-
-        foreach ($otherKey AS $key){
-            $this->otherKey[$key] = array();
-        }
-
-        var_dump($this->foreignKey->med__id); exit;*/
-
         $this->foreignKey = $foreignKey;
         $this->otherKey = $otherKey;
 
