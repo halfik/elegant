@@ -234,28 +234,42 @@ class RelationTest  extends ElegantTest
 
     /**
      * @covers \Netinteractive\Elegant\Relation\Relation::__call
+     * @group call
      */
-    public function testCall()
+    public function testCall_Result()
     {
-        $this->markTestIncomplete();
+        $mock = $this->mockRelation();
+        $result = $mock->from('user');
+
+
+        $this->assertTrue($result instanceof \Netinteractive\Elegant\Relation\Relation);
+        $this->assertEquals('user', $result->getFrom());
     }
 
-    /**
-     * @covers \Netinteractive\Elegant\Relation\Relation::__call
-     */
-    public function testCall_ResultEqualQuery()
-    {
-        $this->markTestIncomplete();
-    }
 
     /**
      * @covers \Netinteractive\Elegant\Relation\Relation::getKeys
      * @group pk
      * @group get
      */
-    public function testGetKeys_EmptyKeys()
+    public function testGetKeys_EmptyKeys_Response()
     {
-        $this->markTestIncomplete();
+        $mock = $this->mockRelation();
+        $record = \App::make('Patient');
+
+        $q =\App::make('ni.elegant.db.query.builder');
+        $q->from('patient');
+
+        $record->fill((Array) $q->find(1));
+        $collection = \App::make('ni.elegant.model.collection');
+        $collection->add($record);
+
+        $response = $this->callPrivateMethod($mock, 'getKeys', array($collection));
+
+        $this->assertTrue(is_array($response));
+        $this->assertEquals(1, count($response));
+        $this->assertArrayHasKey('id', $response);
+        $this->assertTrue(is_array($response['id']));
     }
 
 
@@ -266,18 +280,22 @@ class RelationTest  extends ElegantTest
      */
     public function testGetKeys_Response()
     {
-        $this->markTestIncomplete();
+        $mock = $this->mockRelation();
+        $record = \App::make('Patient');
+
+        $q =\App::make('ni.elegant.db.query.builder');
+        $q->from('patient');
+
+        $record->fill((Array) $q->find(1));
+        $collection = \App::make('ni.elegant.model.collection');
+        $collection->add($record);
+
+        $keys = array('id');
+        $response = $this->callPrivateMethod($mock, 'getKeys', array($collection, $keys));
+
+        $this->assertTrue(is_array($response));
+        $this->assertEquals(1, count($response));
+        $this->assertArrayHasKey('id', $response);
+        $this->assertTrue(is_array($response['id']));
     }
-
-    /**
-     * @covers \Netinteractive\Elegant\Relation\Relation::getKeys
-     * @group pk
-     * @group get
-     */
-    public function testGetKeys_ArrayUnique()
-    {
-        $this->markTestIncomplete();
-    }
-
-
 }

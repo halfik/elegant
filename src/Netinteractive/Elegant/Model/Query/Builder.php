@@ -396,7 +396,7 @@ class Builder extends QueryBuilder
             return call_user_func_array(self::$macros[$method], $parameters);
         }
 
-        return call_user_func_array(array($this, $method), $parameters);
+        return $this;
     }
 }
 

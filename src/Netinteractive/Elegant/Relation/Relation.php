@@ -220,26 +220,12 @@ abstract class Relation {
         return new Pivot($parent, $attributes, $table, $exists);
     }
 
-	/**
-	 * Handle dynamic method calls to the relationship.
-	 *
-	 * @param  string  $method
-	 * @param  array   $parameters
-	 * @return mixed
-	 */
-	public function __call($method, $parameters)
-	{
-		$result = call_user_func_array(array($this->getQuery(), $method), $parameters);
 
-		if ($result === $this->getQuery()) return $this;
-
-		return $result;
-	}
 
     /**
      * Get all of the primary keys of records.
      *
-     * @param  \Netinteractive\Elegant\Model\Collectiob   $records
+     * @param  \Netinteractive\Elegant\Model\Collection   $records
      * @param  string  $keys
      * @return array
      */
@@ -255,8 +241,7 @@ abstract class Relation {
                 }
             }
         }
-
-
+        ;
         #keys array init
         foreach ($keys AS $key){
             if (!isSet($responseKeys[$key])){
@@ -282,6 +267,22 @@ abstract class Relation {
         }
 
         return $responseKeys;
+    }
+
+    /**
+     * Handle dynamic method calls to the relationship.
+     *
+     * @param  string  $method
+     * @param  array   $parameters
+     * @return mixed
+     */
+    public function __call($method, $parameters)
+    {
+        $result = call_user_func_array(array($this->getQuery(), $method), $parameters);
+
+        if ($result === $this->getQuery()) return $this;
+
+        return $result;
     }
 
 }

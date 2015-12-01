@@ -60,7 +60,10 @@ class ModelQueryBuilderTest extends ElegantTest
     public function testIsNested_True()
     {
         $builder = $this->newBuilder();
-        $this->assertTrue($builder->isNested('user.tu', 'user'));
+
+        $result = $this->callPrivateMethod($builder, 'isNested', array('user.tu', 'user'));
+
+        $this->assertTrue($result);
     }
 
     /**
@@ -71,7 +74,11 @@ class ModelQueryBuilderTest extends ElegantTest
     public function testIsNested_False()
     {
         $builder = $this->newBuilder();
-        $this->assertFalse($builder->isNested('user.tu', 'patient'));
+
+
+        $result = $this->callPrivateMethod($builder, 'isNested', array('user.tu', 'patient'));
+
+        $this->assertFalse($result);
     }
 
     /**
@@ -82,7 +89,10 @@ class ModelQueryBuilderTest extends ElegantTest
     public function testIsNested_False_NoDots()
     {
         $builder = $this->newBuilder();
-        $this->assertFalse($builder->isNested('user', 'user'));
+
+        $result = $this->callPrivateMethod($builder, 'isNested', array('user', 'user'));
+
+        $this->assertFalse($result);
     }
 
 
@@ -178,7 +188,8 @@ class ModelQueryBuilderTest extends ElegantTest
             ->withAnyParameters()
         ;
 
-        $mock->parseRelations(array('relation1'));
+
+        $this->callPrivateMethod($mock, 'parseRelations', array( array('relation1') ));
     }
 
 
@@ -192,7 +203,7 @@ class ModelQueryBuilderTest extends ElegantTest
     {
         $builder = $this->newBuilder();
 
-        $result = $builder->parseRelations(array('relation1'));
+        $result = $this->callPrivateMethod($builder, 'parseRelations', array( array('relation1') ));
 
         $this->assertTrue(is_array($result));
         $this->assertArrayHasKey('relation1', $result);
@@ -251,7 +262,7 @@ class ModelQueryBuilderTest extends ElegantTest
             ->withAnyParameters()
         ;
 
-        $mock->nestedRelations('relation1');
+        $this->callPrivateMethod($mock, 'nestedRelations', array( 'relation1'));
     }
 
 
@@ -279,7 +290,7 @@ class ModelQueryBuilderTest extends ElegantTest
 
         $mock->setRelationsToLoad( array('relation.name'=>function(){}));
 
-        $mock->nestedRelations('relation');
+        $this->callPrivateMethod($mock, 'nestedRelations', array( 'relation'));;
     }
 
     /**
@@ -292,13 +303,12 @@ class ModelQueryBuilderTest extends ElegantTest
         $builder = $this->newBuilder();
         $builder->setRelationsToLoad( array('relation.nested'=>function(){}));
 
-        $response = $builder->nestedRelations('relation');
+        $response = $this->callPrivateMethod($builder, 'nestedRelations', array('relation'));
 
         $this->assertTrue(is_array($response));
         $this->assertArrayHasKey('nested',$response);
         $this->assertTrue(is_callable($response['nested']));
     }
-
 
 
     /**
@@ -323,7 +333,7 @@ class ModelQueryBuilderTest extends ElegantTest
         $record  = App::make('Patient');
 
         $mock->setRecord($record);
-        $mock->whereSoftDeleted();
+        $this->callPrivateMethod($mock, 'whereSoftDeleted', array());
     }
 
 
@@ -752,6 +762,19 @@ class ModelQueryBuilderTest extends ElegantTest
         $this->assertEquals(1, count($results));
 
         DB::rollback();
+    }
+
+    /**
+     * @covers \Netinteractive\Elegant\Model\Query\Builder::__call
+     * @group call
+     */
+    public function testCall_NoMethod_Response()
+    {
+        $builder = $this->newBuilder();
+
+        $response = $builder->someNonExistingMethod();
+
+        $this->assertTrue($response instanceof \Netinteractive\Elegant\Model\Query\Builder);
     }
 
 }
