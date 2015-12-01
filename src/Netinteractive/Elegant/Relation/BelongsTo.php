@@ -37,7 +37,7 @@ class BelongsTo extends Relation
     /**
      * Create a new belongs to relationship instance.
      *
-     * @param  \Netinteractive\Elegant\Db\Query\Builder $query
+     * @param  \Netinteractive\Elegant\Model\Query\Builder $query
      * @param  \Netinteractive\Elegant\Model\Record $related
      * @param  \Netinteractive\Elegant\Model\Record $parent
      * @param  string|array $foreignKey
@@ -76,6 +76,7 @@ class BelongsTo extends Relation
      */
     public function getResults()
     {
+        $this->getQuery()->setRecord($this->getRelated());
         return $this->getQuery()->first();
     }
 
@@ -86,7 +87,7 @@ class BelongsTo extends Relation
      */
     public function get()
     {
-        $this->getQuery()->setRecord($this->related);
+        $this->getQuery()->setRecord($this->getRelated());
         return $this->getQuery()->get();
     }
 
@@ -101,12 +102,12 @@ class BelongsTo extends Relation
             // For belongs to relationships, which are essentially the inverse of has one
             // or has many relationships, we need to actually query on the primary key
             // of the related models matching on the foreign key that's on a parent.
-            $table = $this->related->getBlueprint()->getStorageName();
-            $fkList = $this->foreignKey;
+            $table = $this->getRelated()->getBlueprint()->getStorageName();
+            $fkList = $this->getForeignKey();
 
-            foreach ($this->otherKey AS $otherKey) {
+            foreach ($this->getOtherKey() AS $otherKey) {
                 $fk = array_shift($fkList);
-                $this->getQuery()->where($table . '.' . $otherKey, '=', $this->parent->{$fk});
+                $this->getQuery()->where($table . '.' . $otherKey, '=', $this->getParent()->{$fk});
             }
         }
     }
@@ -121,13 +122,14 @@ class BelongsTo extends Relation
     public function addEagerConstraints(Collection $records)
     {
         $keys = $this->getEagerRecordKeys($records);
-        $this->getQuery()->from($this->related->getBlueprint()->getStorageName());
+        $this->getQuery()->from($this->getRelated()->getBlueprint()->getStorageName());
 
         // We'll grab the primary key name of the related models since it could be set to
         // a non-standard name and not "id". We will then construct the constraint for
         // our eagerly loading query so it returns the proper models from execution.
-        foreach ($this->otherKey AS $otherKey) {
-            $key = $this->related->getBlueprint()->getStorageName() . '.' . $otherKey;
+
+        foreach ($this->getOtherKey() AS $otherKey) {
+            $key = $this->getRelated()->getBlueprint()->getStorageName() . '.' . $otherKey;
             $this->getQuery()->whereIn($key, array_shift($keys));
         }
     }
@@ -146,7 +148,7 @@ class BelongsTo extends Relation
         // to query for via the eager loading query. We will add them to an array then
         // execute a "where in" statement to gather up all of those related records.
         foreach ($records as $record) {
-            foreach ($this->foreignKey AS $fk) {
+            foreach ($this->getForeignKey() AS $fk) {
                 if (!is_null($value = $record->{$fk})) {
                     $keys[$fk][] = $value;
                 }
@@ -203,7 +205,7 @@ class BelongsTo extends Relation
         $dictionary = array();
 
         foreach ($results as $result) {
-            foreach ($this->otherKey AS $otherKey) {
+            foreach ($this->getOtherKey() AS $otherKey) {
                 $dictionary[$result->$otherKey] = $result;
             }
         }
@@ -212,7 +214,7 @@ class BelongsTo extends Relation
         // and match back onto their children using these keys of the dictionary and
         // the primary key of the children to map them onto the correct instances.
         foreach ($records as $record) {
-            foreach ($this->foreignKey AS $fk) {
+            foreach ($this->getForeignKey() AS $fk) {
                 if (isset($dictionary[$record->$fk])) {
                     $record->setRelated($relation, $dictionary[$record->$fk]);
                 }
@@ -232,11 +234,11 @@ class BelongsTo extends Relation
     public function associate(Record $record)
     {
         $otherKeys = $this->getOtherKey();
-        foreach ($this->foreignKey AS $fk) {
-            $this->parent->setAttribute($fk, $record->getAttribute(array_shift($otherKeys)));
+        foreach ($this->getForeignKey() AS $fk) {
+            $this->getParent()->setAttribute($fk, $record->getAttribute(array_shift($otherKeys)));
         }
 
-        return $this->parent->setRelated($this->relation, $record);
+        return $this->getParent()->setRelated($this->relation, $record);
     }
 
     /**
@@ -246,18 +248,18 @@ class BelongsTo extends Relation
      */
     public function dissociate()
     {
-        foreach ($this->foreignKey AS $fk) {
-            $this->parent->setAttribute($fk, null);
+        foreach ($this->getForeignKey() AS $fk) {
+            $this->getParent()->setAttribute($fk, null);
         }
 
-        return $this->parent->setRelated($this->relation, null);
+        return $this->getParent()->setRelated($this->relation, null);
     }
 
 
     /**
      * Get the foreign key of the relationship.
      *
-     * @return string
+     * @return array
      */
     public function getForeignKey(Record $record=null)
     {
@@ -271,13 +273,18 @@ class BelongsTo extends Relation
      */
     public function getQualifiedForeignKey()
     {
-        return $this->parent->getBlueprint()->getStorageName() . '.' . $this->foreignKey;
+        $fkList = $this->getForeignKey();
+
+        foreach ($fkList AS $index=>$fk){
+            $fkList[$index] = $this->getParent()->getBlueprint()->getStorageName() . '.' . $fk;
+        }
+        return $fkList;
     }
 
     /**
      * Get the associated key of the relationship.
      *
-     * @return string
+     * @return array
      */
     public function getOtherKey()
     {

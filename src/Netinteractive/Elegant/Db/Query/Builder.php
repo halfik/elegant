@@ -406,7 +406,7 @@ class Builder extends BaseBuilder
         // do whatever it wants to a query then we will store it for compiling.
         $query = $this->newQuery();
 
-        $query->from($this->from);
+        $query->from($this->getFrom());
 
         call_user_func($callback, $query);
 
