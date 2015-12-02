@@ -64,7 +64,6 @@ class BelongsToMany extends Relation
 	 */
 	public function __construct(Builder $query, Record $related, Record $parent, $table, $foreignKey, $otherKey, $relationName = null)
 	{
-
         if (!is_array($foreignKey)) {
             $foreignKey = array($foreignKey);
         }
@@ -104,15 +103,13 @@ class BelongsToMany extends Relation
      */
     public function addEagerConstraints(Collection $records)
     {
-        $keys = $this->getForeignKey();
-        $fkValueList = $this->getKeys($records);
+        $fkList = $this->getForeignKey();
+        $keys = $this->getKeys($records);
 
-        $parentPk = $this->parent->getBlueprint()->getPrimaryKey();
+        $this->getQuery()->from($this->getRelated()->getBlueprint()->getStorageName());
 
-        foreach ($keys AS $index=>$fk){
-            if (isSet($parentPk[$index])){
-                $this->getQuery()->whereIn($fk, $fkValueList[$parentPk[$index]]);
-            }
+        foreach ($fkList AS $index=>$fk){
+            $this->getQuery()->whereIn($this->getTable().'.'.$fk, array_shift($keys));
         }
     }
 
@@ -159,6 +156,7 @@ class BelongsToMany extends Relation
 
         $select = $this->getSelectColumns($columns);
 
+        $this->getQuery()->setRecord($this->getRelated());
         $records = $this->getQuery()->addSelect($select)->get();
 
         $this->hydratePivotRelation($records);
@@ -211,9 +209,20 @@ class BelongsToMany extends Relation
      */
     public function getForeignKey(Record $record=null)
     {
+        return $this->foreignKey;
+    }
+
+    /**
+     * Get the fully qualified foreign key of the relationship.
+     *
+     * @return string
+     */
+    public function getQualifiedForeignKey()
+    {
+        $fkList = $this->getForeignKey();
         $response = array();
 
-        foreach ($this->foreignKey AS $fk){
+        foreach ($fkList AS $fk){
             $response[] = $this->getTable().'.'.$fk;
         }
 
@@ -227,9 +236,20 @@ class BelongsToMany extends Relation
      */
     public function getOtherKey()
     {
+        return $this->otherKey;
+    }
+
+    /**
+     * Get the fully qualified other key of the relationship.
+     *
+     * @return string
+     */
+    public function getQualifiedOtherKey()
+    {
+        $okList = $this->getOtherKey();
         $response = array();
 
-        foreach ($this->otherKey AS $fk){
+        foreach ($okList AS $fk){
             $response[] = $this->getTable().'.'.$fk;
         }
 
@@ -266,9 +286,9 @@ class BelongsToMany extends Relation
      */
     public function createNewPivot(array $attributes = array(), $exists = false)
     {
-        $pivot = $this->newPivot($this->parent, $attributes, $this->getTable(), $exists);
+        $pivot = $this->newPivot($this->getParent(), $attributes, $this->getTable(), $exists);
 
-        return $pivot->setPivotKeys($this->foreignKey, $this->otherKey);
+        return $pivot->setPivotKeys($this->getForeignKey(), $this->getOtherKey());
     }
 
     /**
@@ -284,10 +304,10 @@ class BelongsToMany extends Relation
         // We need to join to the intermediate table on the related model's primary
         // key column with the intermediate table's foreign key for the related
         // model instance. Then we can set the "where" for the parent models.
-        $baseTable = $this->related->getBlueprint()->getStorageName();
+        $baseTable = $this->getRelated()->getBlueprint()->getStorageName();
 
-        $keys = $this->related->getBlueprint()->getPrimaryKey();
-        $otherKeys = $this->getOtherKey();
+        $keys = $this->getRelated()->getBlueprint()->getPrimaryKey();
+        $otherKeys = $this->getQualifiedOtherKey();
 
 
         $query->join($this->getTable(), function($join) use($keys, $baseTable, $otherKeys){
@@ -310,11 +330,11 @@ class BelongsToMany extends Relation
      */
     protected function setWhere()
     {
-        $fkList = $this->getForeignKey();
-        $pkList = $this->parent->getKey();
+        $fkList = $this->getQualifiedForeignKey();
+        $pkList = $this->getParent()->getKey();
 
         foreach ($fkList AS $index=>$fk){
-            $this->getQuery()->where($fk, '=', $pkList[$index]);
+            $this->getQuery()->where($fk, '=',array_shift($pkList));
         }
 
         return $this;
@@ -330,7 +350,7 @@ class BelongsToMany extends Relation
     protected function getSelectColumns(array $columns = array('*'))
     {
         if ($columns == array('*')) {
-            $columns = array($this->related->getBlueprint()->getStorageName().'.*');
+            $columns = array($this->getRelated()->getBlueprint()->getStorageName().'.*');
         }
 
         return array_merge($columns, $this->getAliasedPivotColumns());
@@ -343,7 +363,7 @@ class BelongsToMany extends Relation
      */
     protected function getAliasedPivotColumns()
     {
-        $defaults = array_merge($this->foreignKey, $this->otherKey);
+        $defaults = array_merge($this->getForeignKey(), $this->getOtherKey());
 
         // We need to alias all of the pivot columns with the "pivot_" prefix so we
         // can easily extract them out of the models and put them into the pivot
@@ -407,7 +427,7 @@ class BelongsToMany extends Relation
      */
     protected function buildDictionary(Collection $results)
     {
-        $fkList = $this->foreignKey;
+        $fkList = $this->getForeignKey();
 
         // First we will build a dictionary of child records keyed by the foreign key
         // of the relation so that we will easily and quickly match them to their

@@ -799,5 +799,20 @@ class BelongsToTest extends ElegantTest
     }
 
 
+    /**
+     * @covers \Netinteractive\Elegant\Relation\BelongsTo
+     * @group relation
+     * @group general
+     */
+    public function testGeneral()
+    {
+        $dbMapper = new \Netinteractive\Elegant\Mapper\DbMapper('Patient');
+        $record = $dbMapper->with('user')->find(2);
+
+
+        $this->assertTrue(isset($record->user));
+        $this->assertEquals(2, $record->user__id);
+        $this->assertInstanceOf('\Netinteractive\Elegant\Tests\Models\User\Record', $record->user);
+    }
 
 }

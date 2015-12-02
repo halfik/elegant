@@ -1,8 +1,5 @@
 <?php namespace Netinteractive\Elegant\Tests\Models\Med;
 
-
-use Netinteractive\Elegant\Search\Searchable;
-
 class Blueprint extends \Netinteractive\Elegant\Model\Blueprint
 {
    protected function init()
@@ -14,8 +11,7 @@ class Blueprint extends \Netinteractive\Elegant\Model\Blueprint
 
         $this->getRelationManager()->hasMany('patientData','PatientData','med__id', 'id');
         $this->getRelationManager()->hasMany('user','User', 'med_id', 'id');
-        $this->getRelationManager()->belongsToMany('patients','Patient', array('patient_data', 'med__id', array('patient__id', 'patient__pesel') ) );
-
+        $this->getRelationManager()->belongsToMany('patients','Patient', 'patient_data', 'med__id', array('patient__id')  );
 
         $this->timestamps = true;
 
