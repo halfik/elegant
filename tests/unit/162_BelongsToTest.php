@@ -151,7 +151,7 @@ class BelongsToTest extends ElegantTest
         $belongsTo = new \Netinteractive\Elegant\Relation\BelongsTo($dbModelBuilder, $userRecord, $patientRecord, 'user__id', 'id', 'user');
         $this->getPrivateProperty($belongsTo, 'constraints')->setValue($belongsTo, false);
         $belongsTo->addConstraints();
-
+        $this->getPrivateProperty($belongsTo, 'constraints')->setValue($belongsTo, true);
 
         $this->assertEquals('select * where ("user"."id" = ?)', $belongsTo->getQuery()->toSql());
     }
