@@ -567,7 +567,6 @@ class BelongsToTest extends ElegantTest
             ->getMock()
         ;
 
-
         $mockPatientRecord->expects($this->once())
             ->method('setRelated')
             ->withAnyParameters()
@@ -614,70 +613,189 @@ class BelongsToTest extends ElegantTest
         $this->assertInstanceOf(get_class($userRecord), $response[0]->user);
     }
 
-    /**
-     * @covers \Netinteractive\Elegant\Relation\BelongsTo::associate
-     * @group relation
-     */
-    public function testAssociate_GetOtherKey()
-    {
-        $this->markTestIncomplete();
-    }
 
     /**
      * @covers \Netinteractive\Elegant\Relation\BelongsTo::associate
      * @group relation
+     * @group associate
      */
     public function testAssociate_Parent_SetAttribute()
     {
-        $this->markTestIncomplete();
+        $dbMapper = new \Netinteractive\Elegant\Mapper\DbMapper('Patient');
+        $patientRecord = $dbMapper->find(2);
+
+        $dbMapper->setRecordClass('User');
+        $userRecord = $dbMapper->find($patientRecord->user__id);
+
+        $dbModelBuilder = \App::make('ni.elegant.model.query.builder');
+
+
+        $mockPatientRecord  = $this->getMockBuilder(get_class($patientRecord))
+            ->setMethods( array('setAttribute'))
+            ->setConstructorArgs( array($patientRecord->toArray()) )
+            ->getMock()
+        ;
+
+        $mockPatientRecord->expects($this->once())
+            ->method('setAttribute')
+            ->withAnyParameters()
+        ;
+
+        $belongsTo = new \Netinteractive\Elegant\Relation\BelongsTo($dbModelBuilder, $userRecord, $mockPatientRecord, 'user__id', 'id', 'user');
+
+
+        $belongsTo->associate($patientRecord);
     }
 
     /**
      * @covers \Netinteractive\Elegant\Relation\BelongsTo::associate
      * @group relation
+     * @group associate
      */
     public function testAssociate_Parent_SetRelated()
     {
-        $this->markTestIncomplete();
+        $dbMapper = new \Netinteractive\Elegant\Mapper\DbMapper('Patient');
+        $patientRecord = $dbMapper->find(2);
+
+        $dbMapper->setRecordClass('User');
+        $userRecord = $dbMapper->find($patientRecord->user__id);
+
+        $dbModelBuilder = \App::make('ni.elegant.model.query.builder');
+
+        $mockPatientRecord  = $this->getMockBuilder(get_class($patientRecord))
+            ->setMethods( array('setRelated'))
+            ->setConstructorArgs( array($patientRecord->toArray()) )
+            ->getMock()
+        ;
+
+        $mockPatientRecord->expects($this->once())
+            ->method('setRelated')
+            ->withAnyParameters()
+        ;
+
+        $belongsTo = new \Netinteractive\Elegant\Relation\BelongsTo($dbModelBuilder, $userRecord, $mockPatientRecord, 'user__id', 'id', 'user');
+
+
+        $belongsTo->associate($userRecord);
     }
+
 
 
     /**
      * @covers \Netinteractive\Elegant\Relation\BelongsTo::associate
      * @group relation
+     * @group associate
      */
     public function testAssociate_Result()
     {
-        $this->markTestIncomplete();
+        $dbMapper = new \Netinteractive\Elegant\Mapper\DbMapper('Patient');
+        $patientRecord = $dbMapper->find(2);
+
+        $dbMapper->setRecordClass('User');
+        $userRecord = $dbMapper->find($patientRecord->user__id);
+
+        $dbModelBuilder = \App::make('ni.elegant.model.query.builder');
+
+        $belongsTo = new \Netinteractive\Elegant\Relation\BelongsTo($dbModelBuilder, $userRecord, $patientRecord, 'user__id', 'id', 'user');
+
+        $belongsTo->associate($userRecord);
+        $parent = $belongsTo->getParent();
+
+        $this->assertTrue(isset($parent->user));
+        $this->assertEquals(2, $parent->user__id);
+        $this->assertInstanceOf(get_class($userRecord), $parent->user);
     }
 
 
     /**
      * @covers \Netinteractive\Elegant\Relation\BelongsTo::dissociate
      * @group relation
+     * @group dissociate
      */
     public function testDissociate_Parent_SetAttribute()
     {
-        $this->markTestIncomplete();
+        $dbMapper = new \Netinteractive\Elegant\Mapper\DbMapper('Patient');
+        $patientRecord = $dbMapper->find(2);
+
+        $dbMapper->setRecordClass('User');
+        $userRecord = $dbMapper->find($patientRecord->user__id);
+
+        $dbModelBuilder = \App::make('ni.elegant.model.query.builder');
+
+        $mockPatientRecord  = $this->getMockBuilder(get_class($patientRecord))
+            ->setMethods( array('setAttribute'))
+            ->setConstructorArgs( array($patientRecord->toArray()) )
+            ->getMock()
+        ;
+
+        $mockPatientRecord->expects($this->once())
+            ->method('setAttribute')
+            ->withAnyParameters()
+        ;
+
+        $belongsTo = new \Netinteractive\Elegant\Relation\BelongsTo($dbModelBuilder, $userRecord, $mockPatientRecord, 'user__id', 'id', 'user');
+
+
+        $belongsTo->dissociate($userRecord);
     }
 
     /**
      * @covers \Netinteractive\Elegant\Relation\BelongsTo::dissociate
      * @group relation
+     * @group dissociate
      */
     public function testDissociate_Parent_SetRelated()
     {
-        $this->markTestIncomplete();
+        $dbMapper = new \Netinteractive\Elegant\Mapper\DbMapper('Patient');
+        $patientRecord = $dbMapper->find(2);
+
+        $dbMapper->setRecordClass('User');
+        $userRecord = $dbMapper->find($patientRecord->user__id);
+
+        $dbModelBuilder = \App::make('ni.elegant.model.query.builder');
+
+        $mockPatientRecord  = $this->getMockBuilder(get_class($patientRecord))
+            ->setMethods( array('setRelated'))
+            ->setConstructorArgs( array($patientRecord->toArray()) )
+            ->getMock()
+        ;
+
+        $mockPatientRecord->expects($this->once())
+            ->method('setRelated')
+            ->withAnyParameters()
+        ;
+
+        $belongsTo = new \Netinteractive\Elegant\Relation\BelongsTo($dbModelBuilder, $userRecord, $mockPatientRecord, 'user__id', 'id', 'user');
+
+
+        $belongsTo->dissociate($userRecord);
     }
 
 
     /**
      * @covers \Netinteractive\Elegant\Relation\BelongsTo::dissociate
      * @group relation
+     * @group dissociate
      */
     public function testDissociate_Result()
     {
-        $this->markTestIncomplete();
+        $dbMapper = new \Netinteractive\Elegant\Mapper\DbMapper('Patient');
+        $patientRecord = $dbMapper->find(2);
+
+        $dbMapper->setRecordClass('User');
+        $userRecord = $dbMapper->find($patientRecord->user__id);
+
+        $dbModelBuilder = \App::make('ni.elegant.model.query.builder');
+
+        $belongsTo = new \Netinteractive\Elegant\Relation\BelongsTo($dbModelBuilder, $userRecord, $patientRecord, 'user__id', 'id', 'user');
+
+        $belongsTo->associate($userRecord);
+        $belongsTo->dissociate($userRecord);
+
+        $parent = $belongsTo->getParent();
+
+        $this->assertNull($parent->user__id);
+        $this->assertNull($parent->user);
     }
 
 
