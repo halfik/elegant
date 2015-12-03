@@ -1,7 +1,48 @@
 <?php
+use \Netinteractive\Elegant\Model\Record AS Record;
 
 class HasOneOrManyTest extends ElegantTest
 {
+
+    /**
+     * @param \Netinteractive\Elegant\Model\Record $related
+     * @param \Netinteractive\Elegant\Model\Record $parent
+     * @param string $foreignKey
+     * @param string $localKey
+     * @return PHPUnit_Framework_MockObject_MockObject
+     */
+    public function mockRelation(Record $related, Record $parent, $foreignKey, $localKey, $builder=null)
+    {
+        if (!$builder){
+            $builder = \App::make('ni.elegant.model.query.builder');
+        }
+
+        $mock = $this->getMockBuilder('\Netinteractive\Elegant\Relation\HasOneOrMany')
+            ->setMethods( array('addConstraints', 'addEagerConstraints', 'initRelation', 'match', 'getResults'))
+            ->setConstructorArgs(array($builder, $related, $parent, $foreignKey, $localKey))
+            ->getMock()
+        ;
+
+        $mock->method('addEagerConstraints')
+            ->withAnyParameters()
+        ;
+
+        $mock->method('initRelation')
+            ->withAnyParameters()
+        ;
+
+        $mock->method('match')
+            ->withAnyParameters()
+        ;
+
+        $mock->method('getResults')
+            ->withAnyParameters()
+        ;
+
+        return $mock;
+    }
+
+
     /**
      * @covers \Netinteractive\Elegant\Relation\HasOneOrMany::__construct
      * @group relation
@@ -9,7 +50,17 @@ class HasOneOrManyTest extends ElegantTest
      */
     public function testConstructor_FkNotArray()
     {
-        $this->markTestIncomplete();
+        $dbMapper = new \Netinteractive\Elegant\Mapper\DbMapper('Med');
+        $medRecord = $dbMapper->find(1);
+
+        $dbMapper->setRecordClass('PatientData');
+        $patientDataRecord = $dbMapper->find(1);
+
+
+        $relation = $this->mockRelation($patientDataRecord, $medRecord, 'med__id', 'id');
+        $fk = $this->getPrivateProperty($relation, 'foreignKey')->getValue($relation);
+
+        $this->assertTrue(is_array($fk));
     }
 
     /**
@@ -19,7 +70,17 @@ class HasOneOrManyTest extends ElegantTest
      */
     public function testConstructor_LocalKeyNotArray()
     {
-        $this->markTestIncomplete();
+        $dbMapper = new \Netinteractive\Elegant\Mapper\DbMapper('Med');
+        $medRecord = $dbMapper->find(1);
+
+        $dbMapper->setRecordClass('PatientData');
+        $patientDataRecord = $dbMapper->find(1);
+
+
+        $relation = $this->mockRelation($patientDataRecord, $medRecord, 'med__id', 'id');
+        $lk = $this->getPrivateProperty($relation, 'localKey')->getValue($relation);
+
+        $this->assertTrue(is_array($lk));
     }
 
     /**
@@ -30,7 +91,14 @@ class HasOneOrManyTest extends ElegantTest
      */
     public function testConstructor_KeyDiff()
     {
-        $this->markTestIncomplete();
+        $dbMapper = new \Netinteractive\Elegant\Mapper\DbMapper('Med');
+        $medRecord = $dbMapper->find(1);
+
+        $dbMapper->setRecordClass('PatientData');
+        $patientDataRecord = $dbMapper->find(1);
+
+
+        $this->mockRelation($patientDataRecord, $medRecord, array('med__id'), array('id', 'patient__id'));
     }
 
     /**
@@ -40,7 +108,19 @@ class HasOneOrManyTest extends ElegantTest
      */
     public function testGetLocalKey()
     {
-        $this->markTestIncomplete();
+        $dbMapper = new \Netinteractive\Elegant\Mapper\DbMapper('Med');
+        $medRecord = $dbMapper->find(1);
+
+        $dbMapper->setRecordClass('PatientData');
+        $patientDataRecord = $dbMapper->find(1);
+
+
+        $relation = $this->mockRelation($patientDataRecord, $medRecord, 'med__id', 'id');
+        $key = $relation->getLocalKey();
+
+
+        $this->assertTrue(is_array($key));
+        $this->assertEquals('id', $key[0]);
     }
 
 
@@ -51,18 +131,35 @@ class HasOneOrManyTest extends ElegantTest
      */
     public function testGetForeignKey()
     {
-        $this->markTestIncomplete();
+        $dbMapper = new \Netinteractive\Elegant\Mapper\DbMapper('Med');
+        $medRecord = $dbMapper->find(1);
+
+        $dbMapper->setRecordClass('PatientData');
+        $patientDataRecord = $dbMapper->find(1);
+
+
+        $relation = $this->mockRelation($patientDataRecord, $medRecord, 'med__id', 'id');
+        $key = $relation->getForeignKey();
+
+        $this->assertTrue(is_array($key));
+        $this->assertEquals('med__id', $key[0]);
     }
 
 
     /**
      * @covers \Netinteractive\Elegant\Relation\HasOneOrMany::getParentKey
-     * @group get
+     * @group get2
      * @group key
      */
     public function testGetParentKey()
     {
-        $this->markTestIncomplete();
+        $this->markTestSkipped('There is some problem with mocker and test wont work.');
+        $dbMapper = new \Netinteractive\Elegant\Mapper\DbMapper('Med');
+        $medRecord = $dbMapper->find(1);
+
+        $dbMapper->setRecordClass('PatientData');
+        $patientDataRecord = $dbMapper->find(1);
+
     }
 
     /**
@@ -72,7 +169,7 @@ class HasOneOrManyTest extends ElegantTest
      */
     public function testGetQualifiedParentKeyName()
     {
-        $this->markTestIncomplete();
+        $this->markTestSkipped('There is some problem with mocker and test wont work.');
     }
 
 
@@ -83,7 +180,7 @@ class HasOneOrManyTest extends ElegantTest
      */
     public function testAddConstraints()
     {
-        $this->markTestIncomplete();
+        $this->markTestSkipped('There is some problem with mocker and test wont work.');
     }
 
     /**
@@ -93,7 +190,7 @@ class HasOneOrManyTest extends ElegantTest
      */
     public function testAddEagerConstraints()
     {
-        $this->markTestIncomplete();
+        $this->markTestSkipped('There is some problem with mocker and test wont work.');
     }
 
 
@@ -105,7 +202,7 @@ class HasOneOrManyTest extends ElegantTest
      */
     public function testGetPlainForeignKey()
     {
-        $this->markTestIncomplete();
+        $this->markTestSkipped('There is some problem with mocker and test wont work.');
     }
 
     /**
@@ -115,7 +212,7 @@ class HasOneOrManyTest extends ElegantTest
      */
     public function testBuildDictionary()
     {
-        $this->markTestIncomplete();
+        $this->markTestSkipped('There is some problem with mocker and test wont work.');
     }
 
     /**
@@ -125,7 +222,7 @@ class HasOneOrManyTest extends ElegantTest
      */
     public function testGetRelationValue_One()
     {
-        $this->markTestIncomplete();
+        $this->markTestSkipped('There is some problem with mocker and test wont work.');
     }
 
     /**
@@ -135,7 +232,7 @@ class HasOneOrManyTest extends ElegantTest
      */
     public function testGetRelationValue_Many()
     {
-        $this->markTestIncomplete();
+        $this->markTestSkipped('There is some problem with mocker and test wont work.');
     }
 
 
@@ -146,7 +243,7 @@ class HasOneOrManyTest extends ElegantTest
      */
     public function testMatchOneOrMany_CallBuildDictionary()
     {
-        $this->markTestIncomplete();
+        $this->markTestSkipped('There is some problem with mocker and test wont work.');
     }
 
     /**
@@ -156,7 +253,7 @@ class HasOneOrManyTest extends ElegantTest
      */
     public function testMatchOneOrMany_Response()
     {
-        $this->markTestIncomplete();
+        $this->markTestSkipped('There is some problem with mocker and test wont work.');
     }
 
     /**
@@ -166,7 +263,7 @@ class HasOneOrManyTest extends ElegantTest
      */
     public function testMatchOne_CallMatchOneOrMany()
     {
-        $this->markTestIncomplete();
+        $this->markTestSkipped('There is some problem with mocker and test wont work.');
     }
 
     /**
@@ -176,7 +273,7 @@ class HasOneOrManyTest extends ElegantTest
      */
     public function testMatchMany_CallMatchOneOrMany()
     {
-        $this->markTestIncomplete();
+        $this->markTestSkipped('There is some problem with mocker and test wont work.');
     }
 
 

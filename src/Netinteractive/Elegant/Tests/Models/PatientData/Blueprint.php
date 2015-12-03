@@ -7,7 +7,7 @@ class Blueprint extends \Netinteractive\Elegant\Model\Blueprint
    protected function init()
     {
         $this->setStorageName('patient_data');
-        $this->primaryKey = array('id', 'patient__id');
+        $this->primaryKey = array('id');
         $this->incrementingPk = 'id';
         $this->timestamps = true;
 
