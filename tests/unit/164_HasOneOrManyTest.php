@@ -148,18 +148,22 @@ class HasOneOrManyTest extends ElegantTest
 
     /**
      * @covers \Netinteractive\Elegant\Relation\HasOneOrMany::getParentKey
-     * @group get2
+     * @group get
      * @group key
      */
     public function testGetParentKey()
     {
-        $this->markTestSkipped('There is some problem with mocker and test wont work.');
         $dbMapper = new \Netinteractive\Elegant\Mapper\DbMapper('Med');
         $medRecord = $dbMapper->find(1);
 
         $dbMapper->setRecordClass('PatientData');
         $patientDataRecord = $dbMapper->find(1);
 
+        $relation = $this->mockRelation($patientDataRecord, $medRecord, 'med__id', 'id');
+        $key = $relation->getParentKey();
+
+        $this->assertTrue(is_array($key));
+        $this->assertArrayHasKey('id', $key);
     }
 
     /**
@@ -169,7 +173,17 @@ class HasOneOrManyTest extends ElegantTest
      */
     public function testGetQualifiedParentKeyName()
     {
-        $this->markTestSkipped('There is some problem with mocker and test wont work.');
+        $dbMapper = new \Netinteractive\Elegant\Mapper\DbMapper('Med');
+        $medRecord = $dbMapper->find(1);
+
+        $dbMapper->setRecordClass('PatientData');
+        $patientDataRecord = $dbMapper->find(1);
+
+        $relation = $this->mockRelation($patientDataRecord, $medRecord, 'med__id', 'id');
+        $key = $relation->getQualifiedParentKeyName();
+
+        $this->assertTrue(is_array($key));
+        $this->assertEquals('med.id', $key[0]);
     }
 
 

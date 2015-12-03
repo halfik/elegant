@@ -258,7 +258,13 @@ abstract class HasOneOrMany extends Relation
      */
     public function getQualifiedParentKeyName()
     {
-        return $this->getParent()->getBlueprint()->getStorageName() . '.' . $this->getLocalKey();
+        $response = $this->getLocalKey();
+
+        foreach ($response AS $index=>$key){
+            $response[$index] = $this->getParent()->getBlueprint()->getStorageName() . '.' . $key;
+        }
+
+        return $response;
     }
 
 }
