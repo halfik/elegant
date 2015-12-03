@@ -8,6 +8,7 @@ use Illuminate\Contracts\Support\Jsonable;
 use Carbon\Carbon;
 use Netinteractive\Elegant\Model\Filter\Loader;
 use Netinteractive\Elegant\Model\Filter\Type\Display;
+use Netinteractive\Elegant\Relation\Pivot;
 
 /**
  * Class Record
@@ -50,6 +51,7 @@ abstract class Record implements Arrayable, Jsonable
      * @var array
      */
     protected $related= array();
+
 
     /**
      * Record fill input data
@@ -309,7 +311,6 @@ abstract class Record implements Arrayable, Jsonable
         $this->validationEnabled = false;
         return $this;
     }
-
 
 
     /**

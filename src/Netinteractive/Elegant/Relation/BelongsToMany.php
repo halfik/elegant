@@ -190,6 +190,7 @@ class BelongsToMany extends Relation
             $recordPkList = $record->getKey();
 
             foreach ($recordPkList AS $recordPk){
+
                 if (isset($dictionary[$key = $recordPk])){
                     $collection = \App::make('ni.elegant.model.collection', array($dictionary[$key]));
                     $record->setRelated($relation, $collection);
@@ -215,7 +216,7 @@ class BelongsToMany extends Relation
     /**
      * Get the fully qualified foreign key of the relationship.
      *
-     * @return string
+     * @return array
      */
     public function getQualifiedForeignKey()
     {
@@ -371,7 +372,7 @@ class BelongsToMany extends Relation
         $columns = array();
 
         foreach (array_merge($defaults, $this->pivotColumns) as $column){
-            $columns[] = $this->getTable().'.'.$column.' as pivot_'.$column;
+            $columns[] = $this->getTable().'.'.$column.' as '.Pivot::PREFIX.'_'.$column;
         }
 
         return array_unique($columns);
@@ -397,7 +398,7 @@ class BelongsToMany extends Relation
     }
 
     /**
-     * Get the pivot attributes from a record.
+     * Clear and return the pivot attributes from a record.
      *
      * @param  \Netinteractive\Elegant\Model\Record  $record
      * @return array
@@ -405,8 +406,8 @@ class BelongsToMany extends Relation
     protected function cleanPivotAttributes(Record $record)
     {
         $values = array();
-
         foreach ($record->toArray() as $key => $value){
+
             // To get the pivots attributes we will just take any of the attributes which
             // begin with "pivot_" and add those to this arrays, as well as unsetting
             // them from the parent's models since they exist in a different table.
@@ -435,9 +436,9 @@ class BelongsToMany extends Relation
         $dictionary = array();
 
         foreach ($results as $result){
-           foreach ($fkList AS $fk){
+            foreach ($fkList AS $fk){
                $dictionary[$result->{Pivot::PREFIX}->$fk][] = $result;
-           }
+            }
         }
 
 

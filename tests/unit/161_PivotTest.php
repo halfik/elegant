@@ -132,7 +132,4 @@ class PivotTest extends ElegantTest
     }
 
 
-
-
-
 }

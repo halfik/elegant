@@ -82,7 +82,6 @@ class Pivot extends Record
 	}
 
 
-
 	/**
 	 * Set the key names for the pivot model instance.
 	 *
