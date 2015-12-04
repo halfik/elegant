@@ -93,6 +93,12 @@ return array(
         'price' =>$serializer->serialize( function ($value, $params = array()) {
             return str_replace(',', '.', $value);
         }),
+        'str_replace' =>$serializer->serialize( function ($value, $params = array()) {
+            if (!isset($params[0]) || !$params[1]){
+                return $value;
+            }
+            return str_replace($params[0],$params[1], $value);
+        }),
         'trim' => $serializer->serialize(function ($value, $params = array()) {
             return trim($value);
         }),
@@ -115,11 +121,13 @@ return array(
             return str_replace(array(')', '(', ' ', '-'), '', $value);
         }),
         'stripTags' => $serializer->serialize(function ($value, $params = array()) {
+
             if (is_object($value)){
                 return $value;
             }
 
-            $allowed = isSet($params['allowed']) ? $params['allowed'] : implode('', $params);
+            $allowed = isSet($params[0]) ? $params[0] : implode('', $params);
+
             return strip_tags($value, $allowed);
         }),
         'hour' =>$serializer->serialize( function ($value, $params = array()) {

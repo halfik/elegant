@@ -11,20 +11,16 @@ class HasOneOrManyTest extends ElegantTest
      * @param string $localKey
      * @return PHPUnit_Framework_MockObject_MockObject
      */
-    public function mockRelation(Record $related, Record $parent, $foreignKey, $localKey, $builder=null)
+    public function mockRelation(Record $related, Record $parent, $foreignKey, $localKey, $builder=null, $methods=array())
     {
         if (!$builder){
             $builder = \App::make('ni.elegant.model.query.builder');
         }
 
         $mock = $this->getMockBuilder('\Netinteractive\Elegant\Relation\HasOneOrMany')
-            ->setMethods( array('addConstraints', 'addEagerConstraints', 'initRelation', 'match', 'getResults'))
+            ->setMethods( array_merge(array( 'initRelation', 'match', 'getResults'), $methods))
             ->setConstructorArgs(array($builder, $related, $parent, $foreignKey, $localKey))
             ->getMock()
-        ;
-
-        $mock->method('addEagerConstraints')
-            ->withAnyParameters()
         ;
 
         $mock->method('initRelation')
@@ -147,6 +143,27 @@ class HasOneOrManyTest extends ElegantTest
 
 
     /**
+     * @covers \Netinteractive\Elegant\Relation\HasOneOrMany::getPlainForeignKey
+     * @group key
+     * @group get
+     */
+    public function testGetPlainForeignKey()
+    {
+        $dbMapper = new \Netinteractive\Elegant\Mapper\DbMapper('Med');
+        $medRecord = $dbMapper->find(1);
+
+        $dbMapper->setRecordClass('PatientData');
+        $patientDataRecord = $dbMapper->find(1);
+
+
+        $relation = $this->mockRelation($patientDataRecord, $medRecord, 'med__id', 'id');
+        $key = $relation->getPlainForeignKey('patient_data.med__id');
+
+
+        $this->assertEquals('med__id', $key);
+    }
+
+    /**
      * @covers \Netinteractive\Elegant\Relation\HasOneOrMany::getParentKey
      * @group get
      * @group key
@@ -191,33 +208,129 @@ class HasOneOrManyTest extends ElegantTest
     /**
      * @covers \Netinteractive\Elegant\Relation\HasOneOrMany::addConstraints
      * @group add
+     * @group constraint
      */
-    public function testAddConstraints()
+    public function testAddConstraints_Query_Call_Where()
     {
-        $this->markTestSkipped('There is some problem with mocker and test wont work.');
+        $connection = \App::make('db')->connection(\Config::get('database.default'));
+
+        $processor = $connection->getPostProcessor();
+        $grammar = $connection->getQueryGrammar();
+
+        $dbModelBuilder = \App::make('ni.elegant.model.query.builder');
+        $mockBuilder = $this->getMockBuilder(get_class($dbModelBuilder))
+            ->setMethods( array('where'))
+            ->setConstructorArgs( array($connection, $grammar, $processor) )
+            ->getMock()
+        ;
+
+        $mockBuilder->from('med');
+
+
+        $mockBuilder->expects($this->once())
+            ->method('where')
+            ->withAnyParameters()
+        ;
+
+        $dbMapper = new \Netinteractive\Elegant\Mapper\DbMapper('Med');
+        $medRecord = $dbMapper->find(1);
+
+        $dbMapper->setRecordClass('PatientData');
+        $patientDataRecord = $dbMapper->find(1);
+
+        $relation = $this->mockRelation($patientDataRecord, $medRecord, 'med__id', 'id');
+        $relation->setQuery($mockBuilder);
+
+        $relation->addConstraints();
+    }
+
+
+    /**
+     * @covers \Netinteractive\Elegant\Relation\HasOneOrMany::addEagerConstraints
+     * @group add
+     * @group eager
+     * @group constraint
+     */
+    public function testAddEagerConstraints_Query_Call_From()
+    {
+        $connection = \App::make('db')->connection(\Config::get('database.default'));
+
+        $processor = $connection->getPostProcessor();
+        $grammar = $connection->getQueryGrammar();
+
+        $dbModelBuilder = \App::make('ni.elegant.model.query.builder');
+        $mockBuilder = $this->getMockBuilder(get_class($dbModelBuilder))
+            ->setMethods( array('from'))
+            ->setConstructorArgs( array($connection, $grammar, $processor) )
+            ->getMock()
+        ;
+
+        $mockBuilder->method('from')
+            ->willReturn('med')
+        ;
+
+        $mockBuilder->expects($this->once())
+            ->method('from')
+            ->withAnyParameters()
+        ;
+
+        $dbMapper = new \Netinteractive\Elegant\Mapper\DbMapper('Med');
+        $medRecord = $dbMapper->find(1);
+
+        $dbMapper->setRecordClass('PatientData');
+        $patientDataRecord = $dbMapper->find(1);
+
+        $relation = $this->mockRelation($patientDataRecord, $medRecord, 'med__id', 'id');
+        $relation->setQuery($mockBuilder);
+
+        $collection = new \Netinteractive\Elegant\Model\Collection();
+        $collection->add($medRecord);
+
+        $relation->addEagerConstraints($collection);
     }
 
     /**
      * @covers \Netinteractive\Elegant\Relation\HasOneOrMany::addEagerConstraints
      * @group add
      * @group eager
+     * @group constraint
      */
-    public function testAddEagerConstraints()
+    public function testAddEagerConstraints_Query_Call_WhereIn()
     {
-        $this->markTestSkipped('There is some problem with mocker and test wont work.');
+        $connection = \App::make('db')->connection(\Config::get('database.default'));
+
+        $processor = $connection->getPostProcessor();
+        $grammar = $connection->getQueryGrammar();
+
+        $dbModelBuilder = \App::make('ni.elegant.model.query.builder');
+        $mockBuilder = $this->getMockBuilder(get_class($dbModelBuilder))
+            ->setMethods( array('whereIn'))
+            ->setConstructorArgs( array($connection, $grammar, $processor) )
+            ->getMock()
+        ;
+
+
+        $mockBuilder->expects($this->once())
+            ->method('whereIn')
+            ->withAnyParameters()
+        ;
+
+        $dbMapper = new \Netinteractive\Elegant\Mapper\DbMapper('Med');
+        $medRecord = $dbMapper->find(1);
+
+        $dbMapper->setRecordClass('PatientData');
+        $patientDataRecord = $dbMapper->find(1);
+
+        $relation = $this->mockRelation($patientDataRecord, $medRecord, 'med__id', 'id');
+        $relation->setQuery($mockBuilder);
+
+        $collection = new \Netinteractive\Elegant\Model\Collection();
+        $collection->add($patientDataRecord);
+
+        $relation->addEagerConstraints($collection);
     }
 
 
-
-    /**
-     * @covers \Netinteractive\Elegant\Relation\HasOneOrMany::getPlainForeignKey
-     * @group key
-     * @group get
-     */
-    public function testGetPlainForeignKey()
-    {
-        $this->markTestSkipped('There is some problem with mocker and test wont work.');
-    }
 
     /**
      * @covers \Netinteractive\Elegant\Relation\HasOneOrMany::buildDictionary
@@ -226,7 +339,23 @@ class HasOneOrManyTest extends ElegantTest
      */
     public function testBuildDictionary()
     {
-        $this->markTestSkipped('There is some problem with mocker and test wont work.');
+        $dbMapper = new \Netinteractive\Elegant\Mapper\DbMapper('Med');
+        $medRecord = $dbMapper->find(1);
+
+        $dbMapper->setRecordClass('PatientData');
+        $patientDataRecord = $dbMapper->find(1);
+
+        $relation = $this->mockRelation($patientDataRecord, $medRecord, 'med__id', 'id');
+
+        $collection = new \Netinteractive\Elegant\Model\Collection();
+        $collection->add($patientDataRecord);
+
+        $result = $this->callPrivateMethod($relation, 'buildDictionary', array($collection));
+
+        $this->assertTrue(is_array($result));
+        $this->assertTrue(isSet($result[$patientDataRecord->med__id]));
+        $this->assertTrue(is_array($result[$patientDataRecord->med__id]));
+        $this->assertInstanceOf(get_class($patientDataRecord), $result[$patientDataRecord->med__id][0]);
     }
 
     /**
@@ -236,7 +365,21 @@ class HasOneOrManyTest extends ElegantTest
      */
     public function testGetRelationValue_One()
     {
-        $this->markTestSkipped('There is some problem with mocker and test wont work.');
+        $dbMapper = new \Netinteractive\Elegant\Mapper\DbMapper('Med');
+        $medRecord = $dbMapper->find(1);
+
+        $dbMapper->setRecordClass('PatientData');
+        $patientDataRecord = $dbMapper->find(1);
+
+        $relation = $this->mockRelation($patientDataRecord, $medRecord, 'med__id', 'id');
+
+        $collection = new \Netinteractive\Elegant\Model\Collection();
+        $collection->add($patientDataRecord);
+
+        $dict = $this->callPrivateMethod($relation, 'buildDictionary', array($collection));
+        $response = $this->callPrivateMethod($relation,'getRelationValue', array($dict,1, 'one'));
+
+        $this->assertInstanceOf(get_class($patientDataRecord), $response);
     }
 
     /**
@@ -246,49 +389,170 @@ class HasOneOrManyTest extends ElegantTest
      */
     public function testGetRelationValue_Many()
     {
-        $this->markTestSkipped('There is some problem with mocker and test wont work.');
+        $dbMapper = new \Netinteractive\Elegant\Mapper\DbMapper('Med');
+        $medRecord = $dbMapper->find(1);
+
+        $dbMapper->setRecordClass('PatientData');
+        $patientDataRecord = $dbMapper->find(1);
+
+        $relation = $this->mockRelation($patientDataRecord, $medRecord, 'med__id', 'id');
+
+        $collection = new \Netinteractive\Elegant\Model\Collection();
+        $collection->add($patientDataRecord);
+
+        $dict = $this->callPrivateMethod($relation, 'buildDictionary', array($collection));
+        $response = $this->callPrivateMethod($relation,'getRelationValue', array($dict,1, 'many'));
+
+        $this->assertInstanceOf('\Netinteractive\Elegant\Model\Collection', $response);
+        $this->assertInstanceOf(get_class($patientDataRecord), $response[0]);
     }
 
 
     /**
      * @covers \Netinteractive\Elegant\Relation\HasOneOrMany::matchOneOrMany
-     * @group add
-     * @group eager
+     * @group match
+     * @group related
      */
-    public function testMatchOneOrMany_CallBuildDictionary()
+    public function testMatchOneOrMany_Call_BuildDictionary()
     {
-        $this->markTestSkipped('There is some problem with mocker and test wont work.');
+
+        $dbMapper = new \Netinteractive\Elegant\Mapper\DbMapper('Med');
+        $medRecord = $dbMapper->find(1);
+
+        $dbMapper->setRecordClass('PatientData');
+        $patientDataRecord = $dbMapper->find(1);
+
+        $relation = $this->mockRelation($patientDataRecord, $medRecord, 'med__id', 'id', null, array('buildDictionary'));
+        $relation
+            ->method('buildDictionary')
+            ->willReturn(array())
+        ;
+
+        $relation->expects($this->once())
+            ->method('buildDictionary')
+            ->withAnyParameters()
+        ;
+
+        $collection1 = new \Netinteractive\Elegant\Model\Collection();
+        $collection1->add($patientDataRecord);
+
+        $collection2 = new \Netinteractive\Elegant\Model\Collection();
+        $collection2->add($medRecord);
+
+        $this->callPrivateMethod($relation, 'matchOneOrMany', array($collection2, $collection1, 'patients', 'many'));
     }
 
     /**
      * @covers \Netinteractive\Elegant\Relation\HasOneOrMany::matchOneOrMany
-     * @group add
-     * @group eager
+     * @group match
+     * @group related
+     */
+    public function testMatchOneOrMany_Call_Record_SetRelated()
+    {
+        $dbMapper = new \Netinteractive\Elegant\Mapper\DbMapper('Med');
+        $medRecord = $dbMapper->find(1);
+
+        $dbMapper->setRecordClass('PatientData');
+        $patientDataRecord = $dbMapper->find(1);
+
+        $relation = $this->mockRelation($patientDataRecord, $medRecord, 'med__id', 'id');
+
+        $mockedMedRecord = $this->getMockBuilder(get_class($medRecord))
+            ->setMethods( array('setRelated'))
+            ->setConstructorArgs( array($medRecord->toArray()) )
+            ->getMock()
+        ;
+
+        $mockedMedRecord->expects($this->once())
+            ->method('setRelated')
+            ->withAnyParameters()
+        ;
+
+        $collection1 = new \Netinteractive\Elegant\Model\Collection();
+        $collection1->add($patientDataRecord);
+
+        $collection2 = new \Netinteractive\Elegant\Model\Collection();
+        $collection2->add($mockedMedRecord);
+
+        $this->callPrivateMethod($relation, 'matchOneOrMany', array($collection2, $collection1, 'patients', 'many'));
+    }
+
+    /**
+     * @covers \Netinteractive\Elegant\Relation\HasOneOrMany::matchOneOrMany
+     * @group match
+     * @group related
      */
     public function testMatchOneOrMany_Response()
     {
-        $this->markTestSkipped('There is some problem with mocker and test wont work.');
+        $dbMapper = new \Netinteractive\Elegant\Mapper\DbMapper('Med');
+        $medRecord = $dbMapper->find(1);
+
+        $dbMapper->setRecordClass('PatientData');
+        $patientDataRecord = $dbMapper->find(1);
+
+        $relation = $this->mockRelation($patientDataRecord, $medRecord, 'med__id', 'id');
+
+        $collection1 = new \Netinteractive\Elegant\Model\Collection();
+        $collection1->add($patientDataRecord);
+
+        $collection2 = new \Netinteractive\Elegant\Model\Collection();
+        $collection2->add($medRecord);
+
+        $result = $this->callPrivateMethod($relation, 'matchOneOrMany', array($collection2, $collection1, 'patient', 'one'));
+
+        $this->assertInstanceOf(get_class($collection1), $result);
+        $this->assertTrue(isSet($result[0]));
+        $this->assertInstanceOf(get_class($medRecord), $result[0]);
+        $this->assertTrue(isSet($result[0]->patient));
+        $this->assertInstanceOf(get_class($patientDataRecord), $result[0]->patient);
     }
 
     /**
      * @covers \Netinteractive\Elegant\Relation\HasOneOrMany::matchOne
-     * @group add
-     * @group eager
+     * @group match
+     * @group related
      */
-    public function testMatchOne_CallMatchOneOrMany()
+    public function testMatchOne_Call_MatchOneOrMany()
     {
-        $this->markTestSkipped('There is some problem with mocker and test wont work.');
+        $dbMapper = new \Netinteractive\Elegant\Mapper\DbMapper('Med');
+        $medRecord = $dbMapper->find(1);
+
+        $dbMapper->setRecordClass('PatientData');
+        $patientDataRecord = $dbMapper->find(1);
+
+        $relation = $this->mockRelation($patientDataRecord, $medRecord, 'med__id', 'id', null, array('matchOneOrMany'));
+
+        $collection1 = new \Netinteractive\Elegant\Model\Collection();
+        $collection1->add($patientDataRecord);
+
+        $collection2 = new \Netinteractive\Elegant\Model\Collection();
+        $collection2->add($medRecord);
+
+        $this->callPrivateMethod($relation, 'matchOne', array($collection2, $collection1, 'patient'));
     }
 
     /**
      * @covers \Netinteractive\Elegant\Relation\HasOneOrMany::matchMany
-     * @group add
-     * @group eager
+     * @group match
+     * @group related
      */
     public function testMatchMany_CallMatchOneOrMany()
     {
-        $this->markTestSkipped('There is some problem with mocker and test wont work.');
-    }
+        $dbMapper = new \Netinteractive\Elegant\Mapper\DbMapper('Med');
+        $medRecord = $dbMapper->find(1);
 
+        $dbMapper->setRecordClass('PatientData');
+        $patientDataRecord = $dbMapper->find(1);
+
+        $relation = $this->mockRelation($patientDataRecord, $medRecord, 'med__id', 'id', null, array('matchOneOrMany'));
+
+        $collection1 = new \Netinteractive\Elegant\Model\Collection();
+        $collection1->add($patientDataRecord);
+
+        $collection2 = new \Netinteractive\Elegant\Model\Collection();
+        $collection2->add($medRecord);
+
+         $this->callPrivateMethod($relation, 'matchMany', array($collection2, $collection1, 'patient'));
+    }
 
 }

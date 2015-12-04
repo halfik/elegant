@@ -14,10 +14,10 @@ class Logic
      */
     public static function  parseFilters($filters)
     {
-        if (!empty($filters) && !is_array($filters)){
+        if ( !is_array($filters)){
             $filters = explode('|', $filters);
         }
 
-        return $filters;
+        return array_map('trim', $filters);
     }
 }

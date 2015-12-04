@@ -258,7 +258,7 @@ class RecordTest extends ElegantTest
             ->getMock()
         ;
 
-        $mock->expects($this->exactly(2))
+        $mock->expects($this->atLeast(2))
             ->method('setAttribute')
             ->withAnyParameters()
         ;
@@ -717,11 +717,13 @@ class RecordTest extends ElegantTest
      * @covers \Netinteractive\Elegant\Model\Record::getExternals
      * @group attribute
      * @group external
-     * @group get
+     * @group get2
      */
     public function testGetExternals()
     {
         $record = App::make('User');
+
+
         $record->fill(
             array(
                 'first_name' => 'John',
@@ -730,6 +732,7 @@ class RecordTest extends ElegantTest
                 'age' => 23
             )
         );
+
 
         $this->assertEquals(3, count($record->getExternals()));
     }

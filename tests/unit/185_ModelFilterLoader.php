@@ -8,7 +8,7 @@ class ModelFilterLoader extends ElegantTest
      */
     public function testParseFilters_NotArray()
     {
-
+        $this->markTestIncomplete();
     }
 
     /**
@@ -17,6 +17,6 @@ class ModelFilterLoader extends ElegantTest
      */
     public function testParseFilters_Response()
     {
-
+        $this->markTestIncomplete();
     }
 }

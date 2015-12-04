@@ -17,17 +17,14 @@ class Save
     public static function apply($obj, $key, $filters)
     {
         $serializer = new \SuperClosure\Serializer;
-        $definedFilters = config('netinteractive/elegant/filters.save');
+        $definedFilters = config('packages.netinteractive.elegant.filters.save');
 
         foreach ($filters AS $filter){
-            $filterInfo = explode(':', $filter, 2);
-            $filter = $filterInfo[0];
-
             if ( is_callable($filter)){
                 $obj->data[$key] = $filter($obj->data[$key]);
             }
             else{
-                $filterInfo = explode(':', $filter, 2);
+                $filterInfo = array_map('trim',explode(':', $filter, 2));
                 $filter = $filterInfo[0];
 
                 if (isSet($definedFilters[$filter]) && isset($obj->data[$key])){

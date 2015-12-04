@@ -22,7 +22,13 @@ class Handler
         if ($obj->record->hasBlueprint()){
             $filters =  Logic::parseFilters($obj->record->getBluePrint()->getFieldFilters($obj->field, 'display'));
 
-            if (isSet($filters)){
+            foreach ($filters AS $key=>$val){
+                if (empty(trim($val))){
+                    unset($filters[$key]);
+                }
+            }
+
+            if (isSet($filters) && !empty($filters)){
                 Display::apply($obj, $filters);
             }
         }
@@ -38,7 +44,13 @@ class Handler
             foreach ($obj->record->getAttributes() AS $key=>$val){
                 $filters =  Logic::parseFilters( $obj->record->getBluePrint()->getFieldFilters($key, 'save' ));
 
-                if (isSet($filters)){
+                foreach ($filters AS $k=>$v){
+                    if (empty(trim($k))){
+                        unset($filters[$k]);
+                    }
+                }
+
+                if (isSet($filters) && !empty($filters)){
                     Save::apply($obj, $key, $filters);
                 }
             }
@@ -52,10 +64,19 @@ class Handler
     public function fillFilters(\stdClass $obj)
     {
         if ($obj->record->hasBlueprint()){
+
             foreach ($obj->record->getAttributes() AS $key=>$val){
+
                 $filters =  Logic::parseFilters( $obj->record->getBluePrint()->getFieldFilters($key, 'fill') );
 
-                if (isSet($filters)){
+                foreach ($filters AS $k=>$v){
+                    if (empty(trim($k))){
+                        unset($filters[$k]);
+                    }
+                }
+
+                if (isSet($filters) && !empty($filters)){
+
                     Fill::apply($obj->record, $key, $filters);
                 }
             }

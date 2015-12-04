@@ -17,14 +17,14 @@ class Fill
     public static function apply(\Netinteractive\Elegant\Model\Record $record, $key, $filters)
     {
         $serializer = new \SuperClosure\Serializer;
-        $definedFilters = config('netinteractive/elegant/filters.fill');
+        $definedFilters = config('packages.netinteractive.elegant.filters.fill');
 
         foreach ($filters AS $filter){
             if ( is_callable($filter)){
                 $record->$key = $filter($record->$key);
             }
             else{
-                $filterInfo = explode(':', $filter, 2);
+                $filterInfo = array_map('trim',explode(':', $filter, 2));
                 $filter = $filterInfo[0];
 
                 if (isSet($definedFilters[$filter])){

@@ -91,10 +91,7 @@ abstract class HasOneOrMany extends Relation
             $keys = $this->getParentKey();
 
             foreach ($this->getForeignKey() AS $index=>$key){
-
-                if (isSet($keys[$index])){
-                    $this->getQuery()->where($key, '=', $keys[$index]);
-                }
+                $this->getQuery()->where($key, '=', array_shift( $keys));
             }
         }
     }
@@ -230,7 +227,6 @@ abstract class HasOneOrMany extends Relation
                 $segments = explode('.', $val);
             }
         }
-
 
         return $segments[count($segments) - 1];
     }

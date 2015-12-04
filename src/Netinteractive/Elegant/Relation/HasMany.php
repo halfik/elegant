@@ -16,7 +16,7 @@ class HasMany extends HasOneOrMany
      */
     public function getResults()
     {
-        return $this->getQuery()->get();
+        return $this->get();
     }
 
     /**
@@ -42,7 +42,7 @@ class HasMany extends HasOneOrMany
     public function initRelation(Collection $records, $relation)
     {
         foreach ($records as $record) {
-            $record->setRelated($relation, \App('ni.elegant.model.collection', array($this->getRelated())) );
+            $record->setRelated($relation, \App('ni.elegant.model.collection', array(array($this->getRelated()))) );
         }
 
         return $records;
