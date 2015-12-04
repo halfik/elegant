@@ -1,6 +1,6 @@
 <?php
 
-class RecordTestDbMapper  extends ElegantTest
+class RecordDbMapperTest  extends ElegantTest
 {
     /**
      * @covers \Netinteractive\Elegant\Model\Record::makeDirty
@@ -91,13 +91,16 @@ class RecordTestDbMapper  extends ElegantTest
     }
 
     /**
-     * @covers \Netinteractive\Elegant\Model\Record::getRelated
+     * @covers \Netinteractive\Elegant\Model\Record::hasRelated
      * @group related
-     * @group get
+     * @group has
      */
-    public function testGetRelated()
+    public function testHasRelated_True()
     {
-        $this->markTestIncomplete();
+        $dbMapper = new \Netinteractive\Elegant\Mapper\DbMapper('User');
+        $record = $dbMapper->with('patient')->find(1);
+
+        $this->assertTrue($record->hasRelated('patient'));
     }
 
     /**
@@ -105,10 +108,30 @@ class RecordTestDbMapper  extends ElegantTest
      * @group related
      * @group has
      */
-    public function testHasRelated()
+    public function testHasRelated_False()
     {
-        $this->markTestIncomplete();
+        $dbMapper = new \Netinteractive\Elegant\Mapper\DbMapper('User');
+        $record = $dbMapper->with('patient')->find(1);
+
+        $this->assertFalse($record->hasRelated('patientData'));
     }
+
+    /**
+     * @covers \Netinteractive\Elegant\Model\Record::getRelated
+     * @group related
+     * @group get
+     */
+    public function testGetRelated()
+    {
+        $dbMapper = new \Netinteractive\Elegant\Mapper\DbMapper('User');
+        $record = $dbMapper->with('patient')->find(1);
+
+        $result = $record->getRelated('patient');
+
+        $this->assertInstanceOf('Netinteractive\Elegant\Tests\Models\Patient\Record', $result);
+    }
+
+
 
     /**
      * @covers \Netinteractive\Elegant\Model\Record::setRelated
@@ -117,7 +140,16 @@ class RecordTestDbMapper  extends ElegantTest
      */
     public function testSetRelated()
     {
-        $this->markTestIncomplete();
+        $dbMapper = new \Netinteractive\Elegant\Mapper\DbMapper('User');
+        $record = $dbMapper->with('patient')->find(1);
+
+        $dbMapper->setRecordClass('Patient');
+        $patient = $dbMapper->find(1);
+
+        $record->setRelated('patient', $patient);
+        $result = $record->getRelated('patient');
+
+        $this->assertInstanceOf('Netinteractive\Elegant\Tests\Models\Patient\Record', $result);
     }
 
     /**
@@ -127,7 +159,16 @@ class RecordTestDbMapper  extends ElegantTest
      */
     public function testSetRawRelated()
     {
-        $this->markTestIncomplete();
+        $dbMapper = new \Netinteractive\Elegant\Mapper\DbMapper('User');
+        $record = $dbMapper->with('patient')->find(1);
+
+        $dbMapper->setRecordClass('Patient');
+        $patient = $dbMapper->find(1);
+
+        $record->setRawRelated( array('patient'=>$patient));
+        $result = $record->getRelated('patient');
+
+        $this->assertInstanceOf('Netinteractive\Elegant\Tests\Models\Patient\Record', $result);
     }
 
 
@@ -138,10 +179,17 @@ class RecordTestDbMapper  extends ElegantTest
      */
     public function testToArray_Related()
     {
-        $this->markTestIncomplete();
+        $dbMapper = new \Netinteractive\Elegant\Mapper\DbMapper('User');
+        $record = $dbMapper->with('patient')->find(1);
+
+        $dbMapper->setRecordClass('Patient');
+        $patient = $dbMapper->find(1);
+
+        $record->setRawRelated( array('patient'=>$patient));
+        $result = $record->toArray();
+
+        $this->assertArrayHasKey('patient', $result);
     }
-
-
 
     /**
      * @covers \Netinteractive\Elegant\Model\Record::__isset
@@ -150,7 +198,10 @@ class RecordTestDbMapper  extends ElegantTest
      */
     public function testIsset_Related()
     {
-        $this->markTestIncomplete();
+        $dbMapper = new \Netinteractive\Elegant\Mapper\DbMapper('User');
+        $record = $dbMapper->with('patient')->find(1);
+
+        $this->assertTrue(isSet($record->patient));
     }
 
 
@@ -161,7 +212,13 @@ class RecordTestDbMapper  extends ElegantTest
      */
     public function testUnset_Related()
     {
-        $this->markTestIncomplete();
+        $dbMapper = new \Netinteractive\Elegant\Mapper\DbMapper('User');
+        $record = $dbMapper->with('patient')->find(1);
+
+
+        unset($record->patient);
+
+        $this->assertFalse(isSet($record->patient));
     }
 
 
