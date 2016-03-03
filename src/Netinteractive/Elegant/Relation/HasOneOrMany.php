@@ -75,7 +75,7 @@ abstract class HasOneOrMany extends Relation
      * Get the foreign key for the relationship.
      * @return array|string
      */
-    public function getForeignKey()
+    public function getForeignKey(Record $record=null)
     {
         return $this->foreignKey;
     }
@@ -204,7 +204,10 @@ abstract class HasOneOrMany extends Relation
             // relationship as this will allow us to quickly access all of the related
             // models without having to do nested looping which will be quite slow.
             foreach ($results as $record) {
-                $dictionary[$record->{$foreign}][] = $record;
+                if ($record instanceof Record){
+                    $dictionary[$record->{$foreign}][] = $record;
+                }
+
             }
         }
 
@@ -218,7 +221,7 @@ abstract class HasOneOrMany extends Relation
      * @param  string $name
      * @return string
      */
-    public function getPlainForeignKey($name)
+    public function getPlainForeignKey()
     {
         $segments = array();
 
@@ -261,6 +264,47 @@ abstract class HasOneOrMany extends Relation
         }
 
         return $response;
+    }
+
+    /**
+     * Create a new instance of the related model.
+     *
+     * @param  array  $attributes
+     * @return \Illuminate\Database\Eloquent\Model
+     */
+    public function create(Record $relatedRecord)
+    {
+        $fkList = $this->getForeignKey();
+        $pkList = $this->getParentKey();
+
+        $index = 0;
+        foreach ($pkList AS $name=>$val){
+            if (isset($fkList[$index])){
+                $relatedRecord->setAttribute($fkList[$index], $val);
+            }
+
+            $index++;
+        }
+
+        return $relatedRecord;
+    }
+
+    /**
+     * Create an array of new instances of the related model.
+     *
+     * @param  array  $records
+     * @return array
+     */
+    public function createMany(array $records)
+    {
+        $instances = array();
+
+        foreach ($records as $record)
+        {
+            $instances[] = $this->create($record);
+        }
+
+        return $instances;
     }
 
 }

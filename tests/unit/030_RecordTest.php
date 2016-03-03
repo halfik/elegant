@@ -138,6 +138,25 @@ class RecordTest extends ElegantTest
      * @group attribute
      * @group set
      */
+    public function testSetAttribute_RelatedRecord()
+    {
+        $record = App::make('User');
+
+        $patient = \App::make('Patient',  array(array(
+            'pesel' => '03220110672',
+        )));
+
+        $record->setAttribute('patient', $patient);
+
+        $related = $record->getRelated('patient');
+        $this->assertCount(1, $related);
+    }
+
+    /**
+     * @covers \Netinteractive\Elegant\Model\Record::setAttribute
+     * @group attribute
+     * @group set
+     */
     public function testSetAttribute_NoBlueprint()
     {
         $record = App::make('User');

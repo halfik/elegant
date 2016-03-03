@@ -81,6 +81,18 @@ class BelongsToMany extends Relation
 		parent::__construct($query, $parent);
 	}
 
+
+    /**
+     * Get a new plain query builder for the pivot table.
+     *
+     * @return \Illuminate\Database\Query\Builder
+     */
+    public function newPivotStatement()
+    {
+        return $this->query->getQuery()->newQuery()->from($this->table);
+    }
+
+
     /**
      * Set the base constraints on the relation query.
      *
@@ -445,5 +457,81 @@ class BelongsToMany extends Relation
         return $dictionary;
     }
 
+
+    /**
+     * Create a data for pivot table
+     *
+     * @return array
+     */
+    public function createPivotData()
+    {
+        $data = array();
+        $fkList = $this->getForeignKey();
+        $pkList = $this->getOtherKey();
+
+        $i = 0;
+        $parentKeys = $this->parent->getKey();
+        foreach ($parentKeys AS $val){
+            if (isSet($fkList[$i])){
+                $data[$fkList[$i]] = $val;
+            }
+            $i++;
+        }
+
+        $i = 0;
+        $parentKeys = $this->related->getKey();
+        foreach ($parentKeys AS $val){
+            if (isSet($pkList[$i])){
+                $data[$pkList[$i]] = $val;
+            }
+            $i++;
+        }
+
+        return $data;
+    }
+
+
+    /**
+     * Attach a model to the parent.
+     *
+     * @param  mixed  $id
+     * @param  array  $attributes
+     * @param  bool   $touch
+     * @return void
+     */
+   /* public function attach($id, array $attributes = array(), $touch = true)
+    {
+        if ($id instanceof Model) $id = $id->getKey();
+
+        $query = $this->newPivotStatement();
+
+        $query->insert($this->createAttachRecords((array) $id, $attributes));
+
+        if ($touch) $this->touchIfTouching();
+    }*/
+
+    /**
+     * Create an array of records to insert into the pivot table.
+     *
+     * @param  array  $ids
+     * @param  array  $attributes
+     * @return array
+     */
+   /* protected function createAttachRecords($ids, array $attributes)
+    {
+        $records = array();
+
+        $timed = ($this->hasPivotColumn($this->createdAt()) || $this->hasPivotColumn($this->updatedAt()));
+
+        // To create the attachment records, we will simply spin through the IDs given
+        // and create a new record to insert for each ID. Each ID may actually be a
+        // key in the array, with extra attributes to be placed in other columns.
+        foreach ($ids as $key => $value)
+        {
+            $records[] = $this->attacher($key, $value, $attributes, $timed);
+        }
+
+        return $records;
+    }*/
 
 }

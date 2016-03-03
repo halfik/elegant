@@ -607,7 +607,7 @@ class BelongsToManyTest extends ElegantTest
             'patient__id' => 1
         ));
 
-
+        
         $this->assertTrue(isSet($response->med__id));
         $this->assertTrue(isSet($response->patient__id));
         $this->assertEquals(1, $response->med__id);
@@ -1045,8 +1045,15 @@ class BelongsToManyTest extends ElegantTest
     }
 
 
-
-
+    /**
+     * @covers \Netinteractive\Elegant\Relation\createPivotData
+     * @group pivot
+     * @group create
+     */
+    public function testCreatePivotData()
+    {
+        $this->markTestIncomplete();
+    }
 
 
     /**

@@ -555,4 +555,18 @@ class HasOneOrManyTest extends ElegantTest
          $this->callPrivateMethod($relation, 'matchMany', array($collection2, $collection1, 'patient'));
     }
 
+    /**
+     *  @covers \Netinteractive\Elegant\Relation\HasOneOrMany::create
+     */
+    public function testCreate(){
+        $this->markTestIncomplete();
+    }
+
+    /**
+     *  @covers \Netinteractive\Elegant\Relation\HasOneOrMany::createMany
+     */
+    public function testCreateMany(){
+        $this->markTestIncomplete();
+    }
+
 }

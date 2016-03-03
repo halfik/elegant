@@ -131,5 +131,17 @@ class PivotTest extends ElegantTest
         $this->assertEquals('key2', $pivot->getOtherKey());
     }
 
+    /**
+     * @covers \Netinteractive\Elegant\Relation\Pivot::getDeleteQuery
+     * @group get
+     * @group delete
+     * @group query
+     */
+    public function testGetDeleteQuery()
+    {
+        $this->markTestIncomplete();
+    }
+
+
 
 }

@@ -8,6 +8,8 @@ use Netinteractive\Elegant\Model\Record;
 use Netinteractive\Elegant\Model\Query\Builder;
 
 use Netinteractive\Elegant\Helper;
+use Netinteractive\Elegant\Relation\BelongsToMany;
+use Netinteractive\Elegant\Relation\HasOneOrMany;
 
 
 /**
@@ -161,18 +163,18 @@ class DbMapper implements MapperInterface
      * Saves record to database
      *
      * @param \Netinteractive\Elegant\Model\Record $record
-     * @param bool $touchRelated
+     * @param bool $saveRelated
      * @return $this
      */
-    public function save(Record $record, $touchRelated = false)
+    public function save(Record $record, $saveRelated = false)
     {
         #we want to check if anything has changed with record only when we are updating
         #if we do this for new record it won't let us to read record from one database and save it to another one
         if ($record->isNew()){
-            $this->performInsert($record, $touchRelated);
+            $this->performInsert($record, $saveRelated);
         }
         else{
-            $this->performUpdate($record ,$touchRelated);
+            $this->performUpdate($record ,$saveRelated);
         }
 
         $record->syncOriginal();
@@ -185,15 +187,15 @@ class DbMapper implements MapperInterface
      * Insert record
      *
      * @param \Netinteractive\Elegant\Model\Record $record
-     * @param bool $touchRelated
+     * @param bool $saveRelated
      * @return $this
      */
-    protected function performInsert(Record $record, $touchRelated = false)
+    protected function performInsert(Record $record, $saveRelated = false)
     {
         $dirty = $record->getAttributes();
 
         #check if anything has changed and if we don't have to touch related
-        if (count($dirty) == 0 && $touchRelated === false){
+        if (count($dirty) == 0 && $saveRelated === false){
             return $this;
         }
 
@@ -206,7 +208,6 @@ class DbMapper implements MapperInterface
             if ($record->getBlueprint()->hasTimestamps()){
                 $record->updateTimestamps(true, true);
             }
-
             #here we prepare obj that will be passed to mapper events
             $obj = new \stdClass();
             $obj->data = $record->getAttributes();
@@ -227,6 +228,8 @@ class DbMapper implements MapperInterface
             #check if we have autoincrementing on PK
             if ($record->getBlueprint()->incrementingPk){
                 $primaryKey = $record->getBlueprint()->incrementingPk;
+                #we have to clean probably null pk
+                unset($attributes[$primaryKey]);
 
                 $id = $query->insertGetId($attributes, $primaryKey);
 
@@ -239,7 +242,7 @@ class DbMapper implements MapperInterface
         }
 
         #we touch related records
-        if ($touchRelated === true && $record->hasRelated()){
+        if ($saveRelated === true && $record->hasRelated()){
            $this->touchRelated($record);
         }
 
@@ -250,10 +253,10 @@ class DbMapper implements MapperInterface
      * Update record
      *
      * @param \Netinteractive\Elegant\Model\Record $record
-     * @param bool $touchRelated
+     * @param bool $saveRelated
      * @return $this
      */
-    protected function performUpdate(Record $record, $touchRelated = false)
+    protected function performUpdate(Record $record, $saveRelated = false)
     {
         #we prepare database query object
         $query = $this->getNewQuery();
@@ -286,7 +289,7 @@ class DbMapper implements MapperInterface
         \Event::fire('ni.elegant.mapper.updated.'.\classDotNotation($record), $record);
 
         #we touch related records
-        if ($touchRelated === true && $record->hasRelated()){
+        if ($saveRelated === true && $record->hasRelated()){
             $this->touchRelated($record);
         }
     }
@@ -298,42 +301,63 @@ class DbMapper implements MapperInterface
      */
     public function touchRelated(Record $record)
     {
-        foreach ($record->getRelated() AS $records){
-            if ($records instanceof Record){
-                \Event::fire('ni.elegant.mapper.touching.'.\classDotNotation($record), $record);
-                $this->save($records, true);
-                \Event::fire('ni.elegant.mapper.touched.'.\classDotNotation($record), $record);
+        foreach ($record->getRelated() AS $relationName=>$relatedRecords){
+            if ($relatedRecords instanceof Record){
+                $relatedRecords = array($relatedRecords);
             }
-            elseif ($records instanceof Collection){
-                $this->saveMany($records, true);
+
+            //$this->saveMany($records, true);
+            foreach ($relatedRecords AS $related){
+                $this->saveRelated($record, $related, $relationName);
             }
         }
 
         return $this;
     }
 
+    /**
+     * @param Record $record
+     * @param $relatedRecord
+     * @param $relationName
+     */
+    private function saveRelated(Record $record, $relatedRecord, $relationName)
+    {
+        $relation = $record->getRelation($relationName);
+
+        if ($relation instanceof BelongsToMany){
+            $this->save($relatedRecord, true);
+            $relation->setRelated($relatedRecord);
+
+            $relation->newPivotStatement()->insert($relation->createPivotData());
+        }
+        elseif ($relation instanceof HasOneOrMany){
+            $relation->create($relatedRecord);
+
+            $this->save($relatedRecord, true);
+        }
+    }
 
 
     /**
      * Saves collection of records
      *
      * @param \Netinteractive\Elegant\Model\Collection|array $records
-     * @param bool $touchRelated
+     * @param bool $saveRelated
      * @return $this
      */
-    public function saveMany($records, $touchRelated = false)
+    public function saveMany($records, $saveRelated = false)
     {
         foreach ($records AS $record){
             if (is_array($record)){
                 $record = $this->createRecord($record);
             }
 
-            if ($touchRelated === true){
+            if ($saveRelated === true){
                 \Event::fire('ni.elegant.mapper.touching.'.\classDotNotation($record), $record);
             }
-            $this->save($record, $touchRelated);
+            $this->save($record, $saveRelated);
 
-            if ($touchRelated === true){
+            if ($saveRelated === true){
                 \Event::fire('ni.elegant.mapper.touched.'.\classDotNotation($record), $record);
             }
         }

@@ -46,6 +46,40 @@ return array(
 
             });
         }),
+        'med_personnel' => $serializer->serialize(function(){
+            Schema::dropIfExists('med_personnel');
+
+            Schema::create('med', function(Blueprint $table)
+            {
+                $table->increments('id');
+                $table->integer('user__id');
+                $table->integer('med__id');
+                $table->string('first_name',50);
+                $table->string('last_name',100);
+
+            });
+        }),
+        'med_science_degree' => $serializer->serialize(function(){
+            Schema::dropIfExists('med_science_degree');
+
+            Schema::create('med', function(Blueprint $table)
+            {
+                $table->increments('id');
+                $table->string('name',250);
+
+            });
+        }),
+        'med_personnel__med_sience_degree' => $serializer->serialize(function(){
+            Schema::dropIfExists('med_personnel__med_sience_degree');
+
+            Schema::create('med', function(Blueprint $table)
+            {
+                $table->increments('id');
+                $table->integer('med_personnel__id');
+                $table->integer('med_sience_degree__id');
+
+            });
+        }),
         'tu' => $serializer->serialize(function(){
             Schema::dropIfExists('tu');
 
@@ -194,6 +228,39 @@ return array(
                     'krs' => 'krs2',
                     'spokesman' => 'med 2 spokesman',
                     'phone' => '+48 600 20 20 20'
+                )
+            )
+        ),
+        #MedPersonel
+        '\Netinteractive\Elegant\Tests\Models\MedPersonnel\Record' => array(
+            array(
+                'data' => array(
+                    'id'=>1,
+                    'user__id' => 5,
+                    'med__id' => 1,
+                    'first_name' => 'Greg',
+                    'last_name' => 'Johnson',
+                )
+            )
+        ),
+        #MedPersonel
+        '\Netinteractive\Elegant\Tests\Models\MedScienceDegree\Record' => array(
+            array(
+                'data' => array(
+                    'id'=>1,
+                    'name' => 'degree 1'
+                )
+            ),
+            array(
+                'data' => array(
+                    'id'=>2,
+                    'name' => 'degree 2'
+                )
+            ),
+            array(
+                'data' => array(
+                    'id'=>3,
+                    'name' => 'degree 3'
                 )
             )
         ),

@@ -345,6 +345,9 @@ abstract class Record implements Arrayable, Jsonable
                     }
                 }
             }
+            elseif($blueprint->hasRelation($key)){
+                $this->addRelated($key, $value);
+            }
             else{
                 $this->external[$key] = $value;
             }
@@ -886,10 +889,6 @@ abstract class Record implements Arrayable, Jsonable
      */
     public function setRelated($name, $records)
     {
-        if (!$this->hasRelation($name)){
-            throw new RelationDoesntExistsException($name);
-        }
-
         $this->related[$name] = $records;
         return $this;
     }
