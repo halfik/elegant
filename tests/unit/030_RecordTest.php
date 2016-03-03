@@ -1509,5 +1509,91 @@ class RecordTest extends ElegantTest
         $this->assertNull($record->ip);
     }
 
+    /**
+     * @covers \Netinteractive\Elegant\Model\Record::hasRelation
+     * @group relation
+     * @group has
+     */
+    public function testHasRelation()
+    {
+        $user = \App::make('User');
+
+        $this->assertTrue($user->hasRelation('patient'));
+        $this->assertFalse($user->hasRelation('patient212'));
+    }
+
+    /**
+     * @covers \Netinteractive\Elegant\Model\Record::getRelated
+     * @group related
+     * @group get
+     */
+    public function testGetRelated_NoRelation()
+    {
+        $user = \App::make('User');
+
+        $this->setExpectedException('\Netinteractive\Elegant\Exception\RelationDoesntExistsException');
+        $user->getRelated('noRelation');
+    }
+
+    /**
+     * @covers \Netinteractive\Elegant\Model\Record::getRelated
+     * @group related
+     * @group get
+     */
+    public function testGetRelated_Relation()
+    {
+        $user = \App::make('User');
+
+        $related = $user->getRelated('patient');
+        $this->assertTrue(is_array($related));
+    }
+
+    /**
+     * @covers \Netinteractive\Elegant\Model\Record::setRelated
+     * @group related
+     * @group add
+     */
+    public function testAddRelated_Exception()
+    {
+        $user = \App::make('User',  array(array(
+            'login' => 'test',
+            'email' => 'test@wp.pl',
+            'password' => 'test',
+            'first_name' => 'John',
+            'last_name' => 'London',
+        )));
+
+        $patient = \App::make('Patient',  array(array(
+            'pesel' => '03220110672',
+        )));
+
+        $this->setExpectedException('\Netinteractive\Elegant\Exception\RelationDoesntExistsException');
+        $user->addRelated('patientNoRelation', $patient);
+    }
+
+
+    /**
+     * @covers \Netinteractive\Elegant\Model\Record::setRelated
+     * @group related
+     * @group add
+     */
+    public function testAddRelated()
+    {
+        $user = \App::make('User',  array(array(
+            'login' => 'test',
+            'email' => 'test@wp.pl',
+            'password' => 'test',
+            'first_name' => 'John',
+            'last_name' => 'London',
+        )));
+
+        $patient = \App::make('Patient',  array(array(
+            'pesel' => '03220110672',
+        )));
+
+        $user->addRelated('patient', $patient);
+
+        $this->assertTrue($user->hasRelated('patient'));
+    }
 
 }

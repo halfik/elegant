@@ -2,6 +2,7 @@
 
 
 use Illuminate\Support\MessageBag AS MessageBag;
+use Netinteractive\Elegant\Exception\RelationDoesntExistsException;
 use Netinteractive\Elegant\Exception\ValidationException;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Contracts\Support\Jsonable;
@@ -828,14 +829,33 @@ abstract class Record implements Arrayable, Jsonable
     }
 
     /**
+     * Checks if record has relation
+     * @param string $name
+     * @return bool
+     */
+    public function hasRelation($name)
+    {
+        if (!$this->hasBlueprint()){
+            return false;
+        }
+
+        return $this->getBlueprint()->hasRelation($name);
+    }
+
+    /**
      * Returns related records
      * @param string|null $name
+     * @throws  \Netinteractive\Elegant\Exception\RelationDoesntExistsException
      * @return mixed
      */
     public function getRelated($name=null)
     {
         if (!empty($name)){
-           return isSet( $this->related[$name] )?  $this->related[$name] : array();
+            if (!$this->hasRelation($name)){
+                throw new RelationDoesntExistsException($name);
+            }
+
+            return isSet( $this->related[$name] )?  $this->related[$name] : array();
         }
 
         return $this->related;
@@ -861,11 +881,35 @@ abstract class Record implements Arrayable, Jsonable
      *
      * @param  string  $name
      * @param  mixed   $records
+     * @throws \Netinteractive\Elegant\Exception\RelationDoesntExistsException
      * @return $this
      */
     public function setRelated($name, $records)
     {
+        if (!$this->hasRelation($name)){
+            throw new RelationDoesntExistsException($name);
+        }
+
         $this->related[$name] = $records;
+        return $this;
+    }
+
+    /**
+     * Adds related record
+     *
+     * @param $name
+     * @param Record $record
+     * @throws \Netinteractive\Elegant\Exception\RelationDoesntExistsException
+     *
+     * @return $this
+     */
+    public function addRelated($name, Record $record)
+    {
+        if (!$this->hasRelation($name)){
+            throw new RelationDoesntExistsException($name);
+        }
+
+        $this->related[$name][] = $record;
         return $this;
     }
 

@@ -625,6 +625,14 @@ abstract class Blueprint
     }
 
 
+    /**
+     * Checks if relation is defined
+     * @param string $name
+     * @return bool
+     */
+    public function hasRelation($name){
+        return $this->getRelationManager()->hasRelation($name);
+    }
 
     ## AT COLUMNS
 

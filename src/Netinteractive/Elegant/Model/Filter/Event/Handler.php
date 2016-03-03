@@ -76,7 +76,6 @@ class Handler
                 }
 
                 if (isSet($filters) && !empty($filters)){
-
                     Fill::apply($obj->record, $key, $filters);
                 }
             }

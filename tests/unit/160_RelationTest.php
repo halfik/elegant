@@ -298,4 +298,17 @@ class RelationTest  extends ElegantTest
         $this->assertArrayHasKey('id', $response);
         $this->assertTrue(is_array($response['id']));
     }
+
+    /**
+     * @covers \Netinteractive\Elegant\Model\Blueprint::hasRelation
+     * @group relation
+     * @group has
+     */
+    public function testHasRelation()
+    {
+        $record = \App::make('Patient');
+
+        $this->assertTrue( $record->getBlueprint()->hasRelation('patientData'));
+        $this->assertFalse( $record->getBlueprint()->hasRelation('myTestRelation'));
+    }
 }
