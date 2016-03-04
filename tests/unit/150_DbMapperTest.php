@@ -513,29 +513,29 @@ class DbMapperTest extends ElegantTest
 
     /**
      * save many test 1
+     * @group save
+     * @group many
      */
     public function testSaveMany_Array()
     {
         \DB::beginTransaction();
 
         $dbMapper = new \Netinteractive\Elegant\Mapper\DbMapper('Patient');
-        $dbMapper->saveMany(
+        $records = $dbMapper->saveMany(
             array(
                 array(
-                    'id' => 4,
                     'user__id' => 4,
                     'pesel' => '96062201507'
                 ),
                 array(
-                    'id' => 5,
                     'user__id' => 5,
                     'pesel' => '17032101458'
                 ),
             )
         );
 
-        $record1 = $dbMapper->find(4);
-        $record2 = $dbMapper->find(5);
+        $record1 = $dbMapper->find($records[0]->id);
+        $record2 = $dbMapper->find($records[1]->id);
 
         $this->assertEquals('96062201507', $record1->pesel);
         $this->assertEquals('17032101458', $record2->pesel);
@@ -546,6 +546,8 @@ class DbMapperTest extends ElegantTest
 
     /**
      * save many test 2
+     * @group save
+     * @group many
      */
     public function testSaveMany_Collection()
     {
@@ -555,13 +557,11 @@ class DbMapperTest extends ElegantTest
         $collection = new \Netinteractive\Elegant\Model\Collection();
 
         $record1 = $dbMapper->createRecord(array(
-            'id' => 4,
             'user__id' => 4,
             'pesel' => '96062201507'
         ));
 
         $record2 = $dbMapper->createRecord(array(
-            'id' => 5,
             'user__id' => 5,
             'pesel' => '17032101458'
         ));
@@ -573,8 +573,8 @@ class DbMapperTest extends ElegantTest
             $collection
         );
 
-        $record1 = $dbMapper->find(4);
-        $record2 = $dbMapper->find(5);
+        $record1 = $dbMapper->find($record1->id);
+        $record2 = $dbMapper->find($record2->id);
 
         $this->assertEquals('96062201507', $record1->pesel);
         $this->assertEquals('17032101458', $record2->pesel);

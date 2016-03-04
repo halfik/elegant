@@ -127,10 +127,29 @@ abstract class Relation {
         #we have to set proper record on query so builder can clone and return proper objects
         $this->getQuery()->setRecord($this->getRelated());
 
-		return $this->get();
+		return $this->get(array('*'));
 	}
 
 
+    public function get($columns = array('*'))
+    {
+        #we have to set proper record on query so builder can clone and return proper objects
+        $this->getQuery()->setRecord($this->getRelated());
+
+        return $this->getQuery()->get($columns = array('*'));
+    }
+
+    /**
+     * @param array $columns
+     * @return mixed|null
+     */
+    public function first($columns = ['*'])
+    {
+        #we have to set proper record on query so builder can clone and return proper objects
+        $this->getQuery()->setRecord($this->getRelated());
+
+        return $this->getQuery()->first($columns);
+    }
 
 	/**
 	 * Run a raw update against the base query.

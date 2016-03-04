@@ -248,6 +248,7 @@ abstract class Record implements Arrayable, Jsonable
             foreach ($messages as $key => $message) {
                 $messageBag->add($key, $message);
             }
+
             throw new ValidationException($messageBag);
         }
 
@@ -993,6 +994,23 @@ abstract class Record implements Arrayable, Jsonable
         return $this->toJson();
     }
 
+
+    /**
+     * Handle dynamic method calls into the method.
+     *
+     * @param  string  $method
+     * @param  array   $parameters
+     * @return mixed
+     */
+    public function __call($method, $parameters)
+    {
+        if ($this->hasRelation($method)){
+            return $this->getRelation($method);
+        }
+
+        return call_user_func_array( $method, $parameters);
+       // return call_user_func_array(array($this, $method), $parameters);
+    }
 
     /**
      * Dynamically retrieve attributes on the record.

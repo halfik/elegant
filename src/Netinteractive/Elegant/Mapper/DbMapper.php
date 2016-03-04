@@ -343,10 +343,12 @@ class DbMapper implements MapperInterface
      *
      * @param \Netinteractive\Elegant\Model\Collection|array $records
      * @param bool $saveRelated
-     * @return $this
+     * @return \Netinteractive\Elegant\Model\Collection
      */
     public function saveMany($records, $saveRelated = false)
     {
+        $response = \App::make('ni.elegant.model.collection');
+
         foreach ($records AS $record){
             if (is_array($record)){
                 $record = $this->createRecord($record);
@@ -360,8 +362,10 @@ class DbMapper implements MapperInterface
             if ($saveRelated === true){
                 \Event::fire('ni.elegant.mapper.touched.'.\classDotNotation($record), $record);
             }
+
+            $response->add($record);
         }
-        return $this;
+        return $response;
     }
 
 

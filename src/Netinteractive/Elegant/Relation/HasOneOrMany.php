@@ -88,10 +88,12 @@ abstract class HasOneOrMany extends Relation
     public function addConstraints()
     {
         if (static::$constraints) {
-            $keys = $this->getParentKey();
+            $fkList = $this->getForeignKey();
+            $parentKeys = $this->getParentKey();
+            $this->getQuery()->from($this->getRelated()->getBlueprint()->getStorageName());
 
-            foreach ($this->getForeignKey() AS $index=>$key){
-                $this->getQuery()->where($key, '=', array_shift( $keys));
+            foreach ($fkList AS $index=>$key){
+                $this->getQuery()->where($key, '=',array_shift( $parentKeys));
             }
         }
     }
