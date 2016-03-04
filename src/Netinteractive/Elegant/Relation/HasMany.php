@@ -24,12 +24,12 @@ class HasMany extends HasOneOrMany
      * (We need to set proper class empty record on query builder)
      * @return Collection|static[]
      */
-    public function get()
+    public function get($columns = array('*'))
     {
         $this->getQuery()->setRecord($this->getRelated());
         $this->getQuery()->from($this->getRelated()->getBlueprint()->getStorageName());
 
-        return $this->getQuery()->get();
+        return $this->getQuery()->get($columns);
     }
 
     /**
