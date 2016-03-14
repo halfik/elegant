@@ -51,4 +51,13 @@ class Blueprint extends \Netinteractive\Elegant\Model\Blueprint
 
         return parent::init();
     }
+
+
+    /**
+     * Returns scope object
+     * @return null
+     */
+    public function getScopeObject(){
+        return new Scope($this->getStorageName());
+    }
 } 

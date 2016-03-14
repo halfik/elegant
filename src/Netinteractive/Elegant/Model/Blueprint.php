@@ -175,6 +175,14 @@ abstract class Blueprint
         static::bootTraits();
     }
 
+    /**
+     * Returns scope object
+     * @return null
+     */
+    public function getScopeObject(){
+        return null;
+    }
+
 
     /**
      * Boot all of the bootable traits

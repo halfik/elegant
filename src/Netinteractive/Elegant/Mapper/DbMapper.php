@@ -531,11 +531,19 @@ class DbMapper implements MapperInterface
     public function getNewQuery()
     {
         $q = \App::make('ni.elegant.model.query.builder', array($this->connection,  $this->connection->getQueryGrammar(), $this->connection->getPostProcessor()));
-
-       $q->setRecord($this->emptyRecord);
-
+        $q->setRecord($this->emptyRecord);
 
         return $q;
+    }
+
+
+    /**
+     * Sets a new clean query builder
+     * @return $this
+     */
+    public function resetQuery(){
+        $this->query = $this->getNewQuery();
+        return $this;
     }
 
 
@@ -633,6 +641,130 @@ class DbMapper implements MapperInterface
 
 
     /**
+     * Execute the query as a "select" statement.
+     *
+     * @param  array  $columns
+     * @return \Netinteractive\Elegant\Model\Collection|static[]
+     */
+    public function get($columns = array('*'))
+    {
+        $query = clone $this->query;
+        $this->resetQuery();
+
+        return $query->get($columns);
+    }
+
+    /**
+     * Add a basic where clause to the query.
+     *
+     * @param  string $column
+     * @param  string $operator
+     * @param  mixed $value
+     * @param  string $boolean
+     * @param  string $alias
+     * @return $this
+     *
+     * @throws \InvalidArgumentException
+     */
+    public function where($column, $operator = null, $value = null, $boolean = 'and', $alias = null){
+        $this->query->where($column, $operator, $value, $boolean, $alias);
+        return $this;
+    }
+
+    /**
+     * Add a raw where clause to the query.
+     *
+     * @param  string $sql
+     * @param  array $bindings
+     * @param  string $boolean
+     * @param  string $alias
+     * @return $this
+     */
+    public function whereRaw($sql, array $bindings = array(), $boolean = 'and', $alias = null)
+    {
+        $this->query->whereRaw($sql, $bindings, $boolean, $alias);
+        return $this;
+    }
+
+    /**
+     * Add a where between statement to the query.
+     *
+     * @param  string $column
+     * @param  array $values
+     * @param  string $boolean
+     * @param  bool $not
+     * @param  string $alias
+     * @return $this
+     */
+    public function whereBetween($column, array $values, $boolean = 'and', $not = false, $alias = null)
+    {
+        $this->query->whereBetween($column, $values, $boolean, $not, $alias);
+        return $this;
+    }
+
+
+    /**
+     * Add an exists clause to the query.
+     *
+     * @param  \Closure $callback
+     * @param  string $boolean
+     * @param  bool $not
+     * @param  string $alias
+     * @return $this
+     */
+    public function whereExists(\Closure $callback, $boolean = 'and', $not = false, $alias = null)
+    {
+        $this->query->whereExists($callback, $boolean, $not, $alias);
+        return $this;
+    }
+
+    /**
+     * Add a "where in" clause to the query.
+     *
+     * @param  string $column
+     * @param  mixed $values
+     * @param  string $boolean
+     * @param  bool $not
+     * @param  string $alias
+     * @return $this
+     */
+    public function whereIn($column, $values, $boolean = 'and', $not = false, $alias = null)
+    {
+        $this->query->whereIn($column, $values, $boolean, $not, $alias);
+        return $this;
+    }
+
+
+    /**
+     * Add a nested where statement to the query.
+     *
+     * @param  \Closure $callback
+     * @param  string $boolean
+     * @param  string $aliast
+     * @return \Netinteractive\Elegant\Db\Query\Builder|static
+     */
+    public function whereNested(\Closure $callback, $boolean = 'and', $alias = null)
+    {
+        $this->query->whereNested($callback, $boolean, $alias);
+        return $this;
+    }
+
+    /**
+     * Call the given model scope on the underlying model.
+     *
+     * @param  string  $scope
+     * @param  array   $parameters
+     * @return \Illuminate\Database\Query\Builder
+     */
+    protected function callScope($scopeObj, $scopeMethod, $parameters)
+    {
+        array_unshift($parameters, $this);
+
+        return call_user_func_array(array($scopeObj, $scopeMethod), $parameters);
+    }
+
+
+    /**
      * Handle dynamic method calls into the method.
      *
      * @param  string  $method
@@ -641,6 +773,23 @@ class DbMapper implements MapperInterface
      */
     public function __call($method, $parameters)
     {
-        return call_user_func_array(array($this->query, $method), $parameters);
+        $scopeObj = $this->emptyRecord->getBlueprint()->getScopeObject();
+        $scope = 'scope'.ucfirst($method);
+
+        if ( $scopeObj != null
+            && $scopeObj instanceof \Netinteractive\Elegant\Model\Query\Scope
+            && method_exists($scopeObj, $scope)
+        ){
+            return $this->callScope($scopeObj, $scope, $parameters);
+        }
+
+        $result =  call_user_func_array(array($this->query, $method), $parameters);
+
+        if (in_array($method, array('get', 'first'))){
+            $this->resetQuery();
+            //echo 555; exit;
+        }
+
+        return $result;
     }
-} 
+}
