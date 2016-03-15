@@ -752,6 +752,23 @@ class DbMapper implements MapperInterface
         return $this;
     }
 
+    /**
+     * Add a join clause to the query.
+     *
+     * @param  string  $table
+     * @param  string  $one
+     * @param  string  $operator
+     * @param  string  $two
+     * @param  string  $type
+     * @param  bool    $where
+     * @return $this
+     */
+    public function join($table, $one, $operator = null, $two = null, $type = 'inner', $where = false)
+    {
+        $this->query->join($table, $one, $operator, $two, $type, $where);
+        return $this;
+    }
+
 
     /**
      * Call the given model scope on the underlying model.
