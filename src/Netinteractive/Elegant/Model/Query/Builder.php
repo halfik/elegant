@@ -62,7 +62,21 @@ class Builder extends QueryBuilder
     public function get($columns = array('*'))
     {
         $this->whereSoftDeleted();
-        $records = $this->createRecords($columns);
+
+        // First, we will simply get the raw results from the query builders which we
+        // can use to populate an array with Elegant records. We will pass columns
+        // that should be selected as well, which are typically just everything.
+        $results = parent::get($columns);
+
+        if (isset($results[0]))
+        {
+            $result = array_change_key_case((array) $results[0]);
+            if (array_key_exists('aggregate', $result)){
+                return $results;
+            }
+        }
+
+        $records = $this->createRecords($results);
 
         // If we actually found models we will also eager load any relationships that
         // have been specified as needing to be eager loaded, which will solve the
@@ -112,16 +126,11 @@ class Builder extends QueryBuilder
     /**
      * Get the hydrated models without eager loading.
      *
-     * @param  array  $columns
+     * @param  array  $results
      * @return \Netinteractive\Elegant\Model\Record[]
      */
-    public function createRecords($columns = array('*'))
+    public function createRecords($results=array())
     {
-        // First, we will simply get the raw results from the query builders which we
-        // can use to populate an array with Elegant records. We will pass columns
-        // that should be selected as well, which are typically just everything.
-        $results = parent::get($columns);
-
         $records = \App::make('ni.elegant.model.collection', array());
 
         // Once we have the results, we can spin through them and instantiate a fresh

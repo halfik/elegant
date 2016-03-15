@@ -59,6 +59,9 @@ Also we recommend pivot table names to looke like this: table_one__table_two
 We used codeception here. To run tests: 
  codecept run
 
+Test were made on Potgresql 9.4
+To run all tests at once, first you have to edit postgresql.conf and change max_locks_per_transaction. 256 works for us.
+
 ## Package versioning
 
 x.y.z -

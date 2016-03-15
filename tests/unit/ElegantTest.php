@@ -1,6 +1,9 @@
 <?php
 use Illuminate\Support\Facades\Artisan;
 
+/**
+ * Class ElegantTest
+ */
 class ElegantTest  extends \PHPUnit_Framework_TestCase
 {
     protected function setUp()
@@ -10,14 +13,19 @@ class ElegantTest  extends \PHPUnit_Framework_TestCase
         App::bind('User', '\Netinteractive\Elegant\Tests\Models\User\Record');
         App::bind('Med', '\Netinteractive\Elegant\Tests\Models\Med\Record');
         App::bind('Tu', '\Netinteractive\Elegant\Tests\Models\Tu\Record');
+        App::bind('MedPersonnel', '\Netinteractive\Elegant\Tests\Models\MedPersonnel\Record');
 
+
+        DB::beginTransaction();
         Artisan::call('db:ni-seed:test-data',
             array(
                 '--config' => 'packages.netinteractive.elegant.test',
                 '--env' => 'testing'
             )
         );
+        DB::commit();
     }
+
 
     protected function tearDown()
     {
@@ -122,7 +130,6 @@ class ElegantTest  extends \PHPUnit_Framework_TestCase
      */
     protected function  callPrivateMethod($object, $method, array $args=array())
     {
-
         $method = $this->getPrivateMethod($object, $method);
         return $method->invokeArgs($object, $args);
     }

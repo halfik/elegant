@@ -235,6 +235,17 @@ class RecordDbMapperTest  extends ElegantTest
         $this->assertEquals(1 ,count($res2));
     }
 
+    /**
+     * @group count
+     */
+    public function testCount()
+    {
+        $dbMapper = new \Netinteractive\Elegant\Mapper\DbMapper('Netinteractive\Elegant\Tests\Models\MedPersonnel\Record');
+        $res1 = $dbMapper->where("user__id", "=", 5)->med(1)->count();
+
+        $this->assertEquals(1, $res1);
+    }
+
 
 
 }

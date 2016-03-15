@@ -528,8 +528,7 @@ class ModelQueryBuilderTest extends ElegantTest
         $response = $builder->createRecords();
 
         $this->assertTrue($response instanceof \Netinteractive\Elegant\Model\Collection);
-        $this->assertEquals(2, count($response));
-        $this->assertTrue($response[0] instanceof \Netinteractive\Elegant\Tests\Models\Patient\Record);
+        $this->assertEquals(0, count($response));
     }
 
     /**
