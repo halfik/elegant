@@ -764,6 +764,18 @@ class ModelQueryBuilderTest extends ElegantTest
     }
 
     /**
+     * @group paginate
+     */
+    public function testPaginate()
+    {
+        $dbMapper = new \Netinteractive\Elegant\Mapper\DbMapper('User');
+        $results = $dbMapper->paginate(2);
+
+
+        $this->assertEquals(2, count($results));
+    }
+
+    /**
      * @covers \Netinteractive\Elegant\Model\Query\Builder::__call
      * @group call
      */

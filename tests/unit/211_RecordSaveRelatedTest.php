@@ -138,7 +138,7 @@ class RecordSaveRelatedTest extends ElegantTest
     public function testBelongsTo()
     {
         $this->markTestIncomplete("BelongsTo should be saved manualy");
-        
+
         \DB::beginTransaction();
         $dbMapper = new \Netinteractive\Elegant\Mapper\DbMapper('User');
 
