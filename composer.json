@@ -4,7 +4,7 @@
     "type": "library",
     "homepage": "https://bitbucket.org/niteam/laravel-elegant",
     "keywords": ["laravel", "model", "blueprint", "mapper", "domain model", "elegant", "netinteractive", "laravel5"],
-    "version": "2.0.0",
+    "version": "2.0.1",
     "description": "",
     "authors": [
         {
@@ -20,7 +20,7 @@
     ],
     "require": {
         "php": ">=5.4.0",
-        "illuminate/support": "5.1.*",
+        "illuminate/support": "5.2.*",
         "jeremeamia/superclosure": "2.2.*",
         "netinteractive/seed": "1.0.*@dev"
     },
