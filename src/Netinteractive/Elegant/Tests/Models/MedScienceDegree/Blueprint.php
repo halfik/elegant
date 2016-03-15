@@ -10,8 +10,6 @@ class Blueprint extends \Netinteractive\Elegant\Model\Blueprint
         $this->primaryKey = array('id');
         $this->incrementingPk = 'id';
 
-
-
         $this->fields = array(
             'id' => array(
                 'title' => 'Id',

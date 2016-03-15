@@ -10,7 +10,8 @@ class Blueprint extends \Netinteractive\Elegant\Model\Blueprint
         $this->softDelete = true;
 
         $this->getRelationManager()->hasMany('patientData','PatientData','med__id', 'id');
-        $this->getRelationManager()->hasMany('user','User', 'med_id', 'id');
+        $this->getRelationManager()->hasMany('user','User', 'med__id', 'id');
+        $this->getRelationManager()->hasMany('personnel','MedPersonnel', 'med__id', 'id');
         $this->getRelationManager()->belongsToMany('patients','Patient', 'patient_data', 'med__id', array('patient__id')  );
 
         $this->timestamps = true;

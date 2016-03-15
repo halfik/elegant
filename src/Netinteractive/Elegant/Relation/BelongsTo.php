@@ -85,7 +85,7 @@ class BelongsTo extends Relation
      * (We need to set proper class empty record on query builder)
      * @return Collection|static[]
      */
-    public function get()
+    public function get($columns = array())
     {
         $this->getQuery()->setRecord($this->getRelated());
         return $this->getQuery()->get();

@@ -11,6 +11,7 @@ class Blueprint extends \Netinteractive\Elegant\Model\Blueprint
         $this->incrementingPk = 'id';
 
         $this->getRelationManager()->belongsToMany('med_degree','MedScienceDegree','med_personnel__med_sience_degree', 'med_personnel__id', 'med_sience_degree__id');
+        $this->getRelationManager()->belongsTo('med','Med', 'med__id', 'id');
 
 
         $this->fields = array(

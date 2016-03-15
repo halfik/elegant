@@ -170,6 +170,7 @@ class DbMapper implements MapperInterface
     {
         #we want to check if anything has changed with record only when we are updating
         #if we do this for new record it won't let us to read record from one database and save it to another one
+        \DB::beginTransaction();
         if ($record->isNew()){
             $this->performInsert($record, $saveRelated);
         }
@@ -178,6 +179,8 @@ class DbMapper implements MapperInterface
         }
 
         $record->syncOriginal();
+
+        \DB::commit();
 
 
         return $this;
