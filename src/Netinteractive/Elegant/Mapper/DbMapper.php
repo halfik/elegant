@@ -428,7 +428,10 @@ class DbMapper implements MapperInterface
      */
     public function first(array $columns = array('*'))
     {
-        return $this->getQuery()->take(1)->get($columns)->first();
+        $query = clone $this->query;
+        $this->resetQuery();
+
+        return $query->take(1)->get($columns)->first();
     }
 
 
@@ -749,6 +752,7 @@ class DbMapper implements MapperInterface
         return $this;
     }
 
+
     /**
      * Call the given model scope on the underlying model.
      *
@@ -776,19 +780,17 @@ class DbMapper implements MapperInterface
         $scopeObj = $this->emptyRecord->getBlueprint()->getScopeObject();
         $scope = 'scope'.ucfirst($method);
 
-        if ( $scopeObj != null
-            && $scopeObj instanceof \Netinteractive\Elegant\Model\Query\Scope
+        if ( $scopeObj != null && $scopeObj instanceof \Netinteractive\Elegant\Model\Query\Scope
             && method_exists($scopeObj, $scope)
         ){
             return $this->callScope($scopeObj, $scope, $parameters);
         }
 
+
+
         $result =  call_user_func_array(array($this->query, $method), $parameters);
 
-        if (in_array($method, array('get', 'first'))){
-            $this->resetQuery();
-            //echo 555; exit;
-        }
+
 
         return $result;
     }

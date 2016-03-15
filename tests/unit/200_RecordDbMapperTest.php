@@ -221,5 +221,20 @@ class RecordDbMapperTest  extends ElegantTest
         $this->assertFalse(isSet($record->patient));
     }
 
+    /**
+     * @group scope
+     */
+    public function testScopes()
+    {
+        $dbMapper = new \Netinteractive\Elegant\Mapper\DbMapper('Netinteractive\Elegant\Tests\Models\MedPersonnel\Record');
+
+        $res1 = $dbMapper->where("user__id", "=", 5)->med(1)->first();
+        $res2 = $dbMapper->med(2)->whereRaw("1=1")->get();
+
+        $this->assertTrue($res1 instanceof \Netinteractive\Elegant\Tests\Models\MedPersonnel\Record);
+        $this->assertEquals(1 ,count($res2));
+    }
+
+
 
 }

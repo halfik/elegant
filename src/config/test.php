@@ -49,7 +49,7 @@ return array(
         'med_personnel' => $serializer->serialize(function(){
             Schema::dropIfExists('med_personnel');
 
-            Schema::create('med', function(Blueprint $table)
+            Schema::create('med_personnel', function(Blueprint $table)
             {
                 $table->increments('id');
                 $table->integer('user__id');
@@ -62,7 +62,7 @@ return array(
         'med_science_degree' => $serializer->serialize(function(){
             Schema::dropIfExists('med_science_degree');
 
-            Schema::create('med', function(Blueprint $table)
+            Schema::create('med_science_degree', function(Blueprint $table)
             {
                 $table->increments('id');
                 $table->string('name',250);
@@ -72,7 +72,7 @@ return array(
         'med_personnel__med_sience_degree' => $serializer->serialize(function(){
             Schema::dropIfExists('med_personnel__med_sience_degree');
 
-            Schema::create('med', function(Blueprint $table)
+            Schema::create('med_personnel__med_sience_degree', function(Blueprint $table)
             {
                 $table->increments('id');
                 $table->integer('med_personnel__id');
@@ -241,7 +241,16 @@ return array(
                     'first_name' => 'Greg',
                     'last_name' => 'Johnson',
                 )
-            )
+            ),
+            array(
+                'data' => array(
+                    'id'=>2,
+                    'user__id' => 3,
+                    'med__id' => 2,
+                    'first_name' => 'Adam',
+                    'last_name' => 'Johnson',
+                )
+            ),
         ),
         #MedPersonel
         '\Netinteractive\Elegant\Tests\Models\MedScienceDegree\Record' => array(
