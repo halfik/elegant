@@ -76,6 +76,11 @@ In docs folder you can find more documentation about package.
 
 All examples are based on this 3 classes:
 
+
+
+## Changelog
+* 2.0.0 - first stable version. realsed 15.03.2016
+
 ### User
      <?php namespace App\Sandbox\Models\User;
 
@@ -321,5 +326,3 @@ All examples are based on this 3 classes:
             return parent::init();
         }
     }
-
-## Changelog
