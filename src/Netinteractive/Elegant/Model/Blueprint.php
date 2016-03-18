@@ -134,6 +134,11 @@ abstract class Blueprint
      */
     const TYPE_IMAGE= 'image';
 
+    /**
+     * field type for booleans
+     */
+    const TYPE_BOOL = 'bool';
+
 
     /**
      * Constructor
