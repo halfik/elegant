@@ -43,7 +43,7 @@ interface MapperInterface
      * @param array $columns
      * @return \Netinteractive\Elegant\Model\Record
      */
-    function find($id, array $columns);
+    function find($id, array $columns=array('*'));
 
     /**
      * Find collection of models
