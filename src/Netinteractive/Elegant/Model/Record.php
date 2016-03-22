@@ -200,6 +200,13 @@ abstract class Record implements Arrayable, Jsonable
     public function fill(array $attributes)
     {
         $this->input = $attributes;
+        $hashableAttributes = $this->getBlueprint()->getHashableAttributes();
+
+        foreach ($hashableAttributes AS $hAttr){
+            if (array_key_exists($hAttr, $attributes)){
+                $attributes[$hAttr] = $this->getBlueprint()->getHasher()->hash($attributes[$hAttr]);
+            }
+        }
 
         /**
          * storageName.fieldName

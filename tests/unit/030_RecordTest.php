@@ -291,6 +291,17 @@ class RecordTest extends ElegantTest
         );
     }
 
+    /**
+     * @covers \Netinteractive\Elegant\Model\Record::fill
+     * @group fill
+     * @group attribute
+     * @group hashable
+     */
+    public function testFill_GetHashableAttributes()
+    {
+        $this->markTestIncomplete();
+    }
+
 
     /**
      * @covers \Netinteractive\Elegant\Model\Record::getInput

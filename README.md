@@ -79,9 +79,9 @@ All examples are based on this 3 classes:
 
 
 ## Changelog
-* 2.1.0 - hashers added
+* 2.1.0 - 2.1.1 : hashers added
 
-* 2.0.0 - first stable version. realsed 15.03.2016
+* 2.0.0 : first stable version. realsed 15.03.2016
 
 ### User
      <?php namespace App\Sandbox\Models\User;
