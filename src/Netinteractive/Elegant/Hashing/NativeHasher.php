@@ -18,8 +18,7 @@
  * @link       http://cartalyst.com
  */
 
-class NativeHasher implements HasherInterface
-{
+class NativeHasher implements HasherInterface {
 
 	/**
 	 * Array of alternative hashing functions

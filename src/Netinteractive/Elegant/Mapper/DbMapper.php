@@ -226,6 +226,15 @@ class DbMapper implements MapperInterface
             #we override data we are going to insert
             $attributes = $obj->data;
 
+            #hash hashable attributes
+            $hashableAttributes = $record->getBlueprint()->getHashableAttributes();
+
+            foreach ($hashableAttributes AS $hAttr){
+                if (array_key_exists($hAttr, $attributes)){
+                    $attributes[$hAttr] = $record->getBlueprint()->getHasher()->hash($attributes[$hAttr]);
+                }
+            }
+
             #we always should validate all data not only that actually was changed
             $record->validate($attributes);
 
