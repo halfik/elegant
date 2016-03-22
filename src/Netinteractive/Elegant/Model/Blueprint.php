@@ -633,11 +633,7 @@ abstract class Blueprint
         return $hashableAttributes;
     }
 
-    /**
-     * Checks if attribute is hashable
-     * @param $attribute
-     * @return bool
-     */
+
     public function isHashable($attribute)
     {
         $hashableAttributes = $this->getHashableAttributes();

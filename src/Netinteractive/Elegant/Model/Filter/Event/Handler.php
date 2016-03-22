@@ -23,7 +23,8 @@ class Handler
             $filters =  Logic::parseFilters($obj->record->getBluePrint()->getFieldFilters($obj->field, 'display'));
 
             foreach ($filters AS $key=>$val){
-                if (empty(trim($val))){
+                $val = trim($val);
+                if (empty($val)){
                     unset($filters[$key]);
                 }
             }
@@ -45,7 +46,8 @@ class Handler
                 $filters =  Logic::parseFilters( $obj->record->getBluePrint()->getFieldFilters($key, 'save' ));
 
                 foreach ($filters AS $k=>$v){
-                    if (empty(trim($k))){
+                    $v = trim($v);
+                    if (empty($v)){
                         unset($filters[$k]);
                     }
                 }
@@ -64,13 +66,12 @@ class Handler
     public function fillFilters(\stdClass $obj)
     {
         if ($obj->record->hasBlueprint()){
-
             foreach ($obj->record->getAttributes() AS $key=>$val){
-
                 $filters =  Logic::parseFilters( $obj->record->getBluePrint()->getFieldFilters($key, 'fill') );
 
                 foreach ($filters AS $k=>$v){
-                    if (empty(trim($k))){
+                    $v = trim($v);
+                    if (empty($v)){
                         unset($filters[$k]);
                     }
                 }

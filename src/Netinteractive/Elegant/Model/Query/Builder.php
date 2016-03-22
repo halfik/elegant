@@ -306,7 +306,7 @@ class Builder extends QueryBuilder
      *
      * @param  \Netinteractive\Elegant\Model\Collection      $records
      * @param  string    $name
-     * @param  \Closure  $constraints\debug(3434);
+     * @param  \Closure  $constraints
      * @return array
      */
     protected function loadRelated(Collection $records, $name, Closure $constraints)
