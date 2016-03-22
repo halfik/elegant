@@ -87,9 +87,9 @@ return array(
         'firstToUpper' => $serializer->serialize(function ($value, $params = array()) {
             return ucfirst($value);
         }),
-        'json_encode' => function($value, $field, $params=array()){
+        'jsonEncode' => $serializer->serialize(function($value, $params=array()){
             return json_encode($value);
-        },
+        }),
         'phone' => $serializer->serialize(function ($value, $params = array()) {
             return str_replace(array(')', '(', ' ', '-'), '', $value);
         }),
@@ -114,9 +114,9 @@ return array(
             }
             return $value;
         }),
-        'json_decode' => function($value, $field, $params=array()){
-            return json_decode($value);
-        },
+        'jsonDecode' => $serializer->serialize(function($value, $params=array()){
+            return json_decode($value, true);
+        }),
         'trim' => $serializer->serialize(function ($value, $params = array()) {
             return trim($value);
         }),

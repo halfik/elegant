@@ -79,7 +79,7 @@ All examples are based on this 3 classes:
 
 
 ## Changelog
-* 2.1.3 : fixed filter bug. there was bug in filter list cleaning code.
+* 2.1.3 - 2.1.4 : fixed filter bug. there was bug in filter list cleaning code.
 
 * 2.1.0 - 2.1.2 : hashers added
 

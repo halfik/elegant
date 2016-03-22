@@ -27,7 +27,7 @@ class Fill
                 $filterInfo = array_map('trim',explode(':', $filter, 2));
                 $filter = $filterInfo[0];
 
-                if (isSet($definedFilters[$filter])){
+                if (array_key_exists($filter, $definedFilters)){
                     $filter = $serializer->unserialize($definedFilters[$filterInfo[0]]);
 
                     if (isSet($filterInfo[1])){
