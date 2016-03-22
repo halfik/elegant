@@ -767,6 +767,51 @@ class BlueprintTest extends ElegantTest
         $blueprint->setFieldRules('id', $originalRules);
     }
 
+    /**
+     * @covers \Netinteractive\Elegant\Model\Blueprint::setHasher
+     * @group set
+     * @group hasher
+     */
+    public function testSetHasher()
+    {
+        $this->markTestIncomplete();
+    }
+
+    /**
+     * @covers \Netinteractive\Elegant\Model\Blueprint::getHasher
+     * @group get
+     * @group hasher
+     */
+    public function testGetHasher()
+    {
+        $this->markTestIncomplete();
+    }
+
+    /**
+     * @covers \Netinteractive\Elegant\Model\Blueprint::getHashableAttributes
+     * @group get
+     * @group hasher
+     * @group hashable
+     * @group attributes
+     */
+    public function testGetHashableAttributes()
+    {
+        $this->markTestIncomplete();
+    }
+
+
+    /**
+     * @covers \Netinteractive\Elegant\Model\Blueprint::isHashable
+     * @group get
+     * @group hasher
+     * @group hashable
+     * @group attributes
+     */
+    public function testIsHashable()
+    {
+        $this->markTestIncomplete();
+    }
+
 
 
 }

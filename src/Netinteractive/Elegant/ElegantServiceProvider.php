@@ -2,6 +2,10 @@
 
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Foundation\AliasLoader;
+use Netinteractive\Elegant\Hashing\BcryptHasher;
+use Netinteractive\Elegant\Hashing\NativeHasher;
+use Netinteractive\Elegant\Hashing\Sha256Hasher;
+use Netinteractive\Elegant\Hashing\WhirlpoolHasher;
 
 /**
  * Class ElegantServiceProvider
@@ -34,6 +38,9 @@ class ElegantServiceProvider extends ServiceProvider
 	 */
 	public function register()
 	{
+        $this->prepareResources();
+        $this->registerHasher();
+
         \App::bind('ni.elegant.mapper.db', function($app, $params){
             return new \Netinteractive\Elegant\Mapper\DbMapper($params[0]);
         });
@@ -72,6 +79,38 @@ class ElegantServiceProvider extends ServiceProvider
             $this->app->register('Netinteractive\Elegant\FiltersServiceProvider');
         }
 	}
+
+    /**
+     * Prepare the package resources.
+     *
+     * @return void
+     */
+    protected function prepareResources()
+    {
+        $config     = realpath(__DIR__.'/../../config/config.php');
+        $migrations = realpath(__DIR__.'/../../migrations');
+
+        $this->mergeConfigFrom($config, 'netinteractive.elegant');
+
+        $this->publishes([
+            $migrations => $this->app->databasePath().'/migrations',
+        ]);
+    }
+
+    /**
+     * Register the hasher used by Sentry.
+     *
+     * @return void
+     */
+    protected function registerHasher()
+    {
+        $this->app['elegant.hasher'] = $this->app->share(function($app)
+        {
+            $hasher = $app['config']->get('netinteractive.elegant.hasher');
+
+            return \App::make($hasher);
+        });
+    }
 
 	/**
 	 * Get the services provided by the provider.

@@ -141,6 +141,13 @@ abstract class Blueprint
 
 
     /**
+     * The hasher for the password and other fields
+     *
+     * @var \Netinteractive\Elegant\Hashing\HasherInterface
+     */
+    protected $hasher;
+
+    /**
      * Constructor
      */
     protected function __construct()
@@ -606,6 +613,65 @@ abstract class Blueprint
 
         $this->primaryKey = $key;
         return $this;
+    }
+
+    /**
+     * Returns list of hashable attributes
+     *
+     * @return array
+     */
+    public function getHashableAttributes()
+    {
+        $hashableAttributes = array();
+
+        foreach($this->fields AS $field=>$data){
+            if (array_key_exists('hashable', $data) && $data['hashable'] == true){
+                $hashableAttributes[] = $field;
+            }
+        }
+
+        return $hashableAttributes;
+    }
+
+    /**
+     * Checks if attribute is hashable
+     * @param $attribute
+     * @return bool
+     */
+    public function isHashable($attribute)
+    {
+        $hashableAttributes = $this->getHashableAttributes();
+
+        foreach($hashableAttributes AS $hAttr){
+            if ($hAttr == $attribute){
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * Sets hasher object
+     * @param \Netinteractive\Elegant\Hashing\HasherInterface $hasher
+     * @return $this
+     */
+    public function setHasher(\Netinteractive\Elegant\Hashing\HasherInterface $hasher)
+    {
+        $this->hasher = $hasher;
+        return $this;
+    }
+
+    /**
+     * Returns hasher object
+     * @return \Netinteractive\Elegant\Hashing\HasherInterface
+     */
+    public function getHasher()
+    {
+        if ($this->hasher == null){
+            $this->hasher = \App::make('elegant.hasher');
+        }
+        return $this->hasher;
     }
 
     /**
