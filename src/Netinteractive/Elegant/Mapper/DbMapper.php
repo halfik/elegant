@@ -401,19 +401,19 @@ class DbMapper implements MapperInterface
 
         $q = $this->getNewQuery();
 
+        $record = $q->find($ids, $columns);
 
+        if (!$record instanceof Record){
+            if (!is_array($record) && $record instanceof \Illuminate\Contracts\Support\Arrayable){
+                $data = $record->toArray();
+            }
 
-        $data = $q->find($ids, $columns);
-
-        if (!is_array($data) && $data instanceof \Illuminate\Contracts\Support\Arrayable){
-            $data = $data->toArray();
+            if (!empty($data)){
+                $record = $this->createRecord((array) $data);
+            }
         }
 
-        if (!empty($data)){
-            $record = $this->createRecord((array) $data);
-            $record->setExists(true);
-        }
-
+        $record->setExists(true);
 
         return $record;
     }
