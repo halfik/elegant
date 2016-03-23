@@ -114,6 +114,18 @@ return array(
             }
             return $value;
         }),
+        'emptyToFalse' => $serializer->serialize(function ($value, $params = array()) {
+            if (empty($value)) {
+                $value = false;
+            }
+            return $value;
+        }),
+        'emptyToZero' => $serializer->serialize(function ($value, $params = array()) {
+            if (empty($value)) {
+                $value = 0;
+            }
+            return $value;
+        }),
         'jsonDecode' => $serializer->serialize(function($value, $params=array()){
             return json_decode($value, true);
         }),

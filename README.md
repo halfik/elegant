@@ -81,6 +81,8 @@ All examples are based on this 3 classes:
 ## Changelog
 
 
+* 2.1.7 : added new fill filters: emptyToFalse, emptyToZero
+
 * 2.1.6 : fixed bug when db mapper tried to perform update when none of attributes has changed.
 
 * 2.1.5 : fixed db mapper find bug. we tried to created record when we already had one from model query builder.
