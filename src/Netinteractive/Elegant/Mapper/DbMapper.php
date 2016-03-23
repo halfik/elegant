@@ -271,35 +271,41 @@ class DbMapper implements MapperInterface
      */
     protected function performUpdate(Record $record, $saveRelated = false)
     {
-        #we prepare database query object
-        $query = $this->getNewQuery();
-        $query->from($record->getBlueprint()->getStorageName());
+        $dirty = $record->getDirty();
 
-        #we check if record has created_at and updated_at fields, if so we allow record to set proper values for this fields
-        if ($record->getBlueprint()->hasTimestamps()){
-            $record->updateTimestamps(false, true);
+        if (count($dirty) > 0){
+            #we prepare database query object
+            $query = $this->getNewQuery();
+            $query->from($record->getBlueprint()->getStorageName());
+
+            #we check if record has created_at and updated_at fields, if so we allow record to set proper values for this fields
+            if ($record->getBlueprint()->hasTimestamps()){
+                $record->updateTimestamps(false, true);
+            }
+
+            #here we prepare obj that will be passed to mapper events
+            $obj = new \stdClass();
+            $obj->data = $record->getDirty();
+            $obj->record = $record;
+
+            \Event::fire('ni.elegant.mapper.saving.'.\classDotNotation($record), $record);
+
+            \Event::fire('ni.elegant.mapper.before.save', $obj);
+
+            #we override data we are going to update
+            $dirty =  $obj->data;
+
+            #we always should validate all data not only that actually was changed
+            $record->validate(array_merge($record->getAttributes(), $dirty));
+
+            \Event::fire('ni.elegant.mapper.updating.'.\classDotNotation($record), $record);
+
+            $this->setKeysForSaveQuery($query, $record)->update( $dirty );
+
+            \Event::fire('ni.elegant.mapper.updated.'.\classDotNotation($record), $record);
         }
 
-        #here we prepare obj that will be passed to mapper events
-        $obj = new \stdClass();
-        $obj->data = $record->getDirty();
-        $obj->record = $record;
 
-        \Event::fire('ni.elegant.mapper.saving.'.\classDotNotation($record), $record);
-
-        \Event::fire('ni.elegant.mapper.before.save', $obj);
-
-        #we override data we are going to update
-        $dirty =  $obj->data;
-
-        #we always should validate all data not only that actually was changed
-        $record->validate(array_merge($record->getAttributes(), $dirty));
-
-        \Event::fire('ni.elegant.mapper.updating.'.\classDotNotation($record), $record);
-
-        $this->setKeysForSaveQuery($query, $record)->update( $dirty );
-
-        \Event::fire('ni.elegant.mapper.updated.'.\classDotNotation($record), $record);
 
         #we touch related records
         if ($saveRelated === true && $record->hasRelated()){
