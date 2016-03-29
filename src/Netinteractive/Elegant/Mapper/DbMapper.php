@@ -421,6 +421,7 @@ class DbMapper implements MapperInterface
 
         $record->setExists(true);
 
+
         return $record;
     }
 

@@ -80,6 +80,10 @@ All examples are based on this 3 classes:
 
 ## Changelog
 
+* 2.1.8: 
+     * fixed codeception configuration file
+     * added abstraction layer for business logic \Netinteractive\Elegant\Model\Provider
+
 
 * 2.1.7 : added new fill filters: emptyToFalse, emptyToZero
 

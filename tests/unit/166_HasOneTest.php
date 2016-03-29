@@ -100,42 +100,6 @@ class HasOneTest  extends ElegantTest
         $this->assertNull($response[0]->patient);;
     }
 
-    /**
-     * @covers \Netinteractive\Elegant\Relation\HasOne::match
-     * @group match2
-     * @group related
-     */
-    public function testMatch_Call_MatchOne()
-    {
-        $dbMapper = new \Netinteractive\Elegant\Mapper\DbMapper('Patient');
-        $patientRecord = $dbMapper->find(2);
-
-        $dbMapper->setRecordClass('PatientData');
-        $patientDataRecord = $dbMapper->find(2);
-
-        $collection = new \Netinteractive\Elegant\Model\Collection();
-        $collection->add($patientRecord);
-
-        $relation = $this->getRelation($patientDataRecord, $patientRecord, 'patient__id', 'id');
-        $mock = $this->getMockBuilder(get_class($relation))
-            ->setMethods(array('matchMany'))
-            ->setConstructorArgs(array($relation->getQuery(),$patientDataRecord, $patientRecord, 'patient__id', 'id'))
-            ->getMock()
-        ;
-
-        $mock->method('MatchOne')
-            ->withAnyParameters()
-        ;
-
-        $collection1 = new \Netinteractive\Elegant\Model\Collection();
-        $collection1->add($patientDataRecord);
-
-        $collection2 = new \Netinteractive\Elegant\Model\Collection();
-        $collection2->add($patientRecord);
-
-        $mock->match($collection2, $collection1, 'patient');
-    }
-
 
     /**
      * @covers \Netinteractive\Elegant\Relation\HasOne
