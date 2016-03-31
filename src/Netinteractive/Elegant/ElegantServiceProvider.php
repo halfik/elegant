@@ -13,13 +13,13 @@ use Netinteractive\Elegant\Hashing\WhirlpoolHasher;
  */
 class ElegantServiceProvider extends ServiceProvider
 {
-
 	/**
 	 * Indicates if loading of the provider is deferred.
 	 *
 	 * @var bool
 	 */
 	protected $defer = false;
+
 
 	/**
 	 * Bootstrap the application events.
@@ -28,7 +28,19 @@ class ElegantServiceProvider extends ServiceProvider
 	 */
 	public function boot()
 	{
+        $this->publishes([
+            __DIR__.'/../../config/config.php' => config_path('/packages/netinteractive/elegant/config.php'),
+        ], 'netinteractive.elegant');
 
+        $this->publishes([
+            __DIR__.'/../../config/filteres.php' => config_path('/packages/netinteractive/elegant/filteres.php'),
+        ], 'netinteractive.elegant');
+
+        $migrations = realpath(__DIR__.'/../../migrations');
+
+        $this->publishes([
+            $migrations => $this->app->databasePath().'/migrations',
+        ]);
 	}
 
 	/**
@@ -88,13 +100,10 @@ class ElegantServiceProvider extends ServiceProvider
     protected function prepareResources()
     {
         $config     = realpath(__DIR__.'/../../config/config.php');
-        $migrations = realpath(__DIR__.'/../../migrations');
+        $configFilters     = realpath(__DIR__.'/../../config/filters.php');
 
-        $this->mergeConfigFrom($config, 'netinteractive.elegant');
-
-        $this->publishes([
-            $migrations => $this->app->databasePath().'/migrations',
-        ]);
+        $this->mergeConfigFrom($config, 'packages.netinteractive.elegant.config');
+        $this->mergeConfigFrom($configFilters, 'packages.netinteractive.elegant.filters');
     }
 
     /**
@@ -106,7 +115,7 @@ class ElegantServiceProvider extends ServiceProvider
     {
         $this->app['elegant.hasher'] = $this->app->share(function($app)
         {
-            $hasher = $app['config']->get('netinteractive.elegant.hasher');
+            $hasher = $app['config']->get('netinteractive.elegant.config.hasher');
 
             return \App::make($hasher);
         });

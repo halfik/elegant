@@ -80,22 +80,30 @@ All examples are based on this 3 classes:
 
 ## Changelog
 
+* 2.1.9:
+    * fixed they way how ElegantServiceProvider publishes and merges config file
+
 * 2.1.8: 
      * fixed codeception configuration file
      * added abstraction layer for business logic \Netinteractive\Elegant\Model\Provider
 
+* 2.1.7 : 
+    * added new fill filters: emptyToFalse, emptyToZero
 
-* 2.1.7 : added new fill filters: emptyToFalse, emptyToZero
+* 2.1.6 : 
+    * fixed bug when db mapper tried to perform update when none of attributes has changed.
 
-* 2.1.6 : fixed bug when db mapper tried to perform update when none of attributes has changed.
+* 2.1.5 : 
+    * fixed db mapper find bug. we tried to created record when we already had one from model query builder.
 
-* 2.1.5 : fixed db mapper find bug. we tried to created record when we already had one from model query builder.
+* 2.1.3 - 2.1.4 : 
+    * fixed filter bug. there was bug in filter list cleaning code.
 
-* 2.1.3 - 2.1.4 : fixed filter bug. there was bug in filter list cleaning code.
+* 2.1.0 - 2.1.2 : 
+    * hashers added.
 
-* 2.1.0 - 2.1.2 : hashers added.
-
-* 2.0.0 : first stable version. realsed 15.03.2016.
+* 2.0.0 : 
+    * first stable version. realsed 15.03.2016.
 
 ### User
      <?php namespace App\Sandbox\Models\User;
