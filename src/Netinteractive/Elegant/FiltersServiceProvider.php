@@ -24,10 +24,10 @@ class FiltersServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        
-        $this->publishes(array(
+
+        $this->publishes([
             __DIR__.'/../../config/filters.php' => config_path('/packages/netinteractive/elegant/filters.php'),
-        ), 'config');
+        ], 'config');
 
     }
 
@@ -38,10 +38,9 @@ class FiltersServiceProvider extends ServiceProvider
      */
     public function register()
     {
+        $configFilters     = realpath(__DIR__.'/../../config/filters.php');
 
-        $this->mergeConfigFrom(
-            __DIR__.'/../../config/filters.php', '/packages/netinteractive/elegant/filters'
-        );
+        $this->mergeConfigFrom($configFilters, 'packages.netinteractive.elegant.filters');
 
         \Event::listen('ni.elegant.record.after.fill', 'Netinteractive\Elegant\Model\Filter\Event\Handler@fillFilters');
         \Event::listen('ni.elegant.mapper.before.save', 'Netinteractive\Elegant\Model\Filter\Event\Handler@saveFilters');
@@ -63,4 +62,18 @@ class FiltersServiceProvider extends ServiceProvider
         return ['DisplayFilter'];
     }
 
+    /**
+     * Merge the given configuration with the existing configuration.
+     *
+     * @param  string  $path
+     * @param  string  $key
+     * @return void
+     */
+    protected function mergeConfigFrom($path, $key)
+    {
+        $config = $this->app['config']->get($key, []);
+
+
+        $this->app['config']->set($key, array_merge_recursive(require $path, $config));
+    }
 }

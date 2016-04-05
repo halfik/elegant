@@ -32,10 +32,6 @@ class ElegantServiceProvider extends ServiceProvider
             __DIR__.'/../../config/config.php' => config_path('/packages/netinteractive/elegant/config.php'),
         ], 'config');
 
-        $this->publishes([
-            __DIR__.'/../../config/filters.php' => config_path('/packages/netinteractive/elegant/filters.php'),
-        ], 'config');
-
         $migrations = realpath(__DIR__.'/../../migrations');
 
         $this->publishes([
@@ -100,10 +96,9 @@ class ElegantServiceProvider extends ServiceProvider
     protected function prepareResources()
     {
         $config     = realpath(__DIR__.'/../../config/config.php');
-        $configFilters     = realpath(__DIR__.'/../../config/filters.php');
+
 
         $this->mergeConfigFrom($config, 'packages.netinteractive.elegant.config');
-        $this->mergeConfigFrom($configFilters, 'packages.netinteractive.elegant.filters');
     }
 
     /**
@@ -131,4 +126,18 @@ class ElegantServiceProvider extends ServiceProvider
 		return [];
 	}
 
+    /**
+     * Merge the given configuration with the existing configuration.
+     *
+     * @param  string  $path
+     * @param  string  $key
+     * @return void
+     */
+    protected function mergeConfigFrom($path, $key)
+    {
+        $config = $this->app['config']->get($key, []);
+
+
+        $this->app['config']->set($key, array_merge_recursive(require $path, $config));
+    }
 }
