@@ -82,7 +82,7 @@ All examples are based on this 3 classes:
 
 
 
-* 2.1.9 - 2.1.12:
+* 2.1.9 - 2.1.13:
     * fixed they way how ElegantServiceProvider publishes and merges config file
 
 * 2.1.8: 

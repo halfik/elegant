@@ -96,9 +96,10 @@ class ElegantServiceProvider extends ServiceProvider
     protected function prepareResources()
     {
         $config     = realpath(__DIR__.'/../../config/config.php');
-
+        $configFilters     = realpath(__DIR__.'/../../config/filters.php');
 
         $this->mergeConfigFrom($config, 'packages.netinteractive.elegant.config');
+        $this->mergeConfigFrom($configFilters, 'packages.netinteractive.elegant.filters');
     }
 
     /**
