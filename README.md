@@ -80,7 +80,7 @@ All examples are based on this 3 classes:
 
 ## Changelog
 
-* 2.1.9-2.1.10:
+* 2.1.9 - 2.1.11:
     * fixed they way how ElegantServiceProvider publishes and merges config file
 
 * 2.1.8: 

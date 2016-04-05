@@ -30,11 +30,11 @@ class ElegantServiceProvider extends ServiceProvider
 	{
         $this->publishes([
             __DIR__.'/../../config/config.php' => config_path('/packages/netinteractive/elegant/config.php'),
-        ], 'netinteractive.elegant');
+        ], 'config');
 
         $this->publishes([
             __DIR__.'/../../config/filters.php' => config_path('/packages/netinteractive/elegant/filters.php'),
-        ], 'netinteractive.elegant');
+        ], 'config');
 
         $migrations = realpath(__DIR__.'/../../migrations');
 
