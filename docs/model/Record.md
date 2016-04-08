@@ -27,7 +27,8 @@ All filters are defined in config file. You can easy add you own filters any tim
 
 or you can define them inline in blueprints (Example 5)
 
-Because L5 cache configs we are not allowed to define anonymous functions in configs. We solved this problem by using jeremeamia/superclosure package, that allows to serialize and unserialize functions.
+Because L5 cache configs we are not allowed to define anonymous functions in configs. 
+We solved this problem by using opis/closure package, that allows to serialize and unserialize functions.
 
 ### Fill filter
 

@@ -1,31 +1,40 @@
 <?php
 
-$serializer = new SuperClosure\Serializer;
+use Opis\Closure\SerializableClosure;
 
 return array(
     'display' => array(
-        'bool' => $serializer->serialize(function ($value, $field, $params = array(), $record=null) {
-            if ($value && (int)$value == 1) {
-                return _('Yes');
-            }
-            return _('No');
-        }),
-        'per100' => $serializer->serialize(function($value, $field, $params=array(100), $record=null){
-            return $value.' / '.$params[0];
-        }),
-        'date' => $serializer->serialize(function ($value, $params = array('Y-m-d'), $record=null) {
-            if ($value instanceof \Carbon\Carbon) {
-                $value->setToStringFormat($params[0]);
-                return $value->__toString();
-            } else {
-                if (is_numeric($value)) {
-                    return date($params[0], $value);
+        'bool' => serialize(new SerializableClosure(
+                function ($value, $field, $params = array(), $record=null) {
+                    if ($value && (int)$value == 1) {
+                        return _('Yes');
+                    }
+                    return _('No');
                 }
+            )
+        ),
+        'per100' => serialize(new SerializableClosure(
+                function($value, $field, $params=array(100), $record=null) {
+                    return $value.' / '.$params[0];
+                }
+            )
+        ),
+        'date' => serialize(new SerializableClosure(
+                function ($value, $params = array('Y-m-d'), $record=null) {
+                    if ($value instanceof \Carbon\Carbon) {
+                        $value->setToStringFormat($params[0]);
+                        return $value->__toString();
+                    } else {
+                        if (is_numeric($value)) {
+                            return date($params[0], $value);
+                        }
 
-                $dateObj = new DateTime($value);
-                return $dateObj->format($params[0]);
-            }
-        }),
+                        $dateObj = new DateTime($value);
+                        return $dateObj->format($params[0]);
+                    }
+                }
+            )
+        ),
         'hour' => $serializer->serialize(function ($value, $params = array(), $record=null) {
             return substr($value, 0, 5);
         }),
