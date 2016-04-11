@@ -13,14 +13,8 @@ return array(
                 }
             )
         ),
-        'per100' => serialize(new SerializableClosure(
-                function($value, $field, $params=array(100), $record=null) {
-                    return $value.' / '.$params[0];
-                }
-            )
-        ),
         'date' => serialize(new SerializableClosure(
-                function ($value, $params = array('Y-m-d'), $record=null) {
+                function ($value, $field, $params = array('Y-m-d'), $record=null) {
                     if ($value instanceof \Carbon\Carbon) {
                         $value->setToStringFormat($params[0]);
                         return $value->__toString();
@@ -35,133 +29,206 @@ return array(
                 }
             )
         ),
-        'hour' => $serializer->serialize(function ($value, $params = array(), $record=null) {
-            return substr($value, 0, 5);
-        }),
-        'is_active' => $serializer->serialize(function ($value, $params = array()) {
-            if ((int)$value == 1) {
-                return _('active');
-            }
-            return _('inactive');
-        }),
-        'price' => $serializer->serialize(function ($value, $params = array(), $record=null) {
-            $formatter = new \NumberFormatter("pl-PL", \NumberFormatter::CURRENCY);
-            $value = $formatter->format($value);
-            if (empty($value)) {
-                $value = 0;
-            }
-            return $value;
-        }),
-        'pl_decimal' => $serializer->serialize(function($value, $field, $params=array(), $record=null){
-            return str_replace('.', ',', $value);
-        }),
-        'precision' => $serializer->serialize(function($value, $field, $params=array(2), $record=null){
-            return number_format($value , $params[0]);
-        }),
-        'rounded' => $serializer->serialize(function($value, $field, $params=array(), $record=null){
-            return round($value);
-        }),
-        'translate' => $serializer->serialize(function ($value, $field, $params = array(), $record=null) {
-            if (!empty($value)) {
-                return _($value);
-            }
-            return $value;
-        }),
-        'truncate' => $serializer->serialize(function ($value, $field, $params = array(), $record=null) {
-            $limit = isSet($params[0]) ? $params[0] : 100;
-            $start =  isSet($params[1]) ? $params[1] : 0;
-            $pad = isSet($params[2]) ? $params[2] : "...";
+        'hour' => serialize(new SerializableClosure(
+                function ($value, $field, $params = array(), $record=null) {
+                    return substr($value, 0, 5);
+                }
+            )
+        ),
+        'isActive' => serialize(new SerializableClosure(
+                function ($value, $field, $params = array(), $record=null) {
+                    if ((int)$value == 1) {
+                        return _('active');
+                    }
+                    return _('inactive');
+                }
+            )
+        ),
+        'price' => serialize(new SerializableClosure(
+                function ($value, $field, $params = array('locale'=>'pl-PL'), $record=null) {
+                    $formatter = new \NumberFormatter($params['locale'], \NumberFormatter::CURRENCY);
+                    $value = $formatter->format($value);
+                    if (empty($value)) {
+                        $value = 0;
+                    }
+                    return $value;
+                }
+            )
+        ),
+        'dot2comma' => serialize(new SerializableClosure(
+                function($value, $field, $params=array(), $record=null){
+                    return str_replace('.', ',', $value);
+                }
+            )
+        ),
+        'precision' => serialize(new SerializableClosure(
+                function($value, $field, $params=array(2), $record=null){
+                    return number_format($value , $params[0]);
+                }
+            )
+        ),
+        'rounded' => serialize(new SerializableClosure(
+                function($value, $field, $params=array(), $record=null){
+                    return round($value);
+                }
+            )
+        ),
+        'translate' => serialize(new SerializableClosure(
+                function($value, $field, $params=array(), $record=null){
+                    if (!empty($value)) {
+                        return _($value);
+                    }
+                    return $value;
+                }
+            )
+        ),
+        'truncate' => serialize(new SerializableClosure(
+                function ($value, $field, $params = array(), $record=null) {
+                    $limit = isSet($params[0]) ? $params[0] : 100;
+                    $start =  isSet($params[1]) ? $params[1] : 0;
+                    $pad = isSet($params[2]) ? $params[2] : "...";
 
-            #return with no change if string is shorter than $limit
-            if(strlen($value) <= $limit){
-                return $value;
-            }
+                    #return with no change if string is shorter than $limit
+                    if(strlen($value) <= $limit){
+                        return $value;
+                    }
 
-            return substr($value, $start, $limit) . $pad;
-
-            return $value;
-        }),
-        'upper' => $serializer->serialize(function ($value, $field, $params = array(), $record=null) {
-            return strtoupper($value);
-        }),
+                    return substr($value, $start, $limit) . $pad;
+                }
+            )
+        ),
+        'upper' => serialize(new SerializableClosure(
+                function($value, $field, $params=array(), $record=null){
+                    return strtoupper($value);
+                }
+            )
+        ),
     ),
     'save' => array(
-        'emptyToNull' => $serializer->serialize(function ($value, $params = array()) {
-            $value = trim($value);
-            if (empty($value)) {
-                $value = null;
-            }
-            return $value;
-        }),
-        'firstToUpper' => $serializer->serialize(function ($value, $params = array()) {
-            return ucfirst($value);
-        }),
-        'jsonEncode' => $serializer->serialize(function($value, $params=array()){
-            return json_encode($value);
-        }),
-        'phone' => $serializer->serialize(function ($value, $params = array()) {
-            return str_replace(array(')', '(', ' ', '-'), '', $value);
-        }),
-        'price' =>$serializer->serialize( function ($value, $params = array()) {
-            return str_replace(',', '.', $value);
-        }),
-        'str_replace' =>$serializer->serialize( function ($value, $params = array()) {
-            if (!isset($params[0]) || !$params[1]){
-                return $value;
-            }
-            return str_replace($params[0],$params[1], $value);
-        }),
-        'trim' => $serializer->serialize(function ($value, $params = array()) {
-            return trim($value);
-        }),
+        'dot2comma' => serialize(new SerializableClosure(
+                function ($value, $params = array()) {
+                    return str_replace(',', '.', $value);
+                }
+            )
+        ),
+        'emptyToNull' => serialize(new SerializableClosure(
+                function ($value, $params = array()) {
+                    $value = trim($value);
+                    if (empty($value)) {
+                        $value = null;
+                    }
+                    return $value;
+                }
+            )
+        ),
+        'firstToUpper' => serialize(new SerializableClosure(
+                function ($value, $params = array()) {
+                    return ucfirst($value);
+                }
+            )
+        ),
+        'jsonEncode' => serialize(new SerializableClosure(
+                function ($value, $params = array()) {
+                    return json_encode($value);
+                }
+            )
+        ),
+        'phone' => serialize(new SerializableClosure(
+                function ($value, $params = array()) {
+                    return str_replace(array(')', '(', ' ', '-'), '', $value);
+                }
+            )
+        ),
+        'strReplace' => serialize(new SerializableClosure(
+                function ($value, $params = array()) {
+                    if (!isset($params[0]) || !$params[1]){
+                        return $value;
+                    }
+                    return str_replace($params[0],$params[1], $value);
+                }
+            )
+        ),
+        'trim' => serialize(new SerializableClosure(
+                function ($value, $params = array()) {
+                    return trim($value);
+                }
+            )
+        ),
     ),
     'fill' => array(
-        'emptyToNull' => $serializer->serialize(function ($value, $params = array()) {
-            $value = trim($value);
-            if (empty($value)) {
-                $value = null;
-            }
-            return $value;
-        }),
-        'emptyToFalse' => $serializer->serialize(function ($value, $params = array()) {
-            if (empty($value)) {
-                $value = false;
-            }
-            return $value;
-        }),
-        'emptyToZero' => $serializer->serialize(function ($value, $params = array()) {
-            if (empty($value)) {
-                $value = 0;
-            }
-            return $value;
-        }),
-        'jsonDecode' => $serializer->serialize(function($value, $params=array()){
-            return json_decode($value, true);
-        }),
-        'trim' => $serializer->serialize(function ($value, $params = array()) {
-            return trim($value);
-        }),
-        'price' => $serializer->serialize(function ($value, $params = array()) {
-            return str_replace(',', '.', $value);
-        }),
-        'phone' => $serializer->serialize(function ($value, $params = array()) {
-            return str_replace(array(')', '(', ' ', '-'), '', $value);
-        }),
-        'stripTags' => $serializer->serialize(function ($value, $params = array()) {
+        'dot2comma' => serialize(new SerializableClosure(
+                function ($value, $params = array()) {
+                    return str_replace(',', '.', $value);
+                }
+            )
+        ),
+        'emptyToNull' => serialize(new SerializableClosure(
+                function ($value, $params = array()) {
+                    $value = trim($value);
+                    if (empty($value)) {
+                        $value = null;
+                    }
+                    return $value;
+                }
+            )
+        ),
+        'emptyToFalse' => serialize(new SerializableClosure(
+                function ($value, $params = array()) {
+                    if (empty($value)) {
+                        $value = false;
+                    }
+                    return $value;
+                }
+            )
+        ),
+        'emptyToZero' => serialize(new SerializableClosure(
+                function ($value, $params = array()) {
+                    if (empty($value)) {
+                        $value = 0;
+                    }
+                    return $value;
+                }
+            )
+        ),
+        'hour' => serialize(new SerializableClosure(
+                function ($value, $params = array()) {
+                    if (is_int($value)) {
+                        return date('H:i:s', ($value - 1) * 60 * 60);
+                    }
+                    return $value;
+                }
+            )
+        ),
+        'jsonDecode' => serialize(new SerializableClosure(
+                function ($value, $params = array()) {
+                    return json_decode($value, true);
+                }
+            )
+        ),
+        'trim' => serialize(new SerializableClosure(
+                function ($value, $params = array()) {
+                    return trim($value);
+                }
+            )
+        ),
+        'phone' => serialize(new SerializableClosure(
+                function ($value, $params = array()) {
+                    return str_replace(array(')', '(', ' ', '-'), '', $value);
+                }
+            )
+        ),
+        'stripTags' => serialize(new SerializableClosure(
+                function ($value, $params = array()) {
+                    if (is_object($value)){
+                        return $value;
+                    }
 
-            if (is_object($value)){
-                return $value;
-            }
+                    $allowed = isSet($params[0]) ? $params[0] : implode('', $params);
 
-            $allowed = isSet($params[0]) ? $params[0] : implode('', $params);
+                    return strip_tags($value, $allowed);
+                }
+            )
+        ),
 
-            return strip_tags($value, $allowed);
-        }),
-        'hour' =>$serializer->serialize( function ($value, $params = array()) {
-            if (is_int($value)) {
-                return date('H:i:s', ($value - 1) * 60 * 60);
-            }
-            return $value;
-        }),
     )
 );

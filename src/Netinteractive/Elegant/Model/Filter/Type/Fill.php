@@ -16,7 +16,6 @@ class Fill
      */
     public static function apply(\Netinteractive\Elegant\Model\Record $record, $key, $filters)
     {
-        $serializer = new \SuperClosure\Serializer;
         $definedFilters = config('packages.netinteractive.elegant.filters.fill');
 
         foreach ($filters AS $filter){
@@ -28,7 +27,7 @@ class Fill
                 $filter = $filterInfo[0];
 
                 if (array_key_exists($filter, $definedFilters)){
-                    $filter = $serializer->unserialize($definedFilters[$filterInfo[0]]);
+                    $filter = unserialize($definedFilters[$filterInfo[0]]);
 
                     if (isSet($filterInfo[1])){
                         $params = explode(',', $filterInfo[1]);

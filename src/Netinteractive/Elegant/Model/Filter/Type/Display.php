@@ -17,7 +17,6 @@ class Display
      */
     public static function apply($obj, $filters)
     {
-        $serializer = new \SuperClosure\Serializer;
         $definedFilters = config('packages.netinteractive.elegant.filters.display');
 
         foreach ($filters AS $filter){
@@ -29,7 +28,7 @@ class Display
                 $filter = $filterInfo[0];
 
                 if (isSet($definedFilters[$filter])){
-                    $filter = $serializer->unserialize($definedFilters[$filterInfo[0]]);
+                    $filter = unserialize($definedFilters[$filterInfo[0]]);
 
                     if (isSet($filterInfo[1])){
                         $params = explode(',', $filterInfo[1]);

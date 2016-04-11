@@ -55,6 +55,8 @@ There is the requirement for naming foreign keys. If you wont meet this requirem
 In example if you have patient_data table where you have foreign key from patient table it has to be named: patient__id (related: table_name + __ + field_name)
 Also we recommend pivot table names to looke like this: table_one__table_two
 
+Also we recommend to use config:cache. It will increase perfomance a lot (becouse we serialize closures in config files).
+
 ## Testing
 We used codeception here. To run tests: 
  codecept run
@@ -77,10 +79,10 @@ In docs folder you can find more documentation about package.
 All examples are based on this 3 classes:
 
 
-
 ## Changelog
 
-
+* 2.1.15:
+    * change: we haved changed jeremeamia/superclosure package to opis/closure. It gave us 4x performance boost when cache:config is not used.
 
 * 2.1.9 - 2.1.14:
     * fixed they way how ElegantServiceProvider publishes and merges config file

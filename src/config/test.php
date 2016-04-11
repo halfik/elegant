@@ -1,146 +1,169 @@
 <?php
 use Illuminate\Database\Schema\Blueprint;
-$serializer = new SuperClosure\Serializer(null, null);
+use Opis\Closure\SerializableClosure;
 
 
 return array(
     'tables' => array(
-        'user' => $serializer->serialize(function(){
-            if(Schema::hasTable('user')){
-                DB::statement(DB::raw('DROP TABLE "user" CASCADE;'));
-            }
+        'user' => serialize(new SerializableClosure(
+                function(){
+                    if(Schema::hasTable('user')){
+                        DB::statement(DB::raw('DROP TABLE "user" CASCADE;'));
+                    }
 
 
-            Schema::create('user', function(Blueprint $table)
-            {
-                $table->increments('id');
-                $table->string('login');
-                $table->string('email');
-                $table->string('password');
-                $table->string('first_name')->nullable();
-                $table->string('last_name')->nullable();
-                $table->integer('med__id')->nullable();
-                $table->integer('tu__id')->nullable();
-            });
-        }),
-        'med' => $serializer->serialize(function(){
-            Schema::dropIfExists('med');
+                    Schema::create('user', function(Blueprint $table)
+                    {
+                        $table->increments('id');
+                        $table->string('login');
+                        $table->string('email');
+                        $table->string('password');
+                        $table->string('first_name')->nullable();
+                        $table->string('last_name')->nullable();
+                        $table->integer('med__id')->nullable();
+                        $table->integer('tu__id')->nullable();
+                    });
+                }
+            )
+        ),
+        'med' => serialize(new SerializableClosure(
+                function(){
+                    Schema::dropIfExists('med');
 
-            Schema::create('med', function(Blueprint $table)
-            {
-                $table->increments('id');
-                $table->string('name',100);
-                $table->string('city',100);
-                $table->string('street',100);
-                $table->char('zip_code',6);
-                $table->char('nip',10);
-                $table->string('regon',14);
-                $table->string('krs',20);
-                $table->string('spokesman',100);
-                $table->string('phone',20);
-                $table->string('cell_phone',20)->nullable();
-                $table->string('email',150);
+                    Schema::create('med', function(Blueprint $table)
+                    {
+                        $table->increments('id');
+                        $table->string('name',100);
+                        $table->string('city',100);
+                        $table->string('street',100);
+                        $table->char('zip_code',6);
+                        $table->char('nip',10);
+                        $table->string('regon',14);
+                        $table->string('krs',20);
+                        $table->string('spokesman',100);
+                        $table->string('phone',20);
+                        $table->string('cell_phone',20)->nullable();
+                        $table->string('email',150);
 
-                $table->timestamps();
-                $table->timestamp('deleted_at')->nullable();
+                        $table->timestamps();
+                        $table->timestamp('deleted_at')->nullable();
 
-            });
-        }),
-        'med_personnel' => $serializer->serialize(function(){
-            Schema::dropIfExists('med_personnel');
+                    });
+                }
+            )
+        ),
+        'med_personnel' => serialize(new SerializableClosure(
+                function(){
+                    Schema::dropIfExists('med_personnel');
 
-            Schema::create('med_personnel', function(Blueprint $table)
-            {
-                $table->increments('id');
-                $table->integer('user__id');
-                $table->integer('med__id');
-                $table->string('first_name',50);
-                $table->string('last_name',100);
+                    Schema::create('med_personnel', function(Blueprint $table)
+                    {
+                        $table->increments('id');
+                        $table->integer('user__id');
+                        $table->integer('med__id');
+                        $table->string('first_name',50);
+                        $table->string('last_name',100);
 
-            });
-        }),
-        'med_science_degree' => $serializer->serialize(function(){
-            Schema::dropIfExists('med_science_degree');
+                    });
+                }
+            )
+        ),
+        'med_science_degree' => serialize(new SerializableClosure(
+                function(){
+                    Schema::dropIfExists('med_science_degree');
 
-            Schema::create('med_science_degree', function(Blueprint $table)
-            {
-                $table->increments('id');
-                $table->string('name',250);
+                    Schema::create('med_science_degree', function(Blueprint $table)
+                    {
+                        $table->increments('id');
+                        $table->string('name',250);
 
-            });
-        }),
-        'med_personnel__med_sience_degree' => $serializer->serialize(function(){
-            Schema::dropIfExists('med_personnel__med_sience_degree');
+                    });
+                }
+            )
+        ),
+        'med_personnel__med_sience_degree' => serialize(new SerializableClosure(
+                function(){
+                    Schema::dropIfExists('med_personnel__med_sience_degree');
 
-            Schema::create('med_personnel__med_sience_degree', function(Blueprint $table)
-            {
-                $table->increments('id');
-                $table->integer('med_personnel__id');
-                $table->integer('med_sience_degree__id');
+                    Schema::create('med_personnel__med_sience_degree', function(Blueprint $table)
+                    {
+                        $table->increments('id');
+                        $table->integer('med_personnel__id');
+                        $table->integer('med_sience_degree__id');
 
-            });
-        }),
-        'tu' => $serializer->serialize(function(){
-            Schema::dropIfExists('tu');
+                    });
+                }
+            )
+        ),
+        'tu' => serialize(new SerializableClosure(
+                function(){
+                    Schema::dropIfExists('tu');
 
-            Schema::create('tu',function(Blueprint $table){
-                $table->increments('id');
-                $table->string('name',100);
-                $table->string('city',100)->nullable();
-                $table->char('zip_code',6)->nullable();
-                $table->string('street',100)->nullable();
-                $table->char('nip',10)->nullable();
-                $table->string('regon',14)->nullable();
-                $table->string('krs',20)->nullable();
-                $table->string('phone',20)->nullable();
-                $table->string('mobile',20)->nullable();
-                $table->string('email',150)->nullable();
-                $table->string('main_representative',150)->nullable();
+                    Schema::create('tu',function(Blueprint $table){
+                        $table->increments('id');
+                        $table->string('name',100);
+                        $table->string('city',100)->nullable();
+                        $table->char('zip_code',6)->nullable();
+                        $table->string('street',100)->nullable();
+                        $table->char('nip',10)->nullable();
+                        $table->string('regon',14)->nullable();
+                        $table->string('krs',20)->nullable();
+                        $table->string('phone',20)->nullable();
+                        $table->string('mobile',20)->nullable();
+                        $table->string('email',150)->nullable();
+                        $table->string('main_representative',150)->nullable();
 
-                $table->timestamps();
-                $table->timestamp('deleted_at')->nullable();
-            });
-        }),
-        'patient' => $serializer->serialize(function(){
-            Schema::dropIfExists('patient');
+                        $table->timestamps();
+                        $table->timestamp('deleted_at')->nullable();
+                    });
+                }
+            )
+        ),
+        'patient' => serialize(new SerializableClosure(
+                function(){
+                    Schema::dropIfExists('patient');
 
-            Schema::create('patient',function(Blueprint $table){
-                $table->increments('id');
-                $table->integer('user__id')->nullable();
-                $table->char('pesel',11)->unique();
+                    Schema::create('patient',function(Blueprint $table){
+                        $table->increments('id');
+                        $table->integer('user__id')->nullable();
+                        $table->char('pesel',11)->unique();
 
-                $table->timestamps();
-                $table->timestamp('deleted_at')->nullable();
+                        $table->timestamps();
+                        $table->timestamp('deleted_at')->nullable();
 
-            });
-        }),
-        'patient_data' => $serializer->serialize( function(){
-            Schema::dropIfExists('patient_data');
+                    });
+                }
+            )
+        ),
+        'patient_data' => serialize(new SerializableClosure(
+                function(){
+                    Schema::dropIfExists('patient_data');
 
-            Schema::create('patient_data',function(Blueprint $table){
-                $table->increments('id');
-                $table->integer('patient__id');
-                $table->integer('med__id')->nullable();
-                $table->integer('tu__id')->nullable();
-                $table->string('first_name',100);
-                $table->string('last_name',100);
-                $table->date('birth_date');
-                $table->char('zip_code',6);
-                $table->string('city',100);
-                $table->string('street',100);
-                $table->string('email',150)->nullable();
-                $table->string('phone',20);
-                $table->text('notes')->nullable();
+                    Schema::create('patient_data',function(Blueprint $table){
+                        $table->increments('id');
+                        $table->integer('patient__id');
+                        $table->integer('med__id')->nullable();
+                        $table->integer('tu__id')->nullable();
+                        $table->string('first_name',100);
+                        $table->string('last_name',100);
+                        $table->date('birth_date');
+                        $table->char('zip_code',6);
+                        $table->string('city',100);
+                        $table->string('street',100);
+                        $table->string('email',150)->nullable();
+                        $table->string('phone',20);
+                        $table->text('notes')->nullable();
 
-                $table->timestamps();
-                $table->timestamp('deleted_at')->nullable();
+                        $table->timestamps();
+                        $table->timestamp('deleted_at')->nullable();
 
-                $table->dropPrimary();
-                $table->primary(array('id','patient__id'));
+                        $table->dropPrimary();
+                        $table->primary(array('id','patient__id'));
 
-            });
-        }),
-
+                    });
+                }
+            )
+        ),
     ),
     'data' => array(
         #User

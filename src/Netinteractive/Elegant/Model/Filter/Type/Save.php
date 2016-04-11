@@ -16,8 +16,7 @@ class Save
      */
     public static function apply($obj, $key, $filters)
     {
-        $serializer = new \SuperClosure\Serializer;
-        $definedFilters = config('packages.netinteractive.elegant.filters.save');
+         $definedFilters = config('packages.netinteractive.elegant.filters.save');
 
         foreach ($filters AS $filter){
             if ( is_callable($filter)){
@@ -28,7 +27,7 @@ class Save
                 $filter = $filterInfo[0];
 
                 if (isSet($definedFilters[$filter]) && isset($obj->data[$key])){
-                    $filter = $serializer->unserialize($definedFilters[$filterInfo[0]]);
+                    $filter = unserialize($definedFilters[$filterInfo[0]]);
 
                     if (isSet($filterInfo[1])){
                         $params = explode(',', $filterInfo[1]);
