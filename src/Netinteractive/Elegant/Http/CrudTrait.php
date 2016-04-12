@@ -2,10 +2,10 @@
 
 
 /**
- * Class CrutTrait
+ * Class CrudTrait
  * @package Netinteractive\Elegant\Http
  */
-trait CrutTrait
+trait CrudTrait
 {
     /**
      * @var \Netinteractive\Elegant\Model\Provider
