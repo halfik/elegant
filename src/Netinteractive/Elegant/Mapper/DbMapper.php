@@ -492,10 +492,9 @@ class DbMapper implements MapperInterface
         $query->where(function ($query) use ($input, $operator) {
             foreach ($input AS $recordName => $fields) {
                 if (!empty($fields) && is_array($fields)) {
-
-                    $record = \App::make($recordName);
+                    
                     foreach ($fields AS $field => $value) {
-                        $query = $this->queryFieldSearch($record, $field, $value, $query, $operator);
+                        $query = $this->queryFieldSearch($this->emptyRecord, $field, $value, $query, $operator);
                     }
                 }
             }

@@ -12,25 +12,55 @@ trait CrudTrait
      */
     protected $domainProvider;
 
-
+    /**
+     * Creates and returns record
+     * @param array $params
+     * @return \Netinteractive\Elegant\Model\Record
+     */
     public function create(array $params=array())
     {
-
+       return $this->getProvider()->create($params);
     }
 
-    public function update(array $params=array())
+    /**
+     *
+     * @param int $id
+     * @param array $params
+     * @return \Netinteractive\Elegant\Model\Record
+     */
+    public function update($id, array $params=array())
     {
+        $record = $this->getProvider()->getMapper()->find($id);
 
+        if ($record){
+            $record->fill($params);
+            $this->getProvider()->getMapper()->save($record);
+        }
+
+        return $record;
     }
 
+    /**
+     * Find records
+     * @param array $params
+     * @return mixed
+     */
     public function find(array $params=array())
     {
-
+        return $this->getProvider()->getMapper()->findMany($params);
     }
 
+    /**
+     * Find and deletes records
+     * @param array $params
+     */
     public function delete(array $params=array())
     {
+        $records = $this->getProvider()->getMapper()->findMany($params);
 
+        foreach ($records AS $record){
+            $this->getProvider()->getMapper()->delete($record);
+        }
     }
 
     /**

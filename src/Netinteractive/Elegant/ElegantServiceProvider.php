@@ -109,7 +109,7 @@ class ElegantServiceProvider extends ServiceProvider
     {
         $this->app['elegant.hasher'] = $this->app->share(function($app)
         {
-            $hasher = $app['config']->get('netinteractive.elegant.config.hasher');
+            $hasher = \Config::get('packages.netinteractive.elegant.config.hasher');
 
             return \App::make($hasher);
         });

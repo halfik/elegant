@@ -49,6 +49,10 @@ Elegant is a domain model package. He is similar to laravels Eloquent and we use
         ni.elegant.record.blueprint.before.set.$recordClass - it is fired before blueprint object is set on record
         ni.elegant.record.blueprint.before.set.$recordClass - it is fired after blueprint object is set on record
 
+## Others
+* Netinteractive\Elegant\Http\CrudTrait 
+        
+        trait that will provide CRUD for controllers you will apply it to
 
 ## Important
 There is the requirement for naming foreign keys. If you wont meet this requirement - relations won't work.
@@ -80,6 +84,10 @@ All examples are based on this 3 classes:
 
 
 ## Changelog
+
+* 2.1.16:
+    * fixed: Netinteractive\Elegant\Mapper\DbMapper::search - fixed bug where not mapper record was used to build query.
+    * added: Netinteractive\Elegant\Http\CrudTrait - trait that will provide CRUD for yours controlllers
 
 * 2.1.15:
     * change: we haved changed jeremeamia/superclosure package to opis/closure. It gave us 4x performance boost when cache:config is not used.
