@@ -85,9 +85,16 @@ All examples are based on this 3 classes:
 
 ## Changelog
 
+* 2.1.17:
+    * new: Netinteractive\Elegant\Http\CrudTrait - now returns \Response::build()
+    * new: Netinteractive\Elegant\Model\Collection::toArray($displayFilters=false) - now can apply display filters on items if they are instance of Record
+    * new: Netinteractive\Elegant\Model\Record::toArray($displayFilters=false) - now can apply display filters
+    * new: Netinteractive\Elegant\Model\Blueprint::isProtected($key) - checks if field has 'protected' parameter and its true. 
+           Protected feature isn't used by Elegant. It should be used by other mechanisms in example: you can use to defined if fields are visible somwhere in app.
+
 * 2.1.16:
     * fixed: Netinteractive\Elegant\Mapper\DbMapper::search - fixed bug where not mapper record was used to build query.
-    * added: Netinteractive\Elegant\Http\CrudTrait - trait that will provide CRUD for yours controlllers
+    * new: Netinteractive\Elegant\Http\CrudTrait - trait that will provide CRUD for yours controlllers
 
 * 2.1.15:
     * change: we haved changed jeremeamia/superclosure package to opis/closure. It gave us 4x performance boost when cache:config is not used.
@@ -97,10 +104,10 @@ All examples are based on this 3 classes:
 
 * 2.1.8: 
      * fixed codeception configuration file
-     * added abstraction layer for business logic \Netinteractive\Elegant\Model\Provider
+     * new abstraction layer for business logic \Netinteractive\Elegant\Model\Provider
 
 * 2.1.7 : 
-    * added new fill filters: emptyToFalse, emptyToZero
+    * new: new fill filters: emptyToFalse, emptyToZero
 
 * 2.1.6 : 
     * fixed bug when db mapper tried to perform update when none of attributes has changed.
@@ -116,249 +123,3 @@ All examples are based on this 3 classes:
 
 * 2.0.0 : 
     * first stable version. realsed 15.03.2016.
-
-### User
-     <?php namespace App\Sandbox\Models\User;
-
-     use Netinteractive\Elegant\Model\Blueprint AS BaseBluePrint;
-     use Netinteractive\Elegant\Search\Searchable;
-
-     class Blueprint extends BaseBluePrint
-     {
-        protected function init()
-         {
-             $this->setStorageName('users');
-             $this->primaryKey = array('id');
-             $this->incrementingPk = 'id';
-
-             $this->getRelationManager()->hasOne('patient','App\Sandbox\Models\Patient\Record', 'user__id','id');
-
-             $this->fields = array(
-                 'id' => array(
-                     'title' => 'Id',
-                     'type' => 'int',
-                     'sortable' => true,
-                     'rules' => array(
-                         'any' => 'integer',
-                         'update' => 'required'
-                     )
-                 ),
-                 'login'=>array(
-                     'title'=>_('Login'),
-                     'type'=>'string',
-                     'sortable' => true,
-                     'searchable' => Searchable::$contains,
-                     'rules'=>array(
-                         'update'=>'required',
-                         'insert'=>'required|unique:users'
-                     )
-                 ),
-                 'email'=>array(
-                     'title'=>_('E-mail'),
-                     'type'=>'string',
-                     'sortable' => true,
-                     'searchable' => Searchable::$contains,
-                     'rules'=>array(
-                         'update'=>'required|email',
-                         'insert'=>'required|email|unique:users'
-                     )
-                 ),
-                 'first_name' => array(
-                     'title'=> _('First name'),
-                     'type'=>'string',
-                     'sortable' => true,
-                     'searchable' => Searchable::$contains,
-                     'rules'=>array(
-                         'update'=>'',
-                         'insert'=>''
-                     ),
-                     'filters' => array(
-                         'fill' => array(
-                             'stripTags'
-                         )
-                     )
-                 ),
-                 'last_name' => array(
-                     'title'=> _('Last name'),
-                     'type'=>'string',
-                     'sortable' => true,
-                     'searchable' => Searchable::$contains,
-                     'rules'=>array(
-                         'update'=>'',
-                         'insert'=>''
-                     ),
-                     'filters' => array(
-                         'fill' => array(
-                             'stripTags'
-                         )
-                     )
-                 ),
-                 'activated' => array(
-                     'title' => _('Is Active'),
-                     'type' => 'bool',
-                     'sortable' => true,
-                     'rules' => array(
-                         'any' => 'in:0,1'
-                     ),
-                     'filters' => array(
-                         'display' => array('bool'),
-                     )
-                 )
-             );
-
-             return parent::init();
-         }
-     }
-
-
-### Patient
-    <?php namespace App\Sandbox\Models\Patient;
-
-    use Netinteractive\Elegant\Model\Blueprint AS BaseBluePrint;
-    use Netinteractive\Elegant\Search\Searchable;
-
-    class Blueprint extends BaseBluePrint
-    {
-       protected function init()
-        {
-            $this->setStorageName('patient');
-            $this->primaryKey = array('id');
-            $this->incrementingPk = 'id';
-
-            $this->getRelationManager()->hasMany('patientData','App\Sandbox\Models\PatientData\Record', array('patient__id'), array('id') );
-            $this->getRelationManager()->belongsTo('user','App\Sandbox\Models\User\Record', array('user__id'), array('id') );
-
-            $this->fields = array(
-                'id' => array(
-                    'title' => 'Id',
-                    'type' => 'int',
-                    'sortable' => true,
-                    'rules' => array(
-                        'any' => 'integer',
-                        'update' => 'required'
-                    )
-                ),
-                'user__id' => array(
-                    'title' => _('Id użytkownika'),
-                    'type' => 'int',
-                    'searchable' => '<',
-                    'rules' => array(
-                        'any' => 'integer',
-                    )
-                ),
-                'pesel' => array(
-                    'title' => _('Pesel'),
-                    'type' => 'string',
-                    'sortable' => true,
-                    'searchable' => Searchable::$contains,
-                    'rules' => array(
-
-                    )
-                )
-            );
-
-            return parent::init();
-        }
-    }
-
-### PatientData
-
-    <?php namespace App\Sandbox\Models\PatientData;
-
-    use Netinteractive\Elegant\Model\Blueprint AS BaseBluePrint;
-    use Netinteractive\Elegant\Search\Searchable;
-
-    class Blueprint extends BaseBluePrint
-    {
-       protected function init()
-        {
-            $this->setStorageName('patient_data');
-            $this->primaryKey = array('id');
-            $this->incrementingPk = 'id';
-
-            #Seting up relations
-            $this->getRelationManager()->belongsTo('patient','App\Sandbox\Models\Patient\Record', array('patient__id'), array('id'));
-
-
-            #Seting up fields
-            $this->fields = array(
-                'id' => array(
-                    'title' => 'Id',
-                    'type' => 'int',
-                    'sortable' => true,
-                    'rules' => array(
-                        'any' => 'integer',
-                        'update' => 'required'
-                    )
-                ),
-                'patient__id' => array(
-                    'title' => _('Patient id'),
-                    'type' => 'int',
-                    'rules' => array(
-                        'any' => 'required|integer|exists:patient,id',
-                    )
-                ),
-                'patient__pesel' => array(
-                    'title' => _('Pesel'),
-                    'type' => 'string',
-                    'sortable' => true,
-                    'searchable' => Searchable::$ends,
-                    'rules' => array(
-
-                    )
-                ),
-                'first_name' => array(
-                    'title' => _('First name'),
-                    'type' => 'string',
-                    'sortable' => true,
-                    'searchable' => Searchable::$ends,
-                    'rules' => array(
-                        'any' => 'required|max:100'
-                    ),
-                    'filters' => array(
-                        'fill' => array(
-                            'stripTags'
-                        )
-                    )
-                ),
-                'last_name' => array(
-                    'title' => _('Last name'),
-                    'type' => 'string',
-                    'sortable' => true,
-                    'searchable' => Searchable::$ends,
-                    'rules' => array(
-                        'any' => 'required|max:100'
-                    ),
-                    'filters' => array(
-                        'fill' => array(
-                            'stripTags'
-                        )
-                    )
-                ),
-                'birth_date' => array(
-                    'title' => _('Birth date'),
-                    'type' => 'date',
-                    'searchable' => '=',
-                    'rules' => array(
-                        'any' => 'required|date',
-                    )
-                ),
-                'phone' => array(
-                    'title' => _('Phone'),
-                    'type' => 'string',
-                    'sortable' => true,
-                    'searchable' => Searchable::$ends,
-                    'rules' => array(
-                        'any' => 'required|phone|max:20'
-                    ),
-                    'filters' => array(
-                        'fill' => array(
-                            'phone', 'stripTags'
-                        )
-                    )
-                ),
-            );
-
-            return parent::init();
-        }
-    }

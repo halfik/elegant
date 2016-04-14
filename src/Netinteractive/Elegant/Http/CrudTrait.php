@@ -19,7 +19,7 @@ trait CrudTrait
      */
     public function create(array $params=array())
     {
-       return $this->getProvider()->create($params);
+       return \Response::build($this->getProvider()->create($params));
     }
 
     /**
@@ -37,7 +37,7 @@ trait CrudTrait
             $this->getProvider()->getMapper()->save($record);
         }
 
-        return $record;
+        return \Response::build($record);
     }
 
     /**
@@ -47,7 +47,21 @@ trait CrudTrait
      */
     public function find(array $params=array())
     {
-        return $this->getProvider()->getMapper()->findMany($params);
+        $displayFilter = isSet($params['display_filter']) ?  $params['display_filter'] :true;
+        $columns = isSet($params['columns']) ?  $params['columns'] : array('*');
+        $operator =  isSet($params['operator']) ?  $params['operator'] : 'and';
+        $defaultJoin = isSet($params['default_join']) ?  $params['default_join'] : true;
+
+        #search query from mapper
+        $q = $this->getProvider()->getMapper()->search($params, $columns, $operator, $defaultJoin);
+
+        #options to modify provided query
+        $this->modifyFindQuery($q, $params);
+
+        #results
+        $records = $q->get();
+
+        return $records->toArray($displayFilter);
     }
 
     /**
@@ -57,10 +71,23 @@ trait CrudTrait
     public function delete(array $params=array())
     {
         $records = $this->getProvider()->getMapper()->findMany($params);
-
+        
         foreach ($records AS $record){
             $this->getProvider()->getMapper()->delete($record);
         }
+
+        return \Response::build($params);
+    }
+
+
+    /**
+     * Method allow to modify find query before we get results
+     * @param \Netinteractive\Elegant\Model\Query\Builder $q
+     * @param array $params
+     */
+    public function modifyFindQuery(\Netinteractive\Elegant\Model\Query\Builder &$q, $params = null)
+    {
+        
     }
 
     /**
@@ -74,6 +101,7 @@ trait CrudTrait
         }
         return $this->domainProvider;
     }
+
 
     /**
      * Method delivers model domain provider

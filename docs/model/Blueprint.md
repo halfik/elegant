@@ -83,7 +83,7 @@ Things you should define in init() method:
 
         checks if $fieldKey is a field
 
-*   isFieldRequired( string $key, string $action=null) : bool
+*   isRequired( string $key, string $action=null) : bool
 
        checks if field is required
 

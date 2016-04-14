@@ -191,7 +191,8 @@ abstract class Blueprint
      * Returns scope object
      * @return null
      */
-    public function getScopeObject(){
+    public function getScopeObject()
+    {
         return null;
     }
 
@@ -487,12 +488,22 @@ abstract class Blueprint
     }
 
     /**
+     * Aliast for isField
+     * @param string $key
+     * @return bool
+     */
+    public function hasField($key)
+    {
+        return $this->isField($key);
+    }
+
+    /**
      * Check if field is required
      * @param $key
      * @param string $action
      * @return bool
      */
-    public function isFieldRequired($key, $action=null)
+    public function isRequired($key, $action=null)
     {
         foreach ($this->fields[$key]['rules'] AS $group=>$rules){
             if ($action == null || $action == $group){
@@ -504,6 +515,48 @@ abstract class Blueprint
                     }
                 }
             }
+        }
+
+        return false;
+    }
+
+    /**
+     * Checks if field is sortable
+     * @param string $fieldKey
+     * @return bool
+     */
+    public function isSortable($fieldKey)
+    {
+        if ($this->hasField($fieldKey) && array_key_exists('sortable', $this->fields[$fieldKey])){
+            return $this->fields[$fieldKey]['sortable'];
+        }
+        
+        return false;
+    }
+
+    /**
+     * Checks if field is searchable
+     * @param string $fieldKey
+     * @return bool
+     */
+    public function isSearchable($fieldKey)
+    {
+        if ($this->hasField($fieldKey) && array_key_exists('searchable', $this->fields[$fieldKey])){
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * Checks if field is protected
+     * @param string $key
+     * @return bool
+     */
+    public function isProtected($fieldKey)
+    {
+        if ($this->hasField($fieldKey) && array_key_exists('protected', $this->fields[$fieldKey])){
+            return true;
         }
 
         return false;

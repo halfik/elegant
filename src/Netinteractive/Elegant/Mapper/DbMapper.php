@@ -492,7 +492,7 @@ class DbMapper implements MapperInterface
         $query->where(function ($query) use ($input, $operator) {
             foreach ($input AS $recordName => $fields) {
                 if (!empty($fields) && is_array($fields)) {
-                    
+
                     foreach ($fields AS $field => $value) {
                         $query = $this->queryFieldSearch($this->emptyRecord, $field, $value, $query, $operator);
                     }
@@ -521,7 +521,7 @@ class DbMapper implements MapperInterface
 
         #search translator
         $translator = \App::make('ni.elegant.search.db.translator');
-
+        
         if (isSet($searchableFields[$fieldKey])){
             $searchable = $translator->translate($fieldKey, $searchableFields[$fieldKey]['searchable']);
             $searchable($q, $keyword, $operator);

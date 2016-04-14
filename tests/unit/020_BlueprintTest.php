@@ -53,28 +53,28 @@ class BlueprintTest extends ElegantTest
     }
 
     /**
-     * @covers \Netinteractive\Elegant\Model\Blueprint::isFieldRequired
+     * @covers \Netinteractive\Elegant\Model\Blueprint::isRequired
      * @group fields
      * @group is
      * @group required
      */
-    public function testIsFieldRequired_True()
+    public function testIsRequired_True()
     {
         $blueprint = \App::make('Patient')->getBlueprint();
-        $this->assertTrue($blueprint->isFieldRequired('id'));
+        $this->assertTrue($blueprint->isRequired('id'));
     }
 
 
     /**
-     * @covers \Netinteractive\Elegant\Model\Blueprint::isFieldRequired
+     * @covers \Netinteractive\Elegant\Model\Blueprint::isRequired
      * @group fields
      * @group is
      * @group required
      */
-    public function testIsFieldRequired_False()
+    public function testIsRequired_False()
     {
         $blueprint = \App::make('Patient')->getBlueprint();
-        $this->assertFalse($blueprint->isFieldRequired('user__id'));
+        $this->assertFalse($blueprint->isRequired('user__id'));
     }
 
     /**
@@ -807,11 +807,99 @@ class BlueprintTest extends ElegantTest
      * @group hashable
      * @group attributes
      */
-    public function testIsHashable()
+    public function testIsHashable_True()
+    {
+        $this->markTestIncomplete();
+    }
+
+    /**
+     * @covers \Netinteractive\Elegant\Model\Blueprint::isSortable
+     * @group is
+     * @group sortable
+     * @group field
+     */
+    public function testIsSortable_True()
+    {
+        $this->markTestIncomplete();
+    }
+
+    /**
+     * @covers \Netinteractive\Elegant\Model\Blueprint::isSortable
+     * @group is
+     * @group sortable
+     * @group field
+     */
+    public function testIsSortable_False()
+    {
+        $this->markTestIncomplete();
+    }
+
+    /**
+     * @covers \Netinteractive\Elegant\Model\Blueprint::isSearchable
+     * @group is
+     * @group searchable
+     * @group field
+     */
+    public function testIsSearchable_True()
+    {
+        $this->markTestIncomplete();
+    }
+
+    /**
+     * @covers \Netinteractive\Elegant\Model\Blueprint::isSearchable
+     * @group is
+     * @group searchable
+     * @group field
+     */
+    public function testIsSearchable_False()
     {
         $this->markTestIncomplete();
     }
 
 
+    /**
+     * @covers \Netinteractive\Elegant\Model\Blueprint::isHashable
+     * @group get
+     * @group hasher
+     * @group hashable
+     * @group attributes
+     */
+    public function testIsHashable_False()
+    {
+        $this->markTestIncomplete();
+    }
 
+
+    /**
+     * @covers \Netinteractive\Elegant\Model\Blueprint::is
+     * @group is
+     * @group searchable
+     * @group field
+     */
+    public function testIsFieldSearchable_False()
+    {
+        $this->markTestIncomplete();
+    }
+
+    /**
+     * @covers \Netinteractive\Elegant\Model\Blueprint::isProtected
+     * @group is
+     * @group protected
+     * @group field
+     */
+    public function testIsProtected_True()
+    {
+        $this->markTestIncomplete();
+    }
+
+    /**
+     * @covers \Netinteractive\Elegant\Model\Blueprint::isProtected
+     * @group is
+     * @group protected
+     * @group field
+     */
+    public function testIsProtected_False()
+    {
+        $this->markTestIncomplete();
+    }
 }

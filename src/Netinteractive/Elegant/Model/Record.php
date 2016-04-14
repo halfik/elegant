@@ -956,31 +956,44 @@ abstract class Record implements Arrayable, Jsonable
 
     /**
      * Convert the record instance to an array.
-     *
+     * @param boolean $displayFilters - apply dispaly filters on field value if true
      * @return array
      */
-    public function toArray()
+    public function toArray($displayFilters=false)
     {
         $related = array();
-
+        
         #here we are converting related record to array
         foreach ($this->related AS $relationName=>$data){
             if ( $data instanceof \Netinteractive\Elegant\Model\Record ){
-                $related[$relationName] = $data->toArray();
+                $related[$relationName] = $data->toArray($displayFilters);
             }
             else{
                 $related[$relationName] = array();
                 if (!empty($data)){
                     foreach ($data AS $record){
                         if ( $record instanceof \Netinteractive\Elegant\Model\Record ){
-                            $related[$relationName][] = $record->toArray();
+                            $related[$relationName][] = $record->toArray($displayFilters);
                         }
                     }
                 }
             }
         }
 
-        return array_merge($this->attributes, $this->external, $related);
+        $attributes = $this->attributes;
+        $external = $this->external;
+
+        if ($displayFilters){
+            foreach ($attributes AS $key=>$data){
+                $attributes[$key] = $this->display($key);
+            }
+
+            foreach ($external AS $key=>$data){
+                $external[$key] = $this->display($key);
+            }
+        }
+
+        return array_merge($attributes, $external, $related);
     }
 
 

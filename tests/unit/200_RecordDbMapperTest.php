@@ -217,7 +217,7 @@ class RecordDbMapperTest  extends ElegantTest
 
 
         unset($record->patient);
-
+        
         $this->assertFalse(isSet($record->patient));
     }
 

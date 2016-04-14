@@ -54,4 +54,20 @@ class Collection extends BaseCollection
 
         return $this;
     }
+
+    /**
+     * Get the collection of items as a plain array.
+     * @param boolean $displayFilters - apply dispaly filters on value if its a Record
+     * @return array
+     */
+    public function toArray($displayFilters=false)
+    {
+        return array_map(function ($value) use($displayFilters){
+            if ($value instanceof Record){
+                return $value->toArray($displayFilters);
+            }
+            return $value instanceof Arrayable ? $value->toArray() : $value;
+
+        }, $this->items);
+    }
 }

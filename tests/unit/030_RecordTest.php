@@ -1626,4 +1626,24 @@ class RecordTest extends ElegantTest
         $this->assertTrue($user->hasRelated('patient'));
     }
 
+
+    /**
+     * @covers \Netinteractive\Elegant\Model\Blueprint::hasField
+     * @group has
+     * @group field
+     */
+    public function testHasField_True()
+    {
+        $this->markTestIncomplete();
+    }
+
+    /**
+     * @covers \Netinteractive\Elegant\Model\Blueprint::hasField
+     * @group has
+     * @group field
+     */
+    public function testHasField_False()
+    {
+        $this->markTestIncomplete();
+    }
 }
