@@ -85,6 +85,10 @@ All examples are based on this 3 classes:
 
 ## Changelog
 
+
+* 2.1.18:
+    * new: Netinteractive\Elegant\Model\Record - added methods to check if field is specific type.
+
 * 2.1.17:
     * new: Netinteractive\Elegant\Http\CrudTrait - now returns \Response::build()
     * new: Netinteractive\Elegant\Model\Collection::toArray($displayFilters=false) - now can apply display filters on items if they are instance of Record

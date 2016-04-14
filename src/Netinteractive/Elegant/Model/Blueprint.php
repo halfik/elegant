@@ -605,6 +605,151 @@ abstract class Blueprint
         return false;
     }
 
+    /**
+     * Checks if field is boolean type
+     * @param string $fieldKey
+     * @return bool
+     */
+    public function isBool($fieldKey)
+    {
+        return $this->isType($fieldKey, [static::TYPE_BOOL]);
+    }
+
+
+    /**
+     * Checks if field is date type
+     * @param string $fieldKey
+     * @return bool
+     */
+    public function isDate($fieldKey)
+    {
+        return $this->isType($fieldKey, [static::TYPE_DATE]);
+    }
+
+    /**
+     * Checks if field is dateTime type
+     * @param string $fieldKey
+     * @return bool
+     */
+    public function isDateTime($fieldKey)
+    {
+        return $this->isType($fieldKey, [static::TYPE_DATETIME]);
+    }
+
+    /**
+     * Checks if field is email type
+     * @param string $fieldKey
+     * @return bool
+     */
+    public function isEmail($fieldKey)
+    {
+        return $this->isType($fieldKey, [static::TYPE_EMAIL]);
+    }
+
+    /**
+     * Checks if field is file type
+     * @param string $fieldKey
+     * @return bool
+     */
+    public function isFile($fieldKey)
+    {
+        return $this->isType($fieldKey, [static::TYPE_FILE]);
+    }
+
+    /**
+     * Checks if field is html type
+     * @param string $fieldKey
+     * @return bool
+     */
+    public function isHtml($fieldKey)
+    {
+        return $this->isType($fieldKey, [static::TYPE_HTML]);
+    }
+
+
+    /**
+     * Checks if field is image type
+     * @param string $fieldKey
+     * @return bool
+     */
+    public function isImage($fieldKey)
+    {
+        return $this->isType($fieldKey, [static::TYPE_IMAGE]);
+    }
+
+    /**
+     * Checks if field is i[ type
+     * @param string $fieldKey
+     * @return bool
+     */
+    public function isIP($fieldKey)
+    {
+        return $this->isType($fieldKey, [static::TYPE_IP]);
+    }
+
+    /**
+     * Checks if field is numeric
+     * @param string $fieldKey
+     * @return bool
+     */
+    public function isNumeric($fieldKey)
+    {
+        return $this->isType($fieldKey, [static::TYPE_DECIMAL, static::TYPE_INT]);
+    }
+
+    /**
+     * Checks if field is password type
+     * @param string $fieldKey
+     * @return bool
+     */
+    public function isPassword($fieldKey)
+    {
+        return $this->isType($fieldKey, [static::TYPE_PASSWORD]);
+    }
+
+    /**
+     * Checks if field is time type
+     * @param string $fieldKey
+     * @return bool
+     */
+    public function isTime($fieldKey)
+    {
+        return $this->isType($fieldKey, [static::TYPE_TIME]);
+    }
+
+
+    /**
+     * Checks if field is url type
+     * @param string $fieldKey
+     * @return bool
+     */
+    public function isUrl($fieldKey)
+    {
+        return $this->isType($fieldKey, [static::TYPE_URL]);
+    }
+
+
+    /**
+     * Checks if field is specific type
+     *
+     * @param string $fieldKey
+     * @param string|array $type
+     * @return bool
+     */
+    public function isType($fieldKey, $type)
+    {
+        if ( !is_array($type) ){
+            $type = array($type);
+        }
+
+        if ( isSet($this->fields[$fieldKey]['type']) && in_array($this->fields[$fieldKey]['type'], $type)){
+            return true;
+        }
+
+        return false;
+    }
+
+
 
     /**
      * Returns information if record has timestamps (created_at and updated_at)

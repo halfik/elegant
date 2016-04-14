@@ -1,4 +1,5 @@
 <?php
+
 use Illuminate\Database\Schema\Blueprint;
 use Opis\Closure\SerializableClosure;
 
@@ -12,7 +13,7 @@ return array(
                     }
 
 
-                    Schema::create('user', function(Blueprint $table)
+                    Schema::create('user', function(\Illuminate\Database\Schema\Blueprint$table)
                     {
                         $table->increments('id');
                         $table->string('login');
@@ -30,7 +31,7 @@ return array(
                 function(){
                     Schema::dropIfExists('med');
 
-                    Schema::create('med', function(Blueprint $table)
+                    Schema::create('med', function(\Illuminate\Database\Schema\Blueprint $table)
                     {
                         $table->increments('id');
                         $table->string('name',100);
@@ -56,7 +57,7 @@ return array(
                 function(){
                     Schema::dropIfExists('med_personnel');
 
-                    Schema::create('med_personnel', function(Blueprint $table)
+                    Schema::create('med_personnel', function(\Illuminate\Database\Schema\Blueprint $table)
                     {
                         $table->increments('id');
                         $table->integer('user__id');
@@ -72,7 +73,7 @@ return array(
                 function(){
                     Schema::dropIfExists('med_science_degree');
 
-                    Schema::create('med_science_degree', function(Blueprint $table)
+                    Schema::create('med_science_degree', function(\Illuminate\Database\Schema\Blueprint $table)
                     {
                         $table->increments('id');
                         $table->string('name',250);
@@ -85,7 +86,7 @@ return array(
                 function(){
                     Schema::dropIfExists('med_personnel__med_sience_degree');
 
-                    Schema::create('med_personnel__med_sience_degree', function(Blueprint $table)
+                    Schema::create('med_personnel__med_sience_degree', function(\Illuminate\Database\Schema\Blueprint $table)
                     {
                         $table->increments('id');
                         $table->integer('med_personnel__id');
@@ -99,7 +100,7 @@ return array(
                 function(){
                     Schema::dropIfExists('tu');
 
-                    Schema::create('tu',function(Blueprint $table){
+                    Schema::create('tu',function(\Illuminate\Database\Schema\Blueprint $table){
                         $table->increments('id');
                         $table->string('name',100);
                         $table->string('city',100)->nullable();
@@ -123,7 +124,7 @@ return array(
                 function(){
                     Schema::dropIfExists('patient');
 
-                    Schema::create('patient',function(Blueprint $table){
+                    Schema::create('patient',function(\Illuminate\Database\Schema\Blueprint $table){
                         $table->increments('id');
                         $table->integer('user__id')->nullable();
                         $table->char('pesel',11)->unique();
@@ -139,7 +140,7 @@ return array(
                 function(){
                     Schema::dropIfExists('patient_data');
 
-                    Schema::create('patient_data',function(Blueprint $table){
+                    Schema::create('patient_data',function(\Illuminate\Database\Schema\Blueprint $table){
                         $table->increments('id');
                         $table->integer('patient__id');
                         $table->integer('med__id')->nullable();

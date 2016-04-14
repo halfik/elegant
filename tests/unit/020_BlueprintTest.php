@@ -902,4 +902,251 @@ class BlueprintTest extends ElegantTest
     {
         $this->markTestIncomplete();
     }
+
+    /**
+     * @covers \Netinteractive\Elegant\Model\Blueprint::isDateTime
+     * @group is
+     * @group dateTime
+     * @group field
+     */
+    public function testIsDateTime_False()
+    {
+        $this->markTestIncomplete();
+    }
+
+    /**
+     * @covers \Netinteractive\Elegant\Model\Blueprint::isDateTime
+     * @group is
+     * @group dateTime
+     * @group field
+     */
+    public function testIsDateTime_True()
+    {
+        $this->markTestIncomplete();
+    }
+
+
+    /**
+     * @covers \Netinteractive\Elegant\Model\Blueprint::isDate
+     * @group is
+     * @group dateTime
+     * @group field
+     */
+    public function testIsDate_False()
+    {
+        $this->markTestIncomplete();
+    }
+
+    /**
+     * @covers \Netinteractive\Elegant\Model\Blueprint::isDate
+     * @group is
+     * @group dateTime
+     * @group field
+     */
+    public function testIsDate_True()
+    {
+        $this->markTestIncomplete();
+    }
+
+    /**
+     * @covers \Netinteractive\Elegant\Model\Blueprint::isNumeric
+     * @group is
+     * @group numeric
+     * @group field
+     */
+    public function testIsNumerice_True()
+    {
+        $this->markTestIncomplete();
+    }
+
+
+    /**
+     * @covers \Netinteractive\Elegant\Model\Blueprint::isNumeric
+     * @group is
+     * @group numeric
+     * @group field
+     */
+    public function testIsNumerice_False()
+    {
+        $this->markTestIncomplete();
+    }
+
+    /**
+     * @covers \Netinteractive\Elegant\Model\Blueprint::isPassword
+     * @group is
+     * @group password
+     * @group field
+     */
+    public function testIsPassword_False()
+    {
+        $this->markTestIncomplete();
+    }
+
+    /**
+     * @covers \Netinteractive\Elegant\Model\Blueprint::isPassword
+     * @group is
+     * @group password
+     * @group field
+     */
+    public function testIsPassword_True()
+    {
+        $this->markTestIncomplete();
+    }
+
+
+    /**
+     * @covers \Netinteractive\Elegant\Model\Blueprint::isTime
+     * @group is
+     * @group time
+     * @group field
+     */
+    public function testIsTime_False()
+    {
+        $this->markTestIncomplete();
+    }
+
+    /**
+     * @covers \Netinteractive\Elegant\Model\Blueprint::isTime
+     * @group is
+     * @group time
+     * @group field
+     */
+    public function testIsTime_True()
+    {
+        $this->markTestIncomplete();
+    }
+
+
+    /**
+     * @covers \Netinteractive\Elegant\Model\Blueprint::isIp
+     * @group is
+     * @group ip
+     * @group field
+     */
+    public function testIsIP_False()
+    {
+        $this->markTestIncomplete();
+    }
+
+    /**
+     * @covers \Netinteractive\Elegant\Model\Blueprint::isIp
+     * @group is
+     * @group ip
+     * @group field
+     */
+    public function testIsIP_True()
+    {
+        $this->markTestIncomplete();
+    }
+
+
+    /**
+     * @covers \Netinteractive\Elegant\Model\Blueprint::isEmail
+     * @group is
+     * @group email
+     * @group field
+     */
+    public function testIsEmail_False()
+    {
+        $this->markTestIncomplete();
+    }
+
+    /**
+     * @covers \Netinteractive\Elegant\Model\Blueprint::isEmail
+     * @group is
+     * @group email
+     * @group field
+     */
+    public function testIsEmail_True()
+    {
+        $this->markTestIncomplete();
+    }
+
+    /**
+     * @covers \Netinteractive\Elegant\Model\Blueprint::isUrl
+     * @group is
+     * @group url
+     * @group field
+     */
+    public function testIsUrl_False()
+    {
+        $this->markTestIncomplete();
+    }
+
+    /**
+     * @covers \Netinteractive\Elegant\Model\Blueprint::isUrl
+     * @group is
+     * @group url
+     * @group field
+     */
+    public function testIsUrl_True()
+    {
+        $this->markTestIncomplete();
+    }
+
+    /**
+     * @covers \Netinteractive\Elegant\Model\Blueprint::isFile
+     * @group is
+     * @group file
+     * @group field
+     */
+    public function testIsFile_False()
+    {
+        $this->markTestIncomplete();
+    }
+
+    /**
+     * @covers \Netinteractive\Elegant\Model\Blueprint::isFile
+     * @group is
+     * @group file
+     * @group field
+     */
+    public function testIsFile_True()
+    {
+        $this->markTestIncomplete();
+    }
+
+    /**
+     * @covers \Netinteractive\Elegant\Model\Blueprint::isImage
+     * @group is
+     * @group image
+     * @group field
+     */
+    public function testIsImage_False()
+    {
+        $this->markTestIncomplete();
+    }
+
+    /**
+     * @covers \Netinteractive\Elegant\Model\Blueprint::isImage
+     * @group is
+     * @group image
+     * @group field
+     */
+    public function testIsImage_True()
+    {
+        $this->markTestIncomplete();
+    }
+
+    /**
+     * @covers \Netinteractive\Elegant\Model\Blueprint::isBool
+     * @group is
+     * @group boolean
+     * @group field
+     */
+    public function testIsBool_False()
+    {
+        $this->markTestIncomplete();
+    }
+
+    /**
+     * @covers \Netinteractive\Elegant\Model\Blueprint::isBool
+     * @group is
+     * @group boolean
+     * @group field
+     */
+    public function testIsBool_True()
+    {
+        $this->markTestIncomplete();
+    }
 }
