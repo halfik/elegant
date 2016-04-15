@@ -85,6 +85,10 @@ All examples are based on this 3 classes:
 
 ## Changelog
 
+* 2.1.19:
+    * fixed: Netinteractive\Elegant\Mapper\DbMapper::search
+             Now if we send data in format record.field = value - \App::make($record) will be used to create record class.
+             If we send data in format field = value - mapper current record class will be used.
 
 * 2.1.18:
     * new: Netinteractive\Elegant\Model\Record - added methods to check if field is specific type.
@@ -104,26 +108,26 @@ All examples are based on this 3 classes:
     * change: we haved changed jeremeamia/superclosure package to opis/closure. It gave us 4x performance boost when cache:config is not used.
 
 * 2.1.9 - 2.1.14:
-    * fixed they way how ElegantServiceProvider publishes and merges config file
+    * fixed: the way how ElegantServiceProvider publishes and merges config file
 
 * 2.1.8: 
-     * fixed codeception configuration file
-     * new abstraction layer for business logic \Netinteractive\Elegant\Model\Provider
+     * fixed: codeception configuration file
+     * new: abstraction layer for business logic \Netinteractive\Elegant\Model\Provider
 
 * 2.1.7 : 
     * new: new fill filters: emptyToFalse, emptyToZero
 
 * 2.1.6 : 
-    * fixed bug when db mapper tried to perform update when none of attributes has changed.
+    * fixed: bug when db mapper tried to perform update when none of attributes has changed.
 
 * 2.1.5 : 
-    * fixed db mapper find bug. we tried to created record when we already had one from model query builder.
+    * fixed: db mapper find bug. we tried to created record when we already had one from model query builder.
 
 * 2.1.3 - 2.1.4 : 
-    * fixed filter bug. there was bug in filter list cleaning code.
+    * fixed: filter bug. there was bug in filter list cleaning code.
 
 * 2.1.0 - 2.1.2 : 
-    * hashers added.
+    * new: hashers added.
 
 * 2.0.0 : 
     * first stable version. realsed 15.03.2016.

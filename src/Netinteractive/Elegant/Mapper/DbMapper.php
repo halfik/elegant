@@ -489,12 +489,21 @@ class DbMapper implements MapperInterface
         }
 
         #we wrap all ours search wheres  because of others wheres that can be add later (or where added before)
+        #we wrap all ours search wheres  because of others wheres that can be add later (or where added before)
         $query->where(function ($query) use ($input, $operator) {
-            foreach ($input AS $recordName => $fields) {
-                if (!empty($fields) && is_array($fields)) {
-
-                    foreach ($fields AS $field => $value) {
-                        $query = $this->queryFieldSearch($this->emptyRecord, $field, $value, $query, $operator);
+            foreach ($input AS $key => $val) {
+                #if data are in format model.field - then $fields is an array
+                #in other case we have only field names and values, with out record name
+                if (is_array($val)){
+                    if (!empty($val)){
+                        $record = \App::make($key);
+                        foreach ($val AS $field => $value) {
+                            $query = $this->queryFieldSearch($record, $field, $value, $query, $operator);
+                        }
+                    }
+                }else{
+                    if (!empty($val)){
+                        $query = $this->queryFieldSearch($this->emptyRecord, $key, $val, $query, $operator);
                     }
                 }
             }
@@ -521,7 +530,7 @@ class DbMapper implements MapperInterface
 
         #search translator
         $translator = \App::make('ni.elegant.search.db.translator');
-        
+
         if (isSet($searchableFields[$fieldKey])){
             $searchable = $translator->translate($fieldKey, $searchableFields[$fieldKey]['searchable']);
             $searchable($q, $keyword, $operator);
