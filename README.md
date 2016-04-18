@@ -85,6 +85,9 @@ All examples are based on this 3 classes:
 
 ## Changelog
 
+* 2.1.20:
+    * changed: Netinteractive\Elegant\Model\Record::toArray($displayFilters=true) - display filters now by default are set to true
+
 * 2.1.19:
     * fixed: Netinteractive\Elegant\Mapper\DbMapper::search
              Now if we send data in format record.field = value - \App::make($record) will be used to create record class.

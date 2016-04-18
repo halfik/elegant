@@ -60,8 +60,7 @@ trait CrudTrait
 
         #results
         $records = $q->get();
-
-        return $records->toArray($displayFilter);
+        return \Response::build($records);
     }
 
     /**

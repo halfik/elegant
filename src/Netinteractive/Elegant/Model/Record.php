@@ -959,7 +959,7 @@ abstract class Record implements Arrayable, Jsonable
      * @param boolean $displayFilters - apply dispaly filters on field value if true
      * @return array
      */
-    public function toArray($displayFilters=false)
+    public function toArray($displayFilters=true)
     {
         $related = array();
         

@@ -60,7 +60,7 @@ class Collection extends BaseCollection
      * @param boolean $displayFilters - apply dispaly filters on value if its a Record
      * @return array
      */
-    public function toArray($displayFilters=false)
+    public function toArray($displayFilters=true)
     {
         return array_map(function ($value) use($displayFilters){
             if ($value instanceof Record){
