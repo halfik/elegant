@@ -85,7 +85,7 @@ All examples are based on this 3 classes:
 
 ## Changelog
 
-* 2.1.20:
+* 2.1.20 - 2.1.21:
     * changed: Netinteractive\Elegant\Model\Record::toArray($displayFilters=true) - display filters now by default are set to true
 
 * 2.1.19:

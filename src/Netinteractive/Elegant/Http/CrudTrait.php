@@ -60,6 +60,7 @@ trait CrudTrait
 
         #results
         $records = $q->get();
+        
         return \Response::build($records);
     }
 
