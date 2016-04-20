@@ -1149,4 +1149,26 @@ class BlueprintTest extends ElegantTest
     {
         $this->markTestIncomplete();
     }
+
+    /**
+     * @covers \Netinteractive\Elegant\Model\Blueprint::isPk
+     * @group is
+     * @group pk
+     * @group field
+     */
+    public function testIsPK_False()
+    {
+        $this->markTestIncomplete();
+    }
+
+    /**
+     * @covers \Netinteractive\Elegant\Model\Blueprint::isPk
+     * @group is
+     * @group pk
+     * @group field
+     */
+    public function testIsPk_True()
+    {
+        $this->markTestIncomplete();
+    }
 }

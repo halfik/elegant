@@ -85,6 +85,12 @@ All examples are based on this 3 classes:
 
 ## Changelog
 
+
+* 2.1.22:
+    * new: 
+        * Netinteractive\Elegant\Model\Blueprint::isPk($fieldKey) - checks if field is part of primary key
+    
+
 * 2.1.20 - 2.1.21:
     * changed: Netinteractive\Elegant\Model\Record::toArray($displayFilters=true) - display filters now by default are set to true
 
@@ -97,11 +103,12 @@ All examples are based on this 3 classes:
     * new: Netinteractive\Elegant\Model\Record - added methods to check if field is specific type.
 
 * 2.1.17:
-    * new: Netinteractive\Elegant\Http\CrudTrait - now returns \Response::build()
-    * new: Netinteractive\Elegant\Model\Collection::toArray($displayFilters=false) - now can apply display filters on items if they are instance of Record
-    * new: Netinteractive\Elegant\Model\Record::toArray($displayFilters=false) - now can apply display filters
-    * new: Netinteractive\Elegant\Model\Blueprint::isProtected($key) - checks if field has 'protected' parameter and its true. 
-           Protected feature isn't used by Elegant. It should be used by other mechanisms in example: you can use to defined if fields are visible somwhere in app.
+    * new: 
+        * Netinteractive\Elegant\Http\CrudTrait - now returns \Response::build()
+        * Netinteractive\Elegant\Model\Collection::toArray($displayFilters=false) - now can apply display filters on items if they are instance of Record
+        * Netinteractive\Elegant\Model\Record::toArray($displayFilters=false) - now can apply display filters
+        * Netinteractive\Elegant\Model\Blueprint::isProtected($key) - checks if field has 'protected' parameter and its true. 
+          Protected feature isn't used by Elegant. It should be used by other mechanisms in example: you can use to defined if fields are visible somwhere in app.
 
 * 2.1.16:
     * fixed: Netinteractive\Elegant\Mapper\DbMapper::search - fixed bug where not mapper record was used to build query.

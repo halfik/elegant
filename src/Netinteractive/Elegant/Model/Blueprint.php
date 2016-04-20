@@ -548,6 +548,21 @@ abstract class Blueprint
         return false;
     }
 
+
+    /**
+     * Checks if field is primary key
+     * @param string $key
+     * @return bool
+     */
+    public function isPk($fieldKey)
+    {
+        if ($this->hasField($fieldKey) && in_array($fieldKey, $this->primaryKey)){
+            return true;
+        }
+
+        return false;
+    }
+    
     /**
      * Checks if field is protected
      * @param string $key
