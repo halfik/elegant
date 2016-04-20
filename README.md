@@ -86,6 +86,10 @@ All examples are based on this 3 classes:
 ## Changelog
 
 
+* 2.1.23:
+    * fixed:
+        * Netinteractive\Elegant\Model\Record::validate - fixed bug where each message was an array added to MessageBag
+
 * 2.1.22:
     * new: 
         * Netinteractive\Elegant\Model\Blueprint::isPk($fieldKey) - checks if field is part of primary key

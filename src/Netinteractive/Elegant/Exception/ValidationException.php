@@ -19,7 +19,8 @@ class ValidationException  extends \Exception
      * @param int $code
      * @param \Exception $previous
      */
-    public function __construct(MessageBag $messageBag = null, $message = "", $code = 0, \Exception $previous = null){
+    public function __construct(MessageBag $messageBag = null, $message = "", $code = 0, \Exception $previous = null)
+    {
         $this->messageBag = $messageBag;
         return parent::__construct($message, $code,$previous);
     }
@@ -27,7 +28,8 @@ class ValidationException  extends \Exception
     /**
      * @return MessageBag
      */
-    public function getMessageBag(){
+    public function getMessageBag()
+    {
         return $this->messageBag;
     }
 }

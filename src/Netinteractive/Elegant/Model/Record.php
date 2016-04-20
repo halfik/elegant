@@ -241,12 +241,13 @@ abstract class Record implements Arrayable, Jsonable
 
         $messageBag = new MessageBag();
         $validator = \Validator::make($data, $this->getBlueprint()->getFieldsRules($rulesGroups, array_keys($data)));
-
-
+        
         if ($validator->fails()) {
             $messages = $validator->messages()->toArray();
-            foreach ($messages as $key => $message) {
-                $messageBag->add($key, $message);
+            foreach ($messages as $key => $messageList) {
+                foreach ($messageList AS $message){
+                    $messageBag->add($key, $message);
+                }
             }
 
             throw new ValidationException($messageBag);
