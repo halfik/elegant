@@ -572,22 +572,6 @@ abstract class Record implements Arrayable, Jsonable
             }
         }
 
-        /*if ($this->exists()){
-            foreach ($this->attributes as $key => $value){
-
-                if ( !array_key_exists($key, $this->original)){
-                    $this->dirty[$key] = $value;
-                }
-                elseif ($value !== $this->original[$key] && !$this->originalIsNumericallyEquivalent($key)){
-                    $this->dirty[$key] = $value;
-                }
-            }
-        }
-        else{
-            $this->dirty = $this->attributes;
-        }*/
-
-
         return $this->dirty;
     }
 
@@ -753,6 +737,10 @@ abstract class Record implements Arrayable, Jsonable
      */
     public function createTimestamp($time=null)
     {
+        if (is_array($time) && array_key_exists('date', $time)){
+
+            $time = $time['date'];
+        }
         return new Carbon($time);
     }
 
@@ -961,7 +949,7 @@ abstract class Record implements Arrayable, Jsonable
      * @param boolean $displayFilters - apply dispaly filters on field value if true
      * @return array
      */
-    public function toArray($displayFilters=true)
+    public function toArray($displayFilters=false)
     {
         $related = array();
         
@@ -992,6 +980,19 @@ abstract class Record implements Arrayable, Jsonable
 
             foreach ($external AS $key=>$data){
                 $external[$key] = $this->display($key);
+            }
+        }
+
+        #objects to string
+        foreach ($attributes AS $key=>$val){
+            if ( is_object($val)){
+                $attributes[$key] = (String) $val;
+            }
+        }
+        
+        foreach ($external AS $key=>$val){
+            if ( is_object($val)){
+                $external[$key] = (String) $val;
             }
         }
 

@@ -86,6 +86,12 @@ All examples are based on this 3 classes:
 ## Changelog
 
 
+* 2.1.25:
+    * changed:
+        * Netinteractive\Elegant\Model\Record::toArray- display filters now by default are set to false.
+          Also all attributes that are objects are casted to string.
+        * Netinteractive\Elegant\Model\Collection::toArray - display filters now by default are set to false
+
 * 2.1.24:
     * changed:
         * Netinteractive\Elegant\Model\Record::validate - by default validation group list, now is an empty array.
@@ -97,11 +103,12 @@ All examples are based on this 3 classes:
 
 * 2.1.22:
     * new: 
-        * Netinteractive\Elegant\Model\Blueprint::isPk($fieldKey) - checks if field is part of primary key.
+        * Netinteractive\Elegant\Model\Blueprint::isPk) - checks if field is part of primary key.
     
 
 * 2.1.20 - 2.1.21:
-    * changed: Netinteractive\Elegant\Model\Record::toArray($displayFilters=true) - display filters now by default are set to true.
+    * changed: 
+        * Netinteractive\Elegant\Model\Record::toArray - display filters now by default are set to true.
 
 * 2.1.19:
     * fixed: Netinteractive\Elegant\Mapper\DbMapper::search

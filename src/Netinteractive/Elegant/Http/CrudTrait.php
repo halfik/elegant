@@ -23,13 +23,13 @@ trait CrudTrait
     }
 
     /**
-     *
      * @param int $id
      * @param array $params
      * @return \Netinteractive\Elegant\Model\Record
      */
     public function update($id, array $params=array())
     {
+        $displayFilter = isSet($params['display_filter']) ? (bool)  $params['display_filter'] : false;
         $record = $this->getProvider()->getMapper()->find($id);
 
         if ($record){
@@ -37,7 +37,9 @@ trait CrudTrait
             $this->getProvider()->getMapper()->save($record);
         }
 
-        return \Response::build($record);
+        return \Response::build(
+            $record->toArray($displayFilter)
+        );
     }
 
     /**
@@ -50,6 +52,7 @@ trait CrudTrait
         $columns = isSet($params['columns']) ?  $params['columns'] : array('*');
         $operator =  isSet($params['operator']) ?  $params['operator'] : 'and';
         $defaultJoin = isSet($params['default_join']) ?  $params['default_join'] : true;
+        $displayFilter = isSet($params['display_filter']) ? (bool)  $params['display_filter'] : false;
 
         #search query from mapper
         $q = $this->getProvider()->getMapper()->search($params, $columns, $operator, $defaultJoin);
@@ -60,7 +63,9 @@ trait CrudTrait
         #results
         $record = $q->first();
 
-        return \Response::build($record);
+        return \Response::build(
+            $record->toArray($displayFilter)
+        );
     }
 
 
@@ -74,6 +79,7 @@ trait CrudTrait
         $columns = isSet($params['columns']) ?  $params['columns'] : array('*');
         $operator =  isSet($params['operator']) ?  $params['operator'] : 'and';
         $defaultJoin = isSet($params['default_join']) ?  $params['default_join'] : true;
+        $displayFilter = isSet($params['display_filter']) ? (bool)  $params['display_filter'] : false;
 
         #search query from mapper
         $q = $this->getProvider()->getMapper()->search($params, $columns, $operator, $defaultJoin);
@@ -84,7 +90,9 @@ trait CrudTrait
         #results
         $records = $q->get();
         
-        return \Response::build($records);
+        return \Response::build(
+            $records->toArray($displayFilter)
+        );
     }
 
     /**
