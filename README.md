@@ -86,7 +86,7 @@ All examples are based on this 3 classes:
 ## Changelog
 
 
-* 2.1.25:
+* 2.1.25 - 2.1.26:
     * changed:
         * Netinteractive\Elegant\Model\Record::toArray- display filters now by default are set to false.
           Also all attributes that are objects are casted to string.

@@ -989,7 +989,7 @@ abstract class Record implements Arrayable, Jsonable
                 $attributes[$key] = (String) $val;
             }
         }
-        
+
         foreach ($external AS $key=>$val){
             if ( is_object($val)){
                 $external[$key] = (String) $val;

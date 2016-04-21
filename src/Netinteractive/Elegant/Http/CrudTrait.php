@@ -19,7 +19,9 @@ trait CrudTrait
      */
     public function create(array $params=array())
     {
-       return \Response::build($this->getProvider()->create($params));
+       return \Response::build(
+           $this->getProvider()->create($params)
+       );
     }
 
     /**
