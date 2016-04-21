@@ -229,21 +229,22 @@ abstract class Record implements Arrayable, Jsonable
     /**
      * Method validates input data
      * @param array $data
-     * @param string $rulesGroups
+     * @param string|array $rulesGroups
      * @return $this
      * @throws \Netinteractive\Elegant\Exception\ValidationException
      */
-    public function validate(array $data, $rulesGroups = 'all')
+    public function validate(array $data, $rulesGroups = array())
     {
         if ($this->validationEnabled === false) {
             return $this;
         }
-
+        
         $messageBag = new MessageBag();
         $validator = \Validator::make($data, $this->getBlueprint()->getFieldsRules($rulesGroups, array_keys($data)));
-        
+
         if ($validator->fails()) {
             $messages = $validator->messages()->toArray();
+
             foreach ($messages as $key => $messageList) {
                 foreach ($messageList AS $message){
                     $messageBag->add($key, $message);

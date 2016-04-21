@@ -86,17 +86,22 @@ All examples are based on this 3 classes:
 ## Changelog
 
 
+* 2.1.24:
+    * changed:
+        * Netinteractive\Elegant\Model\Record::validate - by default validation group list, now is an empty array.
+        * Netinteractive\Elegant\Model\Blueprint::getFieldsRules - now by default merges all group validators. 
+
 * 2.1.23:
     * fixed:
-        * Netinteractive\Elegant\Model\Record::validate - fixed bug where each message was an array added to MessageBag
+        * Netinteractive\Elegant\Model\Record::validate - fixed bug where each message was an array added to MessageBag.
 
 * 2.1.22:
     * new: 
-        * Netinteractive\Elegant\Model\Blueprint::isPk($fieldKey) - checks if field is part of primary key
+        * Netinteractive\Elegant\Model\Blueprint::isPk($fieldKey) - checks if field is part of primary key.
     
 
 * 2.1.20 - 2.1.21:
-    * changed: Netinteractive\Elegant\Model\Record::toArray($displayFilters=true) - display filters now by default are set to true
+    * changed: Netinteractive\Elegant\Model\Record::toArray($displayFilters=true) - display filters now by default are set to true.
 
 * 2.1.19:
     * fixed: Netinteractive\Elegant\Mapper\DbMapper::search

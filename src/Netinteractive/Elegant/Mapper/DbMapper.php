@@ -236,7 +236,7 @@ class DbMapper implements MapperInterface
             }
 
             #we always should validate all data not only that actually was changed
-            $record->validate($attributes);
+            $record->validate($attributes, array('insert'));
 
             #check if we have autoincrementing on PK
             if ($record->getBlueprint()->incrementingPk){
@@ -296,7 +296,7 @@ class DbMapper implements MapperInterface
             $dirty =  $obj->data;
 
             #we always should validate all data not only that actually was changed
-            $record->validate(array_merge($record->getAttributes(), $dirty));
+            $record->validate(array_merge($record->getAttributes(), $dirty),  array('update'));
 
             \Event::fire('ni.elegant.mapper.updating.'.\classDotNotation($record), $record);
 

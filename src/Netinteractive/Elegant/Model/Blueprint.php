@@ -342,12 +342,17 @@ abstract class Blueprint
      * @param array $fieldsKeys
      * @return array
      */
-    public function getFieldsRules($rulesGroups='all', array $fieldsKeys=array())
+    public function getFieldsRules($rulesGroups=array(), array $fieldsKeys=array())
     {
         if (!is_array($rulesGroups)){
             $rulesGroups = array_map('trim', explode(',', $rulesGroups));
         }
 
+        #if no group is specified, we get all validators
+        if (empty($rulesGroups)){
+            $rulesGroups = ['any', 'insert', 'update'];
+        }
+        
         if (empty($fieldsKeys)) {
             $fieldsKeys = array_keys($this->getFields());
         }
@@ -355,7 +360,6 @@ abstract class Blueprint
         if (!in_array('any', $rulesGroups)) {
             array_push($rulesGroups, 'any');
         }
-
 
         $result = array();
         $fields = $this->getFields();
