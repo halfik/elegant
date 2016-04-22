@@ -80,15 +80,16 @@ x.y.z -
 In docs folder you can find more documentation about package.
 
 
-All examples are based on this 3 classes:
-
 
 ## Changelog
+
+* 2.1.28:
+    * fixed: :Netinteractive\Elegant\Model\Blueprint::isProtected - there was bug. if field had "protected" key, it was always protected no matter if
+      declared true of false.
 
 * 2.1.27:
     * new:Netinteractive\Elegant\Model\Blueprint::getField($key) - returs field data
        
-
 * 2.1.25 - 2.1.26:
     * changed:
         * Netinteractive\Elegant\Model\Record::toArray- display filters now by default are set to false.

@@ -589,7 +589,7 @@ abstract class Blueprint
     public function isProtected($fieldKey)
     {
         if ($this->hasField($fieldKey) && array_key_exists('protected', $this->fields[$fieldKey])){
-            return true;
+            return  $this->fields[$fieldKey]['protected'];
         }
 
         return false;
