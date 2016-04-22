@@ -85,6 +85,9 @@ All examples are based on this 3 classes:
 
 ## Changelog
 
+* 2.1.27:
+    * new:Netinteractive\Elegant\Model\Blueprint::getField($key) - returs field data
+       
 
 * 2.1.25 - 2.1.26:
     * changed:

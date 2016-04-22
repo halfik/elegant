@@ -1171,4 +1171,14 @@ class BlueprintTest extends ElegantTest
     {
         $this->markTestIncomplete();
     }
+
+    /**
+     * @covers \Netinteractive\Elegant\Model\Blueprint::getField
+     * @group get
+     * @group field
+     */
+    public function testGetField()
+    {
+        $this->markTestIncomplete();
+    }
 }

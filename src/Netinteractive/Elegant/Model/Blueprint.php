@@ -261,6 +261,20 @@ abstract class Blueprint
     }
 
     /**
+     * Returns field data
+     * @param string $key
+     * @return array
+     */
+    public function getField($key)
+    {
+        if (array_key_exists($key, $this->fields)){
+            return $this->fields[$key];
+        }
+
+        return null;
+    }
+
+    /**
      * Returns list of fields that are sortable
      *
      * @return array
