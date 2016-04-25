@@ -105,6 +105,34 @@ return array(
         ),
     ),
     'save' => array(
+        //file upload for base64 encoded files data
+        'base64File' => serialize(new SerializableClosure(
+                function ($value, $params = array()) {
+                    if (is_array($value) && array_key_exists('name', $value) && array_key_exists('content', $value)){
+                        $encodedValue = base64_decode(preg_replace('#^data:[^;]+;base64,#', '', $value['content']));
+
+                        #detecting is we have bse64 encoded data
+                        if ($encodedValue){
+                            #file infos
+                            $ext = pathinfo($value['name'], PATHINFO_EXTENSION);
+
+                            if(count($params) == 0){
+                                $params[] = time();
+                            }
+
+                            #put file into storage
+                            $fileName = $params[0].'.'.$ext;
+                            \Storage::put($fileName,$encodedValue);
+                            return $fileName;
+                        }
+
+                        return $value['content'];
+                    }
+
+                    return $value;
+                }
+            )
+        ),
         'dot2comma' => serialize(new SerializableClosure(
                 function ($value, $params = array()) {
                     return str_replace(',', '.', $value);
