@@ -105,7 +105,37 @@ return array(
         ),
     ),
     'save' => array(
-        //file upload for base64 encoded files data
+        /*
+         * file upload for base64 encoded files data
+         * example (annonymous function returns file name - with out extension, just name)
+         *  'logo' => array(
+                'title' => _('Logo'),
+                'type'=> static::TYPE_IMAGE,
+                'filters' => array(
+                    'save' => array(
+                        'base64File:'.call_user_func(function(){
+                            return '777';
+                        })
+                    ),
+                    'fill' => array(
+                        //'jsonDecode'
+                    )
+                )
+            ),
+         * or (file name will be random based on timestamp)
+         * 'logo' => array(
+                'title' => _('Logo'),
+                'type'=> static::TYPE_IMAGE,
+                'filters' => array(
+                    'save' => array(
+                        'base64File'
+                    ),
+                    'fill' => array(
+                        //'jsonDecode'
+                    )
+                )
+            ),
+         */
         'base64File' => serialize(new SerializableClosure(
                 function ($value, $params = array()) {
                     if (is_array($value) && array_key_exists('name', $value) && array_key_exists('content', $value)){

@@ -83,8 +83,8 @@ In docs folder you can find more documentation about package.
 
 ## Changelog
 
-* 2.1.29:
-    * new: added base64File save filter to config file. Filter will put file date to storage and returns file name.
+* 2.1.29 - 2.1.30:
+    * new: added base64File save filter to config file. Filter will put file date to storage and returns file name. Check filters.php file for example.
 
 * 2.1.28:
     * fixed: :Netinteractive\Elegant\Model\Blueprint::isProtected - there was bug. if field had "protected" key, it was always protected no matter if
