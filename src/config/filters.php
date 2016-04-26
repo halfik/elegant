@@ -152,6 +152,10 @@ return array(
 
                             #put file into storage
                             $fileName = $params[0].'.'.$ext;
+                            if (\Storage::exists($fileName)){
+                                \Storage::delete([$fileName]);
+                            }
+
                             \Storage::put($fileName,$encodedValue);
                             return $fileName;
                         }
@@ -214,6 +218,16 @@ return array(
         ),
     ),
     'fill' => array(
+        'base64File' => serialize(new SerializableClosure(
+                function ($value, $params = array()) {
+                    if (\Storage::exists($value)){
+                        $mimeType = \Storage::mimeType($value);
+                        return 'data:'.$mimeType.';base64,' .  base64_encode(\Storage::get($value));
+                    }
+                    return $value;
+                }
+            )
+        ),
         'dot2comma' => serialize(new SerializableClosure(
                 function ($value, $params = array()) {
                     return str_replace(',', '.', $value);
