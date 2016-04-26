@@ -84,6 +84,26 @@ In docs folder you can find more documentation about package.
 ## Changelog
 
 
+* 2.1.32:
+    * changed:
+        * Netinteractive\Elegant\Model\Blueprint:
+            * field protection definition is no longer boolean type. Now its int. It will allow to keep field protected
+               but with diffrenet levels of protecting, which still can be used by external tools, but delivers more flexibility.
+    * new:
+        *  Netinteractive\Elegant\Model\Blueprint:
+           * getProtectionLvl($fieldKey) - returns protection level of field
+           * getEnum($fieldKey) - return list of possible values for field. It should be defined on field as assoc array. Example: 
+             $this->fields['permissions']['enum'] = ['full'=>_('Full access'), 'limited'=>_('Limited access')];
+           * isEnum() - checks if field is enum type
+           * added  3 basic protection levels definitions (level id definted by value between min and max decalred in blueprint):
+                 protected static  $PROTECTION_LOW = [51, 100];
+                 protected static  $PROTECTION_NORMAL = [1,50];
+                 protected static  $PROTECTION_HIGH = [1,10];
+           * isProtectionLow($fieldKey) - checks if field protection level is low
+           * isProtectionNormal($fieldKey) - checks if field protection level is normal
+           * isProtectionHigh($fieldKey) - checks if field protection level is high
+
+        
 
 * 2.1.29 - 2.1.31:
     * new: 

@@ -1181,4 +1181,114 @@ class BlueprintTest extends ElegantTest
     {
         $this->markTestIncomplete();
     }
+
+    /**
+     * @covers \Netinteractive\Elegant\Model\Blueprint::isEnum
+     * @group is
+     * @group enum
+     * @group field
+     */
+    public function testIsEnum_False()
+    {
+        $this->markTestIncomplete();
+    }
+
+    /**
+     * @covers \Netinteractive\Elegant\Model\Blueprint::isEnum
+     * @group is
+     * @group enum
+     * @group field
+     */
+    public function testIsEnum_True()
+    {
+        $this->markTestIncomplete();
+    }
+
+    /**
+     * @covers \Netinteractive\Elegant\Model\Blueprint::getEnum
+     * @group get
+     * @group enum
+     */
+    public function testGetEnum()
+    {
+        $this->markTestIncomplete();
+    }
+
+    /**
+     * @covers \Netinteractive\Elegant\Model\Blueprint::getProtectionLvl
+     * @group get
+     * @group field
+     * @group protected
+     */
+    public function testGetProtectionLvl()
+    {
+        $this->markTestIncomplete();
+    }
+
+
+    /**
+     * @covers \Netinteractive\Elegant\Model\Blueprint::isProtectionLow
+     * @group is
+     * @group protected
+     * @group field
+     */
+    public function testIsProtectionLow_False()
+    {
+        $this->markTestIncomplete();
+    }
+
+    /**
+     * @covers \Netinteractive\Elegant\Model\Blueprint::isProtectionLow
+     * @group is
+     * @group protected
+     * @group field
+     */
+    public function testIsProtectionLow_True()
+    {
+        $this->markTestIncomplete();
+    }
+
+    /**
+     * @covers \Netinteractive\Elegant\Model\Blueprint::isProtectionNormal
+     * @group is
+     * @group protected
+     * @group field
+     */
+    public function testIsProtectionNormal_False()
+    {
+        $this->markTestIncomplete();
+    }
+
+    /**
+     * @covers \Netinteractive\Elegant\Model\Blueprint::isProtectionNormal
+     * @group is
+     * @group protected
+     * @group field
+     */
+    public function testIsProtectionNormal_True()
+    {
+        $this->markTestIncomplete();
+    }
+
+    /**
+     * @covers \Netinteractive\Elegant\Model\Blueprint::isProtectionHigh
+     * @group is
+     * @group protected
+     * @group field
+     */
+    public function testIsProtectionHigh_False()
+    {
+        $this->markTestIncomplete();
+    }
+
+    /**
+     * @covers \Netinteractive\Elegant\Model\Blueprint::isProtectionHigh
+     * @group is
+     * @group protected
+     * @group field
+     */
+    public function testIsProtectionHigh_True()
+    {
+        $this->markTestIncomplete();
+    }
 }

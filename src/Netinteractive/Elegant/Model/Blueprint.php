@@ -65,9 +65,23 @@ abstract class Blueprint
     public static $updatedAt = 'updated_at';
     public static $deletedAt = 'deleted_at';
 
+    #STANDARD PROTECTION LEVELS
+    const PROTECTION_LOW_MIN = 51;
+    const PROTECTION_LOW_MAX= 100;
+
+    const PROTECTION_NORMAL_MIN = 11;
+    const PROTECTION_NORMAL_MAX= 50;
+
+    const PROTECTION_HIGH_MIN = 1;
+    const PROTECTION_HIGH_MAX= 10;
+
+    protected static  $PROTECTION_LOW = [self::PROTECTION_LOW_MIN, self::PROTECTION_LOW_MAX];
+    protected static  $PROTECTION_NORMAL = [self::PROTECTION_NORMAL_MIN, self::PROTECTION_NORMAL_MAX];
+    protected static  $PROTECTION_HIGH = [self::PROTECTION_HIGH_MIN, self::PROTECTION_HIGH_MAX];
+
+
 
     #FIELD TYPES
-
     /**
      * field type for ints
      */
@@ -114,6 +128,11 @@ abstract class Blueprint
     const TYPE_IP = 'ip';
 
 
+    /**
+     * field type for enym data
+     */
+    const TYPE_ENUM = 'enum';
+    
     /**
      * field type for email
      */
@@ -506,6 +525,36 @@ abstract class Blueprint
     }
 
     /**
+     * Returns field enum array
+     * @param string $fieldKey
+     * @return array|null
+     */
+    public function getEnum($fieldKey)
+    {
+        $field = $this->getField($fieldKey);
+
+        if ($this->isEnum($fieldKey) && array_key_exists('enum', $field)){
+            return $field['enum'];
+        }
+        
+        return null;
+    }
+
+    /**
+     * Returns field protection level
+     * @param string $key
+     * @return null|int
+     */
+    public function getProtectionLvl($fieldKey)
+    {
+        if ($this->isProtected($fieldKey)){
+            return  (int) $this->fields[$fieldKey]['protected'];
+        }
+
+        return null;
+    }
+
+    /**
      * Aliast for isField
      * @param string $key
      * @return bool
@@ -589,12 +638,65 @@ abstract class Blueprint
     public function isProtected($fieldKey)
     {
         if ($this->hasField($fieldKey) && array_key_exists('protected', $this->fields[$fieldKey])){
-            return  $this->fields[$fieldKey]['protected'];
+            return  (boolean) $this->fields[$fieldKey]['protected'];
         }
 
         return false;
     }
 
+    /**
+     * Checks if level protection level is low
+     * @param string $fieldKey
+     * @return bool|null
+     */
+    public function isProtectionLow($fieldKey)
+    {
+        if ($this->isProtected($fieldKey)){
+            $lvl = $this->getProtectionLvl($fieldKey);
+            if ($lvl >= static::$PROTECTION_LOW && $lvl <= static::$PROTECTION_LOW){
+                return true;
+            }
+            return false;
+        }
+
+        return null;
+    }
+
+    /**
+     * Checks if level protection level is normal
+     * @param string $fieldKey
+     * @return bool|null
+     */
+    public function isProtectionNormal($fieldKey)
+    {
+        if ($this->isProtected($fieldKey)){
+            $lvl = $this->getProtectionLvl($fieldKey);
+            if ($lvl >= static::$PROTECTION_LOW && $lvl <= static::$PROTECTION_NORMAL){
+                return true;
+            }
+            return false;
+        }
+
+        return null;
+    }
+
+    /**
+     * Checks if level protection level is high
+     * @param string $fieldKey
+     * @return bool|null
+     */
+    public function isProtectionHigh($fieldKey)
+    {
+        if ($this->isProtected($fieldKey)){
+            $lvl = $this->getProtectionLvl($fieldKey);
+            if ($lvl >= static::$PROTECTION_LOW && $lvl <= static::$PROTECTION_HIGH){
+                return true;
+            }
+            return false;
+        }
+
+        return null;
+    }
 
     /**
      * Function checks if field is external or not.
@@ -679,6 +781,16 @@ abstract class Blueprint
         return $this->isType($fieldKey, [static::TYPE_EMAIL]);
     }
 
+    /**
+     * Checks if field is enum type
+     * @param string $fieldKey
+     * @return bool
+     */
+    public function isEnum($fieldKey)
+    {
+        return $this->isType($fieldKey, [static::TYPE_ENUM]);
+    }
+    
     /**
      * Checks if field is file type
      * @param string $fieldKey
