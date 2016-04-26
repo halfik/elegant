@@ -653,7 +653,7 @@ abstract class Blueprint
     {
         if ($this->isProtected($fieldKey)){
             $lvl = $this->getProtectionLvl($fieldKey);
-            if ($lvl >= static::$PROTECTION_LOW && $lvl <= static::$PROTECTION_LOW){
+            if ($lvl >= static::$PROTECTION_LOW[0] && $lvl <= static::$PROTECTION_LOW[1]){
                 return true;
             }
             return false;
@@ -671,7 +671,7 @@ abstract class Blueprint
     {
         if ($this->isProtected($fieldKey)){
             $lvl = $this->getProtectionLvl($fieldKey);
-            if ($lvl >= static::$PROTECTION_LOW && $lvl <= static::$PROTECTION_NORMAL){
+            if ($lvl >= static::$PROTECTION_NORMAL[0] && $lvl <= static::$PROTECTION_NORMAL[1]){
                 return true;
             }
             return false;
@@ -689,7 +689,8 @@ abstract class Blueprint
     {
         if ($this->isProtected($fieldKey)){
             $lvl = $this->getProtectionLvl($fieldKey);
-            if ($lvl >= static::$PROTECTION_LOW && $lvl <= static::$PROTECTION_HIGH){
+            
+            if ($lvl >= static::$PROTECTION_HIGH[0] && $lvl <= static::$PROTECTION_HIGH[1]){
                 return true;
             }
             return false;

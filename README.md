@@ -84,7 +84,7 @@ In docs folder you can find more documentation about package.
 ## Changelog
 
 
-* 2.1.32:
+* 2.1.32 - 2.1.33:
     * changed:
         * Netinteractive\Elegant\Model\Blueprint:
             * field protection definition is no longer boolean type. Now its int. It will allow to keep field protected
