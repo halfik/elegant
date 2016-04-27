@@ -80,6 +80,16 @@ abstract class Blueprint
     protected static  $PROTECTION_HIGH = [self::PROTECTION_HIGH_MIN, self::PROTECTION_HIGH_MAX];
 
 
+    const PROTECTION_LOW = 1;
+    const PROTECTION_NORMAL = 2;
+    const PROTECTION_HIGH = 4;
+
+
+    const PROTECT_CREATE = 1;
+    const PROTECT_VIEW = 2;
+    const PROTECT_UPDATE = 4;
+    const PROTECT_DELETE = 8;
+
 
     #FIELD TYPES
     /**
@@ -543,16 +553,35 @@ abstract class Blueprint
     /**
      * Returns field protection level
      * @param string $key
-     * @return null|int
+     * @return array
+     */
+    public function getProtections($fieldKey)
+    {
+        if ($this->isProtected($fieldKey)){
+            return $this->fields[$fieldKey]['protected'];
+        }
+
+        return array();
+    }
+
+
+    /**
+     * Returns protection lvl (bit sum of protections)
+     * @param string $fieldKey
+     * @return int
      */
     public function getProtectionLvl($fieldKey)
     {
+        $protectionLvl = 0;
         if ($this->isProtected($fieldKey)){
-            return  (int) $this->fields[$fieldKey]['protected'];
+            $protectionLvl = array_reduce($this->getProtections($fieldKey), function($a, $b) {
+                return $a | $b;
+            }, 0);
         }
-
-        return null;
+        
+        return $protectionLvl;
     }
+
 
     /**
      * Aliast for isField
@@ -638,65 +667,92 @@ abstract class Blueprint
     public function isProtected($fieldKey)
     {
         if ($this->hasField($fieldKey) && array_key_exists('protected', $this->fields[$fieldKey])){
-            return  (boolean) $this->fields[$fieldKey]['protected'];
+            return  true;
         }
 
         return false;
     }
 
     /**
-     * Checks if level protection level is low
-     * @param string $fieldKey
-     * @return bool|null
+     * @param int $lvl
+     * @param int $value
+     * @return bool
      */
-    public function isProtectionLow($fieldKey)
+    protected function checkProtection($lvl, $value)
     {
-        if ($this->isProtected($fieldKey)){
-            $lvl = $this->getProtectionLvl($fieldKey);
-            if ($lvl >= static::$PROTECTION_LOW[0] && $lvl <= static::$PROTECTION_LOW[1]){
-                return true;
-            }
+        if ( ~ $lvl &  $value){
             return false;
         }
-
-        return null;
+        return true;
     }
 
     /**
-     * Checks if level protection level is normal
+     * Checks if field has view protection
      * @param string $fieldKey
-     * @return bool|null
+     * @return bool
      */
-    public function isProtectionNormal($fieldKey)
+    public function hasViewProtection($fieldKey)
     {
-        if ($this->isProtected($fieldKey)){
-            $lvl = $this->getProtectionLvl($fieldKey);
-            if ($lvl >= static::$PROTECTION_NORMAL[0] && $lvl <= static::$PROTECTION_NORMAL[1]){
-                return true;
-            }
+        if (!$this->isProtected($fieldKey)) {
+            return false;
+        }
+        
+        return $this->checkProtection(
+            $this->getProtectionLvl($fieldKey),
+            static::PROTECT_VIEW
+        );
+    }
+
+
+    /**
+     * Checks if field has create protection
+     * @param string $fieldKey
+     * @return bool
+     */
+    public function hasCreateProtection($fieldKey)
+    {
+        if (!$this->isProtected($fieldKey)) {
             return false;
         }
 
-        return null;
+        return $this->checkProtection(
+            $this->getProtectionLvl($fieldKey),
+            static::PROTECT_CREATE
+        );
     }
 
     /**
-     * Checks if level protection level is high
+     * Checks if field has update protection
      * @param string $fieldKey
-     * @return bool|null
+     * @return bool
      */
-    public function isProtectionHigh($fieldKey)
+    public function hasUpdateProtection($fieldKey)
     {
-        if ($this->isProtected($fieldKey)){
-            $lvl = $this->getProtectionLvl($fieldKey);
-            
-            if ($lvl >= static::$PROTECTION_HIGH[0] && $lvl <= static::$PROTECTION_HIGH[1]){
-                return true;
-            }
+        if (!$this->isProtected($fieldKey)) {
             return false;
         }
 
-        return null;
+        return $this->checkProtection(
+            $this->getProtectionLvl($fieldKey),
+            static::PROTECT_UPDATE
+        );
+    }
+
+    /**
+     * Checks if field has delete protection
+     * @param string $fieldKey
+     * @return bool
+     */
+    public function hasDeleteProtection($fieldKey)
+    {
+        if (!$this->isProtected($fieldKey)) {
+            return false;
+        }
+
+        return $this->checkProtection(
+            $this->getProtectionLvl($fieldKey),
+            static::PROTECT_DELETE
+        );
     }
 
     /**

@@ -84,6 +84,25 @@ In docs folder you can find more documentation about package.
 ## Changelog
 
 
+* 2.1.34:
+   Changed field protection mechanism. Now its based on bitsum. Elegant himself dosn't use this mechanism. It should
+   be used by programmers. In concept protection field means that field value shoudn't be display, set or changed or deleted by user.
+   But it's only an information that can be ignored.
+   
+   Max field protection example:
+        $this->fields['permissions']['protected'] =  [
+                        static::PROTECT_CREATE,
+                        static::PROTECT_VIEW,
+                        static::PROTECT_UPDATE,
+                        static::PROTECT_DELETE
+                    ];
+    *  Netinteractive\Elegant\Model\Blueprint:
+        * hasCreateProtection($fieldKey) - checks if field has create protection
+        * hasViewProtection($fieldKey) - checks if field has view protection
+        * hasUpdateProtection($fieldKey) - checks if field has update protection
+        * hasDeleteProtection($fieldKey) - checks if field has delete protection
+                
+
 * 2.1.32 - 2.1.33:
     * changed:
         * Netinteractive\Elegant\Model\Blueprint:

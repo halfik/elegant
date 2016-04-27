@@ -1215,6 +1215,17 @@ class BlueprintTest extends ElegantTest
     }
 
     /**
+     * @covers \Netinteractive\Elegant\Model\Blueprint::getProtections
+     * @group get
+     * @group field
+     * @group protected
+     */
+    public function testGetProtections()
+    {
+        $this->markTestIncomplete();
+    }
+
+    /**
      * @covers \Netinteractive\Elegant\Model\Blueprint::getProtectionLvl
      * @group get
      * @group field
@@ -1226,68 +1237,92 @@ class BlueprintTest extends ElegantTest
     }
 
 
+
+
     /**
-     * @covers \Netinteractive\Elegant\Model\Blueprint::isProtectionLow
-     * @group is
+     * @covers \Netinteractive\Elegant\Model\Blueprint::hasViewProtection
+     * @group has
      * @group protected
      * @group field
      */
-    public function testIsProtectionLow_False()
+    public function testHasViewProtection_False()
     {
         $this->markTestIncomplete();
     }
 
     /**
-     * @covers \Netinteractive\Elegant\Model\Blueprint::isProtectionLow
-     * @group is
+     * @covers \Netinteractive\Elegant\Model\Blueprint::hasViewProtection
+     * @group has
      * @group protected
      * @group field
      */
-    public function testIsProtectionLow_True()
+    public function testHasViewProtection_True()
     {
         $this->markTestIncomplete();
     }
 
     /**
-     * @covers \Netinteractive\Elegant\Model\Blueprint::isProtectionNormal
-     * @group is
+     * @covers \Netinteractive\Elegant\Model\Blueprint::hasCreateProtection
+     * @group has
      * @group protected
      * @group field
      */
-    public function testIsProtectionNormal_False()
+    public function testHasCreateProtection_False()
     {
         $this->markTestIncomplete();
     }
 
     /**
-     * @covers \Netinteractive\Elegant\Model\Blueprint::isProtectionNormal
-     * @group is
+     * @covers \Netinteractive\Elegant\Model\Blueprint::hasCreateProtection
+     * @group has
      * @group protected
      * @group field
      */
-    public function testIsProtectionNormal_True()
+    public function testHasCreateProtection_True()
     {
         $this->markTestIncomplete();
     }
 
     /**
-     * @covers \Netinteractive\Elegant\Model\Blueprint::isProtectionHigh
-     * @group is
+     * @covers \Netinteractive\Elegant\Model\Blueprint::hasCreateProtection
+     * @group has
      * @group protected
      * @group field
      */
-    public function testIsProtectionHigh_False()
+    public function testHasUpdateProtection_False()
     {
         $this->markTestIncomplete();
     }
 
     /**
-     * @covers \Netinteractive\Elegant\Model\Blueprint::isProtectionHigh
-     * @group is
+     * @covers \Netinteractive\Elegant\Model\Blueprint::hasCreateProtection
+     * @group has
      * @group protected
      * @group field
      */
-    public function testIsProtectionHigh_True()
+    public function testHasUpdateProtection_True()
+    {
+        $this->markTestIncomplete();
+    }
+
+    /**
+     * @covers \Netinteractive\Elegant\Model\Blueprint::hasDeleteProtection
+     * @group has
+     * @group protected
+     * @group field
+     */
+    public function testHasDeleteProtection_False()
+    {
+        $this->markTestIncomplete();
+    }
+
+    /**
+     * @covers \Netinteractive\Elegant\Model\Blueprint::hasDeleteProtection
+     * @group has
+     * @group protected
+     * @group field
+     */
+    public function testHasDeleteProtection_True()
     {
         $this->markTestIncomplete();
     }
