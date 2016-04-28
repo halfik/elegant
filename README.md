@@ -84,6 +84,10 @@ In docs folder you can find more documentation about package.
 ## Changelog
 
 
+* 2.1.35:
+    *  Netinteractive\Elegant\Model\Provider:
+        * findAll() - returns all data from table
+
 * 2.1.34:
    Changed field protection mechanism. Now its based on bitsum. Elegant himself dosn't use this mechanism. It should
    be used by programmers. In concept protection field means that field value shoudn't be display, set or changed or deleted by user.

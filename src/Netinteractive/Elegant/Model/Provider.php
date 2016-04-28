@@ -49,6 +49,16 @@ abstract class Provider
     }
 
     /**
+     * Returns all record.
+     *
+     * @return array $roles
+     */
+    public function findAll()
+    {
+        return $this->getMapper()->get();
+    }
+
+    /**
      * Create a new instance of the record.
      *
      * @return \Netinteractive\Elegant\Model\Record
