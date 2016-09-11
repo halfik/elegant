@@ -460,7 +460,7 @@ class Builder extends BaseBuilder
      * @param  string $alias
      * @return $this
      */
-    public function whereRaw($sql, array $bindings = array(), $boolean = 'and', $alias = null)
+    public function whereRaw($sql, $bindings = array(), $boolean = 'and', $alias = null)
     {
         $type = 'raw';
 
@@ -480,7 +480,8 @@ class Builder extends BaseBuilder
      *
      * @param  string $sql
      * @param  array $bindings
-     * @return \Netinteractive\Elegant\Db\Query\Builder|static
+     * @param  string $alias
+     * @return $this
      */
     public function orWhereRaw($sql, array $bindings = array(), $alias = null)
     {

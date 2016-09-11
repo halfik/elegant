@@ -83,6 +83,9 @@ In docs folder you can find more documentation about package.
 
 ## Changelog
 
+* 2.1.36
+    * fixed: Declaration of Netinteractive\Elegant\Db\Query\Builder::whereRaw()
+    
 * 2.1.35
     * fixed "illuminate/support" dependency so package can work with Laravel 5.3+
 
