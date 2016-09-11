@@ -83,6 +83,8 @@ In docs folder you can find more documentation about package.
 
 ## Changelog
 
+* 2.1.35
+    * fixed "illuminate/support" dependency so package can work with Laravel 5.3+
 
 * 2.1.35:
     *  Netinteractive\Elegant\Model\Provider:
@@ -179,35 +181,3 @@ In docs folder you can find more documentation about package.
         * Netinteractive\Elegant\Model\Record::toArray($displayFilters=false) - now can apply display filters
         * Netinteractive\Elegant\Model\Blueprint::isProtected($key) - checks if field has 'protected' parameter and its true. 
           Protected feature isn't used by Elegant. It should be used by other mechanisms in example: you can use to defined if fields are visible somwhere in app.
-
-* 2.1.16:
-    * fixed: Netinteractive\Elegant\Mapper\DbMapper::search - fixed bug where not mapper record was used to build query.
-    * new: Netinteractive\Elegant\Http\CrudTrait - trait that will provide CRUD for yours controlllers
-
-* 2.1.15:
-    * change: we haved changed jeremeamia/superclosure package to opis/closure. It gave us 4x performance boost when cache:config is not used.
-
-* 2.1.9 - 2.1.14:
-    * fixed: the way how ElegantServiceProvider publishes and merges config file
-
-* 2.1.8: 
-     * fixed: codeception configuration file
-     * new: abstraction layer for business logic \Netinteractive\Elegant\Model\Provider
-
-* 2.1.7 : 
-    * new: new fill filters: emptyToFalse, emptyToZero
-
-* 2.1.6 : 
-    * fixed: bug when db mapper tried to perform update when none of attributes has changed.
-
-* 2.1.5 : 
-    * fixed: db mapper find bug. we tried to created record when we already had one from model query builder.
-
-* 2.1.3 - 2.1.4 : 
-    * fixed: filter bug. there was bug in filter list cleaning code.
-
-* 2.1.0 - 2.1.2 : 
-    * new: hashers added.
-
-* 2.0.0 : 
-    * first stable version. realsed 15.03.2016.
