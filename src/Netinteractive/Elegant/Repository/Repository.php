@@ -1,4 +1,4 @@
-<?php namespace Netinteractive\Elegant\Mapper;
+<?php namespace Netinteractive\Elegant\Repository;
 
 use Illuminate\Database\ConnectionInterface;
 use Netinteractive\Elegant\Exception\PrimaryKeyException;
@@ -13,10 +13,10 @@ use Netinteractive\Elegant\Relation\HasOneOrMany;
 
 
 /**
- * Class DbMapper
- * @package Netinteractive\Elegant\Mapper
+ * Class Repository
+ * @package Netinteractive\Elegant\Repository
  */
-class DbMapper implements MapperInterface
+class Repository implements RepositoryInterface
 {
     /**
      * The database connection instance.

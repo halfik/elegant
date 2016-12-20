@@ -218,8 +218,8 @@ class DbQueryBuilderTest extends ElegantTest
      */
     public function testFrom_Query()
     {
-        $dbMapper = new \Netinteractive\Elegant\Mapper\DbMapper('PatientData');
-        $patientQuery = $dbMapper->getNewQuery()->orderBy('id');
+        $repository = new \Netinteractive\Elegant\Repository\Repository('PatientData');
+        $patientQuery = $repository->getNewQuery()->orderBy('id');
 
         $q = $this->builder->newQuery();
         $q->from($patientQuery);
@@ -237,8 +237,8 @@ class DbQueryBuilderTest extends ElegantTest
      */
     public function testFrom_QueryAlias()
     {
-        $dbMapper = new \Netinteractive\Elegant\Mapper\DbMapper('PatientData');
-        $patientQuery = $dbMapper->getNewQuery()->orderBy('id');
+        $repository = new \Netinteractive\Elegant\Repository\Repository('PatientData');
+        $patientQuery = $repository->getNewQuery()->orderBy('id');
 
         $q = $this->builder->newQuery();
         $q->from($patientQuery, 'test');
@@ -257,8 +257,8 @@ class DbQueryBuilderTest extends ElegantTest
      */
     public function testFrom_QueryAliasBindings()
     {
-        $dbMapper = new \Netinteractive\Elegant\Mapper\DbMapper('PatientData');
-        $patientQuery = $dbMapper->getNewQuery()->where('tu_id', '=', 2)->orWhere('med__id', '=', 1);
+        $repository = new \Netinteractive\Elegant\Repository\Repository('PatientData');
+        $patientQuery = $repository->getNewQuery()->where('tu_id', '=', 2)->orWhere('med__id', '=', 1);
 
         $q = $this->builder->newQuery();
         $q->from($patientQuery, 'test');
@@ -296,8 +296,8 @@ class DbQueryBuilderTest extends ElegantTest
      */
     public function testAddWith()
     {
-        $dbMapper = new \Netinteractive\Elegant\Mapper\DbMapper('PatientData');
-        $patientQuery = $dbMapper->getNewQuery()->where('tu_id', '=', 2)->orWhere('med__id', '=', 1);
+        $repository = new \Netinteractive\Elegant\Repository\Repository('PatientData');
+        $patientQuery = $repository->getNewQuery()->where('tu_id', '=', 2)->orWhere('med__id', '=', 1);
 
         $q = $this->builder->newQuery();
         $q->from('patient');
@@ -1313,8 +1313,8 @@ class DbQueryBuilderTest extends ElegantTest
      */
     public function testPrepareQuery_With()
     {
-        $dbMapper = new \Netinteractive\Elegant\Mapper\DbMapper('PatientData');
-        $patientQuery = $dbMapper->getNewQuery()->where('tu_id', '=', 2)->orWhere('med__id', '=', 1);
+        $repository = new \Netinteractive\Elegant\Repository\Repository('PatientData');
+        $patientQuery = $repository->getNewQuery()->where('tu_id', '=', 2)->orWhere('med__id', '=', 1);
 
         $q = $this->builder->newQuery();
         $q->from('patient');

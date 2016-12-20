@@ -2,6 +2,7 @@
 
 use Illuminate\Support\MessageBag AS MessageBag;
 
+
 /**
  * Class ValidationException
  * @package Netinteractive\Elegant\Exception

@@ -49,8 +49,8 @@ class ElegantServiceProvider extends ServiceProvider
         $this->prepareResources();
         $this->registerHasher();
 
-        \App::bind('ni.elegant.mapper.db', function($app, $params){
-            return new \Netinteractive\Elegant\Mapper\DbMapper($params[0]);
+        \App::bind('ni.elegant.repository', function($app, $params){
+            return new \Netinteractive\Elegant\Repository\Repository($params[0]);
         });
 
         \App::bind('ni.elegant.db.query.builder', function($app, $params){

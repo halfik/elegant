@@ -28,7 +28,7 @@ class HasManyTest  extends ElegantTest
      */
     public function testGet_Call_Query_SetRecord()
     {
-        $dbMapper = new \Netinteractive\Elegant\Mapper\DbMapper('Med');
+        $dbMapper = new \Netinteractive\Elegant\Repository\Repository('Med');
         $medRecord = $dbMapper->find(1);
 
         $dbMapper->setRecordClass('PatientData');
@@ -70,7 +70,7 @@ class HasManyTest  extends ElegantTest
      */
     public function testGet_Call_Query_From()
     {
-        $dbMapper = new \Netinteractive\Elegant\Mapper\DbMapper('Med');
+        $dbMapper = new \Netinteractive\Elegant\Repository\Repository('Med');
         $medRecord = $dbMapper->find(1);
 
         $dbMapper->setRecordClass('PatientData');
@@ -112,7 +112,7 @@ class HasManyTest  extends ElegantTest
      */
     public function testGet_Response()
     {
-        $dbMapper = new \Netinteractive\Elegant\Mapper\DbMapper('Med');
+        $dbMapper = new \Netinteractive\Elegant\Repository\Repository('Med');
         $medRecord = $dbMapper->find(1);
 
         $dbMapper->setRecordClass('PatientData');
@@ -137,7 +137,7 @@ class HasManyTest  extends ElegantTest
      */
     public function testGetResults_Response()
     {
-        $dbMapper = new \Netinteractive\Elegant\Mapper\DbMapper('Med');
+        $dbMapper = new \Netinteractive\Elegant\Repository\Repository('Med');
         $medRecord = $dbMapper->find(1);
 
         $dbMapper->setRecordClass('PatientData');
@@ -161,7 +161,7 @@ class HasManyTest  extends ElegantTest
      */
     public function testInitRelation_Call_Record_SetRelated()
     {
-        $dbMapper = new \Netinteractive\Elegant\Mapper\DbMapper('Med');
+        $dbMapper = new \Netinteractive\Elegant\Repository\Repository('Med');
         $medRecord = $dbMapper->find(1);
 
         $dbMapper->setRecordClass('PatientData');
@@ -194,7 +194,7 @@ class HasManyTest  extends ElegantTest
      */
     public function testInitRelation_Response()
     {
-        $dbMapper = new \Netinteractive\Elegant\Mapper\DbMapper('Med');
+        $dbMapper = new \Netinteractive\Elegant\Repository\Repository('Med');
         $medRecord = $dbMapper->find(1);
 
         $dbMapper->setRecordClass('PatientData');
@@ -221,7 +221,7 @@ class HasManyTest  extends ElegantTest
      */
     public function testMatch_Call_MatchMany()
     {
-        $dbMapper = new \Netinteractive\Elegant\Mapper\DbMapper('Med');
+        $dbMapper = new \Netinteractive\Elegant\Repository\Repository('Med');
         $medRecord = $dbMapper->find(1);
 
         $dbMapper->setRecordClass('PatientData');
@@ -257,7 +257,7 @@ class HasManyTest  extends ElegantTest
      */
     public function testGeneral()
     {
-        $dbMapper = new \Netinteractive\Elegant\Mapper\DbMapper('Med');
+        $dbMapper = new \Netinteractive\Elegant\Repository\Repository('Med');
         $record = $dbMapper->with('patientData')->find(1);
 
 

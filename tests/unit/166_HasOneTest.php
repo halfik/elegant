@@ -29,7 +29,7 @@ class HasOneTest  extends ElegantTest
      */
     public function testGetResults_Response()
     {
-        $dbMapper = new \Netinteractive\Elegant\Mapper\DbMapper('User');
+        $dbMapper = new \Netinteractive\Elegant\Repository\Repository('User');
         $userRecord = $dbMapper->find(1);
 
         $dbMapper->setRecordClass('Patient');
@@ -50,7 +50,7 @@ class HasOneTest  extends ElegantTest
      */
     public function testInitRelation_Call_Record_SetRelated()
     {
-        $dbMapper = new \Netinteractive\Elegant\Mapper\DbMapper('Patient');
+        $dbMapper = new \Netinteractive\Elegant\Repository\Repository('Patient');
         $patientRecord = $dbMapper->find(2);
 
         $dbMapper->setRecordClass('PatientData');
@@ -83,7 +83,7 @@ class HasOneTest  extends ElegantTest
      */
     public function testInitRelation_Response()
     {
-        $dbMapper = new \Netinteractive\Elegant\Mapper\DbMapper('Patient');
+        $dbMapper = new \Netinteractive\Elegant\Repository\Repository('Patient');
         $patientRecord = $dbMapper->find(2);
 
         $dbMapper->setRecordClass('PatientData');
@@ -107,7 +107,7 @@ class HasOneTest  extends ElegantTest
      */
     public function testGeneral()
     {
-        $dbMapper = new \Netinteractive\Elegant\Mapper\DbMapper('User');
+        $dbMapper = new \Netinteractive\Elegant\Repository\Repository('User');
         $record = $dbMapper->with('patient')->find(1);
 
         $this->assertTrue(isset($record->patient));

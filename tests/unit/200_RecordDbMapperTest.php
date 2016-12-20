@@ -17,7 +17,7 @@ class RecordDbMapperTest  extends ElegantTest
             'pesel' => '13292213737',
         )));
 
-        $dbMapper = new \Netinteractive\Elegant\Mapper\DbMapper('Patient');
+        $dbMapper = new \Netinteractive\Elegant\Repository\Repository('Patient');
         $dbMapper->save($record);
 
 
@@ -97,7 +97,7 @@ class RecordDbMapperTest  extends ElegantTest
      */
     public function testHasRelated_True()
     {
-        $dbMapper = new \Netinteractive\Elegant\Mapper\DbMapper('User');
+        $dbMapper = new \Netinteractive\Elegant\Repository\Repository('User');
         $record = $dbMapper->with('patient')->find(1);
 
         $this->assertTrue($record->hasRelated('patient'));
@@ -110,7 +110,7 @@ class RecordDbMapperTest  extends ElegantTest
      */
     public function testHasRelated_False()
     {
-        $dbMapper = new \Netinteractive\Elegant\Mapper\DbMapper('User');
+        $dbMapper = new \Netinteractive\Elegant\Repository\Repository('User');
         $record = $dbMapper->with('patient')->find(1);
 
         $this->assertFalse($record->hasRelated('patientData'));
@@ -123,7 +123,7 @@ class RecordDbMapperTest  extends ElegantTest
      */
     public function testGetRelated()
     {
-        $dbMapper = new \Netinteractive\Elegant\Mapper\DbMapper('User');
+        $dbMapper = new \Netinteractive\Elegant\Repository\Repository('User');
         $record = $dbMapper->with('patient')->find(1);
 
         $result = $record->getRelated('patient');
@@ -140,7 +140,7 @@ class RecordDbMapperTest  extends ElegantTest
      */
     public function testSetRelated()
     {
-        $dbMapper = new \Netinteractive\Elegant\Mapper\DbMapper('User');
+        $dbMapper = new \Netinteractive\Elegant\Repository\Repository('User');
         $record = $dbMapper->with('patient')->find(1);
 
         $dbMapper->setRecordClass('Patient');
@@ -159,7 +159,7 @@ class RecordDbMapperTest  extends ElegantTest
      */
     public function testSetRawRelated()
     {
-        $dbMapper = new \Netinteractive\Elegant\Mapper\DbMapper('User');
+        $dbMapper = new \Netinteractive\Elegant\Repository\Repository('User');
         $record = $dbMapper->with('patient')->find(1);
 
         $dbMapper->setRecordClass('Patient');
@@ -179,7 +179,7 @@ class RecordDbMapperTest  extends ElegantTest
      */
     public function testToArray_Related()
     {
-        $dbMapper = new \Netinteractive\Elegant\Mapper\DbMapper('User');
+        $dbMapper = new \Netinteractive\Elegant\Repository\Repository('User');
         $record = $dbMapper->with('patient')->find(1);
 
         $dbMapper->setRecordClass('Patient');
@@ -198,7 +198,7 @@ class RecordDbMapperTest  extends ElegantTest
      */
     public function testIsset_Related()
     {
-        $dbMapper = new \Netinteractive\Elegant\Mapper\DbMapper('User');
+        $dbMapper = new \Netinteractive\Elegant\Repository\Repository('User');
         $record = $dbMapper->with('patient')->find(1);
 
         $this->assertTrue(isSet($record->patient));
@@ -212,7 +212,7 @@ class RecordDbMapperTest  extends ElegantTest
      */
     public function testUnset_Related()
     {
-        $dbMapper = new \Netinteractive\Elegant\Mapper\DbMapper('User');
+        $dbMapper = new \Netinteractive\Elegant\Repository\Repository('User');
         $record = $dbMapper->with('patient')->find(1);
 
 
@@ -226,7 +226,7 @@ class RecordDbMapperTest  extends ElegantTest
      */
     public function testScopes()
     {
-        $dbMapper = new \Netinteractive\Elegant\Mapper\DbMapper('Netinteractive\Elegant\Tests\Models\MedPersonnel\Record');
+        $dbMapper = new \Netinteractive\Elegant\Repository\Repository('Netinteractive\Elegant\Tests\Models\MedPersonnel\Record');
 
         $res1 = $dbMapper->where("user__id", "=", 5)->med(1)->first();
         $res2 = $dbMapper->med(2)->whereRaw("1=1")->get();
@@ -240,7 +240,7 @@ class RecordDbMapperTest  extends ElegantTest
      */
     public function testCount()
     {
-        $dbMapper = new \Netinteractive\Elegant\Mapper\DbMapper('Netinteractive\Elegant\Tests\Models\MedPersonnel\Record');
+        $dbMapper = new \Netinteractive\Elegant\Repository\Repository('Netinteractive\Elegant\Tests\Models\MedPersonnel\Record');
         $res1 = $dbMapper->where("user__id", "=", 5)->med(1)->count();
 
         $this->assertEquals(1, $res1);

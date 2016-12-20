@@ -6,7 +6,7 @@ Elegant is a domain model package. He is similar to laravels Eloquent and we use
 
 ## Services
 * Netinteractive\Elegant\ElegantServiceProvider - registers in App most important classes:
-     * ni.elegant.mapper.db - class that allows to work with databases.
+     * ni.elegant.repository - class that allows to work with databases.
      * ni.elegant.db.query.builder - database query builder.
      * ni.elegant.model.query.builder - model query builder. Responsible for relations.
      * ni.elegant.model.collection - data collection class

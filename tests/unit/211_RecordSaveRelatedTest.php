@@ -14,7 +14,7 @@ class RecordSaveRelatedTest extends ElegantTest
     public function testHasMany()
     {
         \DB::beginTransaction();
-        $dbMapper = new \Netinteractive\Elegant\Mapper\DbMapper('Med');
+        $dbMapper = new \Netinteractive\Elegant\Repository\Repository('Med');
 
         $med = \App::make('Med',  array(array(
             'name' => 'Med 33',
@@ -54,7 +54,7 @@ class RecordSaveRelatedTest extends ElegantTest
     public function testHasOne()
     {
         \DB::beginTransaction();
-        $dbMapper = new \Netinteractive\Elegant\Mapper\DbMapper('User');
+        $dbMapper = new \Netinteractive\Elegant\Repository\Repository('User');
 
         $user = \App::make('User',  array(array(
             'login' => 'test',
@@ -86,7 +86,7 @@ class RecordSaveRelatedTest extends ElegantTest
     public function testBelongsToMany()
     {
         \DB::beginTransaction();
-        $dbMapper = new \Netinteractive\Elegant\Mapper\DbMapper('User');
+        $dbMapper = new \Netinteractive\Elegant\Repository\Repository('User');
 
         $user = \App::make('User',  array(array(
           'login' => 'test11',
@@ -140,7 +140,7 @@ class RecordSaveRelatedTest extends ElegantTest
         $this->markTestIncomplete("BelongsTo should be saved manualy");
 
         \DB::beginTransaction();
-        $dbMapper = new \Netinteractive\Elegant\Mapper\DbMapper('User');
+        $dbMapper = new \Netinteractive\Elegant\Repository\Repository('User');
 
         $user = \App::make('User',  array(array(
             'login' => 'test11',

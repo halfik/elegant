@@ -36,7 +36,7 @@ class Blueprint extends \Netinteractive\Elegant\Model\Blueprint
                 'searchable' => Searchable::$contains,
                 'rules'=>array(
                     'update'=>'required',
-                    'insert'=>'required|unique:users'
+                    'insert'=>'required|unique:user'
                 )
             ),
             'email'=>array(
@@ -46,7 +46,7 @@ class Blueprint extends \Netinteractive\Elegant\Model\Blueprint
                 'searchable' => Searchable::$contains,
                 'rules'=>array(
                     'update'=>'required|email',
-                    'insert'=>'required|email|unique:users'
+                    'insert'=>'required|email|unique:user'
                 )
             ),
             'password'=>array(

@@ -12,7 +12,7 @@ class PivotTest extends ElegantTest
      */
     public function testConstructor_CallFill()
     {
-        $dbMapper = new \Netinteractive\Elegant\Mapper\DbMapper('Patient');
+        $dbMapper = new \Netinteractive\Elegant\Repository\Repository('Patient');
         $record = $dbMapper->find(1);
 
         $pivot = new Netinteractive\Elegant\Relation\Pivot($record, $record->toArray(), 'patient', true);
@@ -40,7 +40,7 @@ class PivotTest extends ElegantTest
      */
     public function testConstructor_SetExists()
     {
-        $dbMapper = new \Netinteractive\Elegant\Mapper\DbMapper('Patient');
+        $dbMapper = new \Netinteractive\Elegant\Repository\Repository('Patient');
         $record = $dbMapper->find(1);
 
         $pivot = new Netinteractive\Elegant\Relation\Pivot($record, $record->toArray(), 'patient', true);
@@ -67,7 +67,7 @@ class PivotTest extends ElegantTest
      */
     public function testConstructor()
     {
-        $dbMapper = new \Netinteractive\Elegant\Mapper\DbMapper('Patient');
+        $dbMapper = new \Netinteractive\Elegant\Repository\Repository('Patient');
         $record = $dbMapper->find(1);
 
         $pivot = new Netinteractive\Elegant\Relation\Pivot($record, $record->toArray(), 'patient', true);
@@ -85,7 +85,7 @@ class PivotTest extends ElegantTest
      */
     public function testSetPivotKeys()
     {
-        $dbMapper = new \Netinteractive\Elegant\Mapper\DbMapper('Patient');
+        $dbMapper = new \Netinteractive\Elegant\Repository\Repository('Patient');
         $record = $dbMapper->find(1);
 
         $pivot = new Netinteractive\Elegant\Relation\Pivot($record, $record->toArray(), 'patient', true);
@@ -106,7 +106,7 @@ class PivotTest extends ElegantTest
      */
     public function testGetForeignKey()
     {
-        $dbMapper = new \Netinteractive\Elegant\Mapper\DbMapper('Patient');
+        $dbMapper = new \Netinteractive\Elegant\Repository\Repository('Patient');
         $record = $dbMapper->find(1);
 
         $pivot = new Netinteractive\Elegant\Relation\Pivot($record, $record->toArray(), 'patient', true);
@@ -122,7 +122,7 @@ class PivotTest extends ElegantTest
      */
     public function testGetOtherKey()
     {
-        $dbMapper = new \Netinteractive\Elegant\Mapper\DbMapper('Patient');
+        $dbMapper = new \Netinteractive\Elegant\Repository\Repository('Patient');
         $record = $dbMapper->find(1);
 
         $pivot = new Netinteractive\Elegant\Relation\Pivot($record, $record->toArray(), 'patient', true);

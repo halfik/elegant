@@ -1,14 +1,14 @@
-<?php namespace Netinteractive\Elegant\Mapper;
+<?php namespace Netinteractive\Elegant\Repository;
 
 
 use \Netinteractive\Elegant\Model\Record;
 use \Netinteractive\Elegant\Model\Collection;
 
 /**
- * Interface MapperInterface
- * @package Netinteractive\Elegant\Mapper
+ * Interface RepositoryInterfaceInterface
+ * @package Netinteractive\Elegant\Repository
  */
-interface MapperInterface
+interface RepositoryInterface
 {
 
     /**

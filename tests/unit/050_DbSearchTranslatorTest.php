@@ -12,7 +12,7 @@ class DbSearchTranslatorTest extends  ElegantTest
      */
     public function testTranslateTextOne()
     {
-        $dbMapper = new \Netinteractive\Elegant\Mapper\DbMapper('Med');
+        $dbMapper = new \Netinteractive\Elegant\Repository\Repository('Med');
         $dbTranslator = new \Netinteractive\Elegant\Search\Db\Translator();
 
         $func = $dbTranslator->translate('street', 1);
@@ -30,7 +30,7 @@ class DbSearchTranslatorTest extends  ElegantTest
      */
     public function testTranslateTextOneOr()
     {
-        $dbMapper = new \Netinteractive\Elegant\Mapper\DbMapper('Med');
+        $dbMapper = new \Netinteractive\Elegant\Repository\Repository('Med');
         $dbTranslator = new \Netinteractive\Elegant\Search\Db\Translator();
 
         $func = $dbTranslator->translate('street', 1);
@@ -49,7 +49,7 @@ class DbSearchTranslatorTest extends  ElegantTest
      */
     public function testTranslateTextTwo()
     {
-        $dbMapper = new \Netinteractive\Elegant\Mapper\DbMapper('Med');
+        $dbMapper = new \Netinteractive\Elegant\Repository\Repository('Med');
         $dbTranslator = new \Netinteractive\Elegant\Search\Db\Translator();
 
         $func = $dbTranslator->translate('street', 2);
@@ -67,7 +67,7 @@ class DbSearchTranslatorTest extends  ElegantTest
      */
     public function testTranslateTextTwoOr()
     {
-        $dbMapper = new \Netinteractive\Elegant\Mapper\DbMapper('Med');
+        $dbMapper = new \Netinteractive\Elegant\Repository\Repository('Med');
         $dbTranslator = new \Netinteractive\Elegant\Search\Db\Translator();
 
         $func = $dbTranslator->translate('street', 2);
@@ -86,7 +86,7 @@ class DbSearchTranslatorTest extends  ElegantTest
      */
     public function testTranslateTextTree()
     {
-        $dbMapper = new \Netinteractive\Elegant\Mapper\DbMapper('Med');
+        $dbMapper = new \Netinteractive\Elegant\Repository\Repository('Med');
         $dbTranslator = new \Netinteractive\Elegant\Search\Db\Translator();
 
         $func = $dbTranslator->translate('street', 3);
@@ -104,7 +104,7 @@ class DbSearchTranslatorTest extends  ElegantTest
      */
     public function testTranslateTextTreeOr()
     {
-        $dbMapper = new \Netinteractive\Elegant\Mapper\DbMapper('PatientData');
+        $dbMapper = new \Netinteractive\Elegant\Repository\Repository('PatientData');
         $dbTranslator = new \Netinteractive\Elegant\Search\Db\Translator();
 
         $func = $dbTranslator->translate('first_name', 3);
@@ -123,7 +123,7 @@ class DbSearchTranslatorTest extends  ElegantTest
      */
     public function testTranslateStandard()
     {
-        $dbMapper = new \Netinteractive\Elegant\Mapper\DbMapper('Med');
+        $dbMapper = new \Netinteractive\Elegant\Repository\Repository('Med');
         $dbTranslator = new \Netinteractive\Elegant\Search\Db\Translator();
 
         $func = $dbTranslator->translate('id', 4);
@@ -141,7 +141,7 @@ class DbSearchTranslatorTest extends  ElegantTest
      */
     public function testTranslateStandardOr()
     {
-        $dbMapper = new \Netinteractive\Elegant\Mapper\DbMapper('Med');
+        $dbMapper = new \Netinteractive\Elegant\Repository\Repository('Med');
         $dbTranslator = new \Netinteractive\Elegant\Search\Db\Translator();
 
         $func = $dbTranslator->translate('id', 4);
@@ -161,7 +161,7 @@ class DbSearchTranslatorTest extends  ElegantTest
      */
     public function testTranslateStandardArray()
     {
-        $dbMapper = new \Netinteractive\Elegant\Mapper\DbMapper('Med');
+        $dbMapper = new \Netinteractive\Elegant\Repository\Repository('Med');
         $dbTranslator = new \Netinteractive\Elegant\Search\Db\Translator();
 
         $func = $dbTranslator->translate('id', 4);
@@ -180,7 +180,7 @@ class DbSearchTranslatorTest extends  ElegantTest
      */
     public function testTranslateStandardArrayOr()
     {
-        $dbMapper = new \Netinteractive\Elegant\Mapper\DbMapper('PatientData');
+        $dbMapper = new \Netinteractive\Elegant\Repository\Repository('PatientData');
         $dbTranslator = new \Netinteractive\Elegant\Search\Db\Translator();
 
         $func = $dbTranslator->translate('id', 4);

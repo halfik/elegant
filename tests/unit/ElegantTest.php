@@ -1,6 +1,7 @@
 <?php
 use Illuminate\Support\Facades\Artisan;
 
+
 /**
  * Class ElegantTest
  */
@@ -8,24 +9,15 @@ class ElegantTest  extends \PHPUnit_Framework_TestCase
 {
     protected function setUp()
     {
-        App::bind('PatientData', '\Netinteractive\Elegant\Tests\Models\PatientData\Record');
-        App::bind('Patient', '\Netinteractive\Elegant\Tests\Models\Patient\Record');
-        App::bind('User', '\Netinteractive\Elegant\Tests\Models\User\Record');
-        App::bind('Med', '\Netinteractive\Elegant\Tests\Models\Med\Record');
-        App::bind('Tu', '\Netinteractive\Elegant\Tests\Models\Tu\Record');
-        App::bind('MedPersonnel', '\Netinteractive\Elegant\Tests\Models\MedPersonnel\Record');
-        App::bind('MedScienceDegree', '\Netinteractive\Elegant\Tests\Models\MedScienceDegree\Record');
 
+        \App::bind('PatientData', '\Netinteractive\Elegant\Tests\Models\PatientData\Record');
+        \App::bind('Patient', '\Netinteractive\Elegant\Tests\Models\Patient\Record');
+        \App::bind('User', '\Netinteractive\Elegant\Tests\Models\User\Record');
+        \App::bind('Med', '\Netinteractive\Elegant\Tests\Models\Med\Record');
+        \App::bind('Tu', '\Netinteractive\Elegant\Tests\Models\Tu\Record');
+        \App::bind('MedPersonnel', '\Netinteractive\Elegant\Tests\Models\MedPersonnel\Record');
+        \App::bind('MedScienceDegree', '\Netinteractive\Elegant\Tests\Models\MedScienceDegree\Record');
 
-
-        DB::beginTransaction();
-        Artisan::call('db:ni-seed:test-data',
-            array(
-                '--config' => 'packages.netinteractive.elegant.test',
-                '--env' => 'testing'
-            )
-        );
-        DB::commit();
     }
 
 
@@ -35,11 +27,11 @@ class ElegantTest  extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @param string|object $class
+     * @param string $class
      * @param string $method
      * @param array $args
      * @param string $code
-     * @param array $flags
+     * @return mixed
      */
     protected function redefineMethod($class, $method, array $args, $code)
     {

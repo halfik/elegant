@@ -751,7 +751,7 @@ class ModelQueryBuilderTest extends ElegantTest
     {
         DB::beginTransaction();
 
-        $dbMapper = new \Netinteractive\Elegant\Mapper\DbMapper('Med');
+        $dbMapper = new \Netinteractive\Elegant\Repository\Repository('Med');
         $record = $dbMapper->find(1);
 
         $dbMapper->delete( $record );
@@ -768,7 +768,7 @@ class ModelQueryBuilderTest extends ElegantTest
      */
     public function testPaginate()
     {
-        $dbMapper = new \Netinteractive\Elegant\Mapper\DbMapper('User');
+        $dbMapper = new \Netinteractive\Elegant\Repository\Repository('User');
         $results = $dbMapper->paginate(2);
 
 

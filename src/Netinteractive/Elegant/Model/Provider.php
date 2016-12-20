@@ -1,4 +1,5 @@
 <?php namespace Netinteractive\Elegant\Model;
+use Netinteractive\Elegant\Repository\RepositoryInterface;
 
 /**
  * Class Provider
@@ -8,9 +9,9 @@
 abstract class Provider
 {
     /**
-     * @var \Netinteractive\Elegant\Mapper\MapperInterface
+     * @var \Netinteractive\Elegant\Repository\RepositoryInterface
      */
-    protected $mapper;
+    protected $repository;
 
 
     /**
@@ -27,25 +28,25 @@ abstract class Provider
     public function __construct($recordClass)
     {
         $this->recordClass = $recordClass;
-        $this->mapper = \App::make('ni.elegant.mapper.db', array($this->getRecordClass()));
+        $this->repository = \App::make('ni.elegant.repository', array($this->getRecordClass()));
     }
 
     /**
-     * @param \Netinteractive\Elegant\Mapper\MapperInterface $mapper
+     * @param \Netinteractive\Elegant\Repository\RepositoryInterface  $repository
      * @return $this
      */
-    public function setMapper(MapperInterface $mapper)
+    public function setMapper(RepositoryInterface $repository)
     {
-        $this->mapper = $mapper;
+        $this->repository = $repository;
         return $this;
     }
 
     /**
-     * @return mixed|\Netinteractive\Elegant\Mapper\MapperInterface
+     * @return \Netinteractive\Elegant\Repository\RepositoryInterface
      */
-    public function getMapper()
+    public function getRepository()
     {
-        return $this->mapper;
+        return $this->repository;
     }
 
     /**
@@ -55,7 +56,7 @@ abstract class Provider
      */
     public function findAll()
     {
-        return $this->getMapper()->get();
+        return $this->getRepository()->get();
     }
 
     /**
@@ -88,7 +89,7 @@ abstract class Provider
         $record = $this->createRecord();
         $record->fill($credentials);
 
-        $this->getMapper()->save($record);
+        $this->getRepository()->save($record);
 
         return $record;
     }

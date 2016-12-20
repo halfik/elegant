@@ -10,3 +10,6 @@ modules:
         - PhpBrowser:
             url: http://localhost/myapp
         - \Helper\Acceptance
+    config:
+            Laravel5:
+                environment_file: .env.testing

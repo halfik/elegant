@@ -1,24 +1,25 @@
 <?php
+
 namespace Netinteractive\Elegant\Tests\Models\MedPersonnel;
 
 
-use Netinteractive\Elegant\Mapper\DbMapper;
 use Netinteractive\Elegant\Model\Query\Scope AS BaseScope;
+use Netinteractive\Elegant\Repository\Repository;
 
 class Scope extends BaseScope
 {
     /**
-     * @param \Netinteractive\Elegant\Mapper\DbMapper
+     * @param \Netinteractive\Elegant\Repository\Repository
      * @param int $medId
-     * @return \Netinteractive\Elegant\Mapper\DbMapper
+     * @return \Netinteractive\Elegant\Repository\Repository
      */
-    public function scopeMed(DbMapper $mapper, $medId)
+    public function scopeMed(Repository $repository, $medId)
     {
-        $query = $mapper->getQuery();
+        $query = $repository->getQuery();
 
         $query->join('med',  $this->table .'.med__id', '=', 'med.id');
         $query->where('med.id', '=', $medId);
 
-        return $mapper;
+        return $repository;
     }
 }

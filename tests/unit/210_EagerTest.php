@@ -10,7 +10,7 @@ class EagerTest extends ElegantTest
      * @grup HasOne
      */
     public function testEagerHasOne_Get(){
-        $dbMapper = new \Netinteractive\Elegant\Mapper\DbMapper('User');
+        $dbMapper = new \Netinteractive\Elegant\Repository\Repository('User');
         $user = $dbMapper->find(1);
 
         $result = $user->patient()->get();
@@ -28,7 +28,7 @@ class EagerTest extends ElegantTest
      * @group HasOne
      */
     public function testEagerHasOne_First(){
-        $dbMapper = new \Netinteractive\Elegant\Mapper\DbMapper('User');
+        $dbMapper = new \Netinteractive\Elegant\Repository\Repository('User');
         $user = $dbMapper->find(1);
 
         $result = $user->patient()->first();
@@ -44,7 +44,7 @@ class EagerTest extends ElegantTest
      * @grup HasMany
      */
     public function testEagerHasMany_Get(){
-        $dbMapper = new \Netinteractive\Elegant\Mapper\DbMapper('Patient');
+        $dbMapper = new \Netinteractive\Elegant\Repository\Repository('Patient');
         $record = $dbMapper->find(2);
 
         $result = $record->patientData()->get();
@@ -63,7 +63,7 @@ class EagerTest extends ElegantTest
      * @group test
      */
     public function testEagerHasMany_First(){
-        $dbMapper = new \Netinteractive\Elegant\Mapper\DbMapper('Patient');
+        $dbMapper = new \Netinteractive\Elegant\Repository\Repository('Patient');
         $record = $dbMapper->find(1);
 
         $result = $record->patientData()->first();

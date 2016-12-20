@@ -9,7 +9,7 @@ class ModelFilterFillTest extends ElegantTest
      */
     public function testParseApply_IsCallable()
     {
-        $dbMapper = new \Netinteractive\Elegant\Mapper\DbMapper('User');
+        $dbMapper = new \Netinteractive\Elegant\Repository\Repository('User');
         $record = $dbMapper->find(1);
 
         $func = function ($value) {
@@ -28,7 +28,7 @@ class ModelFilterFillTest extends ElegantTest
      */
     public function testParseApply_Defined_NoParams()
     {
-        $dbMapper = new \Netinteractive\Elegant\Mapper\DbMapper('User');
+        $dbMapper = new \Netinteractive\Elegant\Repository\Repository('User');
         $record = $dbMapper->find(1);
         $record->first_name = '';
 
@@ -44,7 +44,7 @@ class ModelFilterFillTest extends ElegantTest
      */
     public function testParseApply_Defined_WithParams()
     {
-        $dbMapper = new \Netinteractive\Elegant\Mapper\DbMapper('User');
+        $dbMapper = new \Netinteractive\Elegant\Repository\Repository('User');
         $record = $dbMapper->find(1);
         $record->first_name = '<b><i>Adam</i></b>';
 

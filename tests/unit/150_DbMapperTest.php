@@ -10,7 +10,7 @@ class DbMapperTest extends ElegantTest
      */
     public function testFind_SimplePk()
     {
-        $dbMapper = new \Netinteractive\Elegant\Mapper\DbMapper('Patient');
+        $dbMapper = new \Netinteractive\Elegant\Repository\Repository('Patient');
         $record = $dbMapper->find(1);
 
         $this->assertEquals(1,$record->id);
@@ -22,7 +22,7 @@ class DbMapperTest extends ElegantTest
      */
     public function testFind_MultiPk()
     {
-        $dbMapper = new \Netinteractive\Elegant\Mapper\DbMapper('PatientData');
+        $dbMapper = new \Netinteractive\Elegant\Repository\Repository('PatientData');
         $record = $dbMapper->find(array('id'=>1, 'patient__id'=>1));
 
         $this->assertEquals(1,$record->id);
@@ -34,9 +34,10 @@ class DbMapperTest extends ElegantTest
      */
     public function testFind_Exists()
     {
-        $dbMapper = new \Netinteractive\Elegant\Mapper\DbMapper('Patient');
+        $dbMapper = new \Netinteractive\Elegant\Repository\Repository('Patient');
         $record = $dbMapper->find(1);
 
+        $this->assertNotEmpty($record);
         $this->assertTrue($record->exists());
     }
 
@@ -49,7 +50,7 @@ class DbMapperTest extends ElegantTest
             'PatientData' => array('zip_code'=>'00-002')
         );
 
-        $dbMapper = new \Netinteractive\Elegant\Mapper\DbMapper('PatientData');
+        $dbMapper = new \Netinteractive\Elegant\Repository\Repository('PatientData');
         $searchResult = $dbMapper->findMany($searchParams);
 
         $this->assertEquals(2, count($searchResult));
@@ -67,7 +68,7 @@ class DbMapperTest extends ElegantTest
             )
         );
 
-        $dbMapper = new \Netinteractive\Elegant\Mapper\DbMapper('PatientData');
+        $dbMapper = new \Netinteractive\Elegant\Repository\Repository('PatientData');
         $searchResult = $dbMapper->findMany($searchParams);
 
         if (count($searchResult) != 1){
@@ -82,7 +83,7 @@ class DbMapperTest extends ElegantTest
     {
         \DB::beginTransaction();
 
-        $dbMapper = new \Netinteractive\Elegant\Mapper\DbMapper('Med');
+        $dbMapper = new \Netinteractive\Elegant\Repository\Repository('Med');
         $record = $dbMapper->find(1);
 
         $dbMapper->delete( $record );
@@ -105,7 +106,7 @@ class DbMapperTest extends ElegantTest
             'PatientData' => array('zip_code'=>'00-002')
         );
 
-        $dbMapper = new \Netinteractive\Elegant\Mapper\DbMapper('PatientData');
+        $dbMapper = new \Netinteractive\Elegant\Repository\Repository('PatientData');
         $searchResult = $dbMapper->findMany($searchParams);
 
         foreach ($searchResult AS $record){
@@ -118,7 +119,7 @@ class DbMapperTest extends ElegantTest
      */
     public function testWith()
     {
-        $dbMapper = new \Netinteractive\Elegant\Mapper\DbMapper('PatientData');
+        $dbMapper = new \Netinteractive\Elegant\Repository\Repository('PatientData');
         $results = $dbMapper->where('patient_data.id', '=', 1)
             ->with('patient.user')
             ->get()
@@ -145,7 +146,7 @@ class DbMapperTest extends ElegantTest
     {
         \DB::beginTransaction();
 
-        $dbMapper = new \Netinteractive\Elegant\Mapper\DbMapper('Med');
+        $dbMapper = new \Netinteractive\Elegant\Repository\Repository('Med');
         $record = $dbMapper->find(1);
 
         $dbMapper->delete( $record );
@@ -163,7 +164,7 @@ class DbMapperTest extends ElegantTest
      */
     public function testDelete_NewRecord()
     {
-        $dbMapper = new \Netinteractive\Elegant\Mapper\DbMapper('PatientData');
+        $dbMapper = new \Netinteractive\Elegant\Repository\Repository('PatientData');
 
         $record = $dbMapper->createRecord(
             array(
@@ -200,7 +201,7 @@ class DbMapperTest extends ElegantTest
     {
         \DB::beginTransaction();
 
-        $dbMapper = new \Netinteractive\Elegant\Mapper\DbMapper('Med');
+        $dbMapper = new \Netinteractive\Elegant\Repository\Repository('Med');
         $dbMapper->where('med.id', '=', 2);
         $record = $dbMapper->find(1);
 
@@ -220,7 +221,7 @@ class DbMapperTest extends ElegantTest
     {
         \DB::beginTransaction();
 
-        $dbMapper = new \Netinteractive\Elegant\Mapper\DbMapper('Med');
+        $dbMapper = new \Netinteractive\Elegant\Repository\Repository('Med');
 
 
         $dbMapper->getNewQuery()->delete( 1 );
@@ -239,7 +240,7 @@ class DbMapperTest extends ElegantTest
     {
         \DB::beginTransaction();
 
-        $dbMapper = new \Netinteractive\Elegant\Mapper\DbMapper('PatientData');
+        $dbMapper = new \Netinteractive\Elegant\Repository\Repository('PatientData');
 
 
         $result = $dbMapper->getNewQuery()->delete( array('tu__id'=>1, 'med__id'=>1) );
@@ -263,7 +264,7 @@ class DbMapperTest extends ElegantTest
     {
         \DB::beginTransaction();
 
-        $dbMapper = new \Netinteractive\Elegant\Mapper\DbMapper('Med');
+        $dbMapper = new \Netinteractive\Elegant\Repository\Repository('Med');
         $record = $dbMapper->find(1);
 
         $dbMapper->delete( $record );
@@ -285,7 +286,7 @@ class DbMapperTest extends ElegantTest
     {
         \DB::beginTransaction();
 
-        $dbMapper = new \Netinteractive\Elegant\Mapper\DbMapper('Med');
+        $dbMapper = new \Netinteractive\Elegant\Repository\Repository('Med');
         $dbMapper->getNewQuery()->delete( 1 );
 
         $record = $dbMapper->find(1);
@@ -301,7 +302,7 @@ class DbMapperTest extends ElegantTest
      */
     public function testSetRecordClass()
     {
-        $dbMapper = new \Netinteractive\Elegant\Mapper\DbMapper('Med');
+        $dbMapper = new \Netinteractive\Elegant\Repository\Repository('Med');
         $dbMapper->setRecordClass('Tu');
         $record = $dbMapper->find(1);
 
@@ -313,7 +314,7 @@ class DbMapperTest extends ElegantTest
      */
     public function testCreateRecord()
     {
-        $dbMapper = new \Netinteractive\Elegant\Mapper\DbMapper('Patient');
+        $dbMapper = new \Netinteractive\Elegant\Repository\Repository('Patient');
         $record = $dbMapper->createRecord(array('user__id'=>1, 'pesel'=>'54062609749'));
 
         $this->assertEquals('Netinteractive\Elegant\Tests\Models\Patient\Record', get_class($record));
@@ -328,7 +329,7 @@ class DbMapperTest extends ElegantTest
      */
     public function testCreateMany()
     {
-        $dbMapper = new \Netinteractive\Elegant\Mapper\DbMapper('Patient');
+        $dbMapper = new \Netinteractive\Elegant\Repository\Repository('Patient');
         $result = $dbMapper->createMany(
             array(
                 array('user__id'=>1, 'pesel'=>'54062609749'),
@@ -347,7 +348,7 @@ class DbMapperTest extends ElegantTest
      */
     public function testFirst()
     {
-        $dbMapper = new \Netinteractive\Elegant\Mapper\DbMapper('Patient');
+        $dbMapper = new \Netinteractive\Elegant\Repository\Repository('Patient');
         $record = $dbMapper->first();
 
         $this->assertEquals('Netinteractive\Elegant\Tests\Models\Patient\Record', get_class($record));
@@ -360,7 +361,7 @@ class DbMapperTest extends ElegantTest
      */
     public function testFirst_OrderBy()
     {
-        $dbMapper = new \Netinteractive\Elegant\Mapper\DbMapper('Patient');
+        $dbMapper = new \Netinteractive\Elegant\Repository\Repository('Patient');
         $record = $dbMapper->orderBy('pesel')->first();
 
         $this->assertEquals('Netinteractive\Elegant\Tests\Models\Patient\Record', get_class($record));
@@ -372,7 +373,7 @@ class DbMapperTest extends ElegantTest
      */
     public function testFirst_Where()
     {
-        $dbMapper = new \Netinteractive\Elegant\Mapper\DbMapper('PatientData');
+        $dbMapper = new \Netinteractive\Elegant\Repository\Repository('PatientData');
         $record = $dbMapper->where('patient__id', '>', 0)->first();
 
         $this->assertEquals('Netinteractive\Elegant\Tests\Models\PatientData\Record', get_class($record));
@@ -382,7 +383,7 @@ class DbMapperTest extends ElegantTest
 
 
     /**
-     * @covers \Netinteractive\Elegant\Mapper\DbMapper::save
+     * @covers \Netinteractive\Elegant\Repository\Repository::save
      * @group db
      * @group mapper
      * @group save
@@ -391,7 +392,7 @@ class DbMapperTest extends ElegantTest
      */
     public function testSave_NewRecord_IsDirty()
     {
-        $dbMapper = new \Netinteractive\Elegant\Mapper\DbMapper('PatientData');
+        $dbMapper = new \Netinteractive\Elegant\Repository\Repository('PatientData');
 
         $record = $dbMapper->createRecord(
             array(
@@ -417,7 +418,7 @@ class DbMapperTest extends ElegantTest
 
 
     /**
-     * @covers \Netinteractive\Elegant\Mapper\DbMapper::save
+     * @covers \Netinteractive\Elegant\Repository\Repository::save
      * @group db
      * @group mapper
      * @group save
@@ -427,7 +428,7 @@ class DbMapperTest extends ElegantTest
     {
         \DB::beginTransaction();
 
-        $dbMapper = new \Netinteractive\Elegant\Mapper\DbMapper('Med');
+        $dbMapper = new \Netinteractive\Elegant\Repository\Repository('Med');
 
         $record = $dbMapper->find(1);
         $record->name = "xxx";
@@ -445,7 +446,7 @@ class DbMapperTest extends ElegantTest
 
 
     /**
-     * @covers \Netinteractive\Elegant\Mapper\DbMapper::save
+     * @covers \Netinteractive\Elegant\Repository\Repository::save
      * @group db
      * @group mapper
      * @group save
@@ -455,7 +456,7 @@ class DbMapperTest extends ElegantTest
     {
         \DB::beginTransaction();
 
-        $dbMapper = new \Netinteractive\Elegant\Mapper\DbMapper('Patient');
+        $dbMapper = new \Netinteractive\Elegant\Repository\Repository('Patient');
 
         $record = $dbMapper->createRecord(array(
             'id' => 3,
@@ -470,7 +471,7 @@ class DbMapperTest extends ElegantTest
         $dateTime = new DateTime();
         $this->assertEquals($dateTime->format('Y-m-d H:i'), $record->created_at->format('Y-m-d H:i'));
         $this->assertEquals($dateTime->format('Y-m-d H:i'), $record->updated_at->format('Y-m-d H:i'));
-        ;
+
         $this->assertEquals($dateTime->format('Y-m-d H:i'), $record2->created_at->format('Y-m-d H:i'));
         $this->assertEquals($dateTime->format('Y-m-d H:i'), $record2->updated_at->format('Y-m-d H:i'));
 
@@ -478,7 +479,7 @@ class DbMapperTest extends ElegantTest
     }
 
     /**
-     * @covers \Netinteractive\Elegant\Mapper\DbMapper::save
+     * @covers \Netinteractive\Elegant\Repository\Repository::save
      * @group db
      * @group mapper
      * @group save
@@ -489,7 +490,7 @@ class DbMapperTest extends ElegantTest
     {
         \DB::beginTransaction();
 
-        $dbMapper = new \Netinteractive\Elegant\Mapper\DbMapper('Med');
+        $dbMapper = new \Netinteractive\Elegant\Repository\Repository('Med');
 
         $record = $dbMapper->find(1);
         $record->name = "My Med 1";
@@ -520,7 +521,7 @@ class DbMapperTest extends ElegantTest
     {
         \DB::beginTransaction();
 
-        $dbMapper = new \Netinteractive\Elegant\Mapper\DbMapper('Patient');
+        $dbMapper = new \Netinteractive\Elegant\Repository\Repository('Patient');
         $records = $dbMapper->saveMany(
             array(
                 array(
@@ -553,7 +554,7 @@ class DbMapperTest extends ElegantTest
     {
         \DB::beginTransaction();
 
-        $dbMapper = new \Netinteractive\Elegant\Mapper\DbMapper('Patient');
+        $dbMapper = new \Netinteractive\Elegant\Repository\Repository('Patient');
         $collection = new \Netinteractive\Elegant\Model\Collection();
 
         $record1 = $dbMapper->createRecord(array(
@@ -589,7 +590,7 @@ class DbMapperTest extends ElegantTest
     {
         \DB::beginTransaction();
 
-        $dbMapper = new \Netinteractive\Elegant\Mapper\DbMapper('User');
+        $dbMapper = new \Netinteractive\Elegant\Repository\Repository('User');
         $result = $dbMapper->search(
             array(
                 'User' => array(
@@ -610,7 +611,7 @@ class DbMapperTest extends ElegantTest
     {
         \DB::beginTransaction();
 
-        $dbMapper = new \Netinteractive\Elegant\Mapper\DbMapper('User');
+        $dbMapper = new \Netinteractive\Elegant\Repository\Repository('User');
         $result = $dbMapper->search(
             array(
                 'User' => array(
@@ -634,7 +635,7 @@ class DbMapperTest extends ElegantTest
     {
         \DB::beginTransaction();
 
-        $dbMapper = new \Netinteractive\Elegant\Mapper\DbMapper('User');
+        $dbMapper = new \Netinteractive\Elegant\Repository\Repository('User');
         $result = $dbMapper->search(
             array(
                 'User' => array(
@@ -657,7 +658,7 @@ class DbMapperTest extends ElegantTest
     {
         \DB::beginTransaction();
 
-        $dbMapper = new \Netinteractive\Elegant\Mapper\DbMapper('User');
+        $dbMapper = new \Netinteractive\Elegant\Repository\Repository('User');
         $result = $dbMapper->search(
             array(
                 'User' => array(
@@ -680,7 +681,7 @@ class DbMapperTest extends ElegantTest
     {
         \DB::beginTransaction();
 
-        $dbMapper = new \Netinteractive\Elegant\Mapper\DbMapper('Patient');
+        $dbMapper = new \Netinteractive\Elegant\Repository\Repository('Patient');
         $dbMapper->where('id', '=', 1);
         $q = $dbMapper->getQuery();
 
@@ -699,9 +700,10 @@ class DbMapperTest extends ElegantTest
     {
         \DB::beginTransaction();
 
-        $dbMapper = new \Netinteractive\Elegant\Mapper\DbMapper('Patient');
+        $dbMapper = new \Netinteractive\Elegant\Repository\Repository('Patient');
 
         $record = $dbMapper->find(1);
+
         $dbMapper->delete($record);
 
         $dbMapper->where('id', '=', 1);
@@ -721,11 +723,12 @@ class DbMapperTest extends ElegantTest
     {
         \DB::beginTransaction();
 
-        $dbMapper = new \Netinteractive\Elegant\Mapper\DbMapper('Patient');
+        $dbMapper = new \Netinteractive\Elegant\Repository\Repository('Patient');
         $dbMapper->where('id', '=', 1);
         $q = $dbMapper->getNewQuery();
 
         $result = $q->get();
+
 
         $this->assertEquals('Netinteractive\Elegant\Model\Query\Builder', get_class($q));
         $this->assertEquals(2, count($result));
@@ -740,9 +743,10 @@ class DbMapperTest extends ElegantTest
     {
         \DB::beginTransaction();
 
-        $dbMapper = new \Netinteractive\Elegant\Mapper\DbMapper('Patient');
+        $dbMapper = new \Netinteractive\Elegant\Repository\Repository('Patient');
 
         $record = $dbMapper->find(1);
+
         $dbMapper->delete($record);
 
         $dbMapper->where('id', '=', 1);

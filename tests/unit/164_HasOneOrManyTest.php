@@ -46,7 +46,7 @@ class HasOneOrManyTest extends ElegantTest
      */
     public function testConstructor_FkNotArray()
     {
-        $dbMapper = new \Netinteractive\Elegant\Mapper\DbMapper('Med');
+        $dbMapper = new \Netinteractive\Elegant\Repository\Repository('Med');
         $medRecord = $dbMapper->find(1);
 
         $dbMapper->setRecordClass('PatientData');
@@ -66,7 +66,7 @@ class HasOneOrManyTest extends ElegantTest
      */
     public function testConstructor_LocalKeyNotArray()
     {
-        $dbMapper = new \Netinteractive\Elegant\Mapper\DbMapper('Med');
+        $dbMapper = new \Netinteractive\Elegant\Repository\Repository('Med');
         $medRecord = $dbMapper->find(1);
 
         $dbMapper->setRecordClass('PatientData');
@@ -87,7 +87,7 @@ class HasOneOrManyTest extends ElegantTest
      */
     public function testConstructor_KeyDiff()
     {
-        $dbMapper = new \Netinteractive\Elegant\Mapper\DbMapper('Med');
+        $dbMapper = new \Netinteractive\Elegant\Repository\Repository('Med');
         $medRecord = $dbMapper->find(1);
 
         $dbMapper->setRecordClass('PatientData');
@@ -104,7 +104,7 @@ class HasOneOrManyTest extends ElegantTest
      */
     public function testGetLocalKey()
     {
-        $dbMapper = new \Netinteractive\Elegant\Mapper\DbMapper('Med');
+        $dbMapper = new \Netinteractive\Elegant\Repository\Repository('Med');
         $medRecord = $dbMapper->find(1);
 
         $dbMapper->setRecordClass('PatientData');
@@ -127,7 +127,7 @@ class HasOneOrManyTest extends ElegantTest
      */
     public function testGetForeignKey()
     {
-        $dbMapper = new \Netinteractive\Elegant\Mapper\DbMapper('Med');
+        $dbMapper = new \Netinteractive\Elegant\Repository\Repository('Med');
         $medRecord = $dbMapper->find(1);
 
         $dbMapper->setRecordClass('PatientData');
@@ -149,7 +149,7 @@ class HasOneOrManyTest extends ElegantTest
      */
     public function testGetPlainForeignKey()
     {
-        $dbMapper = new \Netinteractive\Elegant\Mapper\DbMapper('Med');
+        $dbMapper = new \Netinteractive\Elegant\Repository\Repository('Med');
         $medRecord = $dbMapper->find(1);
 
         $dbMapper->setRecordClass('PatientData');
@@ -170,7 +170,7 @@ class HasOneOrManyTest extends ElegantTest
      */
     public function testGetParentKey()
     {
-        $dbMapper = new \Netinteractive\Elegant\Mapper\DbMapper('Med');
+        $dbMapper = new \Netinteractive\Elegant\Repository\Repository('Med');
         $medRecord = $dbMapper->find(1);
 
         $dbMapper->setRecordClass('PatientData');
@@ -190,7 +190,7 @@ class HasOneOrManyTest extends ElegantTest
      */
     public function testGetQualifiedParentKeyName()
     {
-        $dbMapper = new \Netinteractive\Elegant\Mapper\DbMapper('Med');
+        $dbMapper = new \Netinteractive\Elegant\Repository\Repository('Med');
         $medRecord = $dbMapper->find(1);
 
         $dbMapper->setRecordClass('PatientData');
@@ -232,7 +232,7 @@ class HasOneOrManyTest extends ElegantTest
             ->withAnyParameters()
         ;
 
-        $dbMapper = new \Netinteractive\Elegant\Mapper\DbMapper('Med');
+        $dbMapper = new \Netinteractive\Elegant\Repository\Repository('Med');
         $medRecord = $dbMapper->find(1);
 
         $dbMapper->setRecordClass('PatientData');
@@ -274,7 +274,7 @@ class HasOneOrManyTest extends ElegantTest
             ->withAnyParameters()
         ;
 
-        $dbMapper = new \Netinteractive\Elegant\Mapper\DbMapper('Med');
+        $dbMapper = new \Netinteractive\Elegant\Repository\Repository('Med');
         $medRecord = $dbMapper->find(1);
 
         $dbMapper->setRecordClass('PatientData');
@@ -315,7 +315,7 @@ class HasOneOrManyTest extends ElegantTest
             ->withAnyParameters()
         ;
 
-        $dbMapper = new \Netinteractive\Elegant\Mapper\DbMapper('Med');
+        $dbMapper = new \Netinteractive\Elegant\Repository\Repository('Med');
         $medRecord = $dbMapper->find(1);
 
         $dbMapper->setRecordClass('PatientData');
@@ -339,7 +339,7 @@ class HasOneOrManyTest extends ElegantTest
      */
     public function testBuildDictionary()
     {
-        $dbMapper = new \Netinteractive\Elegant\Mapper\DbMapper('Med');
+        $dbMapper = new \Netinteractive\Elegant\Repository\Repository('Med');
         $medRecord = $dbMapper->find(1);
 
         $dbMapper->setRecordClass('PatientData');
@@ -365,7 +365,7 @@ class HasOneOrManyTest extends ElegantTest
      */
     public function testGetRelationValue_One()
     {
-        $dbMapper = new \Netinteractive\Elegant\Mapper\DbMapper('Med');
+        $dbMapper = new \Netinteractive\Elegant\Repository\Repository('Med');
         $medRecord = $dbMapper->find(1);
 
         $dbMapper->setRecordClass('PatientData');
@@ -389,7 +389,7 @@ class HasOneOrManyTest extends ElegantTest
      */
     public function testGetRelationValue_Many()
     {
-        $dbMapper = new \Netinteractive\Elegant\Mapper\DbMapper('Med');
+        $dbMapper = new \Netinteractive\Elegant\Repository\Repository('Med');
         $medRecord = $dbMapper->find(1);
 
         $dbMapper->setRecordClass('PatientData');
@@ -416,7 +416,7 @@ class HasOneOrManyTest extends ElegantTest
     public function testMatchOneOrMany_Call_BuildDictionary()
     {
 
-        $dbMapper = new \Netinteractive\Elegant\Mapper\DbMapper('Med');
+        $dbMapper = new \Netinteractive\Elegant\Repository\Repository('Med');
         $medRecord = $dbMapper->find(1);
 
         $dbMapper->setRecordClass('PatientData');
@@ -449,7 +449,7 @@ class HasOneOrManyTest extends ElegantTest
      */
     public function testMatchOneOrMany_Call_Record_SetRelated()
     {
-        $dbMapper = new \Netinteractive\Elegant\Mapper\DbMapper('Med');
+        $dbMapper = new \Netinteractive\Elegant\Repository\Repository('Med');
         $medRecord = $dbMapper->find(1);
 
         $dbMapper->setRecordClass('PatientData');
@@ -484,7 +484,7 @@ class HasOneOrManyTest extends ElegantTest
      */
     public function testMatchOneOrMany_Response()
     {
-        $dbMapper = new \Netinteractive\Elegant\Mapper\DbMapper('Med');
+        $dbMapper = new \Netinteractive\Elegant\Repository\Repository('Med');
         $medRecord = $dbMapper->find(1);
 
         $dbMapper->setRecordClass('PatientData');
@@ -514,7 +514,7 @@ class HasOneOrManyTest extends ElegantTest
      */
     public function testMatchOne_Call_MatchOneOrMany()
     {
-        $dbMapper = new \Netinteractive\Elegant\Mapper\DbMapper('Med');
+        $dbMapper = new \Netinteractive\Elegant\Repository\Repository('Med');
         $medRecord = $dbMapper->find(1);
 
         $dbMapper->setRecordClass('PatientData');
@@ -538,7 +538,7 @@ class HasOneOrManyTest extends ElegantTest
      */
     public function testMatchMany_CallMatchOneOrMany()
     {
-        $dbMapper = new \Netinteractive\Elegant\Mapper\DbMapper('Med');
+        $dbMapper = new \Netinteractive\Elegant\Repository\Repository('Med');
         $medRecord = $dbMapper->find(1);
 
         $dbMapper->setRecordClass('PatientData');

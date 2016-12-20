@@ -9,7 +9,7 @@ class BelongsToTest extends ElegantTest
      */
     public function testConstructor_FkNotArray()
     {
-        $dbMapper = new \Netinteractive\Elegant\Mapper\DbMapper('Patient');
+        $dbMapper = new \Netinteractive\Elegant\Repository\Repository('Patient');
         $patientRecord = $dbMapper->find(1);
 
         $dbMapper->setRecordClass('User');
@@ -30,7 +30,7 @@ class BelongsToTest extends ElegantTest
      */
     public function testConstructor_OtherKeyNotArray()
     {
-        $dbMapper = new \Netinteractive\Elegant\Mapper\DbMapper('Patient');
+        $dbMapper = new \Netinteractive\Elegant\Repository\Repository('Patient');
         $patientRecord = $dbMapper->find(1);
 
         $dbMapper->setRecordClass('User');
@@ -52,7 +52,7 @@ class BelongsToTest extends ElegantTest
      */
     public function testConstructor_KeyDiff()
     {
-        $dbMapper = new \Netinteractive\Elegant\Mapper\DbMapper('Patient');
+        $dbMapper = new \Netinteractive\Elegant\Repository\Repository('Patient');
         $patientRecord = $dbMapper->find(1);
 
         $dbMapper->setRecordClass('User');
@@ -71,7 +71,7 @@ class BelongsToTest extends ElegantTest
      */
     public function testGetForeignKey()
     {
-        $dbMapper = new \Netinteractive\Elegant\Mapper\DbMapper('Patient');
+        $dbMapper = new \Netinteractive\Elegant\Repository\Repository('Patient');
         $patientRecord = $dbMapper->find(1);
 
         $dbMapper->setRecordClass('User');
@@ -94,7 +94,7 @@ class BelongsToTest extends ElegantTest
      */
     public function testGetQualifiedForeignKey()
     {
-        $dbMapper = new \Netinteractive\Elegant\Mapper\DbMapper('Patient');
+        $dbMapper = new \Netinteractive\Elegant\Repository\Repository('Patient');
         $patientRecord = $dbMapper->find(1);
 
         $dbMapper->setRecordClass('User');
@@ -118,7 +118,7 @@ class BelongsToTest extends ElegantTest
      */
     public function testAddConstraints_True()
     {
-        $dbMapper = new \Netinteractive\Elegant\Mapper\DbMapper('Patient');
+        $dbMapper = new \Netinteractive\Elegant\Repository\Repository('Patient');
         $patientRecord = $dbMapper->find(1);
 
         $dbMapper->setRecordClass('User');
@@ -140,7 +140,7 @@ class BelongsToTest extends ElegantTest
      */
     public function testAddConstraints_False()
     {
-        $dbMapper = new \Netinteractive\Elegant\Mapper\DbMapper('Patient');
+        $dbMapper = new \Netinteractive\Elegant\Repository\Repository('Patient');
         $patientRecord = $dbMapper->find(1);
 
         $dbMapper->setRecordClass('User');
@@ -165,7 +165,7 @@ class BelongsToTest extends ElegantTest
      */
     public function testGetOtherKey()
     {
-        $dbMapper = new \Netinteractive\Elegant\Mapper\DbMapper('Patient');
+        $dbMapper = new \Netinteractive\Elegant\Repository\Repository('Patient');
         $patientRecord = $dbMapper->find(1);
 
         $dbMapper->setRecordClass('User');
@@ -189,7 +189,7 @@ class BelongsToTest extends ElegantTest
      */
     public function testGetResults_Query_Call_SetRecord()
     {
-        $dbMapper = new \Netinteractive\Elegant\Mapper\DbMapper('Patient');
+        $dbMapper = new \Netinteractive\Elegant\Repository\Repository('Patient');
         $patientRecord = $dbMapper->find(1);
 
         $dbMapper->setRecordClass('User');
@@ -232,7 +232,7 @@ class BelongsToTest extends ElegantTest
      */
     public function testGetResults_Response()
     {
-        $dbMapper = new \Netinteractive\Elegant\Mapper\DbMapper('Patient');
+        $dbMapper = new \Netinteractive\Elegant\Repository\Repository('Patient');
         $patientRecord = $dbMapper->find(1);
 
         $dbMapper->setRecordClass('User');
@@ -254,7 +254,7 @@ class BelongsToTest extends ElegantTest
      */
     public function testGet_SetRecord()
     {
-        $dbMapper = new \Netinteractive\Elegant\Mapper\DbMapper('Patient');
+        $dbMapper = new \Netinteractive\Elegant\Repository\Repository('Patient');
         $patientRecord = $dbMapper->find(1);
 
         $dbMapper->setRecordClass('User');
@@ -294,7 +294,7 @@ class BelongsToTest extends ElegantTest
      */
     public function testGet_Result()
     {
-        $dbMapper = new \Netinteractive\Elegant\Mapper\DbMapper('Patient');
+        $dbMapper = new \Netinteractive\Elegant\Repository\Repository('Patient');
         $patientRecord = $dbMapper->find(1);
 
         $dbMapper->setRecordClass('User');
@@ -322,7 +322,7 @@ class BelongsToTest extends ElegantTest
      */
     public function testGetEagerRecordKeys()
     {
-        $dbMapper = new \Netinteractive\Elegant\Mapper\DbMapper('Patient');
+        $dbMapper = new \Netinteractive\Elegant\Repository\Repository('Patient');
         $patientRecord = $dbMapper->find(2);
 
         $dbMapper->setRecordClass('User');
@@ -352,7 +352,7 @@ class BelongsToTest extends ElegantTest
      */
     public function testAddEagerConstraints_Call_GetEagerRecordKeys()
     {
-        $dbMapper = new \Netinteractive\Elegant\Mapper\DbMapper('Patient');
+        $dbMapper = new \Netinteractive\Elegant\Repository\Repository('Patient');
         $patientRecord = $dbMapper->find(2);
 
         $dbMapper->setRecordClass('User');
@@ -396,7 +396,7 @@ class BelongsToTest extends ElegantTest
      */
     public function testAddEagerConstraints_Call_Query_From()
     {
-        $dbMapper = new \Netinteractive\Elegant\Mapper\DbMapper('Patient');
+        $dbMapper = new \Netinteractive\Elegant\Repository\Repository('Patient');
         $patientRecord = $dbMapper->find(2);
 
         $dbMapper->setRecordClass('User');
@@ -444,7 +444,7 @@ class BelongsToTest extends ElegantTest
      */
     public function testAddEagerConstraints_Query_WhereIn()
     {
-        $dbMapper = new \Netinteractive\Elegant\Mapper\DbMapper('Patient');
+        $dbMapper = new \Netinteractive\Elegant\Repository\Repository('Patient');
         $patientRecord = $dbMapper->find(2);
 
         $dbMapper->setRecordClass('User');
@@ -489,7 +489,7 @@ class BelongsToTest extends ElegantTest
      */
     public function testInitRelation_SetRelated()
     {
-        $dbMapper = new \Netinteractive\Elegant\Mapper\DbMapper('Patient');
+        $dbMapper = new \Netinteractive\Elegant\Repository\Repository('Patient');
         $patientRecord = $dbMapper->find(2);
 
         $dbMapper->setRecordClass('User');
@@ -524,7 +524,7 @@ class BelongsToTest extends ElegantTest
      */
     public function testInitRelation_Response()
     {
-        $dbMapper = new \Netinteractive\Elegant\Mapper\DbMapper('Patient');
+        $dbMapper = new \Netinteractive\Elegant\Repository\Repository('Patient');
         $patientRecord = $dbMapper->find(2);
 
         $dbMapper->setRecordClass('User');
@@ -551,7 +551,7 @@ class BelongsToTest extends ElegantTest
      */
     public function testMatch_Record_SetRelated()
     {
-        $dbMapper = new \Netinteractive\Elegant\Mapper\DbMapper('Patient');
+        $dbMapper = new \Netinteractive\Elegant\Repository\Repository('Patient');
         $patientRecord = $dbMapper->find(2);
 
         $dbMapper->setRecordClass('User');
@@ -589,7 +589,7 @@ class BelongsToTest extends ElegantTest
      */
     public function testMatch_Response()
     {
-        $dbMapper = new \Netinteractive\Elegant\Mapper\DbMapper('Patient');
+        $dbMapper = new \Netinteractive\Elegant\Repository\Repository('Patient');
         $patientRecord = $dbMapper->find(2);
 
         $dbMapper->setRecordClass('User');
@@ -621,7 +621,7 @@ class BelongsToTest extends ElegantTest
      */
     public function testAssociate_Parent_SetAttribute()
     {
-        $dbMapper = new \Netinteractive\Elegant\Mapper\DbMapper('Patient');
+        $dbMapper = new \Netinteractive\Elegant\Repository\Repository('Patient');
         $patientRecord = $dbMapper->find(2);
 
         $dbMapper->setRecordClass('User');
@@ -654,7 +654,7 @@ class BelongsToTest extends ElegantTest
      */
     public function testAssociate_Parent_SetRelated()
     {
-        $dbMapper = new \Netinteractive\Elegant\Mapper\DbMapper('Patient');
+        $dbMapper = new \Netinteractive\Elegant\Repository\Repository('Patient');
         $patientRecord = $dbMapper->find(2);
 
         $dbMapper->setRecordClass('User');
@@ -688,7 +688,7 @@ class BelongsToTest extends ElegantTest
      */
     public function testAssociate_Result()
     {
-        $dbMapper = new \Netinteractive\Elegant\Mapper\DbMapper('Patient');
+        $dbMapper = new \Netinteractive\Elegant\Repository\Repository('Patient');
         $patientRecord = $dbMapper->find(2);
 
         $dbMapper->setRecordClass('User');
@@ -714,7 +714,7 @@ class BelongsToTest extends ElegantTest
      */
     public function testDissociate_Parent_SetAttribute()
     {
-        $dbMapper = new \Netinteractive\Elegant\Mapper\DbMapper('Patient');
+        $dbMapper = new \Netinteractive\Elegant\Repository\Repository('Patient');
         $patientRecord = $dbMapper->find(2);
 
         $dbMapper->setRecordClass('User');
@@ -746,7 +746,7 @@ class BelongsToTest extends ElegantTest
      */
     public function testDissociate_Parent_SetRelated()
     {
-        $dbMapper = new \Netinteractive\Elegant\Mapper\DbMapper('Patient');
+        $dbMapper = new \Netinteractive\Elegant\Repository\Repository('Patient');
         $patientRecord = $dbMapper->find(2);
 
         $dbMapper->setRecordClass('User');
@@ -779,7 +779,7 @@ class BelongsToTest extends ElegantTest
      */
     public function testDissociate_Result()
     {
-        $dbMapper = new \Netinteractive\Elegant\Mapper\DbMapper('Patient');
+        $dbMapper = new \Netinteractive\Elegant\Repository\Repository('Patient');
         $patientRecord = $dbMapper->find(2);
 
         $dbMapper->setRecordClass('User');
@@ -806,7 +806,7 @@ class BelongsToTest extends ElegantTest
      */
     public function testGeneral()
     {
-        $dbMapper = new \Netinteractive\Elegant\Mapper\DbMapper('Patient');
+        $dbMapper = new \Netinteractive\Elegant\Repository\Repository('Patient');
         $record = $dbMapper->with('user')->find(2);
 
 

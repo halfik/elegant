@@ -9,7 +9,7 @@ class BelongsToManyTest extends ElegantTest
      */
     public function testConstructor_FkNotArray()
     {
-        $dbMapper = new \Netinteractive\Elegant\Mapper\DbMapper('Med');
+        $dbMapper = new \Netinteractive\Elegant\Repository\Repository('Med');
         $medRecord = $dbMapper->find(1);
 
         $dbMapper->setRecordClass('Patient');
@@ -30,7 +30,7 @@ class BelongsToManyTest extends ElegantTest
      */
     public function testConstructor_OtherKeyNotArray()
     {
-        $dbMapper = new \Netinteractive\Elegant\Mapper\DbMapper('Med');
+        $dbMapper = new \Netinteractive\Elegant\Repository\Repository('Med');
         $medRecord = $dbMapper->find(1);
 
         $dbMapper->setRecordClass('Patient');
@@ -52,7 +52,7 @@ class BelongsToManyTest extends ElegantTest
      */
     public function testGetTable()
     {
-        $dbMapper = new \Netinteractive\Elegant\Mapper\DbMapper('Med');
+        $dbMapper = new \Netinteractive\Elegant\Repository\Repository('Med');
         $medRecord = $dbMapper->find(1);
 
         $dbMapper->setRecordClass('Patient');
@@ -74,7 +74,7 @@ class BelongsToManyTest extends ElegantTest
      */
     public function testGetForeignKey()
     {
-        $dbMapper = new \Netinteractive\Elegant\Mapper\DbMapper('Med');
+        $dbMapper = new \Netinteractive\Elegant\Repository\Repository('Med');
         $medRecord = $dbMapper->find(1);
 
         $dbMapper->setRecordClass('Patient');
@@ -96,7 +96,7 @@ class BelongsToManyTest extends ElegantTest
      */
     public function testGetQualifiedForeignKey()
     {
-        $dbMapper = new \Netinteractive\Elegant\Mapper\DbMapper('Med');
+        $dbMapper = new \Netinteractive\Elegant\Repository\Repository('Med');
         $medRecord = $dbMapper->find(1);
 
         $dbMapper->setRecordClass('Patient');
@@ -119,7 +119,7 @@ class BelongsToManyTest extends ElegantTest
      */
     public function testGetOtherKey()
     {
-        $dbMapper = new \Netinteractive\Elegant\Mapper\DbMapper('Med');
+        $dbMapper = new \Netinteractive\Elegant\Repository\Repository('Med');
         $medRecord = $dbMapper->find(1);
 
         $dbMapper->setRecordClass('Patient');
@@ -142,7 +142,7 @@ class BelongsToManyTest extends ElegantTest
      */
     public function testGetQualifiedOtherKey()
     {
-        $dbMapper = new \Netinteractive\Elegant\Mapper\DbMapper('Med');
+        $dbMapper = new \Netinteractive\Elegant\Repository\Repository('Med');
         $medRecord = $dbMapper->find(1);
 
         $dbMapper->setRecordClass('Patient');
@@ -168,7 +168,7 @@ class BelongsToManyTest extends ElegantTest
      */
     public function testSetJoin_Call_Query_Join()
     {
-        $dbMapper = new \Netinteractive\Elegant\Mapper\DbMapper('Med');
+        $dbMapper = new \Netinteractive\Elegant\Repository\Repository('Med');
         $medRecord = $dbMapper->find(1);
 
         $dbMapper->setRecordClass('Patient');
@@ -213,7 +213,7 @@ class BelongsToManyTest extends ElegantTest
      */
     public function testSetJoin_Response()
     {
-        $dbMapper = new \Netinteractive\Elegant\Mapper\DbMapper('Med');
+        $dbMapper = new \Netinteractive\Elegant\Repository\Repository('Med');
         $medRecord = $dbMapper->find(1);
 
         $dbMapper->setRecordClass('Patient');
@@ -235,7 +235,7 @@ class BelongsToManyTest extends ElegantTest
      */
     public function testSetJoin_Result()
     {
-        $dbMapper = new \Netinteractive\Elegant\Mapper\DbMapper('Med');
+        $dbMapper = new \Netinteractive\Elegant\Repository\Repository('Med');
         $medRecord = $dbMapper->find(1);
 
         $dbMapper->setRecordClass('Patient');
@@ -257,7 +257,7 @@ class BelongsToManyTest extends ElegantTest
      */
     public function testSetWhere_Result()
     {
-        $dbMapper = new \Netinteractive\Elegant\Mapper\DbMapper('Med');
+        $dbMapper = new \Netinteractive\Elegant\Repository\Repository('Med');
         $medRecord = $dbMapper->find(1);
 
         $dbMapper->setRecordClass('Patient');
@@ -283,7 +283,7 @@ class BelongsToManyTest extends ElegantTest
      */
     public function testAddEagerConstraints_Call_Query_From()
     {
-        $dbMapper = new \Netinteractive\Elegant\Mapper\DbMapper('Med');
+        $dbMapper = new \Netinteractive\Elegant\Repository\Repository('Med');
         $medRecord = $dbMapper->find(1);
 
         $dbMapper->setRecordClass('Patient');
@@ -331,7 +331,7 @@ class BelongsToManyTest extends ElegantTest
      */
     public function testAddEagerConstraints_Query_WhereIn()
     {
-        $dbMapper = new \Netinteractive\Elegant\Mapper\DbMapper('Med');
+        $dbMapper = new \Netinteractive\Elegant\Repository\Repository('Med');
         $medRecord = $dbMapper->find(1);
 
         $dbMapper->setRecordClass('Patient');
@@ -375,7 +375,7 @@ class BelongsToManyTest extends ElegantTest
      */
     public function testAddEagerConstraints_Result()
     {
-        $dbMapper = new \Netinteractive\Elegant\Mapper\DbMapper('Med');
+        $dbMapper = new \Netinteractive\Elegant\Repository\Repository('Med');
         $medRecord = $dbMapper->find(1);
 
         $dbMapper->setRecordClass('Patient');
@@ -404,7 +404,7 @@ class BelongsToManyTest extends ElegantTest
      */
     public function testInitRelation_Record_SetRelated()
     {
-        $dbMapper = new \Netinteractive\Elegant\Mapper\DbMapper('Med');
+        $dbMapper = new \Netinteractive\Elegant\Repository\Repository('Med');
         $medRecord = $dbMapper->find(1);
 
         $dbMapper->setRecordClass('Patient');
@@ -439,7 +439,7 @@ class BelongsToManyTest extends ElegantTest
      */
     public function testInitRelation_Response()
     {
-        $dbMapper = new \Netinteractive\Elegant\Mapper\DbMapper('Med');
+        $dbMapper = new \Netinteractive\Elegant\Repository\Repository('Med');
         $medRecord = $dbMapper->find(1);
 
         $dbMapper->setRecordClass('Patient');
@@ -463,7 +463,7 @@ class BelongsToManyTest extends ElegantTest
      */
     public function testGetAliasedPivotColumns()
     {
-        $dbMapper = new \Netinteractive\Elegant\Mapper\DbMapper('Med');
+        $dbMapper = new \Netinteractive\Elegant\Repository\Repository('Med');
         $medRecord = $dbMapper->find(1);
 
         $dbMapper->setRecordClass('Patient');
@@ -493,7 +493,7 @@ class BelongsToManyTest extends ElegantTest
      */
     public function testGetSelectColumns_Call_GetAliasedPivotColumns()
     {
-        $dbMapper = new \Netinteractive\Elegant\Mapper\DbMapper('Med');
+        $dbMapper = new \Netinteractive\Elegant\Repository\Repository('Med');
         $medRecord = $dbMapper->find(1);
 
         $dbMapper->setRecordClass('Patient');
@@ -529,7 +529,7 @@ class BelongsToManyTest extends ElegantTest
      */
     public function testGetSelectColumns_Response()
     {
-        $dbMapper = new \Netinteractive\Elegant\Mapper\DbMapper('Med');
+        $dbMapper = new \Netinteractive\Elegant\Repository\Repository('Med');
         $medRecord = $dbMapper->find(1);
 
         $dbMapper->setRecordClass('Patient');
@@ -562,7 +562,7 @@ class BelongsToManyTest extends ElegantTest
      */
     public function testCleanPivotAttributes()
     {
-        $dbMapper = new \Netinteractive\Elegant\Mapper\DbMapper('Med');
+        $dbMapper = new \Netinteractive\Elegant\Repository\Repository('Med');
         $medRecord = $dbMapper->find(1);
 
         $dbMapper->setRecordClass('Patient');
@@ -592,7 +592,7 @@ class BelongsToManyTest extends ElegantTest
      */
     public function testCreateNewPivot_Response()
     {
-        $dbMapper = new \Netinteractive\Elegant\Mapper\DbMapper('Med');
+        $dbMapper = new \Netinteractive\Elegant\Repository\Repository('Med');
         $medRecord = $dbMapper->find(1);
 
         $dbMapper->setRecordClass('Patient');
@@ -624,7 +624,7 @@ class BelongsToManyTest extends ElegantTest
      */
     public function testNewExistingPivot_Call_CreateNewPivot()
     {
-        $dbMapper = new \Netinteractive\Elegant\Mapper\DbMapper('Med');
+        $dbMapper = new \Netinteractive\Elegant\Repository\Repository('Med');
         $medRecord = $dbMapper->find(1);
 
         $dbMapper->setRecordClass('Patient');
@@ -649,7 +649,7 @@ class BelongsToManyTest extends ElegantTest
      */
     public function testHydratePivotRelation_Call_CleanPivotAttributes()
     {
-        $dbMapper = new \Netinteractive\Elegant\Mapper\DbMapper('Med');
+        $dbMapper = new \Netinteractive\Elegant\Repository\Repository('Med');
         $medRecord = $dbMapper->find(1);
 
         $dbMapper->setRecordClass('Patient');
@@ -694,7 +694,7 @@ class BelongsToManyTest extends ElegantTest
      */
     public function testHydratePivotRelation_Call_NewExistingPivot()
     {
-        $dbMapper = new \Netinteractive\Elegant\Mapper\DbMapper('Med');
+        $dbMapper = new \Netinteractive\Elegant\Repository\Repository('Med');
         $medRecord = $dbMapper->find(1);
 
         $dbMapper->setRecordClass('Patient');
@@ -735,7 +735,7 @@ class BelongsToManyTest extends ElegantTest
      */
     public function testHydratePivotRelation_Record_Call_SetRelated()
     {
-        $dbMapper = new \Netinteractive\Elegant\Mapper\DbMapper('Med');
+        $dbMapper = new \Netinteractive\Elegant\Repository\Repository('Med');
         $medRecord = $dbMapper->find(1);
 
         $dbMapper->setRecordClass('Patient');
@@ -773,7 +773,7 @@ class BelongsToManyTest extends ElegantTest
      */
     public function testGet_Call_Query_SetRecord()
     {
-        $dbMapper = new \Netinteractive\Elegant\Mapper\DbMapper('Med');
+        $dbMapper = new \Netinteractive\Elegant\Repository\Repository('Med');
         $medRecord = $dbMapper->find(1);
 
         $dbMapper->setRecordClass('Patient');
@@ -815,7 +815,7 @@ class BelongsToManyTest extends ElegantTest
      */
     public function testGet_Call_Query_AddSelect()
     {
-        $dbMapper = new \Netinteractive\Elegant\Mapper\DbMapper('Med');
+        $dbMapper = new \Netinteractive\Elegant\Repository\Repository('Med');
         $medRecord = $dbMapper->find(1);
 
         $dbMapper->setRecordClass('Patient');
@@ -852,7 +852,7 @@ class BelongsToManyTest extends ElegantTest
      */
     public function testGet_Call_Query_EagerLoadRelations()
     {
-        $dbMapper = new \Netinteractive\Elegant\Mapper\DbMapper('Med');
+        $dbMapper = new \Netinteractive\Elegant\Repository\Repository('Med');
         $medRecord = $dbMapper->find(1);
 
         $dbMapper->setRecordClass('Patient');
@@ -887,7 +887,7 @@ class BelongsToManyTest extends ElegantTest
      */
     public function testGet_Response()
     {
-        $dbMapper = new \Netinteractive\Elegant\Mapper\DbMapper('Med');
+        $dbMapper = new \Netinteractive\Elegant\Repository\Repository('Med');
         $medRecord = $dbMapper->find(1);
 
         $dbMapper->setRecordClass('Patient');
@@ -914,7 +914,7 @@ class BelongsToManyTest extends ElegantTest
      */
     public function testGetResults_CallGet()
     {
-        $dbMapper = new \Netinteractive\Elegant\Mapper\DbMapper('Med');
+        $dbMapper = new \Netinteractive\Elegant\Repository\Repository('Med');
         $medRecord = $dbMapper->find(1);
 
         $dbMapper->setRecordClass('Patient');
@@ -944,7 +944,7 @@ class BelongsToManyTest extends ElegantTest
      */
     public function testBuildDictionary_Response()
     {
-        $dbMapper = new \Netinteractive\Elegant\Mapper\DbMapper('Med');
+        $dbMapper = new \Netinteractive\Elegant\Repository\Repository('Med');
         $medRecord = $dbMapper->find(1);
 
         $dbMapper->setRecordClass('Patient');
@@ -973,7 +973,7 @@ class BelongsToManyTest extends ElegantTest
      */
     public function testMatch_Record_Call_SetRelated()
     {
-        $dbMapper = new \Netinteractive\Elegant\Mapper\DbMapper('Med');
+        $dbMapper = new \Netinteractive\Elegant\Repository\Repository('Med');
         $medRecord = $dbMapper->find(1);
 
         $dbMapper->setRecordClass('Patient');
@@ -1014,7 +1014,7 @@ class BelongsToManyTest extends ElegantTest
      */
     public function testMatch_Response()
     {
-        $dbMapper = new \Netinteractive\Elegant\Mapper\DbMapper('Med');
+        $dbMapper = new \Netinteractive\Elegant\Repository\Repository('Med');
         $medRecord = $dbMapper->find(1);
 
         $dbMapper->setRecordClass('Patient');
@@ -1063,7 +1063,7 @@ class BelongsToManyTest extends ElegantTest
      */
     public function testGeneral()
     {
-        $dbMapper = new \Netinteractive\Elegant\Mapper\DbMapper('Med');
+        $dbMapper = new \Netinteractive\Elegant\Repository\Repository('Med');
         $record = $dbMapper->with('patients')->find(1);
 
         $this->assertTrue(isset($record->patients));
