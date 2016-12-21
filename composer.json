@@ -20,7 +20,7 @@
     ],
     "require": {
         "php": ">=5.4.0",
-        "illuminate/support": ">=5.2.0",
+        "illuminate/support": ">=5.0.0",
         "opis/closure": ">=1.3.0",
         "netinteractive/seed": ">=1.0.0",
         "netinteractive/http": ">=1.0.0"
