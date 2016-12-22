@@ -50,6 +50,7 @@ class ElegantServiceProvider extends ServiceProvider
         \App::bind('ni.elegant.repository', function($app, $params){
             return new \Netinteractive\Elegant\Repository\Repository($params[0]);
         });
+        $db = \App::make('db');
 
         \App::bind('ni.elegant.db.query.builder', function($app, $params){
             $connection = \App::make('db')->connection(\Config::get('database.default'));

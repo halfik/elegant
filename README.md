@@ -1,7 +1,18 @@
 Netinteractive\Elegant
 ======================
 
-Elegant is a domain model package. He is similar to laravels Eloquent and we used a lot of Eloquent code to build this package.
+Elegant is a package that provides data mapper architecture model. 
+He is similar to laravel's Eloquent and we used a lot of Eloquent code to build this package.
+
+##Start
+First you have to replace some laravel service providers:
+* Illuminate\Database\DatabaseServiceProvider   ->  Netinteractive\Elegant\DatabaseServiceProvider
+* Illuminate\Database\MigrationServiceProvider  ->  Netinteractive\Elegant\MigrationServiceProvider
+* Illuminate\Database\SeedServiceProvider'      ->  Netinteractive\Elegant\SeedServiceProvider
+
+Also some providers won't work after this chances (wil be fixed) so you have to remove them:
+* Illuminate\Queue\QueueServiceProvider
+* Illuminate\Notifications\NotificationServiceProvider
 
 
 ## Services

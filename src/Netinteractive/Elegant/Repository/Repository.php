@@ -2,7 +2,7 @@
 
 namespace Netinteractive\Elegant\Repository;
 
-use Illuminate\Database\ConnectionInterface;
+use Netinteractive\Elegant\Db\ConnectionInterface;
 use Netinteractive\Elegant\Exception\PrimaryKeyException;
 use Netinteractive\Elegant\Model\Collection;
 
@@ -23,7 +23,7 @@ class Repository implements RepositoryInterface
     /**
      * The database connection instance.
      *
-     * @var \Illuminate\Database\Connection
+     * @var \Netinteractive\Elegant\Db\Connection
      */
     protected $connection;
 
@@ -42,7 +42,7 @@ class Repository implements RepositoryInterface
      * Create a new db mapper
      *
      * @param string $recordClass
-     * @param \Illuminate\Database\ConnectionInterface $connection
+     * @param \Netinteractive\Elegant\Db\ConnectionInterface $connection
      * @return void
      */
     public function __construct($recordClass, ConnectionInterface $connection=null)

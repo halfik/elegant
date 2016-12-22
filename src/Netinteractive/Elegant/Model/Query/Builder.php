@@ -1,15 +1,17 @@
 <?php namespace Netinteractive\Elegant\Model\Query;
 
 
-use Netinteractive\Elegant\Db\Query\Builder AS QueryBuilder;
 use Closure;
 use Netinteractive\Elegant\Model\Collection;
 use Netinteractive\Elegant\Model\Record;
 use Netinteractive\Elegant\Relation\Relation;
-use Illuminate\Database\ConnectionInterface AS ConnectionInterface;
-use Illuminate\Database\Query\Grammars\Grammar AS Grammar;
-use Illuminate\Database\Query\Processors\Processor AS Processor;
-use Illuminate\Database\Query\Builder AS BaseBuilder;
+
+
+use Netinteractive\Elegant\Db\Query\Builder AS QueryBuilder;
+use Netinteractive\Elegant\Db\ConnectionInterface AS ConnectionInterface;
+use Netinteractive\Elegant\Db\Query\Grammars\Grammar AS Grammar;
+use Netinteractive\Elegant\Db\Query\Processors\Processor AS Processor;
+
 
 
 /**
@@ -43,9 +45,9 @@ class Builder extends QueryBuilder
     /**
     * Create a new query builder instance.
     *
-    * @param  \Illuminate\Database\ConnectionInterface $connection
-    * @param  \Illuminate\Database\Query\Grammars\Grammar $grammar
-    * @param  \Illuminate\Database\Query\Processors\Processor $processor
+    * @param  \Netinteractive\Elegant\Db\ConnectionInterface $connection
+    * @param  \Netinteractive\Elegant\Db\Query\Grammars\Grammar $grammar
+    * @param  \Netinteractive\Elegant\Db\Query\Processors\Processor $processor
     */
     public function __construct(ConnectionInterface $connection = null, Grammar $grammar = null, Processor $processor = null)
     {
