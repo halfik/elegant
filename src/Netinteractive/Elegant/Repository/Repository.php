@@ -1,4 +1,6 @@
-<?php namespace Netinteractive\Elegant\Repository;
+<?php
+
+namespace Netinteractive\Elegant\Repository;
 
 use Illuminate\Database\ConnectionInterface;
 use Netinteractive\Elegant\Exception\PrimaryKeyException;

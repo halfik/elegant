@@ -1,11 +1,9 @@
-<?php namespace Netinteractive\Elegant;
+<?php
+
+namespace Netinteractive\Elegant;
 
 use Illuminate\Support\ServiceProvider;
-use Illuminate\Foundation\AliasLoader;
-use Netinteractive\Elegant\Hashing\BcryptHasher;
-use Netinteractive\Elegant\Hashing\NativeHasher;
-use Netinteractive\Elegant\Hashing\Sha256Hasher;
-use Netinteractive\Elegant\Hashing\WhirlpoolHasher;
+
 
 /**
  * Class ElegantServiceProvider

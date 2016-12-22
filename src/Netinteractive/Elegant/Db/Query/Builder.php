@@ -2,46 +2,50 @@
 
 namespace Netinteractive\Elegant\Db\Query;
 
-use Closure;
-use Illuminate\Database\Query\Expression;
-use RuntimeException;
-use BadMethodCallException;
-use Illuminate\Support\Arr;
-use Illuminate\Support\Str;
-use InvalidArgumentException;
-use Illuminate\Support\Collection;
-use Illuminate\Pagination\Paginator;
-use Illuminate\Support\Traits\Macroable;
-use Illuminate\Contracts\Support\Arrayable;
-use Illuminate\Database\ConnectionInterface;
-use Illuminate\Database\Query\Grammars\Grammar;
-use Illuminate\Pagination\LengthAwarePaginator;
-use Illuminate\Database\Query\Processors\Processor;
+use  Closure;
+
+use  RuntimeException;
+use  InvalidArgumentException;
+use  BadMethodCallException;
+
+use  Illuminate\Support\Arr;
+use  Illuminate\Support\Str;
+use  Illuminate\Support\Collection;
+use  Illuminate\Pagination\Paginator;
+use  Illuminate\Pagination\LengthAwarePaginator;
+use  Illuminate\Contracts\Support\Arrayable;
+use  Illuminate\Pagination\Paginator;
+use  Illuminate\Pagination\LengthAwarePaginator;
+
+use  Netinteractive\Elegant\Db\Query\Expression;
+use  Netinteractive\Elegant\Db\ConnectionInterface;
+use  Netinteractive\Elegant\Db\Query\Grammars\Grammar;
+use  Netinteractive\Elegant\Db\Query\Processors\Processor;
 
 /**
  * Class Builder
  * @package Netinteractive\Elegant\Db\Query
  */
-class Builder
+class Builder implements BuilderInterface
 {
     /**
      * The database connection instance.
      *
-     * @var \Illuminate\Database\Connection
+     * @var \Netinteractive\Elegant\Db\Connection
      */
     protected $connection;
 
     /**
      * The database query grammar instance.
      *
-     * @var \Illuminate\Database\Query\Grammars\Grammar
+     * @var \Netinteractive\Elegant\Db\Query\Grammars\Grammar
      */
     protected $grammar;
 
     /**
      * The database query post processor instance.
      *
-     * @var \Illuminate\Database\Query\Processors\Processor
+     * @var \Netinteractive\Elegant\Db\Query\Processors\Processor
      */
     protected $processor;
 
@@ -209,9 +213,9 @@ class Builder
     /**
      * Create a new query builder instance.
      *
-     * @param  \Illuminate\Database\ConnectionInterface  $connection
-     * @param  \Illuminate\Database\Query\Grammars\Grammar  $grammar
-     * @param  \Illuminate\Database\Query\Processors\Processor  $processor
+     * @param  \Netinteractive\Elegant\Db\ConnectionInterface  $connection
+     * @param  \Netinteractive\Elegant\Db\Query\Grammars\Grammar  $grammar
+     * @param  \Netinteractive\Elegant\Db\Query\Processors\Processor  $processor
      * @return void
      */
     public function __construct(ConnectionInterface $connection,
@@ -241,7 +245,7 @@ class Builder
      *
      * @param  string  $expression
      * @param  array   $bindings
-     * @return \Illuminate\Database\Query\Builder|static
+     * @return \Netinteractive\Elegant\Db\Query\Builder|static
      */
     public function selectRaw($expression, array $bindings = [])
     {
@@ -257,9 +261,9 @@ class Builder
     /**
      * Add a subselect expression to the query.
      *
-     * @param  \Closure|\Illuminate\Database\Query\Builder|string $query
+     * @param  \Closure|\Netinteractive\Elegant\Db\Query\Builder|string $query
      * @param  string  $as
-     * @return \Illuminate\Database\Query\Builder|static
+     * @return \Netinteractive\Elegant\Db\Query\Builder|static
      *
      * @throws \InvalidArgumentException
      */
@@ -410,7 +414,7 @@ class Builder
      * @param  string  $operator
      * @param  string  $two
      * @param  string  $type
-     * @return \Illuminate\Database\Query\Builder|static
+     * @return \Netinteractive\Elegant\Db\Query\Builder|static
      */
     public function joinWhere($table, $one, $operator, $two, $type = 'inner')
     {
@@ -424,7 +428,7 @@ class Builder
      * @param  string  $first
      * @param  string  $operator
      * @param  string  $second
-     * @return \Illuminate\Database\Query\Builder|static
+     * @return \Netinteractive\Elegant\Db\Query\Builder|static
      */
     public function leftJoin($table, $first, $operator = null, $second = null)
     {
@@ -438,7 +442,7 @@ class Builder
      * @param  string  $one
      * @param  string  $operator
      * @param  string  $two
-     * @return \Illuminate\Database\Query\Builder|static
+     * @return \Netinteractive\Elegant\Db\Query\Builder|static
      */
     public function leftJoinWhere($table, $one, $operator, $two)
     {
@@ -452,7 +456,7 @@ class Builder
      * @param  string  $first
      * @param  string  $operator
      * @param  string  $second
-     * @return \Illuminate\Database\Query\Builder|static
+     * @return \Netinteractive\Elegant\Db\Query\Builder|static
      */
     public function rightJoin($table, $first, $operator = null, $second = null)
     {
@@ -466,7 +470,7 @@ class Builder
      * @param  string  $one
      * @param  string  $operator
      * @param  string  $two
-     * @return \Illuminate\Database\Query\Builder|static
+     * @return \Netinteractive\Elegant\Db\Query\Builder|static
      */
     public function rightJoinWhere($table, $one, $operator, $two)
     {
@@ -480,7 +484,7 @@ class Builder
      * @param  string  $first
      * @param  string  $operator
      * @param  string  $second
-     * @return \Illuminate\Database\Query\Builder|static
+     * @return \Netinteractive\Elegant\Db\Query\Builder|static
      */
     public function crossJoin($table, $first = null, $operator = null, $second = null)
     {
@@ -499,7 +503,7 @@ class Builder
      * @param  bool  $value
      * @param  \Closure  $callback
      * @param  \Closure  $default
-     * @return \Illuminate\Database\Query\Builder
+     * @return \Netinteractive\Elegant\Db\Query\Builder
      */
     public function when($value, $callback, $default = null)
     {
@@ -1035,7 +1039,7 @@ class Builder
 
         $this->removeDoubleJoins();
 
-        return $comments . $cte . $this->grammar->compileSelect($this);
+        return $comments . $cte . $this->grammar->compileSelect(($this);
     }
 
     /**
@@ -1063,7 +1067,7 @@ class Builder
 
     /**
      * Set the database connection instance.
-     * @param \Illuminate\Database\ConnectionInterface $connection
+     * @param \Netinteractive\Elegant\Db\ConnectionInterface $connection
      * @return $this
      */
     public function setConnection(ConnectionInterface $connection)
@@ -1078,7 +1082,7 @@ class Builder
     /**
      * Set the database query processor instance.
      *
-     * @param \Illuminate\Database\Query\Processors\Processor $processor
+     * @param \Netinteractive\Elegant\Db\Query\Processors\Processor $processor
      */
     public function setProcessor(Processor $processor)
     {
@@ -1089,7 +1093,7 @@ class Builder
     /**
      * Set the query grammar instance.
      *
-     * @param \Illuminate\Database\Grammar $grammar
+     * @param \Netinteractive\Elegant\Db\Grammar $grammar
      * @return $this
      */
     public function setGrammar(Grammar $grammar)
@@ -1150,7 +1154,7 @@ class Builder
      * @param  string|null  $operator
      * @param  string|null  $second
      * @param  string|null  $boolean
-     * @return \Illuminate\Database\Query\Builder|static
+     * @return \Netinteractive\Elegant\Db\Query\Builder|static
      */
     public function whereColumn($first, $operator = null, $second = null, $boolean = 'and')
     {
@@ -1176,7 +1180,7 @@ class Builder
      * @param  string|array  $first
      * @param  string|null  $operator
      * @param  string|null  $second
-     * @return \Illuminate\Database\Query\Builder|static
+     * @return \Netinteractive\Elegant\Db\Query\Builder|static
      */
     public function orWhereColumn($first, $operator = null, $second = null)
     {
@@ -1209,7 +1213,7 @@ class Builder
     /**
      * Create a new query instance for nested where condition.
      *
-     * @return \Illuminate\Database\Query\Builder
+     * @return \Netinteractive\Elegant\Db\Query\Builder
      */
     public function forNestedWhere()
     {
@@ -1280,7 +1284,7 @@ class Builder
     /**
      * Add an exists clause to the query.
      *
-     * @param  \Illuminate\Database\Query\Builder $query
+     * @param  \Netinteractive\Elegant\Db\Query\Builder $query
      * @param  string  $boolean
      * @param  bool  $not
      * @return $this
@@ -1301,7 +1305,7 @@ class Builder
      * Add an external sub-select to the query.
      *
      * @param  string   $column
-     * @param  \Illuminate\Database\Query\Builder|static  $query
+     * @param  \Netinteractive\Elegant\Db\Query\Builder|static  $query
      * @param  string   $boolean
      * @param  bool     $not
      * @return $this
@@ -1326,7 +1330,7 @@ class Builder
      * @param  string  $operator
      * @param  mixed  $value
      * @param  string  $boolean
-     * @return \Illuminate\Database\Query\Builder|static
+     * @return \Netinteractive\Elegant\Db\Query\Builder|static
      */
     public function whereDate($column, $operator, $value = null, $boolean = 'and')
     {
@@ -1343,7 +1347,7 @@ class Builder
      * @param  string  $column
      * @param  string  $operator
      * @param  string  $value
-     * @return \Illuminate\Database\Query\Builder|static
+     * @return \Netinteractive\Elegant\Db\Query\Builder|static
      */
     public function orWhereDate($column, $operator, $value)
     {
@@ -1357,7 +1361,7 @@ class Builder
      * @param  string   $operator
      * @param  int   $value
      * @param  string   $boolean
-     * @return \Illuminate\Database\Query\Builder|static
+     * @return \Netinteractive\Elegant\Db\Query\Builder|static
      */
     public function whereTime($column, $operator, $value, $boolean = 'and')
     {
@@ -1370,7 +1374,7 @@ class Builder
      * @param  string  $column
      * @param  string   $operator
      * @param  int   $value
-     * @return \Illuminate\Database\Query\Builder|static
+     * @return \Netinteractive\Elegant\Db\Query\Builder|static
      */
     public function orWhereTime($column, $operator, $value)
     {
@@ -1384,7 +1388,7 @@ class Builder
      * @param  string  $operator
      * @param  mixed  $value
      * @param  string  $boolean
-     * @return \Illuminate\Database\Query\Builder|static
+     * @return \Netinteractive\Elegant\Db\Query\Builder|static
      */
     public function whereDay($column, $operator, $value = null, $boolean = 'and')
     {
@@ -1402,7 +1406,7 @@ class Builder
      * @param  string  $operator
      * @param  mixed  $value
      * @param  string  $boolean
-     * @return \Illuminate\Database\Query\Builder|static
+     * @return \Netinteractive\Elegant\Db\Query\Builder|static
      */
     public function whereMonth($column, $operator, $value = null, $boolean = 'and')
     {
@@ -1420,7 +1424,7 @@ class Builder
      * @param  string  $operator
      * @param  mixed  $value
      * @param  string  $boolean
-     * @return \Illuminate\Database\Query\Builder|static
+     * @return \Netinteractive\Elegant\Db\Query\Builder|static
      */
     public function whereYear($column, $operator, $value = null, $boolean = 'and')
     {
@@ -1574,7 +1578,7 @@ class Builder
      * @param  string  $column
      * @param  string  $operator
      * @param  string  $value
-     * @return \Illuminate\Database\Query\Builder|static
+     * @return \Netinteractive\Elegant\Db\Query\Builder|static
      */
     public function orHaving($column, $operator = null, $value = null)
     {
@@ -1605,7 +1609,7 @@ class Builder
      *
      * @param  string  $sql
      * @param  array   $bindings
-     * @return \Illuminate\Database\Query\Builder|static
+     * @return \Netinteractive\Elegant\Db\Query\Builder|static
      */
     public function orHavingRaw($sql, array $bindings = [])
     {
@@ -1633,7 +1637,7 @@ class Builder
      * Add an "order by" clause for a timestamp to the query.
      *
      * @param  string  $column
-     * @return \Illuminate\Database\Query\Builder|static
+     * @return \Netinteractive\Elegant\Db\Query\Builder|static
      */
     public function latest($column = 'created_at')
     {
@@ -1644,7 +1648,7 @@ class Builder
      * Add an "order by" clause for a timestamp to the query.
      *
      * @param  string  $column
-     * @return \Illuminate\Database\Query\Builder|static
+     * @return \Netinteractive\Elegant\Db\Query\Builder|static
      */
     public function oldest($column = 'created_at')
     {
@@ -1701,7 +1705,7 @@ class Builder
      * Alias to set the "offset" value of the query.
      *
      * @param  int  $value
-     * @return \Illuminate\Database\Query\Builder|static
+     * @return \Netinteractive\Elegant\Db\Query\Builder|static
      */
     public function skip($value)
     {
@@ -1729,7 +1733,7 @@ class Builder
      * Alias to set the "limit" value of the query.
      *
      * @param  int  $value
-     * @return \Illuminate\Database\Query\Builder|static
+     * @return \Netinteractive\Elegant\Db\Query\Builder|static
      */
     public function take($value)
     {
@@ -1741,7 +1745,7 @@ class Builder
      *
      * @param  int  $page
      * @param  int  $perPage
-     * @return \Illuminate\Database\Query\Builder|static
+     * @return \Netinteractive\Elegant\Db\Query\Builder|static
      */
     public function forPage($page, $perPage = 15)
     {
@@ -1754,7 +1758,7 @@ class Builder
      * @param  int  $perPage
      * @param  int  $lastId
      * @param  string  $column
-     * @return \Illuminate\Database\Query\Builder|static
+     * @return \Netinteractive\Elegant\Db\Query\Builder|static
      */
     public function forPageAfterId($perPage = 15, $lastId = 0, $column = 'id')
     {
@@ -1771,9 +1775,9 @@ class Builder
     /**
      * Add a union statement to the query.
      *
-     * @param  \Illuminate\Database\Query\Builder|\Closure  $query
+     * @param  \Netinteractive\Elegant\Db\Query\Builder|\Closure  $query
      * @param  bool  $all
-     * @return \Illuminate\Database\Query\Builder|static
+     * @return \Netinteractive\Elegant\Db\Query\Builder|static
      */
     public function union($query, $all = false)
     {
@@ -1791,8 +1795,8 @@ class Builder
     /**
      * Add a union all statement to the query.
      *
-     * @param  \Illuminate\Database\Query\Builder|\Closure  $query
-     * @return \Illuminate\Database\Query\Builder|static
+     * @param  \Netinteractive\Elegant\Db\Query\Builder|\Closure  $query
+     * @return \Netinteractive\Elegant\Db\Query\Builder|static
      */
     public function unionAll($query)
     {
@@ -1819,7 +1823,7 @@ class Builder
     /**
      * Lock the selected rows in the table for updating.
      *
-     * @return \Illuminate\Database\Query\Builder
+     * @return \Netinteractive\Elegant\Db\Query\Builder
      */
     public function lockForUpdate()
     {
@@ -1829,7 +1833,7 @@ class Builder
     /**
      * Share lock the selected rows in the table.
      *
-     * @return \Illuminate\Database\Query\Builder
+     * @return \Netinteractive\Elegant\Db\Query\Builder
      */
     public function sharedLock()
     {
@@ -2563,7 +2567,7 @@ class Builder
     /**
      * Get a new instance of the query builder.
      *
-     * @return \Illuminate\Database\Query\Builder
+     * @return \Netinteractive\Elegant\Db\Query\Builder
      */
     public function newQuery()
     {
@@ -2601,7 +2605,7 @@ class Builder
      * Create a raw database expression.
      *
      * @param  mixed  $value
-     * @return \Illuminate\Database\Query\Expression
+     * @return \Netinteractive\Elegant\Db\Query\Expression
      */
     public function raw($value)
     {
@@ -2707,7 +2711,7 @@ class Builder
     /**
      * Merge an array of bindings into our bindings.
      *
-     * @param  \Illuminate\Database\Query\Builder  $query
+     * @param  \Netinteractive\Elegant\Db\Query\Builder  $query
      * @return $this
      */
     public function mergeBindings(Builder $query)
@@ -2720,7 +2724,7 @@ class Builder
     /**
      * Get the database connection instance.
      *
-     * @return \Illuminate\Database\ConnectionInterface
+     * @return \Netinteractive\Elegant\Db\ConnectionInterface
      */
     public function getConnection()
     {
@@ -2730,7 +2734,7 @@ class Builder
     /**
      * Get the database query processor instance.
      *
-     * @return \Illuminate\Database\Query\Processors\Processor
+     * @return \Netinteractive\Elegant\Db\Query\Processors\Processor
      */
     public function getProcessor()
     {
@@ -2740,7 +2744,7 @@ class Builder
     /**
      * Get the query grammar instance.
      *
-     * @return \Illuminate\Database\Query\Grammars\Grammar
+     * @return \Netinteractive\Elegant\Db\Query\Grammars\Grammar
      */
     public function getGrammar()
     {
