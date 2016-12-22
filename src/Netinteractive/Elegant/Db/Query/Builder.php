@@ -1036,7 +1036,7 @@ class Builder implements BuilderInterface
 
         $this->removeDoubleJoins();
 
-        return $comments . $cte . $this->grammar->compileSelect(($this);
+        return $comments . $cte . $this->grammar->compileSelect($this);
     }
 
     /**
