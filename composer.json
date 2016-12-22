@@ -40,6 +40,9 @@
       "codeception/codeception": "*"
     },
     "autoload": {
+        "classmap": [
+            "src/migrations"
+        ],
         "files": [
           "src/Netinteractive/Elegant/helpers.php"
         ],
