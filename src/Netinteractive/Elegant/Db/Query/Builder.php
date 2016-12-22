@@ -14,10 +14,7 @@ use  Illuminate\Support\Collection;
 use  Illuminate\Pagination\Paginator;
 use  Illuminate\Pagination\LengthAwarePaginator;
 use  Illuminate\Contracts\Support\Arrayable;
-use  Illuminate\Pagination\Paginator;
-use  Illuminate\Pagination\LengthAwarePaginator;
 
-use  Netinteractive\Elegant\Db\Query\Expression;
 use  Netinteractive\Elegant\Db\ConnectionInterface;
 use  Netinteractive\Elegant\Db\Query\Grammars\Grammar;
 use  Netinteractive\Elegant\Db\Query\Processors\Processor;
