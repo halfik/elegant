@@ -1,4 +1,6 @@
-<?php namespace Netinteractive\Elegant\Model;
+<?php
+
+namespace Netinteractive\Elegant\Model;
 
 use Netinteractive\Elegant\Exception\ClassTypeException;
 use Netinteractive\Elegant\Model\Relation\Manager;

@@ -1,4 +1,6 @@
-<?php namespace Netinteractive\Elegant\Model\Relation;
+<?php
+
+namespace Netinteractive\Elegant\Model\Relation;
 
 use Netinteractive\Elegant\Model\Record;
 

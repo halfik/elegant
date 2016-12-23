@@ -18,6 +18,8 @@ class ElegantTest  extends \PHPUnit_Framework_TestCase
         \App::bind('MedPersonnel', '\Netinteractive\Elegant\Tests\Models\MedPersonnel\Record');
         \App::bind('MedScienceDegree', '\Netinteractive\Elegant\Tests\Models\MedScienceDegree\Record');
 
+        DB::setDefaultConnection('testing');
+
     }
 
 

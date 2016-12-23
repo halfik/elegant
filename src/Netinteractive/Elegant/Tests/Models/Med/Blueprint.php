@@ -1,5 +1,11 @@
-<?php namespace Netinteractive\Elegant\Tests\Models\Med;
+<?php
 
+namespace Netinteractive\Elegant\Tests\Models\Med;
+
+/**
+ * Class Blueprint
+ * @package Netinteractive\Elegant\Tests\Models\Med
+ */
 class Blueprint extends \Netinteractive\Elegant\Model\Blueprint
 {
    protected function init()

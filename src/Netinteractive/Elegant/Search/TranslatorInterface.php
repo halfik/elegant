@@ -1,4 +1,6 @@
-<?php namespace Netinteractive\Elegant\Search;
+<?php
+
+namespace Netinteractive\Elegant\Search;
 
 
 interface TranslatorInterface

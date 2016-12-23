@@ -1,4 +1,6 @@
-<?php namespace Netinteractive\Elegant\Search\Db;
+<?php
+
+namespace Netinteractive\Elegant\Search\Db;
 
 use Netinteractive\Elegant\Search\Searchable;
 use Netinteractive\Elegant\Search\TranslatorInterface;

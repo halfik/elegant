@@ -1,4 +1,6 @@
-<?php namespace Netinteractive\Elegant\Repository;
+<?php
+
+namespace Netinteractive\Elegant\Repository;
 
 
 use \Netinteractive\Elegant\Model\Record;

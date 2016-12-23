@@ -1,4 +1,6 @@
-<?php namespace Netinteractive\Elegant\Model\Filter;
+<?php
+
+namespace Netinteractive\Elegant\Model\Filter;
 
 
 /**

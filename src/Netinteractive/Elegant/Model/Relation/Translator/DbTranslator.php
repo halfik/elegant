@@ -1,4 +1,6 @@
-<?php namespace Netinteractive\Elegant\Model\Relation\Translator;
+<?php
+
+namespace Netinteractive\Elegant\Model\Relation\Translator;
 
 use Netinteractive\Elegant\Model\Record;
 use Netinteractive\Elegant\Model\Relation\TranslatorInterface;

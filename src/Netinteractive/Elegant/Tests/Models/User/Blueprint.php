@@ -1,8 +1,14 @@
-<?php namespace Netinteractive\Elegant\Tests\Models\User;
+<?php
+
+namespace Netinteractive\Elegant\Tests\Models\User;
 
 
 use Netinteractive\Elegant\Search\Searchable;
 
+/**
+ * Class Blueprint
+ * @package Netinteractive\Elegant\Tests\Models\User
+ */
 class Blueprint extends \Netinteractive\Elegant\Model\Blueprint
 {
    protected function init()

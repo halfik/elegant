@@ -1,4 +1,6 @@
-<?php namespace Netinteractive\Elegant\Model;
+<?php
+
+namespace Netinteractive\Elegant\Model;
 
 
 use Illuminate\Support\MessageBag AS MessageBag;

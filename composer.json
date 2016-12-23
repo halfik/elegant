@@ -4,7 +4,7 @@
     "type": "library",
     "homepage": "https://github.com/halfik/elegant",
     "keywords": ["laravel", "model", "blueprint", "mapper", "data mapper architecture", "elegant", "netinteractive", "laravel5"],
-    "version": "3.0.0",
+    "version": "3.0.0@dev",
     "description": "",
     "authors": [
         {

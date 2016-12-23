@@ -1,4 +1,6 @@
-<?php namespace Netinteractive\Elegant\Model\Query;
+<?php
+
+namespace Netinteractive\Elegant\Model\Query;
 
 
 use Closure;

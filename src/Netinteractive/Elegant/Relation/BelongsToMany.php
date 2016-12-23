@@ -1,4 +1,6 @@
-<?php namespace Netinteractive\Elegant\Relation;
+<?php
+
+namespace Netinteractive\Elegant\Relation;
 
 use Netinteractive\Elegant\Model\Query\Builder;
 use Netinteractive\Elegant\Model\Record;

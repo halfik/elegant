@@ -1,11 +1,14 @@
-<?php namespace Netinteractive\Elegant\Relation;
+<?php
+
+namespace Netinteractive\Elegant\Relation;
 
 use Closure;
 use Netinteractive\Elegant\Model\Query\Builder;
 use Netinteractive\Elegant\Model\Record;
 use Netinteractive\Elegant\Model\Collection;
 
-abstract class Relation {
+abstract class Relation
+{
 
 	/**
 	 * The Elegant query builder instance.

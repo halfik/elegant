@@ -1,7 +1,13 @@
-<?php namespace Netinteractive\Elegant\Tests\Models\MedScienceDegree;
+<?php
+
+namespace Netinteractive\Elegant\Tests\Models\MedScienceDegree;
 
 use Netinteractive\Elegant\Search\Searchable;
 
+/**
+ * Class Blueprint
+ * @package Netinteractive\Elegant\Tests\Models\MedScienceDegree
+ */
 class Blueprint extends \Netinteractive\Elegant\Model\Blueprint
 {
    protected function init()
@@ -29,4 +35,4 @@ class Blueprint extends \Netinteractive\Elegant\Model\Blueprint
 
         return parent::init();
     }
-} 
+}

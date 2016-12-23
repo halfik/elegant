@@ -1,17 +1,22 @@
-<?php namespace Netinteractive\Elegant\Tests\Models\MedPersonnel;
+<?php
 
-use Netinteractive\Elegant\Search\Searchable;
+namespace Netinteractive\Elegant\Tests\Models\MedPersonnel;
 
+
+/**
+ * Class Blueprint
+ * @package Netinteractive\Elegant\Tests\Models\MedPersonnel
+ */
 class Blueprint extends \Netinteractive\Elegant\Model\Blueprint
 {
-   protected function init()
+    protected function init()
     {
         $this->setStorageName('med_personnel');
         $this->primaryKey = array('id');
         $this->incrementingPk = 'id';
 
-        $this->getRelationManager()->belongsToMany('med_degree','MedScienceDegree','med_personnel__med_sience_degree', 'med_personnel__id', 'med_sience_degree__id');
-        $this->getRelationManager()->belongsTo('med','Med', 'med__id', 'id');
+        $this->getRelationManager()->belongsToMany('med_degree', 'MedScienceDegree', 'med_personnel__med_sience_degree', 'med_personnel__id', 'med_sience_degree__id');
+        $this->getRelationManager()->belongsTo('med', 'Med', 'med__id', 'id');
 
 
         $this->fields = array(
@@ -58,7 +63,8 @@ class Blueprint extends \Netinteractive\Elegant\Model\Blueprint
      * Returns scope object
      * @return null
      */
-    public function getScopeObject(){
+    public function getScopeObject()
+    {
         return new Scope($this->getStorageName());
     }
-} 
+}

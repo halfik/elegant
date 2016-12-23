@@ -1,4 +1,6 @@
-<?php namespace Netinteractive\Elegant\Hashing;
+<?php
+namespace Netinteractive\Elegant\Hashing;
+
 /**
  * Part of the Sentry package.
  *

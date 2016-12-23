@@ -1,4 +1,6 @@
-<?php namespace Netinteractive\Elegant\Exception;
+<?php
+
+namespace Netinteractive\Elegant\Exception;
 
 use Illuminate\Support\MessageBag AS MessageBag;
 

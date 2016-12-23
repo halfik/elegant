@@ -1,4 +1,6 @@
-<?php namespace Netinteractive\Elegant\Model\Filter\Event;
+<?php
+
+namespace Netinteractive\Elegant\Model\Filter\Event;
 
 use Netinteractive\Elegant\Model\Filter\Logic;
 use Netinteractive\Elegant\Model\Filter\Type\Display;

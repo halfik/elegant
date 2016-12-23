@@ -1,7 +1,13 @@
-<?php namespace Netinteractive\Elegant\Tests\Models\PatientData;
+<?php
+
+namespace Netinteractive\Elegant\Tests\Models\PatientData;
 
 use Netinteractive\Elegant\Search\Searchable;
 
+/**
+ * Class Blueprint
+ * @package Netinteractive\Elegant\Tests\Models\PatientData
+ */
 class Blueprint extends \Netinteractive\Elegant\Model\Blueprint
 {
    protected function init()
@@ -144,4 +150,4 @@ class Blueprint extends \Netinteractive\Elegant\Model\Blueprint
 
         return parent::init();
     }
-} 
+}

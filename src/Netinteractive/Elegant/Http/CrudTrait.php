@@ -1,4 +1,6 @@
-<?php namespace Netinteractive\Elegant\Http;
+<?php
+
+namespace Netinteractive\Elegant\Http;
 
 
 /**
@@ -8,7 +10,7 @@
 trait CrudTrait
 {
     /**
-     * @var \Netinteractive\Elegant\Model\Provider
+     * @var \Netinteractive\Elegant\Domain\Provider
      */
     protected $domainProvider;
 

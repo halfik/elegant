@@ -1,4 +1,7 @@
-<?php namespace Netinteractive\Elegant\Model;
+<?php
+
+namespace Netinteractive\Elegant\Domain;
+
 use Netinteractive\Elegant\Repository\RepositoryInterface;
 
 /**

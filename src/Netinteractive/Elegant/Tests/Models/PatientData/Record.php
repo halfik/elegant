@@ -1,4 +1,6 @@
-<?php namespace Netinteractive\Elegant\Tests\Models\PatientData;
+<?php
+
+namespace Netinteractive\Elegant\Tests\Models\PatientData;
 
 
 class Record extends \Netinteractive\Elegant\Model\Record
@@ -8,4 +10,4 @@ class Record extends \Netinteractive\Elegant\Model\Record
         $this->setBlueprint( Blueprint::getInstance() );
         return $this;
     }
-} 
+}
