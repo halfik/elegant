@@ -3,6 +3,7 @@
 namespace Netinteractive\Elegant;
 
 use Illuminate\Support\ServiceProvider;
+use Netinteractive\Elegant\Console\Commands\MakeElegant;
 
 
 /**
@@ -17,6 +18,10 @@ class ElegantServiceProvider extends ServiceProvider
 	 * @var bool
 	 */
 	protected $defer = false;
+
+    protected $commands = [
+        'Netinteractive\Elegant\Console\Commands\MakeElegant',
+    ];
 
 
 	/**
@@ -46,6 +51,7 @@ class ElegantServiceProvider extends ServiceProvider
 	{
         $this->prepareResources();
         $this->registerHasher();
+        $this->registerFieldGenerator();
 
         \App::bind('ni.elegant.repository', function($app, $params){
             return new \Netinteractive\Elegant\Repository\Repository($params[0]);
@@ -85,6 +91,8 @@ class ElegantServiceProvider extends ServiceProvider
         if ($this->app->environment('testing')) {
             $this->app->register('Netinteractive\Elegant\FiltersServiceProvider');
         }
+
+        $this->commands($this->commands);
 	}
 
     /**
@@ -111,6 +119,16 @@ class ElegantServiceProvider extends ServiceProvider
             $hasher = \Config::get('packages.netinteractive.elegant.config.hasher');
 
             return \App::make($hasher);
+        });
+    }
+
+    /**
+     *  Register factory of field generators
+     */
+    protected function registerFieldGenerator()
+    {
+        $this->app->singleton('elegant.make.fieldGenerator', function ($app) {
+            return new Utils\FieldGenerator();
         });
     }
 

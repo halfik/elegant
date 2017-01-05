@@ -1,0 +1,33 @@
+<?php
+
+namespace {Namespace};
+
+use Netinteractive\Elegant\Search\Searchable;
+use Netinteractive\Elegant\Model\Blueprint AS BaseBlueprint;
+
+/**
+ * Class Blueprint
+ * @package App\Models
+ */
+class Blueprint extends BaseBlueprint
+{
+    /**
+     * @return mixed
+     */
+    protected function init()
+    {
+        $table = '{TableName}';
+
+        $this->setStorageName($table);
+        $this->primaryKey = array('id');
+        $this->incrementingPk = 'id';
+        //$this->timestamps = true;
+
+        $this->fields = [
+            {Fields}
+        ];
+
+        return parent::init();
+     }
+}
+

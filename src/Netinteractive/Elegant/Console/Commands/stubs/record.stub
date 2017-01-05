@@ -1,0 +1,21 @@
+<?php
+
+namespace {Namespace};
+
+
+/**
+ * Class Record
+ * @package App\Models
+ */
+class Record extends \Netinteractive\Elegant\Model\Record
+{
+
+    /**
+     * @return $this
+     */
+    public function init()
+    {
+        $this->setBlueprint( Blueprint::getInstance() );
+        return $this;
+    }
+}

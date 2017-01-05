@@ -5,11 +5,11 @@ namespace Netinteractive\Elegant\Domain;
 use Netinteractive\Elegant\Repository\RepositoryInterface;
 
 /**
- * Class Provider
+ * Class ServiceProvider
  * Abstract class that should be use to implement business layer for specific model
  * @package Netinteractive\Elegant\Model
  */
-abstract class Provider
+abstract class ServiceProvider
 {
     /**
      * @var \Netinteractive\Elegant\Repository\RepositoryInterface
