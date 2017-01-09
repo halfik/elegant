@@ -7,7 +7,6 @@ use Netinteractive\Elegant\Model\Blueprint AS BaseBlueprint;
 
 /**
  * Class Blueprint
- * @package App\Models
  */
 class Blueprint extends BaseBlueprint
 {
@@ -23,9 +22,9 @@ class Blueprint extends BaseBlueprint
         $this->incrementingPk = 'id';
         //$this->timestamps = true;
 
-        $this->fields = [
+        $this->fields =
             {Fields}
-        ];
+        ;
 
         return parent::init();
      }

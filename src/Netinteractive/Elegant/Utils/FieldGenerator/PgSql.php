@@ -34,7 +34,7 @@ class PgSql implements DriverInterface
 
         if($columns){
             foreach ($columns as $column){
-                $fields[] = $this->analyzeColumn($column);
+                $fields = $this->analyzeColumn($fields, $column);
             }
         }
 
@@ -42,15 +42,15 @@ class PgSql implements DriverInterface
     }
 
     /**
-     * @param $column
+     * @param array $fields
+     * @param array $column
      * @return array
      */
-    protected function analyzeColumn($column)
+    protected function analyzeColumn(array $fields, $column)
     {
         $fieldType =  $this->getDataType($column->udt_name);
 
-        $response = [
-            $column->column_name => [
+        $fields[$column->column_name] = [
                 'title' => $column->column_name,
                 'type' => $this->getDataType($fieldType),
                 'sortable' => false,
@@ -60,10 +60,9 @@ class PgSql implements DriverInterface
                     'save' => [],
                     'display' => []
                 ]
-            ]
         ];
 
-        return $response;
+        return $fields;
     }
 
     protected function getRuleS($column, $fieldType)

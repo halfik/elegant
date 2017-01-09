@@ -61,23 +61,23 @@ class MakeElegant extends Command
     public function handle()
     {
         $table = $this->ask('Table name');
-        $name = $this->ask('Model name');
-        $name = ucfirst(strtolower($name));
+        $name = $this->ask('Model name (app/?)');
+
 
         $name = $this->parseName($name);
 
         $recordStub = $this->getRecordStub($name);
         $blueprintStub = $this->getBlueprintStub($name, $table);
+        $serviceStub = $this->getServiceStub($name);
 
 
         $recordPath = $this->getPath($name, 'Record');
         $bpPath = $this->getPath($name, 'Blueprint');
+        $servicePath = $this->getPath($name, 'ServiceProvider');
 
-        $this->makeDirectory($recordPath);
-        $this->makeDirectory($bpPath);
-
-        $this->files->put($recordPath, $recordStub);
-        $this->files->put($bpPath, $blueprintStub);
+        $this->make($recordPath, $recordStub);
+        $this->make($bpPath, $blueprintStub);
+        $this->make($servicePath, $serviceStub);
 
         //$this->files->put($path, $this->populateStub($name, $stub, $table));
 
@@ -88,6 +88,15 @@ class MakeElegant extends Command
         $this->comment('Model generated successfully!');
     }
 
+    /**
+     * @param $path
+     * @param $stub
+     */
+    protected function make($path, $stub)
+    {
+        $this->makeDirectory($path);
+        $this->files->put($path, $stub);
+    }
 
     /**
      * Get the destination class path.
@@ -97,11 +106,8 @@ class MakeElegant extends Command
      */
     protected function getPath($name, $file)
     {
-        $name = str_replace('\\', ' ', $name);
-        $name = ucwords($name);
-        $name = str_replace(' ', '\\', $name);
         $name = str_replace($this->laravel->getNamespace(), '', $name);
-        echo $name; exit;
+
         return $this->laravel['path'].'/'.ucwords($name).'/'.str_replace('\\', '/', $file).'.php';
     }
 
@@ -127,6 +133,10 @@ class MakeElegant extends Command
     protected function parseName($name)
     {
         $rootNamespace = $this->laravel->getNamespace();
+
+        $name = str_replace('\\', ' ', $name);
+        $name = ucwords($name);
+        $name = str_replace(' ', '\\', $name);
 
         if (Str::startsWith($name, $rootNamespace)) {
             return $name;
@@ -165,7 +175,8 @@ class MakeElegant extends Command
         $generator =  $this->fieldGenerator->get($driverName);
 
         $fields = $generator->getFieldsList($table);
-        $fieldsStr = $results = var_export($fields, true);
+        $fieldsStr  = var_export($fields, true);
+
         $stub = str_replace('{Fields}', $fieldsStr, $stub);
 
 
@@ -180,6 +191,18 @@ class MakeElegant extends Command
     protected function getRecordStub($name)
     {
         $stub = $this->files->get($this->getStubPath()."/record.stub");
+        $stub = str_replace('{Namespace}', $name, $stub);
+
+        return $stub;
+    }
+
+    /**
+     * @param string $name
+     * @return string
+     */
+    public function getServiceStub($name)
+    {
+        $stub = $this->files->get($this->getStubPath()."/service.stub");
         $stub = str_replace('{Namespace}', $name, $stub);
 
         return $stub;

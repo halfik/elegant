@@ -24,9 +24,10 @@ abstract class ServiceProvider
      */
     protected $recordClass = null;
 
+
     /**
-     * Constructor
-     * @param \Netinteractive\Elegant\Model\Record $record
+     * ServiceProvider constructor.
+     * @param string $recordClass
      */
     public function __construct($recordClass)
     {
@@ -38,7 +39,7 @@ abstract class ServiceProvider
      * @param \Netinteractive\Elegant\Repository\RepositoryInterface  $repository
      * @return $this
      */
-    public function setMapper(RepositoryInterface $repository)
+    public function setRepository(RepositoryInterface $repository)
     {
         $this->repository = $repository;
         return $this;

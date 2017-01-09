@@ -2,12 +2,12 @@
 
 namespace {Namespace};
 
+use Netinteractive\Elegant\Model\Record as BaseRecord;
 
 /**
  * Class Record
- * @package App\Models
  */
-class Record extends \Netinteractive\Elegant\Model\Record
+class Record extends BaseRecord
 {
 
     /**

@@ -1,0 +1,24 @@
+<?php
+
+namespace {Namespace};
+
+use Netinteractive\Elegant\Domain\ServiceProvider as BusinessProvider;
+
+/**
+ * Class Provider
+ */
+class Provider extends BusinessProvider
+{
+
+    /**
+     * @param null|string $record
+     */
+    public function __construct($record=null)
+    {
+        if (!$record){
+            $record = '{Namespace}\Record';
+        }
+        parent::__construct($record);
+    }
+
+}
