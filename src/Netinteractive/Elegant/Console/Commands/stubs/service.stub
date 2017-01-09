@@ -7,7 +7,7 @@ use Netinteractive\Elegant\Domain\ServiceProvider as BusinessProvider;
 /**
  * Class Provider
  */
-class Provider extends BusinessProvider
+class ServiceProvider extends BusinessProvider
 {
 
     /**

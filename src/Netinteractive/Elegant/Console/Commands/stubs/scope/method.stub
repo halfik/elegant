@@ -1,0 +1,14 @@
+    /**
+     * @param \Netinteractive\Elegant\Repository\RepositoryInterface
+     * @param string $val
+     * @return \Netinteractive\Elegant\Repository\Repository
+     */
+    public function scope{ucField}(RepositoryInterface $repository, $val)
+    {
+        $query = $repository->getQuery();
+        $blueprint = $query->getRecord()->getBlueprint();
+
+        $query->where($blueprint->getStorageName().'.{field}', '=', $val);
+
+        return $repository;
+    }

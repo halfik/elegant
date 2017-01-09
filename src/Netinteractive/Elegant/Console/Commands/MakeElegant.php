@@ -39,6 +39,11 @@ class MakeElegant extends Command
      */
     protected $description = 'Create elegant model';
 
+    /**
+     * @var array
+     */
+    protected $fields = [];
+
 
     /**
      * Create a new migration creator instance.
@@ -63,29 +68,43 @@ class MakeElegant extends Command
         $table = $this->ask('Table name');
         $name = $this->ask('Model name (app/?)');
 
-
+        // prepare name
         $name = $this->parseName($name);
 
+        //get field list
+        $this->grabFields($table);
+
+        // get stubs
         $recordStub = $this->getRecordStub($name);
         $blueprintStub = $this->getBlueprintStub($name, $table);
         $serviceStub = $this->getServiceStub($name);
+        $scopeStub = $this->getScopeStub($name);
 
-
+        // get paths
         $recordPath = $this->getPath($name, 'Record');
         $bpPath = $this->getPath($name, 'Blueprint');
+        $scopePath = $this->getPath($name, 'Scope');
         $servicePath = $this->getPath($name, 'ServiceProvider');
 
+        // create cfiles
         $this->make($recordPath, $recordStub);
         $this->make($bpPath, $blueprintStub);
+        $this->make($scopePath, $scopeStub);
         $this->make($servicePath, $serviceStub);
 
-        //$this->files->put($path, $this->populateStub($name, $stub, $table));
-
-        //$this->firePostCreateHooks();
-
-        //return $path;
 
         $this->comment('Model generated successfully!');
+    }
+
+    /**
+     * @param $table
+     */
+    protected function grabFields($table)
+    {
+        $driverName = \DB::connection()->getDriverName();
+        $generator =  $this->fieldGenerator->get($driverName);
+
+        $this->fields = $generator->getFieldsList($table);
     }
 
     /**
@@ -171,14 +190,34 @@ class MakeElegant extends Command
         $stub = str_replace('{Namespace}', $name, $stub);
         $stub = str_replace('{TableName}', $table, $stub);
 
-        $driverName = \DB::connection()->getDriverName();
-        $generator =  $this->fieldGenerator->get($driverName);
-
-        $fields = $generator->getFieldsList($table);
-        $fieldsStr  = var_export($fields, true);
-
+        $fieldsStr  = var_export($this->fields, true);
         $stub = str_replace('{Fields}', $fieldsStr, $stub);
 
+
+        return $stub;
+    }
+
+    /**
+     * @param string $name
+     * @return mixed
+     */
+    protected function getScopeStub($name)
+    {
+        $stub = $this->files->get($this->getStubPath()."/scope.stub");
+        $stub = str_replace('{Namespace}', $name, $stub);
+
+        $methods = '';
+        foreach($this->fields as $field=>$data){
+            $methodStub = $this->files->get($this->getStubPath()."/scope/method.stub");
+            $methodStub = str_replace('{ucField}', Str::studly($field), $methodStub);
+            $methodStub = str_replace('{field}',$field, $methodStub);
+
+            $methods .= "\n";
+            $methods .= $methodStub;
+            $methods .= "\n";
+        }
+
+        $stub = str_replace('{Methods}', $methods, $stub);
 
         return $stub;
     }

@@ -1,0 +1,17 @@
+<?php
+
+namespace {Namespace};
+
+use Netinteractive\Elegant\Repository\Repository;
+use Netinteractive\Elegant\Repository\RepositoryInterface;
+use Netinteractive\Elegant\Model\Query\Scope AS BaseScope;
+
+/**
+ * Class Scope
+ */
+class Scope extends BaseScope
+{
+
+   {Methods}
+
+}
