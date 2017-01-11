@@ -2,9 +2,8 @@
 
 namespace Netinteractive\Elegant\Repository;
 
-use Netinteractive\Elegant\Db\ConnectionInterface;
+use Illuminate\Database\ConnectionInterface;
 use Netinteractive\Elegant\Exception\PrimaryKeyException;
-use Netinteractive\Elegant\Model\Collection;
 
 use Netinteractive\Elegant\Model\Record;
 use Netinteractive\Elegant\Model\Query\Builder;
@@ -39,11 +38,10 @@ class Repository implements RepositoryInterface
 
 
     /**
-     * Create a new db mapper
+     * Conctructor
      *
      * @param string $recordClass
-     * @param \Netinteractive\Elegant\Db\ConnectionInterface $connection
-     * @return void
+     * @param \Illuminate\Database\ConnectionInterface $connection
      */
     public function __construct($recordClass, ConnectionInterface $connection=null)
     {
@@ -58,7 +56,7 @@ class Repository implements RepositoryInterface
 
 
     /**
-     * Informs mapper to work with specified row class
+     * Informs repository to work with specified record class
      * @param string $recordClass
      * @return $this
      */
@@ -124,7 +122,7 @@ class Repository implements RepositoryInterface
      */
     public function delete(Record $record)
     {
-        \Event::fire('ni.elegant.mapper.deleting.'.\classDotNotation($record), $record);
+        \Event::fire('ni.elegant.record.deleting.'.\classDotNotation($record), $record);
 
         $query  = $this->getNewQuery();
 
@@ -143,7 +141,7 @@ class Repository implements RepositoryInterface
         #it dosn't we just deleted it
         $record->setExists(false);
 
-        \Event::fire('ni.elegant.mapper.deleted.'.\classDotNotation($record), $record);
+        \Event::fire('ni.elegant.record.deleted.'.\classDotNotation($record), $record);
 
         return $result;
     }
@@ -214,16 +212,16 @@ class Repository implements RepositoryInterface
             if ($record->getBlueprint()->hasTimestamps()){
                 $record->updateTimestamps(true, true);
             }
-            #here we prepare obj that will be passed to mapper events
+            #here we prepare obj that will be passed to repository events
             $obj = new \stdClass();
             $obj->data = $record->getAttributes();
             $obj->record = $record;
 
-            \Event::fire('ni.elegant.mapper.saving.'.\classDotNotation($record), $record);
+            \Event::fire('ni.elegant.record.saving.'.\classDotNotation($record), $record);
 
-            \Event::fire('ni.elegant.mapper.before.save', $obj);
+            \Event::fire('ni.elegant.record.before.save', $obj);
 
-            \Event::fire('ni.elegant.mapper.creating.'.\classDotNotation($record), $record);
+            \Event::fire('ni.elegant.record.creating.'.\classDotNotation($record), $record);
 
             #we override data we are going to insert
             $attributes = $obj->data;
@@ -253,7 +251,7 @@ class Repository implements RepositoryInterface
                 $query->insert($attributes);
             }
 
-            \Event::fire('ni.elegant.mapper.created.'.\classDotNotation($record), $record);
+            \Event::fire('ni.elegant.record.created.'.\classDotNotation($record), $record);
         }
 
         #we touch related records
@@ -285,14 +283,14 @@ class Repository implements RepositoryInterface
                 $record->updateTimestamps(false, true);
             }
 
-            #here we prepare obj that will be passed to mapper events
+            #here we prepare obj that will be passed to repository events
             $obj = new \stdClass();
             $obj->data = $record->getDirty();
             $obj->record = $record;
 
-            \Event::fire('ni.elegant.mapper.saving.'.\classDotNotation($record), $record);
+            \Event::fire('ni.elegant.record.saving.'.\classDotNotation($record), $record);
 
-            \Event::fire('ni.elegant.mapper.before.save', $obj);
+            \Event::fire('ni.elegant.record.before.save', $obj);
 
             #we override data we are going to update
             $dirty =  $obj->data;
@@ -300,11 +298,11 @@ class Repository implements RepositoryInterface
             #we always should validate all data not only that actually was changed
             $record->validate(array_merge($record->getAttributes(), $dirty),  array('update'));
 
-            \Event::fire('ni.elegant.mapper.updating.'.\classDotNotation($record), $record);
+            \Event::fire('ni.elegant.record.updating.'.\classDotNotation($record), $record);
 
             $this->setKeysForSaveQuery($query, $record)->update( $dirty );
 
-            \Event::fire('ni.elegant.mapper.updated.'.\classDotNotation($record), $record);
+            \Event::fire('ni.elegant.record.updated.'.\classDotNotation($record), $record);
         }
 
 
@@ -376,12 +374,12 @@ class Repository implements RepositoryInterface
             }
 
             if ($saveRelated === true){
-                \Event::fire('ni.elegant.mapper.touching.'.\classDotNotation($record), $record);
+                \Event::fire('ni.elegant.record.touching.'.\classDotNotation($record), $record);
             }
             $this->save($record, $saveRelated);
 
             if ($saveRelated === true){
-                \Event::fire('ni.elegant.mapper.touched.'.\classDotNotation($record), $record);
+                \Event::fire('ni.elegant.record.touched.'.\classDotNotation($record), $record);
             }
 
             $response->add($record);
@@ -512,7 +510,7 @@ class Repository implements RepositoryInterface
         });
 
         #we add to search query default join defined my developer in searchJoins method
-        \Event::fire('ni.elegant.mapper.search.'.\classDotNotation($this->emptyRecord), $query);
+        \Event::fire('ni.elegant.repository.search.'.\classDotNotation($this->emptyRecord), $query);
 
         return $query;
     }

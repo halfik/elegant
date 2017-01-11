@@ -34,11 +34,11 @@ trait CrudTrait
     public function update($id, array $params=array())
     {
         $displayFilter = isSet($params['display_filter']) ? (bool)  $params['display_filter'] : false;
-        $record = $this->getProvider()->getMapper()->find($id);
+        $record = $this->getProvider()->getRepository()->find($id);
 
         if ($record){
             $record->fill($params);
-            $this->getProvider()->getMapper()->save($record);
+            $this->getProvider()->getRepository()->save($record);
         }
 
         return \Response::build(
@@ -58,8 +58,8 @@ trait CrudTrait
         $defaultJoin = isSet($params['default_join']) ?  $params['default_join'] : true;
         $displayFilter = isSet($params['display_filter']) ? (bool)  $params['display_filter'] : false;
 
-        #search query from mapper
-        $q = $this->getProvider()->getMapper()->search($params, $columns, $operator, $defaultJoin);
+        #search query from repository
+        $q = $this->getProvider()->getRepository()->search($params, $columns, $operator, $defaultJoin);
 
         #options to modify provided query
         $this->modifyFindQuery($q, $params);
@@ -85,8 +85,8 @@ trait CrudTrait
         $defaultJoin = isSet($params['default_join']) ?  $params['default_join'] : true;
         $displayFilter = isSet($params['display_filter']) ? (bool)  $params['display_filter'] : false;
 
-        #search query from mapper
-        $q = $this->getProvider()->getMapper()->search($params, $columns, $operator, $defaultJoin);
+        #search query from repository
+        $q = $this->getProvider()->getRepository()->search($params, $columns, $operator, $defaultJoin);
 
         #options to modify provided query
         $this->modifyFindQuery($q, $params);
@@ -105,10 +105,10 @@ trait CrudTrait
      */
     public function delete(array $params=array())
     {
-        $records = $this->getProvider()->getMapper()->findMany($params);
+        $records = $this->getProvider()->getRepository()->findMany($params);
         
         foreach ($records AS $record){
-            $this->getProvider()->getMapper()->delete($record);
+            $this->getProvider()->getRepository()->delete($record);
         }
 
         return \Response::build($params);

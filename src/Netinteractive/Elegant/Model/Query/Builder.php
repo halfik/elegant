@@ -10,7 +10,7 @@ use Netinteractive\Elegant\Relation\Relation;
 
 
 use Netinteractive\Elegant\Db\Query\Builder AS QueryBuilder;
-use Netinteractive\Elegant\Db\ConnectionInterface AS ConnectionInterface;
+use Illuminate\Database\ConnectionInterface AS ConnectionInterface;
 use Netinteractive\Elegant\Db\Query\Grammars\Grammar AS Grammar;
 use Netinteractive\Elegant\Db\Query\Processors\Processor AS Processor;
 
@@ -47,7 +47,7 @@ class Builder extends QueryBuilder
     /**
     * Create a new query builder instance.
     *
-    * @param  \Netinteractive\Elegant\Db\ConnectionInterface $connection
+    * @param  \Illuminate\Database\ConnectionInterface $connection
     * @param  \Netinteractive\Elegant\Db\Query\Grammars\Grammar $grammar
     * @param  \Netinteractive\Elegant\Db\Query\Processors\Processor $processor
     */

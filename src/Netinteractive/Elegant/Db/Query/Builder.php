@@ -15,7 +15,7 @@ use  Illuminate\Pagination\Paginator;
 use  Illuminate\Pagination\LengthAwarePaginator;
 use  Illuminate\Contracts\Support\Arrayable;
 
-use  Netinteractive\Elegant\Db\ConnectionInterface;
+use Illuminate\Database\ConnectionInterface;
 use  Netinteractive\Elegant\Db\Query\Grammars\Grammar;
 use  Netinteractive\Elegant\Db\Query\Processors\Processor;
 
@@ -210,7 +210,7 @@ class Builder implements BuilderInterface
     /**
      * Create a new query builder instance.
      *
-     * @param  \Netinteractive\Elegant\Db\ConnectionInterface  $connection
+     * @param \Illuminate\Database\ConnectionInterface $connection
      * @param  \Netinteractive\Elegant\Db\Query\Grammars\Grammar  $grammar
      * @param  \Netinteractive\Elegant\Db\Query\Processors\Processor  $processor
      * @return void
@@ -1064,7 +1064,7 @@ class Builder implements BuilderInterface
 
     /**
      * Set the database connection instance.
-     * @param \Netinteractive\Elegant\Db\ConnectionInterface $connection
+     * @param \Illuminate\Database\ConnectionInterface $connection
      * @return $this
      */
     public function setConnection(ConnectionInterface $connection)

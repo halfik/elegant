@@ -14,6 +14,7 @@ use Illuminate\Contracts\Events\Dispatcher;
 
 
 use Doctrine\DBAL\Connection as DoctrineConnection;
+use Illuminate\Database\ConnectionInterface;
 
 use  Netinteractive\Elegant\Db\Builder as QueryBuilder;
 use  Netinteractive\Elegant\Db\Query\Expression;

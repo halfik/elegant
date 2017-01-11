@@ -5,7 +5,7 @@ namespace Netinteractive\Elegant\Db\Console\Seeds;
 use Illuminate\Console\Command;
 use Illuminate\Console\ConfirmableTrait;
 use Symfony\Component\Console\Input\InputOption;
-use  Netinteractive\Elegant\Db\ConnectionResolverInterface as Resolver;
+use Illuminate\Database\ConnectionResolverInterface as Resolver;
 
 class SeedCommand extends Command
 {
@@ -28,14 +28,14 @@ class SeedCommand extends Command
     /**
      * The connection resolver instance.
      *
-     * @var \Netinteractive\Elegant\Db\ConnectionResolverInterface
+     * @var \Illuminate\Database\ConnectionResolverInterface
      */
     protected $resolver;
 
     /**
      * Create a new database seed command instance.
      *
-     * @param  \Netinteractive\Elegant\Db\ConnectionResolverInterface  $resolver
+     * @param  \Illuminate\Database\ConnectionResolverInterface  $resolver
      * @return void
      */
     public function __construct(Resolver $resolver)

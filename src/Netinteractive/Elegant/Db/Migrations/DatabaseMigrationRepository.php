@@ -2,7 +2,7 @@
 
 namespace Netinteractive\Elegant\Db\Migrations;
 
-use  Netinteractive\Elegant\Db\ConnectionResolverInterface as Resolver;
+use Illuminate\Database\ConnectionResolverInterface as Resolver;
 
 /**
  * Class DatabaseMigrationRepository
@@ -13,7 +13,7 @@ class DatabaseMigrationRepository implements MigrationRepositoryInterface
     /**
      * The database connection resolver instance.
      *
-     * @var \Netinteractive\Elegant\Db\ConnectionResolverInterface
+     * @var \Illuminate\Database\ConnectionResolverInterface
      */
     protected $resolver;
 
@@ -34,7 +34,7 @@ class DatabaseMigrationRepository implements MigrationRepositoryInterface
     /**
      * Create a new database migration repository instance.
      *
-     * @param  \Netinteractive\Elegant\Db\ConnectionResolverInterface  $resolver
+     * @param  \Illuminate\Database\ConnectionResolverInterface  $resolver
      * @param  string  $table
      * @return void
      */
@@ -158,7 +158,7 @@ class DatabaseMigrationRepository implements MigrationRepositoryInterface
     /**
      * Get the connection resolver instance.
      *
-     * @return \Netinteractive\Elegant\Db\ConnectionResolverInterface
+     * @return \Illuminate\Database\ConnectionResolverInterface
      */
     public function getConnectionResolver()
     {

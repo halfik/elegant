@@ -45,7 +45,7 @@ class FiltersServiceProvider extends ServiceProvider
         $this->mergeConfigFrom($configFilters, 'packages.netinteractive.elegant.filters');
 
         \Event::listen('ni.elegant.record.after.fill', 'Netinteractive\Elegant\Model\Filter\Event\Handler@fillFilters');
-        \Event::listen('ni.elegant.mapper.before.save', 'Netinteractive\Elegant\Model\Filter\Event\Handler@saveFilters');
+        \Event::listen('ni.elegant.repository.before.save', 'Netinteractive\Elegant\Model\Filter\Event\Handler@saveFilters');
         \Event::listen('ni.elegant.record.display', 'Netinteractive\Elegant\Model\Filter\Event\Handler@displayFilters');
 
         $this->app->booting(function()

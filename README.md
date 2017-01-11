@@ -33,20 +33,20 @@ Also some providers won't work after this chances (wil be fixed) so you have to 
 
 
 ## Events
-* Netinteractive\Elegant\Mapper\DbMapper
+* Netinteractive\Elegant\Repository\Repository
 
-        ni.elegant.mapper.search.$recordClass    - event is fired in search method. You can use it to modify search query object.
-        ni.elegant.mapper.saving.$recordClass    - event is fired before record is save to database.
-        ni.elegant.mapper.saved.$recordClass     - event is fired after record is save to database.
-        ni.elegant.mapper.updating.$recordClass  - event is fired  before record update on database.
-        ni.elegant.mapper.updated.$recordClass   - event is fired after record update on database.
-        ni.elegant.mapper.creating.$recordClass  - event is fired  before record is inserted to database.
-        ni.elegant.mapper.created.$recordClass   - event is fired after record is inserted to database.
-        ni.elegant.mapper.deleting.$recordClass  - event is fired before record is deleted from database.
-        ni.elegant.mapper.deleted.$recordClass   - event is fired after record is deleted from database.
-        ni.elegant.mapper.before.save            - event allows to modify data that are send to data source (but not modify record data).
-        ni.elegant.mapper.touching.$recordClass  - event is fired for related record before touch
-        ni.elegant.mapper.touched.$recordClass   - event is fired for related record after touch
+        ni.elegant.repository.search.$recordClass    - event is fired in search method. You can use it to modify search query object.
+        ni.elegant.record.saving.$recordClass    - event is fired before record is save to database.
+        ni.elegant.record.saved.$recordClass     - event is fired after record is save to database.
+        ni.elegant.record.updating.$recordClass  - event is fired  before record update on database.
+        ni.elegant.record.updated.$recordClass   - event is fired after record update on database.
+        ni.elegant.record.creating.$recordClass  - event is fired  before record is inserted to database.
+        ni.elegant.record.created.$recordClass   - event is fired after record is inserted to database.
+        ni.elegant.record.deleting.$recordClass  - event is fired before record is deleted from database.
+        ni.elegant.record.deleted.$recordClass   - event is fired after record is deleted from database.
+        ni.elegant.record.before.save            - event allows to modify data that are send to data source (but not modify record data).
+        ni.elegant.record.touching.$recordClass  - event is fired for related record before touch
+        ni.elegant.record.touched.$recordClass   - event is fired for related record after touch
 
 *  Netinteractive\Elegant\Db\Query\Builder
 

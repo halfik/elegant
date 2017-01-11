@@ -75,18 +75,21 @@ class MakeElegant extends Command
         $this->grabFields($table);
 
         // get stubs
+        $repoStub = $this->getRepositoryStub($name);
         $recordStub = $this->getRecordStub($name);
         $blueprintStub = $this->getBlueprintStub($name, $table);
         $serviceStub = $this->getServiceStub($name);
         $scopeStub = $this->getScopeStub($name);
 
         // get paths
+        $repoPath = $this->getPath($name, 'Repository');
         $recordPath = $this->getPath($name, 'Record');
         $bpPath = $this->getPath($name, 'Blueprint');
         $scopePath = $this->getPath($name, 'Scope');
         $servicePath = $this->getPath($name, 'ServiceProvider');
 
-        // create cfiles
+        // create files
+        $this->make($repoPath, $repoStub);
         $this->make($recordPath, $recordStub);
         $this->make($bpPath, $blueprintStub);
         $this->make($scopePath, $scopeStub);
@@ -230,6 +233,18 @@ class MakeElegant extends Command
     protected function getRecordStub($name)
     {
         $stub = $this->files->get($this->getStubPath()."/record.stub");
+        $stub = str_replace('{Namespace}', $name, $stub);
+
+        return $stub;
+    }
+
+    /**
+     * @param string $name
+     * @return string
+     */
+    protected function getRepositoryStub($name)
+    {
+        $stub = $this->files->get($this->getStubPath()."/repository.stub");
         $stub = str_replace('{Namespace}', $name, $stub);
 
         return $stub;

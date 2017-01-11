@@ -1,0 +1,24 @@
+<?php
+
+namespace {Namespace};
+
+use Netinteractive\Elegant\Repository\Repository as BaseRepository;
+use Illuminate\Database\ConnectionInterface;
+
+/**
+ * Class Repository
+ */
+class Repository extends BaseRepository
+{
+    /**
+     * Repository constructor
+     *
+     * @param string $recordClass
+     * @param \Illuminate\Database\ConnectionInterface; $connection
+     * @return void
+     */
+    public function __construct($recordClass='{Namespace}\Record', ConnectionInterface $connection=null)
+    {
+        parent::__construct($recordClass, $connection);
+    }
+}

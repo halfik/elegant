@@ -5,7 +5,7 @@ namespace Netinteractive\Elegant\Db\Migrations;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 use Illuminate\Filesystem\Filesystem;
-use  Netinteractive\Elegant\Db\ConnectionResolverInterface as Resolver;
+use Illuminate\Database\ConnectionResolverInterface  as Resolver;
 
 class Migrator
 {
