@@ -1,0 +1,18 @@
+    /**
+     * @param string $val
+     * @return $this
+     */
+    public function set{ucField}($val)
+    {
+        $this->{field} = $val;
+
+        return $this;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function get{ucField}()
+    {
+        return $this->{field};
+    }

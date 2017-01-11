@@ -235,6 +235,19 @@ class MakeElegant extends Command
         $stub = $this->files->get($this->getStubPath()."/record.stub");
         $stub = str_replace('{Namespace}', $name, $stub);
 
+        $methods = '';
+        foreach($this->fields as $field=>$data){
+            $methodStub = $this->files->get($this->getStubPath()."/record/method.stub");
+            $methodStub = str_replace('{ucField}', Str::studly($field), $methodStub);
+            $methodStub = str_replace('{field}',$field, $methodStub);
+
+            $methods .= "\n";
+            $methods .= $methodStub;
+            $methods .= "\n";
+        }
+
+        $stub = str_replace('{Methods}', $methods, $stub);
+
         return $stub;
     }
 
