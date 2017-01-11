@@ -16,7 +16,7 @@ use Illuminate\Contracts\Events\Dispatcher;
 use Doctrine\DBAL\Connection as DoctrineConnection;
 use Illuminate\Database\ConnectionInterface;
 
-use  Netinteractive\Elegant\Db\Builder as QueryBuilder;
+use  Netinteractive\Elegant\Db\Query\Builder as QueryBuilder;
 use  Netinteractive\Elegant\Db\Query\Expression;
 use  Netinteractive\Elegant\Db\Schema\Builder as SchemaBuilder;
 use  Netinteractive\Elegant\Db\Query\Grammars\Grammar as QueryGrammar;

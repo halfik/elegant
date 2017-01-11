@@ -55,4 +55,12 @@ class QueryExecuted
         $this->connection = $connection;
         $this->connectionName = $connection->getName();
     }
+
+    /**
+     * @return string
+     */
+    public function __toString()
+    {
+      return $this->sql;
+    }
 }
