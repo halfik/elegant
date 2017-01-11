@@ -2458,10 +2458,12 @@ class Builder implements BuilderInterface
      */
     public function update(array $values)
     {
+        $bindings = array_values(array_merge($values, $this->getBindings()));
+
         $sql = $this->grammar->compileUpdate($this, $values);
 
         return $this->connection->update($sql, $this->cleanBindings(
-            $this->grammar->prepareBindingsForUpdate($this->bindings, $values)
+            $this->grammar->prepareBindingsForUpdate($bindings, $values)
         ));
     }
 

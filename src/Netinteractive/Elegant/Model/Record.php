@@ -919,10 +919,7 @@ abstract class Record implements Arrayable, Jsonable
     }
 
 
-
-
     ##TO ARRAY, JSON, STRING
-
 
     /**
      * Convert the record instance to JSON.

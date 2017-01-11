@@ -11,6 +11,7 @@ use Netinteractive\Elegant\Model\Query\Builder;
 use Netinteractive\Elegant\Helper;
 use Netinteractive\Elegant\Relation\BelongsToMany;
 use Netinteractive\Elegant\Relation\HasOneOrMany;
+use Netinteractive\Elegant\Utils\FieldGenerator\PgSql;
 
 
 /**
@@ -299,13 +300,11 @@ class Repository implements RepositoryInterface
             $record->validate(array_merge($record->getAttributes(), $dirty),  array('update'));
 
             \Event::fire('ni.elegant.record.updating.'.\classDotNotation($record), $record);
-
+            
             $this->setKeysForSaveQuery($query, $record)->update( $dirty );
 
             \Event::fire('ni.elegant.record.updated.'.\classDotNotation($record), $record);
         }
-
-
 
         #we touch related records
         if ($saveRelated === true && $record->hasRelated()){
@@ -832,11 +831,7 @@ class Repository implements RepositoryInterface
             return $this->callScope($scopeObj, $scope, $parameters);
         }
 
-
-
         $result =  call_user_func_array(array($this->query, $method), $parameters);
-
-
 
         return $result;
     }
