@@ -476,6 +476,7 @@ class Repository implements RepositoryInterface
         #here we clean up incoming input from empty values
         foreach ($input as $recordName => $fields) {
             if (is_array($fields)) {
+
                 foreach ($fields AS $name => $val) {
                     if (is_array($val) && in_array('null', $val)) {
                         unset($input[$recordName][$name]);
@@ -488,14 +489,16 @@ class Repository implements RepositoryInterface
         }
 
         #we wrap all ours search wheres  because of others wheres that can be add later (or where added before)
-        #we wrap all ours search wheres  because of others wheres that can be add later (or where added before)
         $query->where(function ($query) use ($input, $operator) {
+
             foreach ($input AS $key => $val) {
                 #if data are in format model.field - then $fields is an array
                 #in other case we have only field names and values, with out record name
                 if (is_array($val)){
                     if (!empty($val)){
                         $record = \App::make($key);
+
+                        //if record can't be created we use current one
                         foreach ($val AS $field => $value) {
                             $query = $this->queryFieldSearch($record, $field, $value, $query, $operator);
                         }

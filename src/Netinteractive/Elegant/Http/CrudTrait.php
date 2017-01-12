@@ -2,6 +2,10 @@
 
 namespace Netinteractive\Elegant\Http;
 
+use Illuminate\Http\Request;
+use Netinteractive\Elegant\Exception\ParamRequiredException;
+use Netinteractive\Elegant\Exception\RecordNotFoundException;
+
 
 /**
  * Class CrudTrait
@@ -10,36 +14,46 @@ namespace Netinteractive\Elegant\Http;
 trait CrudTrait
 {
     /**
-     * @var \Netinteractive\Elegant\Domain\Provider
+     * @var \Netinteractive\Elegant\Domain\ServiceProvider
      */
-    protected $domainProvider;
+    protected $domainServiceProvider;
 
     /**
      * Creates and returns record
-     * @param array $params
+     * @param \Illuminate\Http\Request $request
      * @return \Netinteractive\Elegant\Model\Record
      */
-    public function create(array $params=array())
+    public function create(Request $request)
     {
-       return \Response::build(
+        $params = $request->input('params', []);
+
+        return \Response::build(
            $this->getProvider()->create($params)
-       );
+        );
     }
 
     /**
-     * @param int $id
-     * @param array $params
+     * Request $request
+     * @throws \Netinteractive\Elegant\Exception\ParamRequiredException
+     * @throws \Netinteractive\Elegant\Exception\RecordNotFoundException
      * @return \Netinteractive\Elegant\Model\Record
      */
-    public function update($id, array $params=array())
+    public function update(Request $request)
     {
-        $displayFilter = isSet($params['display_filter']) ? (bool)  $params['display_filter'] : false;
-        $record = $this->getProvider()->getRepository()->find($id);
-
-        if ($record){
-            $record->fill($params);
-            $this->getProvider()->getRepository()->save($record);
+        $params = $request->input('params', []);
+        if(!array_key_exists('id', $params)){
+            throw new ParamRequiredException('id');
         }
+
+        $displayFilter = isSet($params['display_filter']) ? (bool)  $params['display_filter'] : false;
+        $record = $this->getProvider()->getRepository()->find($params['id']);
+
+        if(!$record || empty($params)){
+            throw new RecordNotFoundException();
+        }
+
+        $record->fill($params);
+        $this->getProvider()->getRepository()->save($record);
 
         return \Response::build(
             $record->toArray($displayFilter)
@@ -48,11 +62,14 @@ trait CrudTrait
 
     /**
      * Find a single record
-     * @param array $params
+     * @param \Illuminate\Http\Request $request
+     * @throws \Netinteractive\Elegant\Exception\RecordNotFoundException
      * @return mixed
      */
-    public function find(array $params=array())
+    public function find(Request $request)
     {
+        $params = $request->input('params', []);
+
         $columns = isSet($params['columns']) ?  $params['columns'] : array('*');
         $operator =  isSet($params['operator']) ?  $params['operator'] : 'and';
         $defaultJoin = isSet($params['default_join']) ?  $params['default_join'] : true;
@@ -67,6 +84,10 @@ trait CrudTrait
         #results
         $record = $q->first();
 
+        if(!$record || empty($params)){
+            throw new RecordNotFoundException();
+        }
+
         return \Response::build(
             $record->toArray($displayFilter)
         );
@@ -75,11 +96,13 @@ trait CrudTrait
 
     /**
      * Search records
-     * @param array $params
+     * @@param \Illuminate\Http\Request $request
      * @return mixed
      */
-    public function search(array $params=array())
+    public function search(Request $request)
     {
+        $params = $request->input('params', []);
+
         $columns = isSet($params['columns']) ?  $params['columns'] : array('*');
         $operator =  isSet($params['operator']) ?  $params['operator'] : 'and';
         $defaultJoin = isSet($params['default_join']) ?  $params['default_join'] : true;
@@ -100,18 +123,21 @@ trait CrudTrait
     }
 
     /**
-     * Find and deletes records
-     * @param array $params
+     * Request $request
+     * @throws \Netinteractive\Elegant\Exception\ParamRequiredException
+     * @return \Netinteractive\Elegant\Model\Record
      */
-    public function delete(array $params=array())
+    public function delete(Request $request)
     {
+        $params = $request->input('params', []);
+
         $records = $this->getProvider()->getRepository()->findMany($params);
-        
+
         foreach ($records AS $record){
             $this->getProvider()->getRepository()->delete($record);
         }
 
-        return \Response::build($params);
+        return \Response::build($records);
     }
 
 
@@ -127,20 +153,20 @@ trait CrudTrait
 
     /**
      * Returns model domain provider
-     * @return \Netinteractive\Elegant\Model\Provider|void
+     * @return \Netinteractive\Elegant\Domain\ServiceProvider
      */
     public function getProvider()
     {
-        if(is_null($this->domainProvider)){
-            $this->domainProvider = $this->createDomainProvider();
+        if(is_null($this->domainServiceProvider)){
+            $this->domainServiceProvider = $this->createDomainProvider();
         }
-        return $this->domainProvider;
+        return $this->domainServiceProvider;
     }
 
 
     /**
      * Method delivers model domain provider
-     * @return \Netinteractive\Elegant\Model\Provider
+     * @return \Netinteractive\Elegant\Domain\ServiceProvider
      */
     abstract protected function createDomainProvider();
 }

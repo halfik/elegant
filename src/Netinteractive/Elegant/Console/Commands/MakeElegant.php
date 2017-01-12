@@ -97,6 +97,11 @@ class MakeElegant extends Command
 
 
         $this->comment('Model generated successfully!');
+        $this->comment('To make Repository::search work please bind record:');
+
+        $parts = explode('\\',$name );
+        $modelName = $parts[count($parts)-1];
+        $this->comment("\$app->bind('$modelName', '$name\Record');");
     }
 
     /**
