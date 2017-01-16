@@ -25,7 +25,7 @@ trait CrudTrait
      */
     public function create(Request $request)
     {
-        $params = $request->input('query', []);
+        $params = $request->input('params', []);
 
         return \Response::build(
            $this->getProvider()->create($params)
@@ -40,7 +40,7 @@ trait CrudTrait
      */
     public function update(Request $request)
     {
-        $params = $request->input('query', []);
+        $params = $request->input('params', []);
         if(!array_key_exists('id', $params)){
             throw new ParamRequiredException('id');
         }
@@ -68,7 +68,7 @@ trait CrudTrait
      */
     public function find(Request $request)
     {
-        $params = $request->input('query', []);
+        $params = $request->input('params', []);
 
         $columns = isSet($params['columns']) ?  $params['columns'] : array('*');
         $operator =  isSet($params['operator']) ?  $params['operator'] : 'and';
@@ -101,7 +101,7 @@ trait CrudTrait
      */
     public function search(Request $request)
     {
-        $params = $request->input('query', []);
+        $params = $request->input('params', []);
 
         $columns = isSet($params['columns']) ?  $params['columns'] : array('*');
         $operator =  isSet($params['operator']) ?  $params['operator'] : 'and';
@@ -129,7 +129,7 @@ trait CrudTrait
      */
     public function delete(Request $request)
     {
-        $params = $request->input('query', []);
+        $params = $request->input('params', []);
 
         $records = $this->getProvider()->getRepository()->findMany($params);
 
