@@ -23,10 +23,6 @@ abstract class Blueprint
      */
     protected $fields = array();
 
-    /**
-     * @var null|\Netinteractive\Elegant\Model\Relation\Manager
-     */
-    protected $relationManager = null;
 
     /**
      * @var string
@@ -183,9 +179,6 @@ abstract class Blueprint
      */
     protected function __construct()
     {
-        $relationManager = \App('ni.elegant.model.relation.manager');
-        $this->relationManager = $relationManager;
-
         $this->init();
 
         #adding timestamps to field list
@@ -1078,29 +1071,9 @@ abstract class Blueprint
      */
     public function getRelationManager()
     {
-        return $this->relationManager;
+        return \App('ni.elegant.model.relation.manager');
     }
-
-
-    /**
-     * Sets relationship manager
-     * @param \Netinteractive\Elegant\Model\Relation\Manager|null $manager
-     * @return $this
-     */
-    public function setRelationManager($manager=null)
-    {
-        if (!is_null($manager) && !$manager instanceof Manager){
-            $msg = _(' Invliad class type of object.').' ';
-            $msg .= _('Expected: \Netinteractive\Elegant\Model\Relation\Manager').' ';
-            $msg .= _('Recived:').' '.get_class($manager);
-
-            throw new ClassTypeException($msg);
-        }
-
-        $this->relationManager = $manager;
-        return $this;
-    }
-
+    
 
     /**
      * Checks if relation is defined
