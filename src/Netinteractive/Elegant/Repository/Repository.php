@@ -170,6 +170,7 @@ class Repository implements RepositoryInterface
      */
     public function save(Record $record, $saveRelated = false)
     {
+
         #we want to check if anything has changed with record only when we are updating
         #if we do this for new record it won't let us to read record from one database and save it to another one
         \DB::beginTransaction();
@@ -232,7 +233,9 @@ class Repository implements RepositoryInterface
 
             foreach ($hashableAttributes AS $hAttr){
                 if (array_key_exists($hAttr, $attributes)){
-                    $attributes[$hAttr] = $record->getBlueprint()->getHasher()->hash($attributes[$hAttr]);
+                    if(!empty($attributes[$hAttr])){
+                        $attributes[$hAttr] = $record->getBlueprint()->getHasher()->hash($attributes[$hAttr]);
+                    }
                 }
             }
 
