@@ -21,4 +21,12 @@ class Repository extends BaseRepository
     {
         parent::__construct($recordClass, $connection);
     }
+
+    /**
+     * init repository
+     */
+    protected function initRepository()
+    {
+        $this->repository = new Repository($this->getRecordClass());
+    }
 }

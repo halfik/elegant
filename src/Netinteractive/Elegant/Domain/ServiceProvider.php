@@ -32,6 +32,14 @@ abstract class ServiceProvider
     public function __construct($recordClass)
     {
         $this->recordClass = $recordClass;
+        $this->initRepository();
+    }
+
+    /**
+     * init repository
+     */
+    protected function initRepository()
+    {
         $this->repository = \App::make('ni.elegant.repository', array($this->getRecordClass()));
     }
 
