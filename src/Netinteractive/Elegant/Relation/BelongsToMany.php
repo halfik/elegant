@@ -66,6 +66,7 @@ class BelongsToMany extends Relation
 	 */
 	public function __construct(Builder $query, Record $related, Record $parent, $table, $foreignKey, $otherKey, $relationName = null)
 	{
+
         if (!is_array($foreignKey)) {
             $foreignKey = array($foreignKey);
         }
@@ -306,6 +307,7 @@ class BelongsToMany extends Relation
         return $pivot->setPivotKeys($this->getForeignKey(), $this->getOtherKey());
     }
 
+
     /**
      * Set the join clause for the relation query.
      *
@@ -326,6 +328,7 @@ class BelongsToMany extends Relation
 
 
         $query->join($this->getTable(), function($join) use($keys, $baseTable, $otherKeys){
+
             foreach ($keys AS $index=>$key){
                 if (isSet($otherKeys[$index])){
                     $key = $baseTable.'.'.$key;
@@ -333,6 +336,7 @@ class BelongsToMany extends Relation
                 }
             }
         });
+        
 
         return $this;
     }

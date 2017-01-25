@@ -384,6 +384,14 @@ class Builder extends QueryBuilder
     }
 
     /**
+     * @return string
+     */
+    public function __toString()
+    {
+        return '';
+    }
+
+    /**
      * Get the given macro by name.
      *
      * @param  string  $name

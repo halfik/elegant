@@ -376,7 +376,7 @@ class Builder implements BuilderInterface
      */
     public function join($table, $one, $operator = null, $two = null, $type = 'inner', $where = false)
     {
-        $join = new JoinClause($this, $type, $table);
+        $join = new JoinClause($type, $table);
 
         // If the first "column" of the join is really a Closure instance the developer
         // is trying to build a join with a complex "on" clause containing more than
@@ -1048,6 +1048,7 @@ class Builder implements BuilderInterface
     {
         return $this->prepareQuery();
     }
+
 
     /**
      * Remove order by from query

@@ -110,6 +110,7 @@ class JoinClause
      */
     public function on($first, $operator = null, $second = null, $boolean = 'and', $where = false)
     {
+
         if ($first instanceof Closure) {
             return $this->nest($first, $boolean);
         }
