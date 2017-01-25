@@ -53,6 +53,41 @@ class JoinClause
     }
 
     /**
+     * @return string
+     */
+    public function getTable()
+    {
+        return $this->table;
+    }
+
+    /**
+     * @param string $table
+     */
+    public function setTable($table)
+    {
+        $this->table = $table;
+    }
+
+    /**
+     * @return array
+     */
+    public function getBindings()
+    {
+        return $this->bindings;
+    }
+
+    /**
+     * @param array $bindings
+     */
+    public function setBindings($bindings)
+    {
+        $this->bindings = $bindings;
+    }
+
+
+
+
+    /**
      * Add an "on" clause to the join.
      *
      * On clauses can be chained, e.g.

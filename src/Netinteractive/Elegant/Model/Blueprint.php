@@ -23,6 +23,10 @@ abstract class Blueprint
      */
     protected $fields = array();
 
+    /**
+     * @var null|\Netinteractive\Elegant\Model\Relation\Manager
+     */
+    protected $relationManager = null;
 
     /**
      * @var string
@@ -179,6 +183,9 @@ abstract class Blueprint
      */
     protected function __construct()
     {
+        $relationManager = \App('ni.elegant.model.relation.manager');
+        $this->relationManager = $relationManager;
+
         $this->init();
 
         #adding timestamps to field list
@@ -335,8 +342,8 @@ abstract class Blueprint
 
     /**
      * Returns list of fields titles
-     * @param array $fieldKeys
-     * @return
+     * @param array $fieldsKeys
+     * @return array
      */
     public function getFieldsTitles($fieldsKeys = array())
     {
@@ -642,7 +649,7 @@ abstract class Blueprint
 
     /**
      * Checks if field is primary key
-     * @param string $key
+     * @param string $fieldKey
      * @return bool
      */
     public function isPk($fieldKey)
@@ -656,7 +663,7 @@ abstract class Blueprint
     
     /**
      * Checks if field is protected
-     * @param string $key
+     * @param string $fieldKey
      * @return bool
      */
     public function isProtected($fieldKey)
@@ -1071,16 +1078,38 @@ abstract class Blueprint
      */
     public function getRelationManager()
     {
-        return \App('ni.elegant.model.relation.manager');
+        return $this->relationManager;
     }
-    
+
+
+    /**
+     * Sets relationship manager
+     * @param \Netinteractive\Elegant\Model\Relation\Manager|null $manager
+     * @throws  \Netinteractive\Elegant\Exception\ClassTypeException
+     * @return $this
+     */
+    public function setRelationManager($manager=null)
+    {
+        if (!is_null($manager) && !$manager instanceof Manager){
+            $msg = _(' Invliad class type of object.').' ';
+            $msg .= _('Expected: \Netinteractive\Elegant\Model\Relation\Manager').' ';
+            $msg .= _('Recived:').' '.get_class($manager);
+
+            throw new ClassTypeException($msg);
+        }
+
+        $this->relationManager = $manager;
+        return $this;
+    }
+
 
     /**
      * Checks if relation is defined
      * @param string $name
      * @return bool
      */
-    public function hasRelation($name){
+    public function hasRelation($name)
+    {
         return $this->getRelationManager()->hasRelation($name);
     }
 

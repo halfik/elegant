@@ -332,6 +332,7 @@ abstract class Record implements Arrayable, Jsonable
 
         #we check if we have a blueprint if not, then each field is an attribute
         if ($blueprint){
+
             #we take from blueprint information if field is a record field
             if ($blueprint->isField($key)){
                 #we check if field should be stored in data storage or it's external data
@@ -360,6 +361,7 @@ abstract class Record implements Arrayable, Jsonable
         }else{
             $this->attributes[$key] = $value;
         }
+
 
         return $this;
     }

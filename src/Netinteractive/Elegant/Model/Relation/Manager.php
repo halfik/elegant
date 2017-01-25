@@ -119,6 +119,15 @@ class Manager
     }
 
     /**
+     * Returns list of all relations
+     * @return array
+     */
+    public function getRelations()
+    {
+        return $this->relations;
+    }
+
+    /**
      * Method checks if relation exists
      * @param $relationName
      * @return bool
