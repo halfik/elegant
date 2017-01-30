@@ -94,15 +94,17 @@ abstract class ServiceProvider
      * Creates and saves record.
      *
      * @param  array $credentials
+     * @param boolean $save
      * @return \Netinteractive\Elegant\Model\Record
      */
-    public function create(array $credentials)
+    public function create(array $credentials, $save=true)
     {
         $record = $this->createRecord();
         $record->fill($credentials);
 
-        $this->getRepository()->save($record);
-
+        if($save){
+            $this->getRepository()->save($record);
+        }
         return $record;
     }
 }
