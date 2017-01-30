@@ -52,7 +52,7 @@ class PgSql implements DriverInterface
 
         $fields[$column->column_name] = [
                 'title' => $column->column_name,
-                'type' => $this->getDataType($fieldType),
+                'type' => $fieldType,
                 'sortable' => false,
                 'rules' => $this->getRules($column, $fieldType),
                 'filters' => [
@@ -102,7 +102,7 @@ class PgSql implements DriverInterface
      */
     protected function getDataType($dbDataType)
     {
-        $type = null;
+        $type =  Blueprint::TYPE_STRING;;
         switch ($dbDataType){
             case 'int2':
             case 'int4':
@@ -110,23 +110,20 @@ class PgSql implements DriverInterface
             case 'serial2':
             case 'serial4':
             case 'serial8':
-                $type = 'self::TYPE_INT';
+                $type = Blueprint::TYPE_INT;
                 break;
             case 'float4':
             case 'float8':
             case 'decimal':
-                $type = 'self::TYPE_DECIMAL';
+                $type = Blueprint::TYPE_DECIMAL;
                 break;
             case 'date':
-                $type = 'self::TYPE_DATE';
+                $type = Blueprint::TYPE_DATE;
                 break;
             case 'timestamp':
             case 'timetz':
             case 'timestamptz':
-                $type =  'self::TYPE_DATETIME';
-                break;
-            default:
-                $type = 'self::TYPE_STRING';
+                $type = Blueprint::TYPE_DATETIME;
                 break;
         }
 
