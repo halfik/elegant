@@ -336,7 +336,7 @@ class BelongsToMany extends Relation
                 }
             }
         });
-        
+
 
         return $this;
     }

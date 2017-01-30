@@ -828,6 +828,7 @@ class Repository implements RepositoryInterface
      */
     public function __call($method, $parameters)
     {
+
         $scopeObj = $this->emptyRecord->getBlueprint()->getScopeObject();
         $scope = 'scope'.ucfirst($method);
 
