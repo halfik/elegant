@@ -680,16 +680,22 @@ class Repository implements RepositoryInterface
     /**
      * Execute the query as a "select" statement.
      *
-     * @param  array  $columns
+     * @param  array|null  $columns
      * @return \Netinteractive\Elegant\Model\Collection|static[]
      */
-    public function get($columns = array('*'))
+    public function get($columns =  null)
     {
         $query = clone $this->query;
         $this->resetQuery();
 
+        if(!$columns){
+            $tableName = $this->getStorageNAme();
+            $columns = ["$tableName.*"];
+        }
+
         return $query->get($columns);
     }
+
 
     /**
      * Add a basic where clause to the query.
@@ -770,6 +776,16 @@ class Repository implements RepositoryInterface
         $this->query->whereIn($column, $values, $boolean, $not, $alias);
         return $this;
     }
+
+    /**
+     * Returns table name
+     * @return null|string
+     */
+    public function getStorageNAme()
+    {
+        return $this->createRecord()->getBlueprint()->getStorageName();
+    }
+
 
 
     /**
