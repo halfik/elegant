@@ -24,6 +24,6 @@ class ServiceProvider extends BusinessProvider
      */
     protected function initRepository()
     {
-        $this->repository = new Repository($this->getRecordClass());
+        $this->repository = new Repository($this->getModelClass());
     }
 }
