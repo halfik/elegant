@@ -77,13 +77,15 @@ class MakeElegant extends Command
     {
         $table = $this->ask('Table name');
         $name = ucfirst(strtolower($this->ask('Model name')));
+        $domainName = ucfirst(strtolower($this->ask('Domain name', $name)));
 
-        $this->modelDir = $this->ask('Model dir', 'Model');
         $this->domainDir = $this->ask('Domain dir', 'Domain');
+        $this->modelDir = $this->ask('Model dir', 'Model');
+
 
         // prepare name
         $modelNamespace = $this->buildModelNamespace($name);
-        $domainNamespace = $this->buildDomainNamespace($name);
+        $domainNamespace = $this->buildDomainNamespace($domainName);
 
 
         //get field list
@@ -139,7 +141,16 @@ class MakeElegant extends Command
     protected function make($path, $stub)
     {
         $this->makeDirectory($path);
-        $this->files->put($path, $stub);
+
+        $overwrite = 'y';
+        if($this->files->exists($path)){
+            $fileName = basename($path);
+            $overwrite = $this->ask("$fileName already exists. Do you want to overwrite it? (y/n)", 'n');
+        }
+
+        if($overwrite == 'y'){
+            $this->files->put($path, $stub);
+        }
     }
 
     /**
