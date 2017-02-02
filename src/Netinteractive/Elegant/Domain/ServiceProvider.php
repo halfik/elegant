@@ -18,20 +18,20 @@ abstract class ServiceProvider
 
 
     /**
-     * The Elegant record class
+     * Domain model class
      *
      * @var string
      */
-    protected $recordClass = null;
+    protected $modelClass = null;
 
 
     /**
      * ServiceProvider constructor.
-     * @param string $recordClass
+     * @param string $modelClass
      */
-    public function __construct($recordClass)
+    public function __construct($modelClass)
     {
-        $this->recordClass = $recordClass;
+        $this->$modelClass = $modelClass;
         $this->init();
     }
 
@@ -40,7 +40,11 @@ abstract class ServiceProvider
      */
     protected function init()
     {
-        $this->repository = \App::make('ni.elegant.repository', array($this->getRecordClass()));
+        $repo = \App::make('ni.elegant.repository',
+            array($this->getModelClass())
+        );
+
+        $this->setRepository($repo);
     }
 
     /**
@@ -72,22 +76,22 @@ abstract class ServiceProvider
     }
 
     /**
-     * Create a new instance of the record.
+     * Create a new instance of model.
      *
-     * @return \Netinteractive\Elegant\Model\Record
+     * @return mixed
      */
-    public function createRecord()
+    public function createModel()
     {
-        return \App::make($this->getRecordClass());
+        return \App::make($this->getModelClass());
     }
 
     /**
-     * Returns record class name
+     * Returns model class name
      * @return string
      */
-    public function getRecordClass()
+    public function getModelClass()
     {
-        return $this->recordClass;
+        return $this->modelClass;
     }
 
     /**
@@ -95,16 +99,16 @@ abstract class ServiceProvider
      *
      * @param  array $credentials
      * @param boolean $save
-     * @return \Netinteractive\Elegant\Model\Record
+     * @return mixed
      */
     public function create(array $credentials, $save=true)
     {
-        $record = $this->createRecord();
-        $record->fill($credentials);
+        $model = $this->createModel();
+        $model->fill($credentials);
 
         if($save){
-            $this->getRepository()->save($record);
+            $this->getRepository()->save($model);
         }
-        return $record;
+        return $model;
     }
 }
