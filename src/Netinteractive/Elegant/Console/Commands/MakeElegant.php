@@ -94,7 +94,7 @@ class MakeElegant extends Command
 
         $recordStub = $this->getRecordStub($modelNamespace);
         $blueprintStub = $this->getBlueprintStub($modelNamespace, $table);
-        $serviceStub = $this->getServiceStub($domainNamespace);
+        $serviceStub = $this->getServiceStub($modelNamespace, $domainNamespace);
 
         $scopeStub = $this->getScopeStub($modelNamespace);
 
@@ -316,13 +316,15 @@ class MakeElegant extends Command
     }
 
     /**
-     * @param string $nameSpace
+     * @param string $modelNamespace
+     * @param string $domainNamespace
      * @return string
      */
-    public function getServiceStub($nameSpace)
+    public function getServiceStub($modelNamespace, $domainNamespace)
     {
         $stub = $this->files->get($this->getStubPath()."/service.stub");
-        $stub = str_replace('{Namespace}', $nameSpace, $stub);
+        $stub = str_replace('{Namespace}', $domainNamespace, $stub);
+        $stub = str_replace('{ModelNamespace}', $modelNamespace, $stub);
 
         return $stub;
     }

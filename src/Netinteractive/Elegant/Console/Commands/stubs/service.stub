@@ -3,6 +3,7 @@
 namespace {Namespace};
 
 use Netinteractive\Elegant\Domain\ServiceProvider as BusinessProvider;
+use {ModelNamespace}\Repository;
 
 /**
  * Class Provider
@@ -13,12 +14,16 @@ class ServiceProvider extends BusinessProvider
     /**
      * @param null|string $record
      */
-    public function __construct($record=null)
+    public function __construct($record='{ModelNamespace}\Record')
     {
-        if (!$record){
-            $record = '{Namespace}\Record';
-        }
         parent::__construct($record);
     }
 
+ /**
+     * init repository
+     */
+    protected function initRepository()
+    {
+        $this->repository = new Repository($this->getRecordClass());
+    }
 }
