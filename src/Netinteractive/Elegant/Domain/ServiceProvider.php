@@ -31,7 +31,7 @@ abstract class ServiceProvider
      */
     public function __construct($modelClass)
     {
-        $this->$modelClass = $modelClass;
+        $this->modelClass = $modelClass;
         $this->init();
     }
 
