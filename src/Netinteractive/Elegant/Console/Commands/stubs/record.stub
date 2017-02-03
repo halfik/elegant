@@ -5,7 +5,7 @@ namespace {Namespace};
 use Netinteractive\Elegant\Model\Record as BaseRecord;
 
 /**
- * Class Record
+ * Class {Model}Record
  */
 class Record extends BaseRecord
 {

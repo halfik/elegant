@@ -8,7 +8,7 @@ use {ModelNamespace}\Repository;
 /**
  * Class Provider
  */
-class ServiceProvider extends BusinessProvider
+class {Model}ServiceProvider extends BusinessProvider
 {
 
     /**

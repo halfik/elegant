@@ -47,11 +47,6 @@ class MakeElegant extends Command
     /**
      * @var string
      */
-    protected $modelDir;
-
-    /**
-     * @var string
-     */
     protected $domainDir;
 
 
@@ -76,29 +71,34 @@ class MakeElegant extends Command
     public function handle()
     {
         $table = $this->ask('Table name');
-        $name = ucfirst(strtolower($this->ask('Model name')));
-        $domainName = ucfirst(strtolower($this->ask('Domain name', $name)));
+        $nameParts = explode('_', $table);
+        $proposeName = '';
+        foreach ($nameParts as $item){
+            $item = str_replace('_', '', $item);
+            $proposeName .=  ucfirst($item);
+        }
+
+        $name = ucfirst($this->ask('Model name', $proposeName));
+        $domainName = $this->ask('Domain name', ucfirst($nameParts[0]));
 
         $this->domainDir = $this->ask('Domain dir', 'Domain');
-        $this->modelDir = $this->ask('Model dir', 'Model');
 
 
         // prepare name
-        $modelNamespace = $this->buildModelNamespace($name);
+        $modelNamespace = $this->buildModelNamespace($name, $domainName);
         $domainNamespace = $this->buildDomainNamespace($domainName);
-
 
         //get field list
         $this->grabFields($table);
 
         // get stubs
-        $repoStub = $this->getRepositoryStub($modelNamespace);
+        $repoStub = $this->getRepositoryStub($name, $modelNamespace);
+        $recordStub = $this->getRecordStub($name, $modelNamespace);
+        $blueprintStub = $this->getBlueprintStub($name, $modelNamespace, $table);
+        $scopeStub = $this->getScopeStub($name, $modelNamespace);
 
-        $recordStub = $this->getRecordStub($modelNamespace);
-        $blueprintStub = $this->getBlueprintStub($modelNamespace, $table);
-        $serviceStub = $this->getServiceStub($modelNamespace, $domainNamespace);
+        $serviceStub = $this->getServiceStub($name, $modelNamespace, $domainNamespace);
 
-        $scopeStub = $this->getScopeStub($modelNamespace);
 
         // get paths
         $repoPath = $this->getPath($modelNamespace, 'Repository');
@@ -185,13 +185,14 @@ class MakeElegant extends Command
      * Build model namespace according to the root namespace.
      *
      * @param  string  $name
+     * @param  string $domainName
      * @return string
      */
-    protected function buildModelNamespace($name)
+    protected function buildModelNamespace($name, $domainName)
     {
         $rootNamespace = $this->laravel->getNamespace();
 
-        $name = $this->modelDir.'\\'.$name;
+        $name = $this->domainDir.'\\'.$domainName.'\\Model\\'.$name;
 
         $name = str_replace('\\', ' ', $name);
         $name = ucwords($name);
@@ -246,11 +247,12 @@ class MakeElegant extends Command
     }
 
     /**
+     * @parma string $model
      * @param string $nameSpace
      * @param string $table
      * @return string
      */
-    protected function getBlueprintStub($nameSpace, $table)
+    protected function getBlueprintStub($model,$nameSpace, $table)
     {
         $stub = $this->files->get($this->getStubPath()."/blueprint.stub");
         $stub = str_replace('{Namespace}', $nameSpace, $stub);
@@ -264,10 +266,11 @@ class MakeElegant extends Command
     }
 
     /**
+     * @parma string $model
      * @param string $nameSpace
      * @return mixed
      */
-    protected function getScopeStub($nameSpace)
+    protected function getScopeStub($model,$nameSpace)
     {
         $stub = $this->files->get($this->getStubPath()."/scope.stub");
         $stub = str_replace('{Namespace}', $nameSpace, $stub);
@@ -290,10 +293,11 @@ class MakeElegant extends Command
 
 
     /**
+     * @parma string $model
      * @param string $nameSpace
      * @return string
      */
-    protected function getRecordStub($nameSpace)
+    protected function getRecordStub($model,$nameSpace)
     {
         $stub = $this->files->get($this->getStubPath()."/record.stub");
         $stub = str_replace('{Namespace}', $nameSpace, $stub);
@@ -315,10 +319,11 @@ class MakeElegant extends Command
     }
 
     /**
+     * @parma string $model
      * @param string $nameSpace
      * @return string
      */
-    protected function getRepositoryStub($nameSpace)
+    protected function getRepositoryStub($model, $nameSpace)
     {
         $stub = $this->files->get($this->getStubPath()."/repository.stub");
         $stub = str_replace('{Namespace}', $nameSpace, $stub);
@@ -327,19 +332,20 @@ class MakeElegant extends Command
     }
 
     /**
+     * @parma string $model
      * @param string $modelNamespace
      * @param string $domainNamespace
      * @return string
      */
-    public function getServiceStub($modelNamespace, $domainNamespace)
+    public function getServiceStub($model, $modelNamespace, $domainNamespace)
     {
-        $stub = $this->files->get($this->getStubPath()."/service.stub");
+        $stub = $this->files->get($this->getStubPath()."/domain/service.stub");
         $stub = str_replace('{Namespace}', $domainNamespace, $stub);
         $stub = str_replace('{ModelNamespace}', $modelNamespace, $stub);
+        $stub = str_replace('{Model}', $model, $stub);
 
         return $stub;
     }
-
     /**
      * Get the filesystem instance.
      *
